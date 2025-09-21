@@ -1,0 +1,77 @@
+Message: Error: Cannot find module './hashTest.ts' with a requireStack pointing to an internal ts-node script. This suggests ts-node can’t resolve the file, possibly because:
+
+The file wasn’t saved correctly (Replit might not have persisted it).
+tsconfig.json isn’t configured to include the root directory.
+Node.js v20.19.3 (Replit’s version) needs explicit module resolution.
+
+
+
+Baby Step 1: Fix the hashTest.ts Execution (Takes ~5 Mins)
+
+Verify File:
+
+In Replit, check the file explorer.
+Ensure hashTest.ts exists in the root (~/workspace/) with this content:
+tsimport { hashPassword } from './lib/crypto';
+
+async function generateAdminHashes() {
+  const [brideHash, brideSalt] = await hashPassword('BRIDESTAYIRIE');
+  const [groomHash, groomSalt] = await hashPassword('GROOMSTAYIRIE');
+  const [plannerHash, plannerSalt] = await hashPassword('PLANNERSTAYIRIE');
+  console.log({ bride: `${brideSalt}:${brideHash}`, groom: `${groomSalt}:${groomHash}`, planner: `${plannerSalt}:${plannerHash}` });
+}
+
+generateAdminHashes();
+
+If missing, create it by clicking “+ Add File” > Name it hashTest.ts > Paste the code > Save.
+
+
+Update tsconfig.json:
+
+Open tsconfig.json in Replit.
+Ensure the include array includes the root:
+json"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "."],
+
+Save.
+
+
+Run Again:
+
+In the shell, retry: npx ts-node hashTest.ts.
+Expect: Output with bride, groom, planner salt:hash pairs (e.g., { bride: "a1b2c3:d4e5f6", ... }).
+
+
+If Fails: If you get ts-node not found, install it: npm install ts-node --save-dev, then retry.
+
+
+Action: Paste the output or error. Let me know (LYK) how it goes!
+
+Baby Step 2: Insert Hashes into Supabase (Takes ~3 Mins)
+
+In Supabase:
+
+Once you have the hashes, go to the SQL Editor.
+Run:
+textINSERT INTO admin_users (user_type, password_hash, salt) VALUES
+('BRIDE', '[brideHash]', '[brideSalt]'),
+('GROOM', '[groomHash]', '[groomSalt]'),
+('PLANNER', '[plannerHash]', '[plannerSalt]')
+ON CONFLICT (user_type) DO NOTHING;
+
+Replace [brideHash] with the hash, [brideSalt] with the salt (e.g., ('BRIDE', 'd4e5f6', 'a1b2c3'), ...).
+
+
+Click “Run”.
+
+
+Test: Run SELECT * FROM admin_users;—expect 3 rows.
+Action: LYK with the query result or errors.
+
+Baby Step 3: Push Changes to GitHub (Takes ~5 Mins)
+
+In Replit Shell:
+
+If you added hashTest.ts or edited files, stage and commit:
+textgit add .
+git commit -m "Added admin user password hashes for Supabase"
+git push origin main
