@@ -9,7 +9,7 @@ export default function ContactPage() {
         <div className="text-center mb-12">
           <Link 
             href="/" 
-            className="text-rose-600 hover:text-rose-800 font-medium mb-4 inline-block"
+            className="text-rose-600 hover:text-rose-800 font-medium inline-block text-left ml-0 mr-0 mb-20"
           >
             ← Back to Home
           </Link>
@@ -19,10 +19,10 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 text-center gap-px">
           {/* Contact Form */}
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-serif text-rose-700 mb-6">Send us a Message</h2>
+          <div className="bg-white rounded-lg shadow-lg p-8 mx-px my-px px-10 py-10 text-left">
+            <h2 className="text-2xl font-serif text-rose-700 mb-6 text-center">Send us a Message</h2>
             <form className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -92,63 +92,7 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-8">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-serif text-rose-700 mb-6">Get in Touch</h2>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Email</h3>
-                  <p className="text-gray-600">
-                    <a href="mailto:wedding@example.com" className="text-rose-600 hover:text-rose-800">
-                      wedding@example.com
-                    </a>
-                  </p>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Phone</h3>
-                  <p className="text-gray-600">
-                    <a href="tel:+1234567890" className="text-rose-600 hover:text-rose-800">
-                      (123) 456-7890
-                    </a>
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Response Time</h3>
-                  <p className="text-gray-600">
-                    We'll get back to you within 24-48 hours
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-serif text-rose-700 mb-6">Quick Actions</h2>
-              <div className="space-y-3">
-                <Link
-                  href="/rsvp"
-                  className="block w-full text-center bg-rose-600 hover:bg-rose-700 text-white py-3 px-4 rounded-lg transition-colors duration-200"
-                >
-                  Submit/Update RSVP
-                </Link>
-                
-                <Link
-                  href="/info"
-                  className="block w-full text-center border-2 border-rose-600 text-rose-600 hover:bg-rose-600 hover:text-white py-3 px-4 rounded-lg transition-colors duration-200"
-                >
-                  View Event Details
-                </Link>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-serif text-rose-700 mb-4">Wedding Planning Team</h2>
-              <p className="text-gray-600 text-sm">
-                For vendor inquiries or coordination matters, please contact our wedding planner directly through the main contact information above.
-              </p>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

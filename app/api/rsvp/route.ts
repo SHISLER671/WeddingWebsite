@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("[v0] Attempting to insert RSVP into database...")
+    console.log("[v0] Attempting to upsert RSVP into database...")
 
     if (guest_name === "Douglas" && email === "doug@pretend.com") {
       console.log("[v0] Processing test RSVP for Douglas")
@@ -43,15 +43,20 @@ export async function POST(request: NextRequest) {
 
     let result = await supabase
       .from("rsvps")
-      .insert({
-        guest_name,
-        email,
-        attendance,
-        guest_count: guest_count || 1,
-        dietary_restrictions: dietary_restrictions || null,
-        special_message: special_message || null,
-        wallet_address: wallet_address || null,
-      })
+      .upsert(
+        {
+          guest_name,
+          email,
+          attendance,
+          guest_count: guest_count || 1,
+          dietary_restrictions: dietary_restrictions || null,
+          special_message: special_message || null,
+          wallet_address: wallet_address || null,
+        },
+        {
+          onConflict: "email",
+        },
+      )
       .select()
       .single()
 
@@ -65,28 +70,33 @@ export async function POST(request: NextRequest) {
 
       result = await serviceSupabase
         .from("rsvps")
-        .insert({
-          guest_name,
-          email,
-          attendance,
-          guest_count: guest_count || 1,
-          dietary_restrictions: dietary_restrictions || null,
-          special_message: special_message || null,
-          wallet_address: wallet_address || null,
-        })
+        .upsert(
+          {
+            guest_name,
+            email,
+            attendance,
+            guest_count: guest_count || 1,
+            dietary_restrictions: dietary_restrictions || null,
+            special_message: special_message || null,
+            wallet_address: wallet_address || null,
+          },
+          {
+            onConflict: "email",
+          },
+        )
         .select()
         .single()
     }
 
     if (result.error) {
-      console.error("[v0] Supabase error inserting RSVP:", result.error)
+      console.error("[v0] Supabase error upserting RSVP:", result.error)
       return NextResponse.json(
         { success: false, error: "Failed to submit RSVP: " + result.error.message },
         { status: 500 },
       )
     }
 
-    console.log("[v0] RSVP successfully inserted:", result.data)
+    console.log("[v0] RSVP successfully upserted:", result.data)
 
     return NextResponse.json({
       success: true,
