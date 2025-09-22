@@ -1,17 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}", // Scan all files in the app directory
-    "./pages/**/*.{js,ts,jsx,tsx}", // Include pages if applicable
+    "./app/**/*.{js,ts,jsx,tsx}", // Scan all app files
+    "./pages/**/*.{js,ts,jsx,tsx}", // Include pages if any
     "./app/globals.css", // Explicitly include globals.css
   ],
   theme: {
     extend: {
-      borderColor: {
-        'border': 'hsl(var(--border))', // Optional: Predefine for consistency
-      },
       backgroundColor: {
-        'background': 'hsl(var(--background))', // Optional: Predefine for consistency
+        'background': 'hsl(var(--background))',
+      },
+      borderColor: {
+        'border': 'hsl(var(--border))',
+      },
+      textColor: {
+        'foreground': 'hsl(var(--foreground))', // Fallback for text-foreground
       },
     },
   },
