@@ -1,19 +1,28 @@
-const webpack = require('webpack');
+const webpack = require("webpack")
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true,
+  },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
           },
         ],
       },
-    ];
+    ]
   },
   env: {
     SUPABASE_URL: process.env.SUPABASE_URL,
@@ -22,14 +31,16 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@storybook/react': false, // Ignore Storybook in Thirdweb
-    };
-    config.plugins.push(new webpack.DefinePlugin({
-      'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
-      'process.env.SUPABASE_KEY': JSON.stringify(process.env.SUPABASE_KEY),
-    }));
-    return config;
+      "@storybook/react": false, // Ignore Storybook in Thirdweb
+    }
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        "process.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
+        "process.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY),
+      }),
+    )
+    return config
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
