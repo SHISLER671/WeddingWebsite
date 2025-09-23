@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const isValidPassword = await verifyPassword(password, adminUsers.password);
-    console.log('Password verification result:', isValidPassword); // Add this
+console.log('Password verification result:', isValidPassword); // Ensure this is here
 
     if (!isValidPassword) {
       return NextResponse.json(
