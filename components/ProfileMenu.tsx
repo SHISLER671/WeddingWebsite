@@ -65,7 +65,7 @@ export default function ProfileMenu() {
         {isOpen ? (
           <X className="h-6 w-6" />
         ) : (
-          <Menu className="h-6 w-6" />
+          <Menu className="h-6 w-6 text-chart-2" />
         )}
       </button>
 

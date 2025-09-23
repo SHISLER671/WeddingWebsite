@@ -226,57 +226,10 @@ export default function InfoPage() {
           </section>
 
           {/* Seating Chart Section */}
-          <section className="bg-gradient-to-r from-rose-100 to-pink-100 rounded-lg shadow-lg p-8 mb-16">
-            <div className="text-center">
-              <h4 className="text-3xl font-serif text-rose-700 mb-4">Find Your Seat</h4>
-              <p className="text-gray-700 mb-6">
-                We've carefully arranged seating to ensure you have a wonderful time celebrating with us. Use your name
-                and email to find your assigned table and seat.
-              </p>
-              <Link
-                href="/seating"
-                className="inline-flex items-center bg-rose-600 hover:bg-rose-700 text-white px-8 py-4 text-lg font-semibold rounded-lg transition-colors duration-200 shadow-lg"
-              >
-                <Heart className="w-5 h-5 mr-2" />
-                View Seating Chart
-              </Link>
-            </div>
-          </section>
+          
 
           {/* Travel & Accommodations */}
-          <section className="bg-white rounded-lg shadow-lg p-8 mb-16">
-            <h4 className="text-3xl font-serif text-rose-700 mb-6 text-center">Travel & Accommodations</h4>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h5 className="text-xl font-semibold text-rose-600 mb-3">Getting to Guam</h5>
-                <p className="text-gray-700 mb-4">
-                  Antonio B. Won Pat International Airport (GUM) is the main airport serving Guam.
-                </p>
-                <ul className="list-disc list-inside text-gray-700 space-y-1">
-                  <li>Direct flights from major Asian cities</li>
-                  <li>Connecting flights from US mainland</li>
-                  <li>Airport is 15 minutes from Hotel Nikko</li>
-                </ul>
-              </div>
-              <div>
-                <h5 className="text-xl font-semibold text-rose-600 mb-3">Hotel Recommendations</h5>
-                <div className="text-gray-700">
-                  <p className="mb-2">
-                    <strong>Hotel Nikko Guam</strong> (Venue hotel)
-                  </p>
-                  <p className="text-sm mb-4">Special rates available for wedding guests</p>
-                  <p className="mb-2">
-                    <strong>Other nearby options:</strong>
-                  </p>
-                  <ul className="list-disc list-inside text-sm space-y-1">
-                    <li>Hyatt Regency Guam</li>
-                    <li>The Westin Resort Guam</li>
-                    <li>Dusit Thani Guam Resort</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
+          
 
           {/* AI Chatbot Placeholder Section */}
           <section className="bg-gradient-to-r from-purple-100 to-rose-100 rounded-lg shadow-lg p-8 mb-16 border-2 border-dashed border-purple-300">
@@ -310,27 +263,7 @@ export default function InfoPage() {
           </section>
 
           {/* RSVP Section */}
-          <section className="text-center bg-white rounded-lg shadow-lg p-8 mb-16">
-            <h4 className="text-3xl font-serif text-rose-700 mb-4">RSVP</h4>
-            <p className="text-gray-600 mb-6">
-              Please let us know if you'll be joining us for our special day. Your response helps us plan the perfect
-              celebration!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/rsvp"
-                className="bg-rose-600 hover:bg-rose-700 text-white px-8 py-4 text-lg font-semibold rounded-lg transition-colors duration-200 shadow-lg"
-              >
-                Submit RSVP
-              </Link>
-              <Link
-                href="/contact"
-                className="border-2 border-rose-600 text-rose-600 hover:bg-rose-600 hover:text-white px-8 py-4 text-lg font-semibold rounded-lg transition-colors duration-200"
-              >
-                Contact Us
-              </Link>
-            </div>
-          </section>
+          
 
           {/* Navigation Footer */}
           <section className="text-center">
@@ -342,13 +275,7 @@ export default function InfoPage() {
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home
               </Link>
-              <Link
-                href="/seating"
-                className="flex items-center bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-lg transition-colors duration-200"
-              >
-                <Heart className="w-4 h-4 mr-2" />
-                Find Your Seat
-              </Link>
+              
               <Link
                 href="/rsvp"
                 className="flex items-center bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg transition-colors duration-200"

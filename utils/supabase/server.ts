@@ -1,11 +1,14 @@
 import { createServerClient } from "@supabase/ssr"
-import type { cookies } from "next/headers"
+import { cookies } from "next/headers"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+/**
+ * Updated to match Supabase example pattern - async function that awaits cookies()
+ * This prevents the "Cannot read properties of undefined" error
+ */
+export async function createClient() {
+  const cookieStore = await cookies()
 
-export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
-  return createServerClient(supabaseUrl!, supabaseKey!, {
+  return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -14,7 +17,7 @@ export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
         } catch {
-          // The `setAll` method was called from a Server Component.
+          // The "setAll" method was called from a Server Component.
           // This can be ignored if you have middleware refreshing
           // user sessions.
         }

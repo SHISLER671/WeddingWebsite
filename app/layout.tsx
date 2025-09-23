@@ -5,7 +5,10 @@ import "./globals.css"
 import { Providers } from "./providers"
 import ProfileMenu from "../components/ProfileMenu"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+})
 
 export const metadata: Metadata = {
   title: "Pia & Ryan Wedding 2026",
@@ -20,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>
           {/* Profile Menu - Fixed in top right corner */}
           <div className="fixed top-4 right-4 z-50">
