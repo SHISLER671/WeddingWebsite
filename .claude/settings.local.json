@@ -4,7 +4,8 @@
       "WebSearch",
       "Bash(task-master:*)",
       "Bash(npm run dev:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

@@ -72,7 +72,7 @@ export class OpenRouterClient {
         model: this.model,
         messages,
         temperature: options?.temperature ?? 0.7,
-        max_tokens: options?.maxTokens ?? 1000,
+        max_tokens: options?.maxTokens ?? 24000,
         stream: options?.stream ?? false,
       };
 
@@ -145,7 +145,7 @@ export class OpenRouterClient {
           model: this.model,
           messages,
           temperature: options?.temperature ?? 0.7,
-          max_tokens: options?.maxTokens ?? 1000,
+          max_tokens: options?.maxTokens ?? 24000,
           stream: true,
         }),
       });

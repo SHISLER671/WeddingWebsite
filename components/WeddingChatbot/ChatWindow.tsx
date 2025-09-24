@@ -6,7 +6,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, Send, X, Minimize2, Maximize2, Trash2 } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
-import { useOpenRouterChat } from '@/hooks/useOpenRouterChat';
 import { getChatbotConfig } from '@/lib/chatbot-config';
 import ChatMessageComponent from './ChatMessage';
 import { ErrorMessage, SystemMessage } from './ChatMessage';
@@ -17,7 +16,6 @@ interface ChatWindowProps {
 
 export default function ChatWindow({ className = '' }: ChatWindowProps) {
   const { state, actions } = useChat();
-  const { sendMessage, isLoading, error, clearError } = useOpenRouterChat();
   const [inputMessage, setInputMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -41,13 +39,13 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
   }, [state.isOpen, isMinimized]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+    if (!inputMessage.trim() || state.isLoading) return;
 
     const message = inputMessage.trim();
     setInputMessage('');
 
     try {
-      await sendMessage(message);
+      await actions.sendMessage(message);
     } catch (error) {
       console.error('Failed to send message:', error);
     }
@@ -198,15 +196,15 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
           )}
           
           {/* Error Message */}
-          {error && (
+          {state.error && (
             <ErrorMessage 
-              message={error} 
-              onRetry={clearError}
+              message={state.error} 
+              onRetry={actions.resetError}
             />
           )}
           
           {/* Loading Indicator */}
-          {isLoading && (
+          {state.isLoading && (
             <SystemMessage
               content="Wedding assistant is thinking..."
               timestamp={new Date()}
@@ -229,17 +227,17 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
                         focus:outline-none focus:ring-2 focus:ring-rose-gold/50 
                         focus:border-transparent text-sm"
               rows={1}
-              disabled={isLoading}
+              disabled={state.isLoading}
               style={{ minHeight: '40px', maxHeight: '120px' }}
             />
             
             <button
               onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || isLoading}
+              disabled={!inputMessage.trim() || state.isLoading}
               className={`
                 px-4 py-2 rounded-lg font-medium transition-all duration-200
                 flex items-center gap-2 text-sm
-                ${inputMessage.trim() && !isLoading
+                ${inputMessage.trim() && !state.isLoading
                   ? 'bg-rose-gold text-white hover:bg-rose-600 transform hover:scale-105'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }
@@ -256,7 +254,7 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
                 <button
                   key={index}
                   onClick={() => actions.sendMessage(action.action)}
-                  disabled={isLoading}
+                  disabled={state.isLoading}
                   className="text-xs px-3 py-1 rounded-full bg-soft-blush text-rose-gold 
                            hover:bg-rose-gold hover:text-white transition-colors"
                 >
@@ -279,7 +277,6 @@ interface MobileChatWindowProps {
 
 export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
   const { state, actions } = useChat();
-  const { sendMessage, isLoading, error, clearError } = useOpenRouterChat();
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -300,13 +297,13 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
   }, [isOpen]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+    if (!inputMessage.trim() || state.isLoading) return;
 
     const message = inputMessage.trim();
     setInputMessage('');
 
     try {
-      await sendMessage(message);
+      await actions.sendMessage(message);
     } catch (error) {
       console.error('Failed to send message:', error);
     }
@@ -362,8 +359,8 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
             ))
           )}
           
-          {error && <ErrorMessage message={error} onRetry={clearError} />}
-          {isLoading && (
+          {state.error && <ErrorMessage message={state.error} onRetry={actions.resetError} />}
+          {state.isLoading && (
             <SystemMessage content="Wedding assistant is thinking..." timestamp={new Date()} />
           )}
           
@@ -383,16 +380,16 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
                         focus:outline-none focus:ring-2 focus:ring-rose-gold/50 
                         focus:border-transparent text-sm"
               rows={1}
-              disabled={isLoading}
+              disabled={state.isLoading}
             />
             
             <button
               onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || isLoading}
+              disabled={!inputMessage.trim() || state.isLoading}
               className={`
                 px-4 py-2 rounded-lg font-medium transition-all duration-200
                 flex items-center gap-2 text-sm
-                ${inputMessage.trim() && !isLoading
+                ${inputMessage.trim() && !state.isLoading
                   ? 'bg-rose-gold text-white hover:bg-rose-600'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }
@@ -409,7 +406,7 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
                 <button
                   key={index}
                   onClick={() => actions.sendMessage(action.action)}
-                  disabled={isLoading}
+                  disabled={state.isLoading}
                   className="text-xs px-3 py-1 rounded-full bg-soft-blush text-rose-gold 
                            hover:bg-rose-gold hover:text-white transition-colors"
                 >

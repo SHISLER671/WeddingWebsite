@@ -106,7 +106,7 @@ export function useOpenRouterChat(
           const response = await Promise.race([
             client.chatCompletion(messages, {
               temperature: 0.7,
-              maxTokens: 1000,
+              maxTokens: 24000,
             }),
             timeoutPromise,
           ]);
@@ -199,7 +199,7 @@ export function useOpenRouterChat(
       
       const stream = client.streamChatCompletion(messages, {
         temperature: 0.7,
-        maxTokens: 1000,
+        maxTokens: 24000,
       });
 
       return stream;

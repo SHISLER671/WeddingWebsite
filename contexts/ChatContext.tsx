@@ -234,7 +234,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
         console.log('💬 [ChatContext] 🚀 Sending to OpenRouter API...');
         const response = await client.chatCompletion(openRouterMessages, {
           temperature: 0.7,
-          maxTokens: 1000,
+          maxTokens: 24000,
         });
         
         console.log('💬 [ChatContext] ✅ OpenRouter response received');
@@ -247,16 +247,32 @@ export function ChatProvider({ children }: ChatProviderProps) {
         
         console.log('💬 [ChatContext] 📝 Assistant message length:', assistantMessage.length);
         console.log('💬 [ChatContext] Assistant message preview:', assistantMessage.substring(0, 100) + '...');
+        console.log('💬 [ChatContext] 📋 Full response object:', {
+          id: response.id,
+          model: response.model,
+          choices: response.choices,
+          usage: response.usage,
+          hasContent: !!response.choices?.[0]?.message?.content,
+          contentLength: response.choices?.[0]?.message?.content?.length
+        });
+        
+        const messageId = generateMessageId();
+        console.log('💬 [ChatContext] 🎯 Generated message ID:', messageId);
         
         dispatch({
           type: 'SEND_MESSAGE_SUCCESS',
           payload: {
-            id: generateMessageId(),
+            id: messageId,
             content: assistantMessage,
           },
         });
         
         console.log('💬 [ChatContext] ✅ Message successfully dispatched to UI');
+        console.log('💬 [ChatContext] 📊 Post-dispatch state check:', {
+          messageCount: state.messages.length + 2, // user + assistant
+          isLoading: state.isLoading,
+          error: state.error
+        });
         
       } catch (error) {
         console.error('💬 [ChatContext] ❌ Message processing failed:');
