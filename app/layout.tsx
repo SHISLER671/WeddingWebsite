@@ -4,6 +4,7 @@ import type React from "react"
 import "./globals.css"
 import { Providers } from "./providers"
 import ProfileMenu from "../components/ProfileMenu"
+import WeddingChatbot from "../components/WeddingChatbot/WeddingChatbot"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,6 +30,10 @@ export default function RootLayout({
           <div className="fixed top-4 right-4 z-50">
             <ProfileMenu />
           </div>
+          
+          {/* Wedding Chatbot */}
+          <WeddingChatbot />
+          
           {children}
         </Providers>
       </body>

@@ -27,6 +27,9 @@ const nextConfig = {
   env: {
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_KEY: process.env.SUPABASE_KEY,
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
+    OPENROUTER_MODEL: process.env.OPENROUTER_MODEL,
+    NEXT_PUBLIC_OPENROUTER_MODEL: process.env.NEXT_PUBLIC_OPENROUTER_MODEL,
   },
   webpack: (config, { isServer }) => {
     config.resolve.alias = {
@@ -37,6 +40,9 @@ const nextConfig = {
       new webpack.DefinePlugin({
         "process.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
         "process.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY),
+        "process.env.OPENROUTER_API_KEY": JSON.stringify(process.env.OPENROUTER_API_KEY),
+        "process.env.OPENROUTER_MODEL": JSON.stringify(process.env.OPENROUTER_MODEL),
+        "process.env.NEXT_PUBLIC_OPENROUTER_MODEL": JSON.stringify(process.env.NEXT_PUBLIC_OPENROUTER_MODEL),
       }),
     )
     return config
