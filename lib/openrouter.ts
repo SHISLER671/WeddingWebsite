@@ -56,7 +56,29 @@ export class OpenRouterClient {
       stream?: boolean;
     }
   ): Promise<OpenRouterResponse> {
+    const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    console.log('🤖 [OpenRouter] === Chat Completion Request ===');
+    console.log('🤖 [OpenRouter] Request ID:', requestId);
+    console.log('🤖 [OpenRouter] Model:', this.model);
+    console.log('🤖 [OpenRouter] Messages count:', messages.length);
+    console.log('🤖 [OpenRouter] Options:', options);
+    console.log('🤖 [OpenRouter] First message role:', messages[0]?.role);
+    console.log('🤖 [OpenRouter] Last message role:', messages[messages.length - 1]?.role);
+    console.log('🤖 [OpenRouter] Last message preview:', messages[messages.length - 1]?.content?.substring(0, 100) + '...');
+
     try {
+      const requestBody = {
+        model: this.model,
+        messages,
+        temperature: options?.temperature ?? 0.7,
+        max_tokens: options?.maxTokens ?? 1000,
+        stream: options?.stream ?? false,
+      };
+
+      console.log('🤖 [OpenRouter] Sending request to:', `${this.baseUrl}/chat/completions`);
+      console.log('🤖 [OpenRouter] Request body:', JSON.stringify(requestBody, null, 2));
+
       const response = await fetch(`${this.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -65,26 +87,37 @@ export class OpenRouterClient {
           'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://wedding-website.local',
           'X-Title': 'Pia & Ryan Wedding Assistant',
         },
-        body: JSON.stringify({
-          model: this.model,
-          messages,
-          temperature: options?.temperature ?? 0.7,
-          max_tokens: options?.maxTokens ?? 1000,
-          stream: options?.stream ?? false,
-        }),
+        body: JSON.stringify(requestBody),
       });
+
+      console.log('🤖 [OpenRouter] Response status:', response.status);
+      console.log('🤖 [OpenRouter] Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
+        console.error('🤖 [OpenRouter] API Error Response:', errorData);
+        const error = new Error(
           `OpenRouter API Error: ${response.status} - ${errorData.error?.message || response.statusText}`
         );
+        console.error('🤖 [OpenRouter] Error:', error.message);
+        throw error;
       }
 
       const data: OpenRouterResponse = await response.json();
+      console.log('🤖 [OpenRouter] === Success Response ===');
+      console.log('🤖 [OpenRouter] Response ID:', data.id);
+      console.log('🤖 [OpenRouter] Model used:', data.model);
+      console.log('🤖 [OpenRouter] Choices count:', data.choices?.length || 0);
+      console.log('🤖 [OpenRouter] First choice:', data.choices?.[0]);
+      console.log('🤖 [OpenRouter] Usage:', data.usage);
+      console.log('🤖 [OpenRouter] Response content preview:', data.choices?.[0]?.message?.content?.substring(0, 100) + '...');
+
       return data;
     } catch (error) {
-      console.error('OpenRouter API Error:', error);
+      console.error('🤖 [OpenRouter] === Request Failed ===');
+      console.error('🤖 [OpenRouter] Request ID:', requestId);
+      console.error('🤖 [OpenRouter] Error:', error);
+      console.error('🤖 [OpenRouter] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       throw error;
     }
   }
@@ -224,11 +257,18 @@ export function getOpenRouterClient(): OpenRouterClient {
     const apiKey = process.env.OPENROUTER_API_KEY;
     const model = process.env.OPENROUTER_MODEL || process.env.NEXT_PUBLIC_OPENROUTER_MODEL || 'openai/gpt-4o-mini';
     
+    console.log('🤖 [OpenRouter] Initializing client...');
+    console.log('🤖 [OpenRouter] API Key configured:', apiKey ? '✅ Yes' : '❌ No');
+    console.log('🤖 [OpenRouter] Model:', model);
+    
     if (!apiKey) {
-      throw new Error('OpenRouter API key not configured. Please set OPENROUTER_API_KEY environment variable.');
+      const error = 'OpenRouter API key not configured. Please set OPENROUTER_API_KEY environment variable.';
+      console.error('🤖 [OpenRouter] Configuration Error:', error);
+      throw new Error(error);
     }
     
     openRouterClient = new OpenRouterClient(apiKey, model);
+    console.log('🤖 [OpenRouter] Client initialized successfully');
   }
   
   return openRouterClient;

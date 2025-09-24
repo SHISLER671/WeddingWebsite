@@ -5,6 +5,7 @@ import "./globals.css"
 import { Providers } from "./providers"
 import ProfileMenu from "../components/ProfileMenu"
 import WeddingChatbot from "../components/WeddingChatbot/WeddingChatbot"
+import ChatbotDebug from "../components/ChatbotDebug"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +34,9 @@ export default function RootLayout({
           
           {/* Wedding Chatbot */}
           <WeddingChatbot />
+          
+          {/* Debug Panel - Temporary for testing */}
+          <ChatbotDebug />
           
           {children}
         </Providers>

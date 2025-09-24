@@ -149,11 +149,25 @@ export function ChatProvider({ children }: ChatProviderProps) {
     sendMessage: async (message: string) => {
       if (!message.trim()) return;
       
+      console.log('💬 [ChatContext] === New Message ===');
+      console.log('💬 [ChatContext] Message:', message);
+      console.log('💬 [ChatContext] Current messages count:', state.messages.length);
+      
       try {
         dispatch({ type: 'SEND_MESSAGE_START', payload: message });
         
         const config = getChatbotConfig();
         const lowerMessage = message.toLowerCase();
+        
+        console.log('💬 [ChatContext] Chatbot config loaded:', config.name);
+        console.log('💬 [ChatContext] Message analysis:', {
+          isRSVPRequest: lowerMessage.includes('rsvp'),
+          isCheckRequest: lowerMessage.includes('check'),
+          isStatusRequest: lowerMessage.includes('status'),
+          isConfirmRequest: lowerMessage.includes('confirm'),
+          isRegisteredRequest: lowerMessage.includes('registered'),
+          isSignedUpRequest: lowerMessage.includes('signed up'),
+        });
         
         // Check if this is an RSVP status request
         const isRSVPRequest = lowerMessage.includes('rsvp') || 
@@ -164,9 +178,12 @@ export function ChatProvider({ children }: ChatProviderProps) {
                              lowerMessage.includes('signed up');
         
         if (isRSVPRequest) {
+          console.log('💬 [ChatContext] 🎯 Detected RSVP request, attempting database lookup...');
           try {
             // Handle RSVP status check
             const rsvpResponse = await handleRSVPStatusRequest(message);
+            console.log('💬 [ChatContext] ✅ RSVP lookup successful');
+            console.log('💬 [ChatContext] Response preview:', rsvpResponse.substring(0, 100) + '...');
             
             dispatch({
               type: 'SEND_MESSAGE_SUCCESS',
@@ -177,12 +194,14 @@ export function ChatProvider({ children }: ChatProviderProps) {
             });
             return;
           } catch (rsvpError) {
-            console.error('RSVP lookup error:', rsvpError);
+            console.error('💬 [ChatContext] ❌ RSVP lookup failed:', rsvpError);
+            console.log('💬 [ChatContext] Falling back to AI response...');
             // Fall back to AI response if RSVP lookup fails
           }
         }
         
         // Regular AI response
+        console.log('💬 [ChatContext] 🤖 Starting AI response generation...');
         const client = getOpenRouterClient();
         
         // Prepare conversation history for OpenRouter
@@ -204,14 +223,30 @@ export function ChatProvider({ children }: ChatProviderProps) {
           },
         ];
         
+        console.log('💬 [ChatContext] 📋 Prepared messages for OpenRouter:', {
+          totalMessages: openRouterMessages.length,
+          systemPromptLength: openRouterMessages[0]?.content?.length || 0,
+          historyMessages: openRouterMessages.length - 2,
+          currentMessageLength: message.length,
+        });
+        
         // Send to OpenRouter
+        console.log('💬 [ChatContext] 🚀 Sending to OpenRouter API...');
         const response = await client.chatCompletion(openRouterMessages, {
           temperature: 0.7,
           maxTokens: 1000,
         });
         
+        console.log('💬 [ChatContext] ✅ OpenRouter response received');
+        console.log('💬 [ChatContext] Response ID:', response.id);
+        console.log('💬 [ChatContext] Model used:', response.model);
+        console.log('💬 [ChatContext] Usage tokens:', response.usage);
+        
         const assistantMessage = response.choices[0]?.message?.content || 
           "I apologize, but I'm having trouble responding right now. Please try again.";
+        
+        console.log('💬 [ChatContext] 📝 Assistant message length:', assistantMessage.length);
+        console.log('💬 [ChatContext] Assistant message preview:', assistantMessage.substring(0, 100) + '...');
         
         dispatch({
           type: 'SEND_MESSAGE_SUCCESS',
@@ -221,21 +256,37 @@ export function ChatProvider({ children }: ChatProviderProps) {
           },
         });
         
+        console.log('💬 [ChatContext] ✅ Message successfully dispatched to UI');
+        
       } catch (error) {
-        console.error('Chat message error:', error);
+        console.error('💬 [ChatContext] ❌ Message processing failed:');
+        console.error('💬 [ChatContext] Error:', error);
+        console.error('💬 [ChatContext] Error type:', typeof error);
+        console.error('💬 [ChatContext] Error message:', error instanceof Error ? error.message : 'Unknown error');
+        console.error('💬 [ChatContext] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
         
         let errorMessage = ERROR_MESSAGES.API_ERROR;
         
         if (error instanceof Error) {
+          console.log('💬 [ChatContext] Analyzing error for user-friendly message...');
           if (error.message.includes('network') || error.message.includes('fetch')) {
             errorMessage = ERROR_MESSAGES.NETWORK_ERROR;
+            console.log('💬 [ChatContext] → Network error detected');
           } else if (error.message.includes('rate limit') || error.message.includes('429')) {
             errorMessage = ERROR_MESSAGES.RATE_LIMIT;
+            console.log('💬 [ChatContext] → Rate limit error detected');
           } else if (error.message.includes('timeout')) {
             errorMessage = ERROR_MESSAGES.TIMEOUT;
+            console.log('💬 [ChatContext] → Timeout error detected');
+          } else if (error.message.includes('API key') || error.message.includes('Unauthorized')) {
+            errorMessage = 'API configuration error. Please check the service configuration.';
+            console.log('💬 [ChatContext] → API key error detected');
+          } else {
+            console.log('💬 [ChatContext] → Generic API error, using default message');
           }
         }
         
+        console.log('💬 [ChatContext] 📢 Dispatching error to UI:', errorMessage);
         dispatch({ type: 'SEND_MESSAGE_ERROR', payload: errorMessage });
       }
     },

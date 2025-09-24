@@ -34,11 +34,20 @@ function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
+  console.log('🗄️ [RSVP] Supabase client initialization...');
+  console.log('🗄️ [RSVP] URL configured:', supabaseUrl ? '✅ Yes' : '❌ No');
+  console.log('🗄️ [RSVP] Key configured:', supabaseKey ? '✅ Yes' : '❌ No');
+  console.log('🗄️ [RSVP] URL:', supabaseUrl?.substring(0, 30) + '...');
+
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase configuration missing for RSVP lookup');
+    const error = 'Supabase configuration missing for RSVP lookup';
+    console.error('🗄️ [RSVP] Configuration error:', error);
+    throw new Error(error);
   }
 
-  return createClient(supabaseUrl, supabaseKey);
+  const client = createClient(supabaseUrl, supabaseKey);
+  console.log('🗄️ [RSVP] ✅ Supabase client created successfully');
+  return client;
 }
 
 // Normalize email for better matching
@@ -85,9 +94,14 @@ function calculateNameSimilarity(name1: string, name2: string): number {
 
 // Search for RSVP by email (primary method)
 async function searchByEmail(email: string): Promise<RSVPRecord | null> {
+  console.log('🗄️ [RSVP] 🔎 Email search started...');
+  console.log('🗄️ [RSVP] Input email:', email);
+  
   try {
     const supabase = getSupabaseClient();
     const normalizedEmail = normalizeEmail(email);
+    
+    console.log('🗄️ [RSVP] Normalized email:', normalizedEmail);
     
     const { data, error } = await supabase
       .from('rsvps')
@@ -95,11 +109,25 @@ async function searchByEmail(email: string): Promise<RSVPRecord | null> {
       .ilike('email', normalizedEmail)
       .single();
 
-    if (error || !data) return null;
+    if (error) {
+      console.log('🗄️ [RSVP] ❌ Email search error:', error.message);
+      return null;
+    }
+    
+    if (!data) {
+      console.log('🗄️ [RSVP] ❌ No data returned for email:', normalizedEmail);
+      return null;
+    }
+    
+    console.log('🗄️ [RSVP] ✅ Email search successful:', {
+      guest_name: data.guest_name,
+      attendance: data.attendance,
+      guest_count: data.guest_count
+    });
     
     return data as RSVPRecord;
   } catch (error) {
-    console.error('Error searching RSVP by email:', error);
+    console.error('🗄️ [RSVP] ❌ Email search failed:', error);
     return null;
   }
 }
@@ -176,40 +204,67 @@ async function searchByWalletAddress(walletAddress: string): Promise<RSVPRecord 
 
 // Main RSVP lookup function
 export async function lookupRSVP(params: GuestSearchParams): Promise<RSVPCheckResult> {
+  const requestId = `rsvp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
+  console.log('🗄️ [RSVP] === Lookup Request ===');
+  console.log('🗄️ [RSVP] Request ID:', requestId);
+  console.log('🗄️ [RSVP] Search params:', params);
+  
   try {
     const { email, name, wallet_address } = params;
     
+    console.log('🗄️ [RSVP] Search priority check:', {
+      hasEmail: !!email,
+      hasName: !!name,
+      hasWallet: !!wallet_address
+    });
+    
     // Priority 1: Email search (most reliable)
     if (email) {
+      console.log('🗄️ [RSVP] 🔍 Priority 1: Searching by email:', email);
       const rsvp = await searchByEmail(email);
       if (rsvp) {
+        console.log('🗄️ [RSVP] ✅ Found RSVP by email:', rsvp.guest_name);
         return {
           found: true,
           rsvp,
           message: `Found RSVP for ${rsvp.guest_name} (${rsvp.email})`,
           confidence: 'high'
         };
+      } else {
+        console.log('🗄️ [RSVP] ❌ No RSVP found by email');
       }
     }
     
     // Priority 2: Wallet address search
     if (wallet_address) {
+      console.log('🗄️ [RSVP] 🔍 Priority 2: Searching by wallet address:', wallet_address.substring(0, 10) + '...');
       const rsvp = await searchByWalletAddress(wallet_address);
       if (rsvp) {
+        console.log('🗄️ [RSVP] ✅ Found RSVP by wallet:', rsvp.guest_name);
         return {
           found: true,
           rsvp,
           message: `Found RSVP for ${rsvp.guest_name} (wallet: ${rsvp.wallet_address?.slice(0, 6)}...${rsvp.wallet_address?.slice(-4)})`,
           confidence: 'high'
         };
+      } else {
+        console.log('🗄️ [RSVP] ❌ No RSVP found by wallet address');
       }
     }
     
     // Priority 3: Name search (least reliable)
     if (name) {
+      console.log('🗄️ [RSVP] 🔍 Priority 3: Searching by name:', name);
       const matches = await searchByName(name);
+      console.log('🗄️ [RSVP] Name search results:', {
+        totalMatches: matches.length,
+        names: matches.map(m => m.guest_name)
+      });
+      
       if (matches.length === 1) {
         const rsvp = matches[0];
+        console.log('🗄️ [RSVP] ✅ Found unique RSVP by name:', rsvp.guest_name);
         return {
           found: true,
           rsvp,
@@ -217,15 +272,19 @@ export async function lookupRSVP(params: GuestSearchParams): Promise<RSVPCheckRe
           confidence: 'medium'
         };
       } else if (matches.length > 1) {
+        console.log('🗄️ [RSVP] ⚠️ Multiple matches found for name:', name);
         return {
           found: false,
           message: `Found ${matches.length} possible matches for "${name}". Please provide your email address for more accurate results.`,
           confidence: 'low'
         };
+      } else {
+        console.log('🗄️ [RSVP] ❌ No matches found for name:', name);
       }
     }
     
     // No matches found
+    console.log('🗄️ [RSVP] ❌ No RSVP found with any provided criteria');
     return {
       found: false,
       message: 'No RSVP found with the provided information. Please check your spelling or provide additional details.',
@@ -233,7 +292,11 @@ export async function lookupRSVP(params: GuestSearchParams): Promise<RSVPCheckRe
     };
     
   } catch (error) {
-    console.error('Error in RSVP lookup:', error);
+    console.error('🗄️ [RSVP] ❌ Lookup failed:');
+    console.error('🗄️ [RSVP] Request ID:', requestId);
+    console.error('🗄️ [RSVP] Error:', error);
+    console.error('🗄️ [RSVP] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    
     return {
       found: false,
       message: 'Sorry, I encountered an error while checking your RSVP status. Please try again later.',
