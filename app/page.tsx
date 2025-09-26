@@ -15,7 +15,7 @@ export default function Home() {
       <div className="relative z-20 min-h-screen flex flex-col items-center justify-center px-4">
         {/* AI Assistant Instructions - Top Header */}
         <div className="absolute top-4 left-4 right-4 flex justify-center">
-          <p className="text-sm md:text-base text-warm-white/80 font-light text-center">
+          <p className="text-lg md:text-xl text-fuchsia-500 font-light text-center">
             Click the Heart button to ask Sophia (the AI assistant) any questions!
           </p>
         </div>
