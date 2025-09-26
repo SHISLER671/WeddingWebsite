@@ -166,9 +166,9 @@ export default function InfoPage() {
                 </summary>
                 <div className="mt-3 text-gray-600">
                   <p>
-                    Please RSVP by <strong>December 13, 2025</strong>.
+                    Please RSVP by <strong>January 10, 2026</strong>.
                   </p>
-                  <p>You can RSVP online at www.pia&ryanwedding.com or use our RSVP form on this website.</p>
+                  <p>You can RSVP online using our RSVP form on this website.</p>
                 </div>
               </details>
 

@@ -124,9 +124,9 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
         <div className="flex items-center gap-3">
           <Heart className="w-6 h-6" />
           <div>
-            <h3 className="font-semibold text-lg">{config.name}</h3>
+            <h3 className="font-semibold text-lg text-rose-gold">{config.name}</h3>
             {!isMinimized && (
-              <p className="text-xs opacity-90">{config.description}</p>
+              <p className="text-xs opacity-90 text-rose-gold">{config.description}</p>
             )}
           </div>
         </div>
@@ -326,8 +326,8 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
           <div className="flex items-center gap-3">
             <Heart className="w-6 h-6" />
             <div>
-              <h3 className="font-semibold text-lg">{config.name}</h3>
-              <p className="text-xs opacity-90">{config.description}</p>
+              <h3 className="font-semibold text-lg text-rose-gold">{config.name}</h3>
+              <p className="text-xs opacity-90 text-rose-gold">{config.description}</p>
             </div>
           </div>
           

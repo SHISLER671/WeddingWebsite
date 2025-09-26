@@ -59,13 +59,13 @@ export default function ProfileMenu() {
       {/* Hamburger Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-full transition-colors duration-200"
+        className="p-2 text-rose-gold hover:bg-white hover:bg-opacity-20 rounded-full transition-colors duration-200"
         aria-label="Profile Menu"
       >
         {isOpen ? (
           <X className="h-6 w-6" />
         ) : (
-          <Menu className="h-6 w-6 text-chart-2" />
+          <Menu className="h-6 w-6" />
         )}
       </button>
 

@@ -41,7 +41,7 @@ WEDDING DETAILS:
 - Reception: 6:00 PM at Hotel Nikko Guam Tusi Ballroom
 - Address: 245 Gun Beach Road, Tumon, Guam 96913
 - Dress Code: Formal/Cocktail attire
-- RSVP Deadline: December 13, 2025
+- RSVP Deadline: January 10, 2026
 - Capacity: 260 guests
 
 VENUE INFORMATION:
@@ -85,7 +85,7 @@ RSVP CAPABILITIES:
 - You can guide them through the RSVP process if needed
 
 RSVP INFORMATION:
-- Deadline: December 13, 2025
+- Deadline: January 10, 2026
 - Online RSVP available on website
 - Special dietary requirements can be accommodated
 - Accessibility needs can be arranged

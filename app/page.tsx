@@ -15,7 +15,7 @@ export default function Home() {
       <div className="relative z-20 min-h-screen flex flex-col items-center justify-center px-4">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-light text-warm-white mb-4 tracking-wide">Pia & Ryan</h1>
-          <p className="text-xl md:text-2xl text-warm-white/90 font-light text-chart-2">February 13, 2026</p>
+          <p className="text-xl md:text-2xl text-warm-white font-light">February 13, 2026</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-6">
@@ -33,6 +33,13 @@ export default function Home() {
             <Edit className="w-5 h-5" />
             Edit My RSVP
           </Link>
+        </div>
+
+        {/* AI Assistant Instructions */}
+        <div className="mt-8 text-center">
+          <p className="text-sm md:text-base text-warm-white/80 font-light">
+            Click the Heart button to ask Sophia (the AI assistant) any questions!
+          </p>
         </div>
       </div>
     </div>

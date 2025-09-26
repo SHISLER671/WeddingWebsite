@@ -121,8 +121,7 @@ export default function ConfirmationPage() {
               </div>
               <div>
                 <h3 className="font-medium text-charcoal mb-2">RSVP Deadline</h3>
-                <p className="text-charcoal/80">December 13, 2025</p>
-                <p className="text-sm text-charcoal/60 mt-1">www.pia&ryanwedding.com</p>
+                <p className="text-charcoal/80">January 10, 2026</p>
               </div>
             </div>
           </div>
