@@ -28,7 +28,7 @@ export interface ChatbotAppearance {
 }
 
 export const WEDDING_CHATBOT_CONFIG: ChatbotConfig = {
-  name: "Sofia - Wedding Planner",
+  name: "Sofia - The AI Wedding Agent Assistant",
   description: "Your professional wedding coordinator for Pia & Ryan's special day",
   
   systemPrompt: `You are Sofia, the professional wedding planner assistant for Pia and Ryan's wedding on February 13, 2026. 

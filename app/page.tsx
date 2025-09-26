@@ -13,6 +13,13 @@ export default function Home() {
       <div className="absolute inset-0 z-10 bg-charcoal/20"></div>
 
       <div className="relative z-20 min-h-screen flex flex-col items-center justify-center px-4">
+        {/* AI Assistant Instructions - Top Header */}
+        <div className="absolute top-4 left-4 right-4 flex justify-center">
+          <p className="text-sm md:text-base text-warm-white/80 font-light text-center">
+            Click the Heart button to ask Sophia (the AI assistant) any questions!
+          </p>
+        </div>
+        
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-light text-warm-white mb-4 tracking-wide">Pia & Ryan</h1>
           <p className="text-xl md:text-2xl text-warm-white font-light">February 13, 2026</p>
@@ -33,13 +40,6 @@ export default function Home() {
             <Edit className="w-5 h-5" />
             Edit My RSVP
           </Link>
-        </div>
-
-        {/* AI Assistant Instructions */}
-        <div className="mt-8 text-center">
-          <p className="text-sm md:text-base text-warm-white/80 font-light">
-            Click the Heart button to ask Sophia (the AI assistant) any questions!
-          </p>
         </div>
       </div>
     </div>
