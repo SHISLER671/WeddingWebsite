@@ -1,7 +1,11 @@
 "use client"
 import Link from "next/link"
-import { Calendar, MapPin, Users, Heart, ArrowLeft, ChevronDown } from "lucide-react"
+import { Calendar, MapPin, Users, Heart, ArrowLeft, ChevronDown, Flower2 } from "lucide-react"
 import ProfileMenu from "../../components/ProfileMenu"
+import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
+import { useChat } from '../../contexts/ChatContext';
+import { useAccount } from 'wagmi';
+import { useLoginWithAbstract } from '@abstract-foundation/agw-react';
 
 export default function InfoPage() {
   return (
@@ -286,10 +290,104 @@ export default function InfoPage() {
           </section>
         </main>
 
+        {/* New Interactive Section */}
+        <section className="max-w-4xl mx-auto mt-16 mb-16">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-rose-200 p-8">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-serif text-rose-700 mb-4">Connect & Chat</h3>
+              <p className="text-gray-700 leading-relaxed">
+                Thank you for taking the time to be a part of our special occasion! Please feel free to spark up a chat with Sophia the AI wedding agent assistant, and you may also click the flower button to connect your wallet, just resubmit the rsvp form again after to save you wallet for a future surprise from the couple!
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              {/* Chatbot Button */}
+              <ChatbotButton />
+              
+              {/* AGW Wallet Button */}
+              <AGWWalletButton />
+            </div>
+          </div>
+        </section>
+
         <footer className="text-center mt-16 text-gray-500">
           <p>&copy; 2026 Wedding Website. Made with love.</p>
         </footer>
       </div>
+
+      {/* Wedding Chatbot - Only accessible from info page */}
+      <WeddingChatbot />
     </div>
   )
+}
+
+// Chatbot Button Component
+function ChatbotButton() {
+  const { actions } = useChat();
+  
+  const handleChatbotClick = () => {
+    actions.openChat();
+  };
+
+  return (
+    <button 
+      onClick={handleChatbotClick}
+      className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-jewel-crimson to-jewel-burgundy hover:from-jewel-burgundy hover:to-jewel-crimson text-warm-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
+    >
+      <Heart className="w-8 h-8" />
+      <span className="font-semibold text-lg">Chat with Sofia</span>
+      <span className="text-sm opacity-90 text-center">AI Wedding Assistant</span>
+    </button>
+  );
+}
+
+// AGW Wallet Button Component
+function AGWWalletButton() {
+  const { address, status, isConnected } = useAccount();
+  const { login, logout } = useLoginWithAbstract();
+
+  const handleConnect = async () => {
+    try {
+      await login();
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error);
+    }
+  };
+
+  const formatAddress = (addr: string) => {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-3 min-w-[200px]">
+      <button 
+        onClick={isConnected ? handleDisconnect : handleConnect}
+        disabled={status === 'connecting'}
+        className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-jewel-sapphire to-jewel-emerald hover:from-jewel-emerald hover:to-jewel-sapphire disabled:from-gray-400 disabled:to-gray-500 text-warm-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
+      >
+        <Flower2 className="w-8 h-8" />
+        <span className="font-semibold text-lg">
+          {status === 'connecting' ? 'Connecting...' : isConnected ? 'Disconnect' : 'Connect Wallet'}
+        </span>
+        <span className="text-sm opacity-90 text-center">Abstract Global Wallet</span>
+      </button>
+      
+      {isConnected && address && (
+        <div className="bg-white/80 backdrop-blur-sm rounded-lg p-3 shadow-sm w-full">
+          <div className="text-xs text-gray-600 mb-1">Connected:</div>
+          <div className="text-sm font-mono text-gray-800 break-all">
+            {formatAddress(address)}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

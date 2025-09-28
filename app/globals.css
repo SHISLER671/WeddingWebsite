@@ -31,6 +31,13 @@
     --warm-white: 0 0% 98%;
     --rose-gold: 15 25% 75%;
     --soft-blush: 15 15% 90%;
+
+    /* Jewel tone palette */
+    --jewel-burgundy: 340 65% 35%; /* Deep burgundy red */
+    --jewel-crimson: 350 85% 50%; /* Crimson red */
+    --jewel-fuchsia: 320 90% 65%; /* Vibrant fuchsia/magenta */
+    --jewel-sapphire: 215 85% 45%; /* Deep sapphire blue */
+    --jewel-emerald: 150 70% 50%; /* Vibrant emerald green */
   }
 
   .dark {
@@ -102,5 +109,66 @@
 
   .border-rose-gold {
     border-color: hsl(var(--rose-gold));
+  }
+
+  /* Jewel tone utility classes */
+  .text-jewel-burgundy {
+    color: hsl(var(--jewel-burgundy));
+  }
+
+  .text-jewel-crimson {
+    color: hsl(var(--jewel-crimson));
+  }
+
+  .text-jewel-fuchsia {
+    color: hsl(var(--jewel-fuchsia));
+  }
+
+  .text-jewel-sapphire {
+    color: hsl(var(--jewel-sapphire));
+  }
+
+  .text-jewel-emerald {
+    color: hsl(var(--jewel-emerald));
+  }
+
+  .bg-jewel-burgundy {
+    background-color: hsl(var(--jewel-burgundy));
+  }
+
+  .bg-jewel-crimson {
+    background-color: hsl(var(--jewel-crimson));
+  }
+
+  .bg-jewel-fuchsia {
+    background-color: hsl(var(--jewel-fuchsia));
+  }
+
+  .bg-jewel-sapphire {
+    background-color: hsl(var(--jewel-sapphire));
+  }
+
+  .bg-jewel-emerald {
+    background-color: hsl(var(--jewel-emerald));
+  }
+
+  .border-jewel-burgundy {
+    border-color: hsl(var(--jewel-burgundy));
+  }
+
+  .border-jewel-crimson {
+    border-color: hsl(var(--jewel-crimson));
+  }
+
+  .border-jewel-fuchsia {
+    border-color: hsl(var(--jewel-fuchsia));
+  }
+
+  .border-jewel-sapphire {
+    border-color: hsl(var(--jewel-sapphire));
+  }
+
+  .border-jewel-emerald {
+    border-color: hsl(var(--jewel-emerald));
   }
 }

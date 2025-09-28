@@ -26,14 +26,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>
-          {/* Profile Menu - Fixed in top right corner */}
-          <div className="fixed top-4 right-4 z-50">
-            <ProfileMenu />
-          </div>
-          
-          {/* Wedding Chatbot */}
-          <WeddingChatbot />
-          
           {children}
         </Providers>
       </body>

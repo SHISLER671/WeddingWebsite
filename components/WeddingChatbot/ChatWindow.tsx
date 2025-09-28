@@ -4,6 +4,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { Heart, Send, X, Minimize2, Maximize2, Trash2 } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
 import { getChatbotConfig } from '@/lib/chatbot-config';
@@ -88,7 +89,7 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
       flex items-center justify-between p-4 border-b
       rounded-t-2xl cursor-pointer
       ${isMinimized ? 'rounded-b-2xl' : ''}
-      bg-gradient-to-r from-rose-gold to-rose-500 text-white
+      bg-gradient-to-r from-jewel-fuchsia to-jewel-crimson text-warm-white
     `;
   };
 
@@ -101,8 +102,8 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
 
   const getMessagesContainerClasses = () => {
     return `
-      flex-1 overflow-y-auto p-4 space-y-4
-      bg-gradient-to-b from-white to-soft-blush/20
+      flex-1 overflow-y-auto p-4 space-y-4 relative
+      bg-gradient-to-b from-white/90 to-soft-blush/30
     `;
   };
 
@@ -116,6 +117,18 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
 
   return (
     <div className={getWindowClasses()} style={{ width: isMinimized ? '300px' : '400px' }}>
+      {/* Background Image */}
+      {!isMinimized && (
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="/tricho.jpg" 
+            alt="Chat background" 
+            fill
+            className="object-cover opacity-20 rounded-2xl"
+          />
+        </div>
+      )}
+      
       {/* Header */}
       <div 
         className={getHeaderClasses()}
@@ -124,9 +137,9 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
         <div className="flex items-center gap-3">
           <Heart className="w-6 h-6" />
           <div>
-            <h3 className="font-semibold text-lg text-rose-gold">{config.name}</h3>
+            <h3 className="font-semibold text-lg text-warm-white">{config.name}</h3>
             {!isMinimized && (
-              <p className="text-xs opacity-90 text-rose-gold">{config.description}</p>
+              <p className="text-xs opacity-90 text-warm-white">{config.description}</p>
             )}
           </div>
         </div>
@@ -238,7 +251,7 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
                 px-4 py-2 rounded-lg font-medium transition-all duration-200
                 flex items-center gap-2 text-sm
                 ${inputMessage.trim() && !state.isLoading
-                  ? 'bg-rose-gold text-white hover:bg-rose-600 transform hover:scale-105'
+                  ? 'bg-jewel-fuchsia text-warm-white hover:bg-jewel-crimson transform hover:scale-105'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }
               `}
@@ -255,8 +268,8 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
                   key={index}
                   onClick={() => actions.sendMessage(action.action)}
                   disabled={state.isLoading}
-                  className="text-xs px-3 py-1 rounded-full bg-soft-blush text-rose-gold 
-                           hover:bg-rose-gold hover:text-white transition-colors"
+                  className="text-xs px-3 py-1 rounded-full bg-jewel-emerald/20 text-jewel-emerald 
+                           hover:bg-jewel-emerald hover:text-warm-white transition-colors"
                 >
                   {action.label}
                 </button>
@@ -322,12 +335,12 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
     <div className="fixed inset-0 z-50 bg-black/50 flex items-end justify-center">
       <div className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-rose-gold to-rose-500 text-white rounded-t-3xl">
+        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-jewel-fuchsia to-jewel-crimson text-warm-white rounded-t-3xl">
           <div className="flex items-center gap-3">
             <Heart className="w-6 h-6" />
             <div>
-              <h3 className="font-semibold text-lg text-rose-gold">{config.name}</h3>
-              <p className="text-xs opacity-90 text-rose-gold">{config.description}</p>
+              <h3 className="font-semibold text-lg text-warm-white">{config.name}</h3>
+              <p className="text-xs opacity-90 text-warm-white">{config.description}</p>
             </div>
           </div>
           
@@ -390,7 +403,7 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
                 px-4 py-2 rounded-lg font-medium transition-all duration-200
                 flex items-center gap-2 text-sm
                 ${inputMessage.trim() && !state.isLoading
-                  ? 'bg-rose-gold text-white hover:bg-rose-600'
+                  ? 'bg-jewel-fuchsia text-warm-white hover:bg-jewel-crimson'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }
               `}
@@ -407,8 +420,8 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
                   key={index}
                   onClick={() => actions.sendMessage(action.action)}
                   disabled={state.isLoading}
-                  className="text-xs px-3 py-1 rounded-full bg-soft-blush text-rose-gold 
-                           hover:bg-rose-gold hover:text-white transition-colors"
+                  className="text-xs px-3 py-1 rounded-full bg-jewel-emerald/20 text-jewel-emerald 
+                           hover:bg-jewel-emerald hover:text-warm-white transition-colors"
                 >
                   {action.label}
                 </button>

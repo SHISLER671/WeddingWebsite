@@ -29,11 +29,11 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
 
   const getBubbleClasses = () => {
     const baseClasses = `
-      relative px-4 py-3 rounded-2xl shadow-sm
+      relative px-4 py-3 rounded-2xl shadow-sm backdrop-blur-sm
       transition-all duration-200 ease-in-out
       ${isUser 
-        ? 'bg-rose-gold text-white rounded-br-none' 
-        : 'bg-white text-gray-800 rounded-bl-none border border-rose-gold/20'
+        ? 'bg-jewel-crimson/80 text-warm-white rounded-br-none' 
+        : 'bg-warm-white/80 text-charcoal rounded-bl-none border border-jewel-fuchsia/20'
       }
       ${message.isLoading ? 'opacity-70' : ''}
     `;
@@ -44,7 +44,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
   const getAvatarClasses = () => {
     const baseClasses = `
       w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-      ${isUser ? 'bg-rose-gold text-white' : 'bg-soft-blush text-rose-gold'}
+      ${isUser ? 'bg-jewel-crimson text-warm-white' : 'bg-jewel-emerald text-warm-white'}
     `;
 
     return baseClasses;
@@ -104,7 +104,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
           {/* Timestamp */}
           <div className={`
             text-xs mt-2 opacity-70
-            ${isUser ? 'text-rose-100' : 'text-gray-500'}
+            ${isUser ? 'text-warm-white/80' : 'text-charcoal/60'}
           `}>
             {formatTimestamp(message.timestamp)}
           </div>
@@ -114,7 +114,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
         {isLatest && !message.isLoading && (
           <div className={`flex items-center gap-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
             {isUser && (
-              <div className="w-2 h-2 bg-rose-300 rounded-full"></div>
+              <div className="w-2 h-2 bg-jewel-crimson rounded-full"></div>
             )}
           </div>
         )}
