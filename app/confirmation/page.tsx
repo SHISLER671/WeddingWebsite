@@ -171,7 +171,7 @@ function ChatbotButton() {
       onClick={handleChatbotClick}
       className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-jewel-crimson to-jewel-burgundy hover:from-jewel-burgundy hover:to-jewel-crimson text-warm-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
     >
-      <Heart className="w-8 h-8" />
+      <Heart className="w-8 h-8 text-warm-white" />
       <span className="font-semibold text-lg">Chat with Sofia</span>
       <span className="text-sm opacity-90 text-center">AI Wedding Assistant</span>
     </button>
@@ -210,7 +210,7 @@ function AGWWalletButton() {
         disabled={status === 'connecting'}
         className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-jewel-sapphire to-jewel-emerald hover:from-jewel-emerald hover:to-jewel-sapphire disabled:from-gray-400 disabled:to-gray-500 text-warm-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
       >
-        <Flower2 className="w-8 h-8" />
+        <Flower2 className="w-8 h-8 text-warm-white" />
         <span className="font-semibold text-lg">
           {status === 'connecting' ? 'Connecting...' : isConnected ? 'Disconnect' : 'Connect Wallet'}
         </span>
