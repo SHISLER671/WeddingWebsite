@@ -234,7 +234,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
         console.log('💬 [ChatContext] 🚀 Sending to OpenRouter API...');
         const response = await client.chatCompletion(openRouterMessages, {
           temperature: 0.7,
-          maxTokens: 24000,
+          maxTokens: 33000,
         });
         
         console.log('💬 [ChatContext] ✅ OpenRouter response received');
