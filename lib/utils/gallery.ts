@@ -2,7 +2,6 @@
 // Handles file uploads, metadata management, and image optimization
 
 import { createClient } from '@/utils/supabase/client'
-import { createClient as createServerClient } from '@/utils/supabase/server'
 
 export interface GalleryItem {
   id: string
@@ -122,10 +121,10 @@ export function getOptimizedImageUrl(filePath: string, width: number = 400): str
   return `${data.publicUrl}?width=${width}&quality=80&format=webp`
 }
 
-// Check if user is authenticated (has RSVP)
+// Check if user is authenticated (has RSVP) - client-side version
 export async function checkUserAuth(email: string): Promise<boolean> {
   try {
-    const supabase = createServerClient()
+    const supabase = createClient()
     
     const { data, error } = await supabase
       .from('rsvps')
