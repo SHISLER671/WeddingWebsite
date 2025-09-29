@@ -32,7 +32,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
       relative px-4 py-3 rounded-2xl shadow-sm backdrop-blur-sm
       transition-all duration-200 ease-in-out
       ${isUser 
-        ? 'bg-jewel-crimson text-white rounded-br-none shadow-md' 
+        ? 'bg-jewel-sapphire text-white rounded-br-none shadow-md' 
         : 'bg-warm-white/80 text-charcoal rounded-bl-none border border-jewel-fuchsia/20'
       }
       ${message.isLoading ? 'opacity-70' : ''}
@@ -44,7 +44,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
   const getAvatarClasses = () => {
     const baseClasses = `
       w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-      ${isUser ? 'bg-jewel-crimson text-white' : 'bg-jewel-emerald text-warm-white'}
+      ${isUser ? 'bg-jewel-sapphire text-white' : 'bg-jewel-emerald text-warm-white'}
     `;
 
     return baseClasses;
@@ -114,7 +114,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
         {isLatest && !message.isLoading && (
           <div className={`flex items-center gap-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
             {isUser && (
-              <div className="w-2 h-2 bg-jewel-crimson rounded-full"></div>
+              <div className="w-2 h-2 bg-jewel-sapphire rounded-full"></div>
             )}
           </div>
         )}
