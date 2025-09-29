@@ -1,0 +1,67 @@
+name: Supabase Keep-Alive
+
+on:
+  # Run every Sunday at 2 AM ChST (UTC+8) = 6 PM UTC (18:00)
+  schedule:
+    - cron: '0 18 * * 0'
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to ping'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Ping Supabase Keep-Alive
+        run: |
+          echo "🔄 Pinging Supabase to keep project active..."
+          echo "⏰ Timestamp: $(date)"
+          echo "🌐 Environment: ${{ github.event.inputs.environment || 'production' }}"
+          
+          # Ping the RSVP endpoint with invalid data to trigger validation logging
+          # This counts as activity without upserting any data
+          response=$(curl -s -w "\n%{http_code}" -X POST https://pia-ryan-wedding.vercel.app/api/rsvp \
+            -H "Content-Type: application/json" \
+            -d '{"guest_name": "", "email": "", "attendance": ""}' \
+            --max-time 30)
+          
+          # Extract HTTP status code (last line)
+          http_code=$(echo "$response" | tail -n1)
+          # Extract response body (all lines except last)
+          response_body=$(echo "$response" | head -n -1)
+          
+          echo "📊 HTTP Status: $http_code"
+          echo "📝 Response: $response_body"
+          
+          # Check if the request was successful (should return 400 for validation error)
+          if [ "$http_code" -eq 400 ]; then
+            echo "✅ Keep-alive ping successful! Supabase activity logged."
+            echo "🎯 Expected validation error received - this confirms the endpoint is active."
+          elif [ "$http_code" -eq 200 ]; then
+            echo "⚠️  Unexpected 200 response - endpoint may have changed behavior"
+          else
+            echo "❌ Keep-alive ping failed with status: $http_code"
+            echo "🔍 Response: $response_body"
+            exit 1
+          fi
+          
+          echo "🏁 Keep-alive process completed successfully!"
+
+      - name: Log Activity Summary
+        run: |
+          echo "📈 Supabase Keep-Alive Summary:"
+          echo "  • Endpoint: https://pia-ryan-wedding.vercel.app/api/rsvp"
+          echo "  • Method: POST with invalid JSON payload"
+          echo "  • Expected: 400 validation error (confirms activity)"
+          echo "  • Frequency: Weekly (Sundays at 2 AM ChST)"
+          echo "  • Purpose: Prevent 7-day Supabase inactivity pause"
+          echo "  • Last run: $(date)"
