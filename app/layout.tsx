@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   title: "Pia & Ryan Wedding 2026",
   description: "Join us as we celebrate the marriage of Pia Consuelo Weisenberger and Ryan Shisler - February 13, 2026",
   generator: "v0.app",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
 }
 
 export default function RootLayout({

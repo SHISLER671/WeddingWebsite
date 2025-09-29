@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 import Link from "next/link"
-import { Heart, Edit } from "lucide-react"
+import { Heart, Edit, Camera } from "lucide-react"
 
 export default function Home() {
   return (
@@ -32,6 +32,13 @@ export default function Home() {
           >
             <Edit className="w-5 h-5" />
             Edit My RSVP
+          </Link>
+          <Link
+            href="/gallery"
+            className="border-2 border-jewel-sapphire text-jewel-sapphire hover:bg-jewel-sapphire hover:text-warm-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 backdrop-blur-sm bg-warm-white/10 flex items-center gap-3 min-w-[200px] justify-center"
+          >
+            <Camera className="w-5 h-5" />
+            Photo Gallery
           </Link>
         </div>
       </div>

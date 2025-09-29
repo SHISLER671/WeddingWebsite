@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-specific optimizations */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation;
+  }
+  
+  /* Prevent zoom on input focus on iOS */
+  input[type="email"],
+  input[type="text"],
+  textarea {
+    font-size: 16px;
+  }
+  
+  /* Improve touch targets */
+  button, 
+  [role="button"],
+  input[type="file"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Smooth scrolling */
+  * {
+    scroll-behavior: smooth;
+  }
+}
+
 @layer base {
   :root {
     /* New 4-color classy and sexy palette */

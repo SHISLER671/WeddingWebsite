@@ -137,7 +137,7 @@ export default function ConfirmationPage() {
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Connect & Chat</h3>
               <p className="text-charcoal/80 leading-relaxed">
-                Thank you for taking the time to be a part of our special occasion! Please feel free to spark up a chat with Sophia the AI wedding agent assistant, and you may also click the flower button to connect your wallet, just resubmit the rsvp form again after to save you wallet for a future surprise from the couple!
+                Thank you for taking time to be a part of our special occasion! Feel free to spark up a chat with Sophia the AI wedding assistant agent, and you may also try clicking on the flower button to connect your AGW wallet, then resubmit the rsvp form once again to save your wallet for a future surprise from the couple!
               </p>
             </div>
             
