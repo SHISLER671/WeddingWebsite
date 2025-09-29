@@ -39,6 +39,17 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
     }
   }, [state.isOpen, isMinimized]);
 
+  // Refocus input when clicking in the chat window (but not on interactive elements)
+  const handleChatWindowClick = (e: React.MouseEvent) => {
+    // Only refocus if clicking on non-interactive elements
+    const target = e.target as HTMLElement;
+    const isInteractiveElement = target.closest('button, input, textarea, a, [role="button"]');
+    
+    if (!isInteractiveElement && !isMinimized) {
+      inputRef.current?.focus();
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || state.isLoading) return;
 
@@ -116,7 +127,11 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
   if (!state.isOpen) return null;
 
   return (
-    <div className={getWindowClasses()} style={{ width: isMinimized ? '300px' : '400px' }}>
+    <div 
+      className={getWindowClasses()} 
+      style={{ width: isMinimized ? '300px' : '400px' }}
+      onClick={handleChatWindowClick}
+    >
       {/* Background Image */}
       {!isMinimized && (
         <div className="absolute inset-0 z-0">
@@ -132,7 +147,14 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
       {/* Header */}
       <div 
         className={getHeaderClasses()}
-        onClick={() => setIsMinimized(!isMinimized)}
+        onClick={(e) => {
+          // Only minimize/maximize when clicking on the header area, not on buttons
+          const target = e.target as HTMLElement;
+          const isButton = target.closest('button');
+          if (!isButton) {
+            setIsMinimized(!isMinimized);
+          }
+        }}
       >
         <div className="flex items-center gap-3">
           <Heart className="w-6 h-6" />
@@ -235,6 +257,10 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
+              onFocus={() => {
+                // Ensure input stays focused when user clicks on it
+                inputRef.current?.focus();
+              }}
               placeholder="Ask about the wedding..."
               className="flex-1 resize-none rounded-lg border border-rose-gold/30 px-3 py-2 
                         focus:outline-none focus:ring-2 focus:ring-rose-gold/50 
@@ -309,6 +335,17 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
     }
   }, [isOpen]);
 
+  // Refocus input when clicking in the mobile chat window (but not on interactive elements)
+  const handleMobileChatWindowClick = (e: React.MouseEvent) => {
+    // Only refocus if clicking on non-interactive elements
+    const target = e.target as HTMLElement;
+    const isInteractiveElement = target.closest('button, input, textarea, a, [role="button"]');
+    
+    if (!isInteractiveElement) {
+      inputRef.current?.focus();
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || state.isLoading) return;
 
@@ -333,7 +370,10 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-end justify-center">
-      <div className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col">
+      <div 
+        className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col"
+        onClick={handleMobileChatWindowClick}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-jewel-fuchsia to-jewel-crimson text-warm-white rounded-t-3xl">
           <div className="flex items-center gap-3">
@@ -388,6 +428,10 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
+              onFocus={() => {
+                // Ensure input stays focused when user clicks on it
+                inputRef.current?.focus();
+              }}
               placeholder="Ask about the wedding..."
               className="flex-1 resize-none rounded-lg border border-rose-gold/30 px-3 py-2 
                         focus:outline-none focus:ring-2 focus:ring-rose-gold/50 
