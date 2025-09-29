@@ -13,7 +13,7 @@ export default function GalleryPage() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [showUploadForm, setShowUploadForm] = useState(false)
-  const [uploadEmail, setUploadEmail] = useState('')
+  const [uploadName, setUploadName] = useState('')
   const [uploadCaption, setUploadCaption] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -64,9 +64,9 @@ export default function GalleryPage() {
   }
 
   const handleUpload = async () => {
-    if (!selectedFile || !uploadEmail.trim()) {
+    if (!selectedFile) {
       setUploadStatus('error')
-      setUploadMessage('Please select a file and enter your email')
+      setUploadMessage('Please select a file to upload')
       return
     }
 
@@ -74,14 +74,14 @@ export default function GalleryPage() {
       setUploading(true)
       setUploadStatus('idle')
       
-      const result = await uploadGalleryFile(selectedFile, uploadCaption, uploadEmail)
+      const result = await uploadGalleryFile(selectedFile, uploadCaption, uploadName || 'Anonymous')
       
       if (result.success) {
         setUploadStatus('success')
         setUploadMessage('Upload successful! Your photo/video will appear in the gallery shortly.')
         setSelectedFile(null)
         setUploadCaption('')
-        setUploadEmail('')
+        setUploadName('')
         setShowUploadForm(false)
         // Reload gallery
         await loadGalleryItems()
@@ -232,19 +232,20 @@ export default function GalleryPage() {
                 )}
               </div>
 
-              {/* Email Input */}
+              {/* Name Input */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-charcoal mb-2">
-                  Your Email (must match RSVP)
+                  <span className="flex items-center gap-2">
+                    👤 Your Name
+                    <span className="text-xs text-charcoal/60 font-normal">(optional)</span>
+                  </span>
                 </label>
                 <input
-                  type="email"
-                  value={uploadEmail}
-                  onChange={(e) => setUploadEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  type="text"
+                  value={uploadName}
+                  onChange={(e) => setUploadName(e.target.value)}
+                  placeholder="Enter your name or leave blank for anonymous"
                   className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 text-base"
-                  autoComplete="email"
-                  inputMode="email"
                 />
               </div>
 
@@ -300,7 +301,7 @@ export default function GalleryPage() {
                 </button>
                 <button
                   onClick={handleUpload}
-                  disabled={uploading || !selectedFile || !uploadEmail.trim()}
+                  disabled={uploading || !selectedFile}
                   className="flex-1 px-4 py-3 bg-jewel-sapphire text-warm-white rounded-lg hover:bg-jewel-emerald disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation"
                 >
                   {uploading ? 'Uploading...' : 'Upload'}

@@ -7,7 +7,7 @@ export interface GalleryItem {
   id: string
   file_path: string
   caption: string | null
-  uploader_email: string
+  uploader_name: string
   created_at: string
   file_url?: string
   file_type?: 'image' | 'video'
@@ -23,7 +23,7 @@ export interface UploadResult {
 export async function uploadGalleryFile(
   file: File,
   caption: string = '',
-  uploaderEmail: string
+  uploaderName: string
 ): Promise<UploadResult> {
   try {
     const supabase = createClient()
@@ -52,7 +52,7 @@ export async function uploadGalleryFile(
       .insert({
         file_path: filePath,
         caption: caption || null,
-        uploader_email: uploaderEmail
+        uploader_name: uploaderName || 'Anonymous'
       })
       .select()
       .single()
@@ -121,23 +121,6 @@ export function getOptimizedImageUrl(filePath: string, width: number = 400): str
   return `${data.publicUrl}?width=${width}&quality=80&format=webp`
 }
 
-// Check if user is authenticated (has RSVP) - client-side version
-export async function checkUserAuth(email: string): Promise<boolean> {
-  try {
-    const supabase = createClient()
-    
-    const { data, error } = await supabase
-      .from('rsvps')
-      .select('email')
-      .eq('email', email)
-      .single()
-    
-    return !error && !!data
-  } catch (error) {
-    console.error('Auth check error:', error)
-    return false
-  }
-}
 
 // Delete gallery item (admin only)
 export async function deleteGalleryItem(itemId: string): Promise<boolean> {
