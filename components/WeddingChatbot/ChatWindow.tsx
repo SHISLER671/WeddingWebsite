@@ -98,7 +98,7 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
   const getHeaderClasses = () => {
     return `
       flex items-center justify-between p-4 border-b
-      rounded-t-2xl cursor-pointer
+      rounded-t-2xl cursor-pointer relative z-20
       ${isMinimized ? 'rounded-b-2xl' : ''}
       bg-gradient-to-r from-jewel-fuchsia to-jewel-crimson text-warm-white
     `;
@@ -113,14 +113,14 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
 
   const getMessagesContainerClasses = () => {
     return `
-      flex-1 overflow-y-auto p-4 space-y-4 relative
-      bg-gradient-to-b from-white/90 to-soft-blush/30
+      flex-1 overflow-y-auto p-4 space-y-4 relative z-10
+      bg-gradient-to-b from-white/20 to-soft-blush/10
     `;
   };
 
   const getInputContainerClasses = () => {
     return `
-      border-t border-rose-gold/20 p-4 bg-white rounded-b-2xl
+      border-t border-rose-gold/20 p-4 bg-white/90 rounded-b-2xl relative z-10
     `;
   };
 
