@@ -18,9 +18,9 @@ The gallery allows authenticated users (those who have RSVP'd) to upload photos 
 
 Run the SQL script in your Supabase SQL Editor:
 
-```sql
+\`\`\`sql
 -- Run: scripts/setup-gallery.sql
-```
+\`\`\`
 
 This creates:
 - `gallery_items` table with proper indexes
@@ -105,36 +105,36 @@ In your Supabase Dashboard:
 ## 🔧 Configuration
 
 ### File Upload Limits
-```typescript
+\`\`\`typescript
 // In app/gallery/page.tsx
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ALLOWED_TYPES = ['image/*', 'video/*']
-```
+\`\`\`
 
 ### Image Optimization
-```typescript
+\`\`\`typescript
 // In lib/utils/gallery.ts
 export function getOptimizedImageUrl(filePath: string, width: number = 400): string {
   return `${data.publicUrl}?width=${width}&quality=80&format=webp`
 }
-```
+\`\`\`
 
 ### Grid Responsiveness
-```css
+\`\`\`css
 /* In app/gallery/page.tsx */
 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
-```
+\`\`\`
 
 ## 🚀 Deployment
 
 The gallery feature is ready for deployment:
 
 1. **Commit Changes**:
-   ```bash
+   \`\`\`bash
    git add .
    git commit -m "Add wedding gallery feature with Supabase Storage"
    git push origin main
-   ```
+   \`\`\`
 
 2. **Vercel Deployment**:
    - Automatic deployment via GitHub
@@ -167,7 +167,7 @@ The gallery feature is ready for deployment:
 
 ### Debug Queries
 
-```sql
+\`\`\`sql
 -- Check gallery items
 SELECT * FROM gallery_items ORDER BY created_at DESC;
 
@@ -176,7 +176,7 @@ SELECT email FROM rsvps WHERE email = 'test@example.com';
 
 -- Check storage files
 SELECT * FROM storage.objects WHERE bucket_id = 'wedding-gallery';
-```
+\`\`\`
 
 ## 📊 Monitoring
 

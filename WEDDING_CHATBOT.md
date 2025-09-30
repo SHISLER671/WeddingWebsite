@@ -48,7 +48,7 @@ Guests can ask about:
 
 ### Architecture
 
-```
+\`\`\`
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Chat UI       │    │  Chat Context   │    │  RSVP Lookup    │
 │  Components     │────│   Provider      │────│   Utility       │
@@ -65,7 +65,7 @@ Guests can ask about:
                        │  Supabase DB    │
                        │  (RSVP Data)    │
                        └─────────────────┘
-```
+\`\`\`
 
 ### Key Components
 
@@ -115,7 +115,7 @@ The chatbot uses a tiered search approach:
 
 ## Environment Variables Required
 
-```env
+\`\`\`env
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -126,13 +126,13 @@ SUPABASE_ANON_KEY=your_supabase_anon_key
 OPENROUTER_API_KEY=your_openrouter_api_key
 OPENROUTER_MODEL=openai/gpt-4o-mini
 NEXT_PUBLIC_OPENROUTER_MODEL=openai/gpt-4o-mini
-```
+\`\`\`
 
 ## Database Schema
 
 The chatbot expects the following `rsvps` table structure:
 
-```sql
+\`\`\`sql
 CREATE TABLE rsvps (
   id INTEGER PRIMARY KEY,
   guest_name TEXT NOT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE rsvps (
 
 -- Unique constraint on email for upsert operations
 ALTER TABLE rsvps ADD CONSTRAINT unique_email UNIQUE (email);
-```
+\`\`\`
 
 ## Security Considerations
 
@@ -162,10 +162,10 @@ ALTER TABLE rsvps ADD CONSTRAINT unique_email UNIQUE (email);
 
 Run the test suite to verify functionality:
 
-```bash
+\`\`\`bash
 # Run the integration tests
 npx ts-node lib/test-rsvp-integration.ts
-```
+\`\`\`
 
 Test cases include:
 - Parameter extraction from messages

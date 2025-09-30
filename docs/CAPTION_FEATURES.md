@@ -61,7 +61,7 @@ The Wedding Gallery includes comprehensive caption functionality for users to ad
 ## 🎨 **Caption Display Design**
 
 ### **Gallery Grid Display:**
-```css
+\`\`\`css
 /* Caption styling in gallery */
 .caption {
   background: rgba(0, 0, 0, 0.3);
@@ -74,7 +74,7 @@ The Wedding Gallery includes comprehensive caption functionality for users to ad
   overflow: hidden;
   text-overflow: ellipsis;
 }
-```
+\`\`\`
 
 ### **Hover States:**
 - Captions fade in on hover/touch
@@ -85,7 +85,7 @@ The Wedding Gallery includes comprehensive caption functionality for users to ad
 ## 🔧 **Technical Implementation**
 
 ### **Database Schema:**
-```sql
+\`\`\`sql
 CREATE TABLE gallery_items (
   id UUID PRIMARY KEY,
   file_path TEXT NOT NULL,
@@ -93,19 +93,19 @@ CREATE TABLE gallery_items (
   uploader_email TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT NOW()
 );
-```
+\`\`\`
 
 ### **Upload Function:**
-```typescript
+\`\`\`typescript
 export async function uploadGalleryFile(
   file: File,
   caption: string = '',  // Caption parameter
   uploaderEmail: string
 ): Promise<UploadResult>
-```
+\`\`\`
 
 ### **Display Logic:**
-```typescript
+\`\`\`typescript
 // Caption display with fallback
 alt={item.caption || 'Wedding memory'}
 
@@ -113,7 +113,7 @@ alt={item.caption || 'Wedding memory'}
 {item.caption && (
   <p className="caption">"{item.caption}"</p>
 )}
-```
+\`\`\`
 
 ## ✅ **Features Confirmed**
 

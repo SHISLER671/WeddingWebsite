@@ -34,9 +34,9 @@ This document provides a comprehensive security analysis of the Ryan & Erin wedd
 ### 3. Environment Variable Swapping in Server Configuration (HIGH)
 
 **Issue**: `lib/supabaseServer.ts` contains commented workaround for swapped environment variables
-```typescript
+\`\`\`typescript
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY; // Contains URL due to Replit secrets
-```
+\`\`\`
 
 **Impact**: Incorrect environment variable usage leading to connection failures
 
@@ -47,10 +47,10 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY; // Contains URL d
 **Issue**: Extensive console logging in API routes that exposes sensitive information
 - **Files affected**: `app/api/rsvp/route.ts`, `api/admin/rsvps/route.ts`, `lib/supabase.ts`
 - **Log examples**:
-  ```javascript
+  \`\`\`javascript
   console.log("[v0] RSVP submission received:", { guest_name, email, attendance });
   console.log('Supabase Key:', supabaseKey ? 'Set (hidden)' : 'Missing');
-  ```
+  \`\`\`
 
 **Impact**: Sensitive data exposure in development and potentially production logs
 

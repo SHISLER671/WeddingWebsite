@@ -22,7 +22,7 @@ This document outlines the comprehensive plan for integrating an AI-powered chat
 ## 2. Technical Architecture
 
 ### 2.1 Component Structure
-```
+\`\`\`
 components/
 ├── WeddingChatbot/
 │   ├── ChatBubble.tsx          # Floating chat trigger button
@@ -36,7 +36,7 @@ components/
 └── lib/
     ├── openrouter.ts          # OpenRouter API client
     └── chatbot-config.ts      # Chatbot configuration and prompts
-```
+\`\`\`
 
 ### 2.2 API Integration
 - **Provider**: OpenRouter API
@@ -46,11 +46,11 @@ components/
 - **Error Handling**: Graceful fallbacks and user-friendly error messages
 
 ### 2.3 Environment Variables
-```env
+\`\`\`env
 OPENROUTER_API_KEY=your_api_key_here
 OPENROUTER_MODEL=openai/gpt-4o-mini  # Default model
 NEXT_PUBLIC_OPENROUTER_MODEL=openai/gpt-4o-mini
-```
+\`\`\`
 
 ## 3. Implementation Phases
 
@@ -109,7 +109,7 @@ NEXT_PUBLIC_OPENROUTER_MODEL=openai/gpt-4o-mini
 ## 4. Detailed Component Specifications
 
 ### 4.1 ChatBubble.tsx
-```typescript
+\`\`\`typescript
 interface ChatBubbleProps {
   onClick: () => void;
   isOpen: boolean;
@@ -121,10 +121,10 @@ interface ChatBubbleProps {
 // - Smooth hover animations
 // - Badge for unread messages
 // - Pulsing animation when new messages arrive
-```
+\`\`\`
 
 ### 4.2 ChatWindow.tsx
-```typescript
+\`\`\`typescript
 interface ChatWindowProps {
   isOpen: boolean;
   onClose: () => void;
@@ -139,10 +139,10 @@ interface ChatWindowProps {
 // - Input area with attachment option
 // - Quick action buttons
 // - Minimize/close controls
-```
+\`\`\`
 
 ### 4.3 OpenRouter API Client
-```typescript
+\`\`\`typescript
 // lib/openrouter.ts
 export class OpenRouterClient {
   constructor(apiKey: string, model: string);
@@ -154,12 +154,12 @@ export class OpenRouterClient {
     }>
   ): Promise<AsyncIterable<string>>;
 }
-```
+\`\`\`
 
 ## 5. Chatbot Configuration
 
 ### 5.1 System Prompt Template
-```
+\`\`\`
 You are a helpful wedding assistant for Pia and Ryan's wedding on February 13, 2026. 
 Your role is to help guests with information about:
 
@@ -176,7 +176,7 @@ Wedding Information:
 
 Tone: Friendly, helpful, and enthusiastic about the wedding
 Style: Concise but warm responses with emoji when appropriate
-```
+\`\`\`
 
 ### 5.2 Response Guidelines
 - Keep responses conversational and brief
@@ -194,7 +194,7 @@ Style: Concise but warm responses with emoji when appropriate
 - **Accessibility**: Keyboard navigation and screen reader support
 
 ### 6.2 Global State Management
-```typescript
+\`\`\`typescript
 // app/providers.tsx
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -204,7 +204,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     </ChatProvider>
   );
 }
-```
+\`\`\`
 
 ## 7. Security & Privacy
 

@@ -47,21 +47,21 @@ A debug panel is now available in the bottom-left corner of your website. It all
 ### Key Logs to Watch For:
 
 #### Successful Flow:
-```
+\`\`\`
 💬 [ChatContext] === New Message ===
 💬 [ChatContext] 🤖 Starting AI response generation...
 🤖 [OpenRouter] Initializing client...
 🤖 [OpenRouter] === Chat Completion Request ===
 🤖 [OpenRouter] ✅ Success Response
 💬 [ChatContext] ✅ Message successfully dispatched to UI
-```
+\`\`\`
 
 #### Error Scenarios:
-```
+\`\`\`
 🤖 [OpenRouter] Configuration Error: OpenRouter API key not configured
 🗄️ [RSVP] Configuration error: Supabase configuration missing
 💬 [ChatContext] ❌ Message processing failed
-```
+\`\`\`
 
 ## 🔧 Common Issues & Solutions
 
@@ -112,30 +112,30 @@ A debug panel is now available in the bottom-left corner of your website. It all
 ### Log Analysis:
 
 #### If you see:
-```
+\`\`\`
 💬 [ChatContext] === New Message ===
 💬 [ChatContext] 🤖 Starting AI response generation...
-```
+\`\`\`
 But no further logs → **OpenRouter client initialization issue**
 
 #### If you see:
-```
+\`\`\`
 🤖 [OpenRouter] Initializing client...
 🤖 [OpenRouter] API Key configured: ❌ No
-```
+\`\`\`
 → **Environment variable issue**
 
 #### If you see:
-```
+\`\`\`
 🤖 [OpenRouter] === Chat Completion Request ===
 🤖 [OpenRouter] Response status: 401
-```
+\`\`\`
 → **API key authentication issue**
 
 #### If you see:
-```
+\`\`\`
 🗄️ [RSVP] Configuration error: Supabase configuration missing
-```
+\`\`\`
 → **Supabase environment variable issue**
 
 ## 🚀 Production Deployment Checks
@@ -157,13 +157,13 @@ But no further logs → **OpenRouter client initialization issue**
 Once everything is working, remove the debug panel:
 
 1. **Remove from layout.tsx**:
-   ```tsx
+   \`\`\`tsx
    // Remove this line:
    import ChatbotDebug from "../components/ChatbotDebug"
    
    // Remove this line:
    <ChatbotDebug />
-   ```
+   \`\`\`
 
 2. **Optional**: Reduce logging level in production
    - Remove or comment out verbose console.log statements

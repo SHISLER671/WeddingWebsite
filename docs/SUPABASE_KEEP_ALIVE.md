@@ -25,7 +25,7 @@ This document describes the automated keep-alive mechanism for the Pia & Ryan We
 
 ### 3. Activity Logging
 The existing RSVP endpoint logs activity when validation fails:
-```typescript
+\`\`\`typescript
 if (!guest_name || !email || !attendance) {
   console.log("[v0] Missing required fields:", {
     guest_name: !!guest_name,
@@ -34,7 +34,7 @@ if (!guest_name || !email || !attendance) {
   })
   return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 })
 }
-```
+\`\`\`
 
 ## Files Created
 
@@ -46,16 +46,16 @@ if (!guest_name || !email || !attendance) {
 
 ### Manual Test
 Run the test script to verify the ping works:
-```bash
+\`\`\`bash
 ./scripts/test-keep-alive.sh
-```
+\`\`\`
 
 ### Expected Output
-```
+\`\`\`
 ✅ Test PASSED! Keep-alive ping successful.
 🎯 Expected validation error received - endpoint is active.
 📈 This confirms Supabase activity will be logged weekly.
-```
+\`\`\`
 
 ### GitHub Actions Test
 1. Go to GitHub Actions tab
@@ -96,23 +96,23 @@ Run the test script to verify the ping works:
    - Ensure validation is working correctly
 
 ### Manual Verification
-```bash
+\`\`\`bash
 # Test the endpoint directly
 curl -X POST https://pia-ryan-wedding.vercel.app/api/rsvp \
   -H "Content-Type: application/json" \
   -d '{"guest_name": "", "email": "", "attendance": ""}'
 
 # Expected: HTTP 400 with validation error
-```
+\`\`\`
 
 ## Configuration
 
 ### Schedule Adjustment
 To change the schedule, modify the cron expression in `.github/workflows/keep-alive.yml`:
-```yaml
+\`\`\`yaml
 schedule:
   - cron: '0 18 * * 0'  # Current: Sundays at 6 PM UTC (2 AM ChST)
-```
+\`\`\`
 
 ### Time Zone Reference
 - **ChST (Chamorro Standard Time)**: UTC+8

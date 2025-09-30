@@ -88,7 +88,7 @@ This document confirms the gallery's mobile compatibility for Android and iOS de
 ## 🔧 **Technical Implementation**
 
 ### **CSS Mobile Optimizations**
-```css
+\`\`\`css
 /* Prevent zoom on input focus */
 input[type="email"], input[type="text"], textarea {
   font-size: 16px;
@@ -104,10 +104,10 @@ button, [role="button"] {
 .touch-manipulation {
   touch-action: manipulation;
 }
-```
+\`\`\`
 
 ### **HTML Mobile Attributes**
-```html
+\`\`\`html
 <!-- Camera capture -->
 <input type="file" capture="environment" accept="image/*,video/*" />
 
@@ -116,13 +116,13 @@ button, [role="button"] {
 
 <!-- Video inline playback -->
 <video playsInline webkit-playsinline="true" preload="metadata">
-```
+\`\`\`
 
 ### **Responsive Grid**
-```css
+\`\`\`css
 /* Mobile-first responsive grid */
 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
-```
+\`\`\`
 
 ## 📊 **Performance on Mobile**
 

@@ -5,7 +5,7 @@
 ### OpenRouter Configuration (for AI Chatbot)
 
 **Required Variables:**
-```bash
+\`\`\`bash
 # OpenRouter API Key - Get from https://openrouter.ai/keys
 OPENROUTER_API_KEY=sk-or-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -14,7 +14,7 @@ OPENROUTER_MODEL=openai/gpt-4o-mini
 
 # Public version for client-side access (optional)
 NEXT_PUBLIC_OPENROUTER_MODEL=openai/gpt-4o-mini
-```
+\`\`\`
 
 **Vercel Configuration:**
 - Go to your Vercel project dashboard
@@ -25,7 +25,7 @@ NEXT_PUBLIC_OPENROUTER_MODEL=openai/gpt-4o-mini
 ### Supabase Configuration (for RSVP Lookup)
 
 **Required Variables:**
-```bash
+\`\`\`bash
 # Supabase Project URL
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 
@@ -40,7 +40,7 @@ SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 # Supabase Service Role Key (for admin operations - if needed)
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
+\`\`\`
 
 **Vercel Configuration:**
 - Add all Supabase variables to your Vercel environment variables
@@ -67,7 +67,7 @@ The application includes validation to ensure proper configuration:
 ### ✅ Properly Configured
 
 **Next.js Configuration** (`next.config.js`):
-```javascript
+\`\`\`javascript
 env: {
   SUPABASE_URL: process.env.SUPABASE_URL,
   SUPABASE_KEY: process.env.SUPABASE_KEY,
@@ -75,10 +75,10 @@ env: {
   OPENROUTER_MODEL: process.env.OPENROUTER_MODEL,
   NEXT_PUBLIC_OPENROUTER_MODEL: process.env.NEXT_PUBLIC_OPENROUTER_MODEL,
 },
-```
+\`\`\`
 
 **Webpack Environment Injection**:
-```javascript
+\`\`\`javascript
 new webpack.DefinePlugin({
   "process.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
   "process.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY),
@@ -86,27 +86,27 @@ new webpack.DefinePlugin({
   "process.env.OPENROUTER_MODEL": JSON.stringify(process.env.OPENROUTER_MODEL),
   "process.env.NEXT_PUBLIC_OPENROUTER_MODEL": JSON.stringify(process.env.NEXT_PUBLIC_OPENROUTER_MODEL),
 })
-```
+\`\`\`
 
 **OpenRouter Client Usage** (`lib/openrouter.ts`):
-```typescript
+\`\`\`typescript
 const apiKey = process.env.OPENROUTER_API_KEY;
 const model = process.env.OPENROUTER_MODEL || process.env.NEXT_PUBLIC_OPENROUTER_MODEL || 'openai/gpt-4o-mini';
 
 if (!apiKey) {
   throw new Error('OpenRouter API key not configured. Please set OPENROUTER_API_KEY environment variable.');
 }
-```
+\`\`\`
 
 **Supabase Client Usage** (`lib/rsvp-lookup.ts`):
-```typescript
+\`\`\`typescript
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error('Supabase configuration missing for RSVP lookup');
 }
-```
+\`\`\`
 
 ### ⚠️ Issues Found & Fixed
 
@@ -151,11 +151,11 @@ The application will fail to build if critical environment variables are missing
 ### Step 3: Test Your Configuration
 
 **Local Testing:**
-```bash
+\`\`\`bash
 # Create a .env.local file with your variables
 # Then run the development server
 npm run dev
-```
+\`\`\`
 
 **Vercel Preview:**
 1. Push changes to trigger a preview deployment
@@ -165,7 +165,7 @@ npm run dev
 ## Environment Variable Quick Reference
 
 ### For Development (.env.local)
-```bash
+\`\`\`bash
 # OpenRouter
 OPENROUTER_API_KEY=sk-or-your-actual-api-key
 OPENROUTER_MODEL=openai/gpt-4o-mini
@@ -176,7 +176,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
-```
+\`\`\`
 
 ### For Vercel Production
 Add all the above variables to your Vercel environment variables configuration.
@@ -217,7 +217,7 @@ Add all the above variables to your Vercel environment variables configuration.
 
 ### Debug Commands
 
-```bash
+\`\`\`bash
 # Check environment variables in development
 echo $OPENROUTER_API_KEY
 echo $NEXT_PUBLIC_SUPABASE_URL
@@ -232,7 +232,7 @@ curl -H "Authorization: Bearer $OPENROUTER_API_KEY" \
 curl -H "apikey: $NEXT_PUBLIC_SUPABASE_ANON_KEY" \
      -H "Authorization: Bearer $NEXT_PUBLIC_SUPABASE_ANON_KEY" \
      "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/rsvps?select=*"
-```
+\`\`\`
 
 ## Summary
 
