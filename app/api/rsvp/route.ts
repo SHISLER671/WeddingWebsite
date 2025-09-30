@@ -1,9 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/utils/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
+
     const body = await request.json()
 
     console.log("[v0] RSVP submission received:", {
@@ -39,7 +45,7 @@ export async function POST(request: NextRequest) {
       console.log("[v0] Processing test RSVP for Douglas")
     }
 
-    let result = await supabase
+    const { data, error } = await supabase
       .from("rsvps")
       .upsert(
         {
@@ -58,47 +64,16 @@ export async function POST(request: NextRequest) {
       .select()
       .single()
 
-    // If RLS error, try with service role client
-    if (result.error && result.error.message.includes("row-level security")) {
-      console.log("[v0] RLS error detected, trying with service role client...")
-
-      // Create service role client for this operation
-      const { createClient: createServiceClient } = await import("@supabase/supabase-js")
-      const serviceSupabase = createServiceClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
-
-      result = await serviceSupabase
-        .from("rsvps")
-        .upsert(
-          {
-            guest_name,
-            email,
-            attendance,
-            guest_count: guest_count || 1,
-            dietary_restrictions: dietary_restrictions || null,
-            special_message: special_message || null,
-            wallet_address: wallet_address || null,
-          },
-          {
-            onConflict: "email",
-          },
-        )
-        .select()
-        .single()
+    if (error) {
+      console.error("[v0] Supabase error upserting RSVP:", error)
+      return NextResponse.json({ success: false, error: "Failed to submit RSVP: " + error.message }, { status: 500 })
     }
 
-    if (result.error) {
-      console.error("[v0] Supabase error upserting RSVP:", result.error)
-      return NextResponse.json(
-        { success: false, error: "Failed to submit RSVP: " + result.error.message },
-        { status: 500 },
-      )
-    }
-
-    console.log("[v0] RSVP successfully upserted:", result.data)
+    console.log("[v0] RSVP successfully upserted:", data)
 
     return NextResponse.json({
       success: true,
-      data: result.data,
+      data: data,
       message: "RSVP submitted successfully",
     })
   } catch (error) {

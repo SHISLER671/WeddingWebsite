@@ -10,6 +10,7 @@ import { Heart, Upload, Camera, Video, X, CheckCircle, AlertCircle, ArrowLeft } 
 import { getGalleryItems, type GalleryItem } from "@/lib/utils/gallery"
 import { uploadGalleryItem } from "@/app/actions/upload-gallery-item"
 import Link from "next/link"
+import { SpinningRoseLoader } from "@/components/spinning-rose-loader"
 
 export default function GalleryPage() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
@@ -338,8 +339,8 @@ export default function GalleryPage() {
         <div className="max-w-7xl mx-auto px-4 pb-16">
           {loading ? (
             <div className="text-center py-16">
-              <div className="animate-spin w-8 h-8 border-2 border-rose-gold border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-charcoal/60">Loading memories...</p>
+              <SpinningRoseLoader size="lg" />
+              <p className="text-charcoal/60 mt-6">Loading memories...</p>
             </div>
           ) : galleryItems.length === 0 ? (
             <div className="text-center py-16">
@@ -372,6 +373,13 @@ export default function GalleryPage() {
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 group-active:bg-black/20 transition-all duration-300 flex items-end">
                       <div className="p-3 sm:p-4 text-white opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 w-full">
+                        {item.uploader_name && (
+                          <div className="mb-1">
+                            <p className="text-xs font-semibold bg-black/40 backdrop-blur-sm rounded px-2 py-1 inline-block">
+                              📸 {item.uploader_name}
+                            </p>
+                          </div>
+                        )}
                         {item.caption && (
                           <div className="mb-2">
                             <p className="text-xs sm:text-sm font-medium mb-1 line-clamp-2 bg-black/30 backdrop-blur-sm rounded px-2 py-1">

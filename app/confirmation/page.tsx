@@ -1,16 +1,30 @@
 "use client"
 import Link from "next/link"
-import { Calendar, MapPin, Clock, Gift, Edit, Sparkles, Heart, Flower2 } from "lucide-react"
+import {
+  Calendar,
+  MapPin,
+  Clock,
+  Gift,
+  Edit,
+  Sparkles,
+  Heart,
+  Flower2,
+  MessageCircle,
+  Wallet,
+  Palmtree,
+} from "lucide-react"
 import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
-import { useChat } from '../../contexts/ChatContext';
-import { useAccount } from 'wagmi';
-import { useLoginWithAbstract } from '@abstract-foundation/agw-react';
+import { useChat } from "../../contexts/ChatContext"
+import { useAccount } from "wagmi"
+import { useLoginWithAbstract } from "@abstract-foundation/agw-react"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function ConfirmationPage() {
   return (
     <div className="min-h-screen bg-warm-white">
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-soft-blush to-rose-gold/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-soft-blush via-emerald-50/20 to-rose-gold/20"></div>
         <div className="relative z-10 px-4 py-16">
           <div className="max-w-4xl mx-auto">
             <div className="flex justify-between items-start mb-8">
@@ -28,12 +42,14 @@ export default function ConfirmationPage() {
 
             <div className="text-center">
               <div className="flex items-center justify-center gap-3 mb-6">
+                <Palmtree className="w-8 h-8 text-emerald-600" />
                 <Sparkles className="w-8 h-8 text-rose-gold" />
                 <h1 className="text-4xl md:text-6xl font-light text-charcoal tracking-wide">Thank You</h1>
                 <Sparkles className="w-8 h-8 text-rose-gold" />
+                <Palmtree className="w-8 h-8 text-emerald-600" />
               </div>
-              <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-4">for your time to RSVP</p>
-              <p className="text-lg text-rose-gold font-medium">We appreciate your love</p>
+              <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-4">for taking the time to RSVP</p>
+              <p className="text-lg text-rose-gold font-medium">We can't wait to celebrate with you! 🌺</p>
             </div>
           </div>
         </div>
@@ -62,10 +78,10 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Location Card */}
-          <div className="bg-warm-white rounded-2xl shadow-lg border border-soft-blush p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-warm-white rounded-2xl shadow-lg border border-emerald-200 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-rose-gold/20 rounded-full flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-rose-gold" />
+              <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center">
+                <MapPin className="h-6 w-6 text-emerald-600" />
               </div>
               <h2 className="text-2xl font-light text-charcoal">Venues</h2>
             </div>
@@ -75,7 +91,7 @@ export default function ConfirmationPage() {
                 <p className="text-lg text-charcoal">Dulce Nombre de Maria Cathedral-Basilica</p>
                 <p className="text-charcoal/70">Hagåtña, Guam • 2:00 PM</p>
               </div>
-              <div className="p-4 bg-soft-blush/50 rounded-xl">
+              <div className="p-4 bg-emerald-50/50 rounded-xl">
                 <h3 className="font-medium text-charcoal mb-2">Reception</h3>
                 <p className="text-lg text-charcoal">Hotel Nikko Guam Tusi Ballroom</p>
                 <p className="text-charcoal/70">Tumon, Guam • 6:00 PM</p>
@@ -131,28 +147,108 @@ export default function ConfirmationPage() {
           </div>
         </div>
 
-        {/* New Interactive Section */}
-        <section className="max-w-4xl mx-auto mt-16 mb-16">
-          <div className="bg-warm-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
+        <section className="max-w-4xl mx-auto mt-16 mb-8">
+          <div className="bg-gradient-to-br from-warm-white/90 to-emerald-50/50 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Connect & Chat</h3>
+              <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed">
-                Thank you for taking time to be a part of our special occasion! Feel free to spark up a chat with Sophia the AI wedding assistant agent, and you may also try clicking on the flower button to connect your AGW wallet, then resubmit the rsvp form once again to save your wallet for a future surprise from the couple!
+                Thanks for RSVPing! Now the fun part - chat with Sofia (our AI wedding assistant) anytime you have
+                questions, and if you're feeling adventurous, click the flower button to connect your Abstract Global
+                Wallet. Then resubmit your RSVP to save your wallet info for a special surprise from us after the
+                wedding! 🎁
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              {/* Chatbot Button */}
               <ChatbotButton />
-              
-              {/* AGW Wallet Button */}
               <AGWWalletButton />
             </div>
           </div>
         </section>
+
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          {/* Sofia FAQ */}
+          <Card className="border-jewel-crimson/30 shadow-lg bg-gradient-to-br from-white to-rose-50/50">
+            <CardHeader className="bg-gradient-to-r from-jewel-crimson/10 to-jewel-fuchsia/10">
+              <CardTitle className="flex items-center gap-2 text-jewel-crimson">
+                <MessageCircle className="w-5 h-5" />
+                About Sofia
+              </CardTitle>
+              <CardDescription>Your 24/7 Wedding Buddy</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="what">
+                  <AccordionTrigger className="text-left text-sm">What can Sofia help with?</AccordionTrigger>
+                  <AccordionContent className="text-sm text-gray-700">
+                    Pretty much everything! Venue details, schedule, dress code, travel tips, hotel recommendations,
+                    local restaurant suggestions, your RSVP status - you name it. She's available 24/7 and never gets
+                    tired of answering questions!
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="how">
+                  <AccordionTrigger className="text-left text-sm">How do I chat with her?</AccordionTrigger>
+                  <AccordionContent className="text-sm text-gray-700">
+                    Just click the "Chat with Sofia" button above! The chat window will pop up and you can start asking
+                    questions right away. She's super friendly and easy to talk to - no complicated commands or
+                    anything.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="safe">
+                  <AccordionTrigger className="text-left text-sm">Is my info safe?</AccordionTrigger>
+                  <AccordionContent className="text-sm text-gray-700">
+                    Sofia uses secure connections and only sees the wedding info you already shared when you RSVP'd. She
+                    doesn't store your conversations or collect any weird data. Your privacy is totally protected.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+
+          {/* AGW FAQ */}
+          <Card className="border-emerald-400/30 shadow-lg bg-gradient-to-br from-white to-emerald-50/50">
+            <CardHeader className="bg-gradient-to-r from-emerald-400/10 to-teal-400/10">
+              <CardTitle className="flex items-center gap-2 text-emerald-700">
+                <Wallet className="w-5 h-5" />
+                About the Wallet
+              </CardTitle>
+              <CardDescription>Abstract Global Wallet</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="why">
+                  <AccordionTrigger className="text-left text-sm">Why connect a wallet?</AccordionTrigger>
+                  <AccordionContent className="text-sm text-gray-700">
+                    Connect your wallet to get a special digital gift from us after the wedding! It's a unique keepsake
+                    that combines tradition with modern tech - a perfect way to remember our celebration. Plus it's free
+                    and takes like 30 seconds!
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="easy">
+                  <AccordionTrigger className="text-left text-sm">Is it easy to set up?</AccordionTrigger>
+                  <AccordionContent className="text-sm text-gray-700">
+                    Super easy! Click the flower button and Abstract Global Wallet will automatically create a wallet
+                    for you if you don't have one. No forms, no verification, no complicated setup. It literally takes
+                    less than a minute - easier than most apps!
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="required">
+                  <AccordionTrigger className="text-left text-sm">Do I have to do this?</AccordionTrigger>
+                  <AccordionContent className="text-sm text-gray-700">
+                    Nope! It's 100% optional. Your RSVP is totally valid whether you connect a wallet or not. This is
+                    just a fun, modern option for anyone interested. Your presence at our wedding is what matters most!
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
-      {/* Wedding Chatbot - Only accessible from confirmation page */}
       <WeddingChatbot />
     </div>
   )
@@ -160,14 +256,14 @@ export default function ConfirmationPage() {
 
 // Chatbot Button Component
 function ChatbotButton() {
-  const { actions } = useChat();
-  
+  const { actions } = useChat()
+
   const handleChatbotClick = () => {
-    actions.openChat();
-  };
+    actions.openChat()
+  }
 
   return (
-    <button 
+    <button
       onClick={handleChatbotClick}
       className="flex flex-col items-center gap-3 p-6 bg-jewel-crimson hover:bg-jewel-burgundy text-warm-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
     >
@@ -175,56 +271,54 @@ function ChatbotButton() {
       <span className="font-semibold text-lg">Chat with Sofia</span>
       <span className="text-sm opacity-90 text-center">AI Wedding Assistant</span>
     </button>
-  );
+  )
 }
 
 // AGW Wallet Button Component
 function AGWWalletButton() {
-  const { address, status, isConnected } = useAccount();
-  const { login, logout } = useLoginWithAbstract();
+  const { address, status, isConnected } = useAccount()
+  const { login, logout } = useLoginWithAbstract()
 
   const handleConnect = async () => {
     try {
-      await login();
+      await login()
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
+      console.error("Failed to connect wallet:", error)
     }
-  };
+  }
 
   const handleDisconnect = async () => {
     try {
-      await logout();
+      await logout()
     } catch (error) {
-      console.error('Failed to disconnect wallet:', error);
+      console.error("Failed to disconnect wallet:", error)
     }
-  };
+  }
 
   const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  };
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+  }
 
   return (
     <div className="flex flex-col items-center gap-3 min-w-[200px]">
-      <button 
+      <button
         onClick={isConnected ? handleDisconnect : handleConnect}
-        disabled={status === 'connecting'}
+        disabled={status === "connecting"}
         className="flex flex-col items-center gap-3 p-6 bg-jewel-sapphire hover:bg-jewel-emerald disabled:from-gray-400 disabled:to-gray-500 text-warm-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
       >
         <Flower2 className="w-8 h-8 text-warm-white" />
         <span className="font-semibold text-lg">
-          {status === 'connecting' ? 'Connecting...' : isConnected ? 'Disconnect' : 'Connect Wallet'}
+          {status === "connecting" ? "Connecting..." : isConnected ? "Disconnect" : "Connect Wallet"}
         </span>
         <span className="text-sm opacity-90 text-center">Abstract Global Wallet</span>
       </button>
-      
+
       {isConnected && address && (
         <div className="bg-warm-white/80 backdrop-blur-sm rounded-lg p-3 shadow-sm w-full">
           <div className="text-xs text-charcoal/60 mb-1">Connected:</div>
-          <div className="text-sm font-mono text-charcoal break-all">
-            {formatAddress(address)}
-          </div>
+          <div className="text-sm font-mono text-charcoal break-all">{formatAddress(address)}</div>
         </div>
       )}
     </div>
-  );
+  )
 }
