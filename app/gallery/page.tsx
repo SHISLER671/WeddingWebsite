@@ -1,23 +1,25 @@
 // Wedding Gallery Page
 // Displays uploaded photos and videos in a responsive grid
 
-'use client'
+"use client"
 
-import React, { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { Heart, Upload, Camera, Video, X, CheckCircle, AlertCircle } from 'lucide-react'
-import { uploadGalleryFile, getGalleryItems, type GalleryItem } from '@/lib/utils/gallery'
+import type React from "react"
+import { useState, useEffect, useRef } from "react"
+import Image from "next/image"
+import { Heart, Upload, Camera, Video, X, CheckCircle, AlertCircle } from "lucide-react"
+import { getGalleryItems, type GalleryItem } from "@/lib/utils/gallery"
+import { uploadGalleryItem } from "@/app/actions/upload-gallery-item"
 
 export default function GalleryPage() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [showUploadForm, setShowUploadForm] = useState(false)
-  const [uploadName, setUploadName] = useState('')
-  const [uploadCaption, setUploadCaption] = useState('')
+  const [uploadName, setUploadName] = useState("")
+  const [uploadCaption, setUploadCaption] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [uploadMessage, setUploadMessage] = useState('')
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle")
+  const [uploadMessage, setUploadMessage] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Load gallery items on mount
@@ -31,7 +33,7 @@ export default function GalleryPage() {
       const items = await getGalleryItems()
       setGalleryItems(items)
     } catch (error) {
-      console.error('Error loading gallery:', error)
+      console.error("Error loading gallery:", error)
     } finally {
       setLoading(false)
     }
@@ -42,57 +44,66 @@ export default function GalleryPage() {
     if (file) {
       // Validate file type
       const fileType = file.type
-      const isImage = fileType.startsWith('image/')
-      const isVideo = fileType.startsWith('video/')
-      
+      const isImage = fileType.startsWith("image/")
+      const isVideo = fileType.startsWith("video/")
+
       if (!isImage && !isVideo) {
-        setUploadStatus('error')
-        setUploadMessage('Please select an image or video file')
+        setUploadStatus("error")
+        setUploadMessage("Please select an image or video file")
         return
       }
-      
+
       // Validate file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
-        setUploadStatus('error')
-        setUploadMessage('File size must be less than 10MB')
+        setUploadStatus("error")
+        setUploadMessage("File size must be less than 10MB")
         return
       }
-      
+
       setSelectedFile(file)
-      setUploadStatus('idle')
+      setUploadStatus("idle")
     }
   }
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setUploadStatus('error')
-      setUploadMessage('Please select a file to upload')
+      setUploadStatus("error")
+      setUploadMessage("Please select a file to upload")
       return
     }
 
     try {
       setUploading(true)
-      setUploadStatus('idle')
-      
-      const result = await uploadGalleryFile(selectedFile, uploadCaption, uploadName || 'Anonymous')
-      
+      setUploadStatus("idle")
+
+      const formData = new FormData()
+      formData.append("file", selectedFile)
+      formData.append("caption", uploadCaption)
+      formData.append("uploaderName", uploadName || "Anonymous")
+
+      console.log("[v0] Uploading file with Server Action")
+
+      const result = await uploadGalleryItem(formData)
+
+      console.log("[v0] Server Action result:", result)
+
       if (result.success) {
-        setUploadStatus('success')
-        setUploadMessage('Upload successful! Your photo/video will appear in the gallery shortly.')
+        setUploadStatus("success")
+        setUploadMessage("Upload successful! Your photo/video will appear in the gallery shortly.")
         setSelectedFile(null)
-        setUploadCaption('')
-        setUploadName('')
+        setUploadCaption("")
+        setUploadName("")
         setShowUploadForm(false)
         // Reload gallery
         await loadGalleryItems()
       } else {
-        setUploadStatus('error')
-        setUploadMessage(result.error || 'Upload failed. Please try again.')
+        setUploadStatus("error")
+        setUploadMessage(result.error || "Upload failed. Please try again.")
       }
     } catch (error) {
-      console.error('Upload error:', error)
-      setUploadStatus('error')
-      setUploadMessage('Upload failed. Please try again.')
+      console.error("Upload error:", error)
+      setUploadStatus("error")
+      setUploadMessage("Upload failed. Please try again.")
     } finally {
       setUploading(false)
     }
@@ -107,14 +118,14 @@ export default function GalleryPage() {
     const file = e.dataTransfer.files[0]
     if (file) {
       const event = {
-        target: { files: [file] }
+        target: { files: [file] },
       } as React.ChangeEvent<HTMLInputElement>
       handleFileSelect(event)
     }
   }
 
   const renderMediaItem = (item: GalleryItem) => {
-    if (item.file_type === 'video') {
+    if (item.file_type === "video") {
       return (
         <video
           controls
@@ -132,8 +143,8 @@ export default function GalleryPage() {
     } else {
       return (
         <Image
-          src={item.file_url || ''}
-          alt={item.caption || 'Wedding memory'}
+          src={item.file_url || ""}
+          alt={item.caption || "Wedding memory"}
           fill
           className="object-cover rounded-lg"
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -147,9 +158,9 @@ export default function GalleryPage() {
     <div className="min-h-screen bg-gradient-to-br from-soft-blush via-warm-white to-rose-gold/20">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <Image 
-          src="/romantic-wedding-background-with-soft-florals.jpg" 
-          alt="Wedding background" 
+        <Image
+          src="/romantic-wedding-background-with-soft-florals.jpg"
+          alt="Wedding background"
           fill
           className="object-cover opacity-30"
         />
@@ -159,13 +170,11 @@ export default function GalleryPage() {
         {/* Header */}
         <div className="text-center py-16 px-4">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-light text-charcoal mb-4 tracking-wide">
-              Wedding Memories
-            </h1>
+            <h1 className="text-4xl md:text-6xl font-light text-charcoal mb-4 tracking-wide">Wedding Memories</h1>
             <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-8">
               Share your favorite moments from our special day
             </p>
-            
+
             {/* Upload Button */}
             <button
               onClick={() => setShowUploadForm(true)}
@@ -206,14 +215,12 @@ export default function GalleryPage() {
                   className="hidden"
                   capture="environment"
                 />
-                
+
                 {selectedFile ? (
                   <div className="space-y-2">
                     <CheckCircle className="w-12 h-12 text-jewel-emerald mx-auto" />
                     <p className="text-charcoal font-medium">{selectedFile.name}</p>
-                    <p className="text-sm text-charcoal/60">
-                      {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
+                    <p className="text-sm text-charcoal/60">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
                     {!uploadCaption && (
                       <p className="text-xs text-rose-gold/80 flex items-center justify-center gap-1">
                         💡 Add a caption below to share your memory!
@@ -266,23 +273,21 @@ export default function GalleryPage() {
                   className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 resize-none text-base placeholder:text-charcoal/50"
                 />
                 <div className="flex justify-between items-center mt-1">
-                  <p className="text-xs text-charcoal/60">
-                    Add a friendly comment or quote to your memory
-                  </p>
-                  <span className="text-xs text-charcoal/40">
-                    {uploadCaption.length}/200
-                  </span>
+                  <p className="text-xs text-charcoal/60">Add a friendly comment or quote to your memory</p>
+                  <span className="text-xs text-charcoal/40">{uploadCaption.length}/200</span>
                 </div>
               </div>
 
               {/* Status Message */}
-              {uploadStatus !== 'idle' && (
-                <div className={`mb-4 p-3 rounded-lg flex items-center gap-2 ${
-                  uploadStatus === 'success' 
-                    ? 'bg-green-50 text-green-700 border border-green-200' 
-                    : 'bg-red-50 text-red-700 border border-red-200'
-                }`}>
-                  {uploadStatus === 'success' ? (
+              {uploadStatus !== "idle" && (
+                <div
+                  className={`mb-4 p-3 rounded-lg flex items-center gap-2 ${
+                    uploadStatus === "success"
+                      ? "bg-green-50 text-green-700 border border-green-200"
+                      : "bg-red-50 text-red-700 border border-red-200"
+                  }`}
+                >
+                  {uploadStatus === "success" ? (
                     <CheckCircle className="w-4 h-4" />
                   ) : (
                     <AlertCircle className="w-4 h-4" />
@@ -304,7 +309,7 @@ export default function GalleryPage() {
                   disabled={uploading || !selectedFile}
                   className="flex-1 px-4 py-3 bg-jewel-sapphire text-warm-white rounded-lg hover:bg-jewel-emerald disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation"
                 >
-                  {uploading ? 'Uploading...' : 'Upload'}
+                  {uploading ? "Uploading..." : "Upload"}
                 </button>
               </div>
             </div>
@@ -338,7 +343,7 @@ export default function GalleryPage() {
                   className="group relative aspect-square bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 touch-manipulation"
                 >
                   {renderMediaItem(item)}
-                  
+
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 group-active:bg-black/20 transition-all duration-300 flex items-end">
                     <div className="p-3 sm:p-4 text-white opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 w-full">
@@ -350,19 +355,15 @@ export default function GalleryPage() {
                         </div>
                       )}
                       <div className="flex items-center justify-between">
-                        <p className="text-xs opacity-80">
-                          {new Date(item.created_at).toLocaleDateString()}
-                        </p>
-                        {item.caption && (
-                          <span className="text-xs opacity-60">💬</span>
-                        )}
+                        <p className="text-xs opacity-80">{new Date(item.created_at).toLocaleDateString()}</p>
+                        {item.caption && <span className="text-xs opacity-60">💬</span>}
                       </div>
                     </div>
                   </div>
 
                   {/* File Type Indicator */}
                   <div className="absolute top-2 right-2">
-                    {item.file_type === 'video' ? (
+                    {item.file_type === "video" ? (
                       <Video className="w-4 h-4 text-white drop-shadow-lg" />
                     ) : (
                       <Camera className="w-4 h-4 text-white drop-shadow-lg" />
