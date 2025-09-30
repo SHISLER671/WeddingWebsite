@@ -6,9 +6,10 @@
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
-import { Heart, Upload, Camera, Video, X, CheckCircle, AlertCircle } from "lucide-react"
+import { Heart, Upload, Camera, Video, X, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react"
 import { getGalleryItems, type GalleryItem } from "@/lib/utils/gallery"
 import { uploadGalleryItem } from "@/app/actions/upload-gallery-item"
+import Link from "next/link"
 
 export default function GalleryPage() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
@@ -21,11 +22,18 @@ export default function GalleryPage() {
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle")
   const [uploadMessage, setUploadMessage] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [displayedItems, setDisplayedItems] = useState<GalleryItem[]>([])
+  const [itemsToShow, setItemsToShow] = useState(12)
+  const [hasMore, setHasMore] = useState(false)
 
-  // Load gallery items on mount
   useEffect(() => {
     loadGalleryItems()
   }, [])
+
+  useEffect(() => {
+    setDisplayedItems(galleryItems.slice(0, itemsToShow))
+    setHasMore(galleryItems.length > itemsToShow)
+  }, [galleryItems, itemsToShow])
 
   const loadGalleryItems = async () => {
     try {
@@ -39,10 +47,13 @@ export default function GalleryPage() {
     }
   }
 
+  const loadMore = () => {
+    setItemsToShow((prev) => prev + 12)
+  }
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
-      // Validate file type
       const fileType = file.type
       const isImage = fileType.startsWith("image/")
       const isVideo = fileType.startsWith("video/")
@@ -53,7 +64,6 @@ export default function GalleryPage() {
         return
       }
 
-      // Validate file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
         setUploadStatus("error")
         setUploadMessage("File size must be less than 10MB")
@@ -94,7 +104,6 @@ export default function GalleryPage() {
         setUploadCaption("")
         setUploadName("")
         setShowUploadForm(false)
-        // Reload gallery
         await loadGalleryItems()
       } else {
         setUploadStatus("error")
@@ -170,6 +179,15 @@ export default function GalleryPage() {
         {/* Header */}
         <div className="text-center py-16 px-4">
           <div className="max-w-4xl mx-auto">
+            {/* Back Button */}
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-charcoal/70 hover:text-charcoal mb-6 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Home</span>
+            </Link>
+
             <h1 className="text-4xl md:text-6xl font-light text-charcoal mb-4 tracking-wide">Wedding Memories</h1>
             <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-8">
               Share your favorite moments from our special day
@@ -336,42 +354,62 @@ export default function GalleryPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-              {galleryItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="group relative aspect-square bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 touch-manipulation"
-                >
-                  {renderMediaItem(item)}
+            <>
+              <div className="text-center mb-6">
+                <p className="text-charcoal/60">
+                  Showing {displayedItems.length} of {galleryItems.length} memories
+                </p>
+              </div>
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 group-active:bg-black/20 transition-all duration-300 flex items-end">
-                    <div className="p-3 sm:p-4 text-white opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 w-full">
-                      {item.caption && (
-                        <div className="mb-2">
-                          <p className="text-xs sm:text-sm font-medium mb-1 line-clamp-2 bg-black/30 backdrop-blur-sm rounded px-2 py-1">
-                            "{item.caption}"
-                          </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                {displayedItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="group relative aspect-square bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 touch-manipulation"
+                  >
+                    {renderMediaItem(item)}
+
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 group-active:bg-black/20 transition-all duration-300 flex items-end">
+                      <div className="p-3 sm:p-4 text-white opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 w-full">
+                        {item.caption && (
+                          <div className="mb-2">
+                            <p className="text-xs sm:text-sm font-medium mb-1 line-clamp-2 bg-black/30 backdrop-blur-sm rounded px-2 py-1">
+                              "{item.caption}"
+                            </p>
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs opacity-80">{new Date(item.created_at).toLocaleDateString()}</p>
+                          {item.caption && <span className="text-xs opacity-60">💬</span>}
                         </div>
-                      )}
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs opacity-80">{new Date(item.created_at).toLocaleDateString()}</p>
-                        {item.caption && <span className="text-xs opacity-60">💬</span>}
                       </div>
                     </div>
-                  </div>
 
-                  {/* File Type Indicator */}
-                  <div className="absolute top-2 right-2">
-                    {item.file_type === "video" ? (
-                      <Video className="w-4 h-4 text-white drop-shadow-lg" />
-                    ) : (
-                      <Camera className="w-4 h-4 text-white drop-shadow-lg" />
-                    )}
+                    {/* File Type Indicator */}
+                    <div className="absolute top-2 right-2">
+                      {item.file_type === "video" ? (
+                        <Video className="w-4 h-4 text-white drop-shadow-lg" />
+                      ) : (
+                        <Camera className="w-4 h-4 text-white drop-shadow-lg" />
+                      )}
+                    </div>
                   </div>
+                ))}
+              </div>
+
+              {/* Load More Button */}
+              {hasMore && (
+                <div className="text-center mt-12">
+                  <button
+                    onClick={loadMore}
+                    className="bg-jewel-sapphire hover:bg-jewel-emerald text-warm-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    Load More Memories
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>

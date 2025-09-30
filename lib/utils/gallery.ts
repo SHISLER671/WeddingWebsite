@@ -66,11 +66,17 @@ export async function uploadGalleryFile(file: File, caption = "", uploaderName: 
 }
 
 // Get gallery items with optimized URLs
-export async function getGalleryItems(): Promise<GalleryItem[]> {
+export async function getGalleryItems(limit?: number, offset = 0): Promise<GalleryItem[]> {
   try {
     const supabase = createClient()
 
-    const { data, error } = await supabase.from("gallery_items").select("*").order("created_at", { ascending: false })
+    let query = supabase.from("gallery_items").select("*").order("created_at", { ascending: false })
+
+    if (limit) {
+      query = query.range(offset, offset + limit - 1)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       console.error("Error fetching gallery items:", error)
