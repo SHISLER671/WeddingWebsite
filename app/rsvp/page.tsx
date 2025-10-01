@@ -119,7 +119,7 @@ export default function RSVPPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 font-sans">
         {/* Header */}
         <div className="text-center mb-12">
           <Link href="/" className="text-rose-600 hover:text-rose-800 font-medium mb-4 inline-block">
@@ -137,7 +137,7 @@ export default function RSVPPage() {
 
         {isEditMode && !foundRSVP && (
           <div className="max-w-2xl mx-auto mb-8 bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center gap-2 font-serif">
               <Search className="w-6 h-6 text-rose-600" />
               Find Your RSVP
             </h2>
@@ -187,7 +187,7 @@ export default function RSVPPage() {
             <div className="flex items-start gap-3 mb-4">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2">Your Current RSVP</h2>
+                <h2 className="text-2xl font-semibold text-gray-800 mb-2 font-serif">Your Current RSVP</h2>
                 <div className="space-y-2 text-gray-700">
                   <p>
                     <strong>Name:</strong> {foundRSVP.guest_name}

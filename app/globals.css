@@ -8,28 +8,28 @@
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
   }
-  
+
   /* Prevent zoom on input focus on iOS */
   input[type="email"],
   input[type="text"],
   textarea {
     font-size: 16px;
   }
-  
+
   /* Improve touch targets */
-  button, 
+  button,
   [role="button"],
   input[type="file"] {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   /* Smooth scrolling */
   * {
     scroll-behavior: smooth;
@@ -40,38 +40,39 @@
   :root {
     /* New 4-color classy and sexy palette */
     --background: 0 0% 98%; /* Warm white */
-    --foreground: 0 0% 10%; /* Deep charcoal */
+    --foreground: 340 65% 25%; /* Deep burgundy for text */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 340 65% 25%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 15 25% 75%; /* Rose gold */
-    --primary-foreground: 0 0% 10%;
-    --secondary: 15 15% 90%; /* Soft blush */
-    --secondary-foreground: 0 0% 10%;
+    --popover-foreground: 340 65% 25%;
+    --primary: 340 65% 35%; /* Burgundy */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 320 90% 65%; /* Fuchsia/Magenta */
+    --secondary-foreground: 0 0% 98%;
     --muted: 15 15% 90%;
     --muted-foreground: 0 0% 45%;
-    --accent: 15 25% 75%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 45 100% 50%; /* Gold */
+    --accent-foreground: 340 65% 25%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 15 15% 85%;
-    --input: 15 15% 85%;
-    --ring: 15 25% 75%;
+    --border: 340 30% 85%;
+    --input: 340 30% 85%;
+    --ring: 340 65% 35%;
     --radius: 0.75rem;
 
-    /* Wedding-specific colors */
+    /* Wedding-specific colors - Updated to match inspiration images */
     --charcoal: 0 0% 10%;
     --warm-white: 0 0% 98%;
-    --rose-gold: 15 25% 75%;
-    --soft-blush: 15 15% 90%;
+    --rose-gold: 45 100% 60%; /* Changed to gold */
+    --soft-blush: 340 50% 90%;
 
-    /* Jewel tone palette */
+    /* Jewel tone palette - Updated to match wedding photos */
     --jewel-burgundy: 340 65% 35%; /* Deep burgundy red */
     --jewel-crimson: 350 85% 50%; /* Crimson red */
     --jewel-fuchsia: 320 90% 65%; /* Vibrant fuchsia/magenta */
-    --jewel-sapphire: 215 85% 45%; /* Deep sapphire blue */
-    --jewel-emerald: 150 70% 50%; /* Vibrant emerald green */
+    --jewel-purple: 280 70% 50%; /* Rich purple */
+    --jewel-violet: 270 60% 55%; /* Deep violet */
+    --jewel-gold: 45 100% 50%; /* Metallic gold */
   }
 
   .dark {
@@ -82,19 +83,19 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 10%;
     --popover-foreground: 0 0% 98%;
-    --primary: 15 25% 75%;
-    --primary-foreground: 0 0% 10%;
+    --primary: 340 65% 35%;
+    --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
-    --accent: 15 25% 75%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 340 65% 25%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 15%;
     --input: 0 0% 15%;
-    --ring: 15 25% 75%;
+    --ring: 340 65% 35%;
   }
 }
 
@@ -118,7 +119,7 @@
   }
 
   .text-rose-gold {
-    color: hsl(var(--rose-gold));
+    color: hsl(var(--jewel-gold));
   }
 
   .text-soft-blush {
@@ -134,7 +135,7 @@
   }
 
   .bg-rose-gold {
-    background-color: hsl(var(--rose-gold));
+    background-color: hsl(var(--jewel-gold));
   }
 
   .bg-soft-blush {
@@ -142,7 +143,7 @@
   }
 
   .border-rose-gold {
-    border-color: hsl(var(--rose-gold));
+    border-color: hsl(var(--jewel-gold));
   }
 
   /* Jewel tone utility classes */
@@ -158,12 +159,16 @@
     color: hsl(var(--jewel-fuchsia));
   }
 
-  .text-jewel-sapphire {
-    color: hsl(var(--jewel-sapphire));
+  .text-jewel-purple {
+    color: hsl(var(--jewel-purple));
   }
 
-  .text-jewel-emerald {
-    color: hsl(var(--jewel-emerald));
+  .text-jewel-violet {
+    color: hsl(var(--jewel-violet));
+  }
+
+  .text-jewel-gold {
+    color: hsl(var(--jewel-gold));
   }
 
   .bg-jewel-burgundy {
@@ -178,12 +183,16 @@
     background-color: hsl(var(--jewel-fuchsia));
   }
 
-  .bg-jewel-sapphire {
-    background-color: hsl(var(--jewel-sapphire));
+  .bg-jewel-purple {
+    background-color: hsl(var(--jewel-purple));
   }
 
-  .bg-jewel-emerald {
-    background-color: hsl(var(--jewel-emerald));
+  .bg-jewel-violet {
+    background-color: hsl(var(--jewel-violet));
+  }
+
+  .bg-jewel-gold {
+    background-color: hsl(var(--jewel-gold));
   }
 
   .border-jewel-burgundy {
@@ -198,11 +207,37 @@
     border-color: hsl(var(--jewel-fuchsia));
   }
 
-  .border-jewel-sapphire {
-    border-color: hsl(var(--jewel-sapphire));
+  .border-jewel-purple {
+    border-color: hsl(var(--jewel-purple));
   }
 
-  .border-jewel-emerald {
-    border-color: hsl(var(--jewel-emerald));
+  .border-jewel-violet {
+    border-color: hsl(var(--jewel-violet));
+  }
+
+  .border-jewel-gold {
+    border-color: hsl(var(--jewel-gold));
+  }
+
+  /* Gradient backgrounds inspired by wedding photos */
+  .bg-wedding-luxury {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--jewel-burgundy)) 0%,
+      hsl(var(--jewel-purple)) 50%,
+      hsl(var(--jewel-fuchsia)) 100%
+    );
+  }
+
+  .bg-wedding-romantic {
+    background: linear-gradient(to bottom right, hsl(340 50% 95%), hsl(320 60% 95%), hsl(340 40% 90%));
+  }
+
+  /* Gold shimmer effect */
+  .text-gold-shimmer {
+    background: linear-gradient(90deg, hsl(var(--jewel-gold)), hsl(45 100% 65%), hsl(var(--jewel-gold)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }

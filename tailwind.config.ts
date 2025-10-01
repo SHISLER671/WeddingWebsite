@@ -62,8 +62,10 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
+        sans: ["var(--font-lato)", "sans-serif"], // Body text
+        serif: ["var(--font-playfair)", "serif"], // Headings
         playfair: ["var(--font-playfair)", "serif"],
-        cormorant: ["var(--font-cormorant)", "serif"],
+        lato: ["var(--font-lato)", "sans-serif"],
       },
     },
   },

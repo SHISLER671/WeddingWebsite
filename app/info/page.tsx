@@ -1,21 +1,24 @@
 "use client"
 import Link from "next/link"
-import { Calendar, MapPin, Users, ArrowLeft, ChevronDown, MessageCircle, Wallet, Palmtree, Gift } from "lucide-react"
+import { Calendar, MapPin, Users, ArrowLeft, ChevronDown, MessageCircle, Wallet, Gift } from "lucide-react"
 import ProfileMenu from "../../components/ProfileMenu"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function InfoPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-emerald-50/30 to-pink-100">
+    <div className="min-h-screen bg-wedding-romantic">
       {/* Header with Navigation */}
-      <header className="relative bg-white/90 backdrop-blur-sm shadow-sm">
+      <header className="relative bg-white/90 backdrop-blur-sm shadow-sm border-b-2 border-jewel-gold/20">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center text-rose-700 hover:text-rose-800 transition-colors">
+          <Link
+            href="/"
+            className="flex items-center text-jewel-burgundy hover:text-jewel-crimson transition-colors font-sans"
+          >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-2xl font-serif text-rose-800">Wedding Information</h1>
+          <h1 className="text-2xl font-serif text-jewel-burgundy">Wedding Information</h1>
           <ProfileMenu />
         </div>
       </header>
@@ -23,19 +26,23 @@ export default function InfoPage() {
       <section className="relative py-16">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-4 mb-4">
-            <Palmtree className="w-8 h-8 text-emerald-600" />
-            <h2 className="text-5xl md:text-6xl font-serif text-rose-800">Our Special Day</h2>
-            <Palmtree className="w-8 h-8 text-emerald-600" />
+            <span className="text-4xl">🌹</span>
+            <h2 className="text-5xl md:text-6xl font-serif text-jewel-burgundy">Our Special Day</h2>
+            <span className="text-4xl">🌹</span>
           </div>
-          <p className="text-xl text-gray-700 mb-4">Join us for a celebration of love on our island paradise</p>
-          <p className="text-lg text-emerald-700 italic">Good vibes, great food, and unforgettable memories</p>
+          <p className="text-xl text-gray-700 mb-4 font-sans">
+            Join us for a celebration of love on our island paradise
+          </p>
+          <p className="text-lg text-jewel-purple italic font-medium font-sans">
+            Good vibes, great food, and unforgettable memories
+          </p>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 pb-16">
+      <div className="container mx-auto px-4 pb-16 font-sans">
         <main className="max-w-6xl mx-auto">
           <section className="mb-16">
-            <h3 className="text-3xl font-serif text-rose-700 mb-8 text-center">Come celebrate with us!</h3>
+            <h3 className="text-3xl font-serif text-jewel-burgundy mb-8 text-center">Come celebrate with us!</h3>
             <p className="text-lg text-gray-700 leading-relaxed text-center mb-12">
               We're getting married on our beautiful island home, and we can't wait to share this special moment with
               you. Think tropical breezes, stunning views, and a whole lot of love. Below you'll find everything you
@@ -45,10 +52,10 @@ export default function InfoPage() {
 
           {/* Wedding Details Grid */}
           <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-rose-400">
+            <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-jewel-burgundy">
               <div className="flex items-center mb-4">
-                <Calendar className="w-6 h-6 text-rose-600 mr-3" />
-                <h4 className="text-2xl font-serif text-rose-700">When</h4>
+                <Calendar className="w-6 h-6 text-jewel-burgundy mr-3" />
+                <h4 className="text-2xl font-serif text-jewel-burgundy">When</h4>
               </div>
               <div className="space-y-3 text-gray-600">
                 <p>
@@ -66,10 +73,10 @@ export default function InfoPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-emerald-400">
+            <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-jewel-fuchsia">
               <div className="flex items-center mb-4">
-                <MapPin className="w-6 h-6 text-emerald-600 mr-3" />
-                <h4 className="text-2xl font-serif text-emerald-700">Where</h4>
+                <MapPin className="w-6 h-6 text-jewel-fuchsia mr-3" />
+                <h4 className="text-2xl font-serif text-jewel-fuchsia">Where</h4>
               </div>
               <div className="space-y-3 text-gray-600">
                 <p>
@@ -87,10 +94,10 @@ export default function InfoPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-rose-400">
+            <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-jewel-purple">
               <div className="flex items-center mb-4">
-                <Users className="w-6 h-6 text-rose-600 mr-3" />
-                <h4 className="text-2xl font-serif text-rose-700">Dress Code</h4>
+                <Users className="w-6 h-6 text-jewel-purple mr-3" />
+                <h4 className="text-2xl font-serif text-jewel-purple">Dress Code</h4>
               </div>
               <div className="space-y-3 text-gray-600">
                 <p>
@@ -110,13 +117,13 @@ export default function InfoPage() {
           </div>
 
           {/* Quick Questions */}
-          <section className="bg-white rounded-lg shadow-lg p-8 mb-16">
-            <h4 className="text-3xl font-serif text-rose-700 mb-6 text-center">Quick Questions</h4>
+          <section className="bg-white rounded-lg shadow-lg p-8 mb-16 border-t-4 border-jewel-gold">
+            <h4 className="text-3xl font-serif text-jewel-burgundy mb-6 text-center">Quick Questions</h4>
             <div className="space-y-4">
               <details className="group border-b border-gray-200 pb-4">
-                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-rose-600">
+                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                   Who's getting hitched?
-                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform" />
+                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                 </summary>
                 <div className="mt-3 text-gray-600">
                   <p>
@@ -127,9 +134,9 @@ export default function InfoPage() {
               </details>
 
               <details className="group border-b border-gray-200 pb-4">
-                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-rose-600">
+                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                   When and where is this party happening?
-                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform" />
+                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                 </summary>
                 <div className="mt-3 text-gray-600">
                   <p>
@@ -141,14 +148,14 @@ export default function InfoPage() {
                   <p>
                     <strong>Reception:</strong> 6:00 PM at Hotel Nikko Guam Tusi Ballroom
                   </p>
-                  <p className="mt-2 text-emerald-700">Then we dance until we can't dance anymore! 🌴</p>
+                  <p className="mt-2 text-jewel-purple">Then we dance until we can't dance anymore! 🌴</p>
                 </div>
               </details>
 
               <details className="group border-b border-gray-200 pb-4">
-                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-rose-600">
+                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                   Where exactly are these places?
-                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform" />
+                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                 </summary>
                 <div className="mt-3 text-gray-600">
                   <p>
@@ -166,9 +173,9 @@ export default function InfoPage() {
               </details>
 
               <details className="group border-b border-gray-200 pb-4">
-                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-rose-600">
+                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                   When do I need to RSVP by?
-                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform" />
+                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                 </summary>
                 <div className="mt-3 text-gray-600">
                   <p>
@@ -179,9 +186,9 @@ export default function InfoPage() {
               </details>
 
               <details className="group">
-                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-rose-600">
+                <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                   What should I wear?
-                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform" />
+                  <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                 </summary>
                 <div className="mt-3 text-gray-600">
                   <p>
@@ -198,11 +205,11 @@ export default function InfoPage() {
           </section>
 
           {/* About Our Venues */}
-          <section className="bg-gradient-to-br from-white to-emerald-50/30 rounded-lg shadow-lg p-8 mb-16">
-            <h4 className="text-3xl font-serif text-rose-700 mb-6 text-center">About Our Venues</h4>
+          <section className="bg-gradient-to-br from-white via-pink-50/30 to-purple-50/30 rounded-lg shadow-lg p-8 mb-16 border-t-4 border-jewel-fuchsia">
+            <h4 className="text-3xl font-serif text-jewel-burgundy mb-6 text-center">About Our Venues</h4>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h5 className="text-xl font-semibold text-rose-600 mb-3">The Cathedral</h5>
+                <h5 className="text-xl font-semibold text-jewel-burgundy mb-3 font-serif">The Cathedral</h5>
                 <p className="text-gray-700 mb-4">
                   We're saying our vows at the stunning Dulce Nombre de Maria Cathedral-Basilica at 2:00 PM. It's a
                   beautiful, historic place that means a lot to us. Sacred, elegant, and the perfect spot to start our
@@ -210,7 +217,7 @@ export default function InfoPage() {
                 </p>
               </div>
               <div>
-                <h5 className="text-xl font-semibold text-emerald-600 mb-3">The Reception</h5>
+                <h5 className="text-xl font-semibold text-jewel-fuchsia mb-3 font-serif">The Reception</h5>
                 <p className="text-gray-700 mb-4">
                   After the ceremony, we're heading to the gorgeous Tusi Ballroom at Hotel Nikko Guam for the real
                   party! Think crystal chandeliers, a huge dance floor, and amazing lighting. The reception starts at
@@ -225,13 +232,13 @@ export default function InfoPage() {
           </section>
 
           {/* Meet Sofia */}
-          <Card className="mb-16 border-jewel-crimson/30 shadow-lg bg-gradient-to-br from-white to-rose-50/50">
-            <CardHeader className="bg-gradient-to-r from-jewel-crimson/10 to-jewel-fuchsia/10">
-              <CardTitle className="flex items-center gap-3 text-jewel-crimson text-2xl">
+          <Card className="mb-16 border-jewel-burgundy/30 shadow-lg bg-gradient-to-br from-white to-pink-50/50">
+            <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-jewel-fuchsia/10 border-b-2 border-jewel-gold/20">
+              <CardTitle className="flex items-center gap-3 text-jewel-burgundy text-2xl font-serif">
                 <MessageCircle className="w-7 h-7" />
                 Meet Sofia - Your 24/7 Wedding Buddy
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-base font-sans">
                 She's basically your personal wedding guru, always online
               </CardDescription>
             </CardHeader>
@@ -310,13 +317,13 @@ export default function InfoPage() {
           </Card>
 
           {/* Abstract Global Wallet */}
-          <Card className="mb-16 border-emerald-400/30 shadow-lg bg-gradient-to-br from-white to-emerald-50/50">
-            <CardHeader className="bg-gradient-to-r from-emerald-400/10 to-teal-400/10">
-              <CardTitle className="flex items-center gap-3 text-emerald-700 text-2xl">
+          <Card className="mb-16 border-jewel-purple/30 shadow-lg bg-gradient-to-br from-white to-purple-50/50">
+            <CardHeader className="bg-gradient-to-r from-jewel-purple/10 to-jewel-fuchsia/10 border-b-2 border-jewel-gold/20">
+              <CardTitle className="flex items-center gap-3 text-jewel-purple text-2xl font-serif">
                 <Wallet className="w-7 h-7" />
                 Abstract Global Wallet - A Little Future Magic
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-base font-sans">
                 Connect your wallet for a surprise gift from us after the wedding
               </CardDescription>
             </CardHeader>
@@ -411,7 +418,7 @@ export default function InfoPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 href="/"
-                className="flex items-center border-2 border-rose-600 text-rose-600 hover:bg-rose-600 hover:text-white px-6 py-3 rounded-lg transition-colors duration-200"
+                className="flex items-center border-2 border-jewel-burgundy text-jewel-burgundy hover:bg-jewel-burgundy hover:text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-md"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home
@@ -419,14 +426,14 @@ export default function InfoPage() {
 
               <Link
                 href="/rsvp"
-                className="flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg transition-colors duration-200"
+                className="flex items-center bg-jewel-fuchsia hover:bg-jewel-crimson text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-md"
               >
                 RSVP Now
               </Link>
 
               <Link
                 href="/gifts"
-                className="flex items-center bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-lg transition-colors duration-200"
+                className="flex items-center bg-jewel-purple hover:bg-jewel-violet text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-md"
               >
                 <Gift className="w-4 h-4 mr-2" />
                 Registry & Gifts
@@ -436,7 +443,7 @@ export default function InfoPage() {
         </main>
 
         {/* Footer */}
-        <footer className="text-center mt-16 text-gray-500">
+        <footer className="text-center mt-16 text-gray-500 font-sans">
           <p>&copy; 2026 Pia & Ryan's Wedding. Made with love and Irie vibes. 🌺</p>
         </footer>
       </div>
