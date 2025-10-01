@@ -68,11 +68,13 @@
 
     /* Jewel tone palette - Updated to match wedding photos */
     --jewel-burgundy: 340 65% 35%; /* Deep burgundy red */
-    --jewel-crimson: 350 85% 50%; /* Crimson red */
+    --jewel-crimson: 350 85% 40%; /* Crimson red - darkened from 50% to 40% */
     --jewel-fuchsia: 320 90% 65%; /* Vibrant fuchsia/magenta */
-    --jewel-purple: 280 70% 50%; /* Rich purple */
-    --jewel-violet: 270 60% 55%; /* Deep violet */
+    --jewel-purple: 280 70% 45%; /* Rich purple - darkened from 50% to 45% */
+    --jewel-violet: 270 60% 50%; /* Deep violet - darkened from 55% to 50% */
     --jewel-gold: 45 100% 50%; /* Metallic gold */
+    --jewel-sapphire: 220 80% 40%; /* Deep sapphire blue - added */
+    --jewel-emerald: 160 70% 35%; /* Rich emerald green - added */
   }
 
   .dark {
@@ -195,6 +197,14 @@
     background-color: hsl(var(--jewel-gold));
   }
 
+  .bg-jewel-sapphire {
+    background-color: hsl(var(--jewel-sapphire));
+  }
+
+  .bg-jewel-emerald {
+    background-color: hsl(var(--jewel-emerald));
+  }
+
   .border-jewel-burgundy {
     border-color: hsl(var(--jewel-burgundy));
   }
@@ -217,6 +227,14 @@
 
   .border-jewel-gold {
     border-color: hsl(var(--jewel-gold));
+  }
+
+  .border-jewel-sapphire {
+    border-color: hsl(var(--jewel-sapphire));
+  }
+
+  .border-jewel-emerald {
+    border-color: hsl(var(--jewel-emerald));
   }
 
   /* Gradient backgrounds inspired by wedding photos */

@@ -265,11 +265,11 @@ function ChatbotButton() {
   return (
     <button
       onClick={handleChatbotClick}
-      className="flex flex-col items-center gap-3 p-6 bg-jewel-crimson hover:bg-jewel-burgundy text-warm-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
+      className="flex flex-col items-center gap-3 p-6 bg-jewel-crimson hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
     >
-      <Heart className="w-8 h-8 text-warm-white" />
-      <span className="font-semibold text-lg">Chat with Sofia</span>
-      <span className="text-sm opacity-90 text-center">AI Wedding Assistant</span>
+      <Heart className="w-8 h-8 text-white" />
+      <span className="font-semibold text-lg text-white">Chat with Sofia</span>
+      <span className="text-sm opacity-90 text-center text-white">AI Wedding Assistant</span>
     </button>
   )
 }
@@ -304,13 +304,13 @@ function AGWWalletButton() {
       <button
         onClick={isConnected ? handleDisconnect : handleConnect}
         disabled={status === "connecting"}
-        className="flex flex-col items-center gap-3 p-6 bg-jewel-sapphire hover:bg-jewel-emerald disabled:from-gray-400 disabled:to-gray-500 text-warm-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
+        className="flex flex-col items-center gap-3 p-6 bg-jewel-sapphire hover:bg-jewel-emerald disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
       >
-        <Flower2 className="w-8 h-8 text-warm-white" />
-        <span className="font-semibold text-lg">
+        <Flower2 className="w-8 h-8 text-white" />
+        <span className="font-semibold text-lg text-white">
           {status === "connecting" ? "Connecting..." : isConnected ? "Disconnect" : "Connect Wallet"}
         </span>
-        <span className="text-sm opacity-90 text-center">Abstract Global Wallet</span>
+        <span className="text-sm opacity-90 text-center text-white">Abstract Global Wallet</span>
       </button>
 
       {isConnected && address && (

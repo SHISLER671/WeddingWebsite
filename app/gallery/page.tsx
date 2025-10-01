@@ -197,7 +197,7 @@ export default function GalleryPage() {
             {/* Upload Button */}
             <button
               onClick={() => setShowUploadForm(true)}
-              className="bg-jewel-sapphire hover:bg-jewel-emerald text-warm-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto"
+              className="bg-jewel-sapphire hover:bg-jewel-emerald text-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto"
             >
               <Camera className="w-5 h-5" />
               Share a Memory
@@ -326,7 +326,7 @@ export default function GalleryPage() {
                 <button
                   onClick={handleUpload}
                   disabled={uploading || !selectedFile}
-                  className="flex-1 px-4 py-3 bg-jewel-sapphire text-warm-white rounded-lg hover:bg-jewel-emerald disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation"
+                  className="flex-1 px-4 py-3 bg-jewel-sapphire text-white rounded-lg hover:bg-jewel-emerald disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation"
                 >
                   {uploading ? "Uploading..." : "Upload"}
                 </button>
@@ -349,7 +349,7 @@ export default function GalleryPage() {
               <p className="text-charcoal/60 mb-6">Be the first to share a special moment!</p>
               <button
                 onClick={() => setShowUploadForm(true)}
-                className="bg-jewel-sapphire hover:bg-jewel-emerald text-warm-white px-6 py-3 rounded-full transition-all duration-300"
+                className="bg-jewel-sapphire hover:bg-jewel-emerald text-white px-6 py-3 rounded-full transition-all duration-300"
               >
                 Share a Memory
               </button>
@@ -411,7 +411,7 @@ export default function GalleryPage() {
                 <div className="text-center mt-12">
                   <button
                     onClick={loadMore}
-                    className="bg-jewel-sapphire hover:bg-jewel-emerald text-warm-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="bg-jewel-sapphire hover:bg-jewel-emerald text-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
                     Load More Memories
                   </button>

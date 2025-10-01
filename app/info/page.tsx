@@ -1,9 +1,23 @@
 "use client"
 import Link from "next/link"
-import { Calendar, MapPin, Users, ArrowLeft, ChevronDown, MessageCircle, Wallet, Gift } from "lucide-react"
+import {
+  Calendar,
+  MapPin,
+  Users,
+  ArrowLeft,
+  ChevronDown,
+  MessageCircle,
+  Wallet,
+  Gift,
+  Heart,
+  Flower2,
+} from "lucide-react"
 import ProfileMenu from "../../components/ProfileMenu"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useChat } from "../../contexts/ChatContext"
+import { useAccount } from "wagmi"
+import { useLoginWithAbstract } from "@abstract-foundation/agw-react"
 
 export default function InfoPage() {
   return (
@@ -249,6 +263,10 @@ export default function InfoPage() {
                 question is too small!
               </p>
 
+              <div className="flex justify-center mb-6">
+                <ChatbotButton />
+              </div>
+
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="what-is-sofia">
                   <AccordionTrigger className="text-left">So what exactly is Sofia?</AccordionTrigger>
@@ -333,6 +351,10 @@ export default function InfoPage() {
                 we'll send you a special digital surprise after the wedding. It's our way of saying thanks for
                 celebrating with us. Plus, it's way cooler than it sounds - promise!
               </p>
+
+              <div className="flex justify-center mb-6">
+                <AGWWalletButton />
+              </div>
 
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="what-is-agw">
@@ -447,6 +469,73 @@ export default function InfoPage() {
           <p>&copy; 2026 Pia & Ryan's Wedding. Made with love and Irie vibes. 🌺</p>
         </footer>
       </div>
+    </div>
+  )
+}
+
+function ChatbotButton() {
+  const { actions } = useChat()
+
+  const handleChatbotClick = () => {
+    actions.openChat()
+  }
+
+  return (
+    <button
+      onClick={handleChatbotClick}
+      className="flex flex-col items-center gap-3 p-6 bg-jewel-crimson hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
+    >
+      <Heart className="w-8 h-8 text-white" />
+      <span className="font-semibold text-lg text-white">Chat with Sofia</span>
+      <span className="text-sm opacity-90 text-center text-white">AI Wedding Assistant</span>
+    </button>
+  )
+}
+
+function AGWWalletButton() {
+  const { address, status, isConnected } = useAccount()
+  const { login, logout } = useLoginWithAbstract()
+
+  const handleConnect = async () => {
+    try {
+      await login()
+    } catch (error) {
+      console.error("Failed to connect wallet:", error)
+    }
+  }
+
+  const handleDisconnect = async () => {
+    try {
+      await logout()
+    } catch (error) {
+      console.error("Failed to disconnect wallet:", error)
+    }
+  }
+
+  const formatAddress = (addr: string) => {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3 min-w-[200px]">
+      <button
+        onClick={isConnected ? handleDisconnect : handleConnect}
+        disabled={status === "connecting"}
+        className="flex flex-col items-center gap-3 p-6 bg-jewel-sapphire hover:bg-jewel-emerald disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
+      >
+        <Flower2 className="w-8 h-8 text-white" />
+        <span className="font-semibold text-lg text-white">
+          {status === "connecting" ? "Connecting..." : isConnected ? "Disconnect" : "Connect Wallet"}
+        </span>
+        <span className="text-sm opacity-90 text-center text-white">Abstract Global Wallet</span>
+      </button>
+
+      {isConnected && address && (
+        <div className="bg-warm-white/80 backdrop-blur-sm rounded-lg p-3 shadow-sm w-full">
+          <div className="text-xs text-charcoal/60 mb-1">Connected:</div>
+          <div className="text-sm font-mono text-charcoal break-all">{formatAddress(address)}</div>
+        </div>
+      )}
     </div>
   )
 }
