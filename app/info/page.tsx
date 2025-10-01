@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useChat } from "../../contexts/ChatContext"
 import { useAccount } from "wagmi"
 import { useLoginWithAbstract } from "@abstract-foundation/agw-react"
+import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
 
 export default function InfoPage() {
   return (
@@ -469,6 +470,7 @@ export default function InfoPage() {
           <p>&copy; 2026 Pia & Ryan's Wedding. Made with love and Irie vibes. 🌺</p>
         </footer>
       </div>
+      <WeddingChatbot />
     </div>
   )
 }
