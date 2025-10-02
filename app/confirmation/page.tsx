@@ -93,7 +93,7 @@ export default function ConfirmationPage() {
               </div>
               <div className="p-4 bg-emerald-50/50 rounded-xl">
                 <h3 className="font-medium text-charcoal mb-2">Reception</h3>
-                <p className="text-lg text-charcoal">Hotel Nikko Guam Tusi Ballroom</p>
+                <p className="text-lg text-charcoal">Hotel Nikko Guam Tasi Ballroom</p>
                 <p className="text-charcoal/70">Tumon, Guam • 6:00 PM</p>
               </div>
             </div>

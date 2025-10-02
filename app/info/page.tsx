@@ -98,7 +98,7 @@ export default function InfoPage() {
                   <strong>Ceremony:</strong> Dulce Nombre de Maria Cathedral-Basilica
                 </p>
                 <p>
-                  <strong>Reception:</strong> Hotel Nikko Guam Tusi Ballroom
+                  <strong>Reception:</strong> Hotel Nikko Guam Tasi Ballroom
                 </p>
                 <p>
                   <strong>Address:</strong> 245 Gun Beach Road, Tumon, Guam 96913
@@ -161,7 +161,7 @@ export default function InfoPage() {
                     <strong>Ceremony:</strong> 2:00 PM at Dulce Nombre de Maria Cathedral-Basilica
                   </p>
                   <p>
-                    <strong>Reception:</strong> 6:00 PM at Hotel Nikko Guam Tusi Ballroom
+                    <strong>Reception:</strong> 6:00 PM at Hotel Nikko Guam Tasi Ballroom
                   </p>
                   <p className="mt-2 text-jewel-purple">Then we dance until we can't dance anymore! 🌴</p>
                 </div>
@@ -178,7 +178,7 @@ export default function InfoPage() {
                     cathedral in Hagåtña)
                   </p>
                   <p>
-                    <strong>Reception:</strong> Hotel Nikko Guam Tusi Ballroom
+                    <strong>Reception:</strong> Hotel Nikko Guam Tasi Ballroom
                   </p>
                   <p>
                     <strong>Address:</strong> 245 Gun Beach Road, Tumon, Guam 96913
@@ -232,13 +232,12 @@ export default function InfoPage() {
                 </p>
               </div>
               <div>
+              <div>
                 <h5 className="text-xl font-semibold text-jewel-fuchsia mb-3 font-serif">The Reception</h5>
                 <p className="text-gray-700 mb-4">
-                  After the ceremony, we're heading to the gorgeous Tusi Ballroom at Hotel Nikko Guam for the real
+                  After the ceremony, we're heading to the gorgeous Tasi Ballroom at Hotel Nikko Guam for the real
                   party! Think crystal chandeliers, a huge dance floor, and amazing lighting. The reception starts at
                   6:00 PM, and we'll be dancing until late.
-                </p>
-                <p className="text-gray-700">
                   Hotel Nikko is right in Tumon with valet parking, so getting there is a breeze. Come ready to eat,
                   drink, and celebrate with us! 🎉
                 </p>
