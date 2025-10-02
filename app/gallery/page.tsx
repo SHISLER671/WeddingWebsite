@@ -165,14 +165,14 @@ export default function GalleryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-soft-blush via-warm-white to-rose-gold/20">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+    <div className="min-h-screen bg-gradient-to-br from-soft-blush via-warm-white to-rose-gold/20 relative">
+      <div className="fixed inset-0 z-0">
         <Image
           src="/romantic-wedding-background-with-soft-florals.jpg"
           alt="Wedding background"
           fill
           className="object-cover opacity-30"
+          priority
         />
       </div>
 
@@ -208,7 +208,15 @@ export default function GalleryPage() {
         {/* Upload Form Modal */}
         {showUploadForm && (
           <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-warm-white rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 my-4 max-h-[90vh] overflow-y-auto">
+            {/* Background Image Layer */}
+            <div className="absolute inset-0 rounded-2xl overflow-hidden">
+              <Image src="/grokflowers.jpg" alt="Floral background" fill className="object-cover opacity-15" priority />
+              {/* Additional overlay for better text readability */}
+              <div className="absolute inset-0 bg-warm-white/80" />
+            </div>
+
+            {/* Content Layer */}
+            <div className="bg-warm-white rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 my-4 max-h-[90vh] overflow-y-auto relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-semibold text-charcoal">Share a Memory</h3>
                 <button
@@ -221,7 +229,7 @@ export default function GalleryPage() {
 
               {/* Upload Area */}
               <div
-                className="border-2 border-dashed border-rose-gold/50 rounded-lg p-4 sm:p-8 text-center mb-4 cursor-pointer hover:border-rose-gold transition-colors touch-manipulation"
+                className="border-2 border-dashed border-rose-gold/50 rounded-lg p-4 sm:p-8 text-center mb-4 cursor-pointer hover:border-rose-gold transition-colors touch-manipulation bg-white/60 backdrop-blur-sm"
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
@@ -271,7 +279,7 @@ export default function GalleryPage() {
                   value={uploadName}
                   onChange={(e) => setUploadName(e.target.value)}
                   placeholder="Enter your name or leave blank for anonymous"
-                  className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 text-base"
+                  className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 text-base bg-white/80 backdrop-blur-sm"
                 />
               </div>
 
@@ -289,7 +297,7 @@ export default function GalleryPage() {
                   placeholder="Share a memory, quote, or special moment... ✨"
                   rows={3}
                   maxLength={200}
-                  className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 resize-none text-base placeholder:text-charcoal/50"
+                  className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 resize-none text-base placeholder:text-charcoal/50 bg-white/80 backdrop-blur-sm"
                 />
                 <div className="flex justify-between items-center mt-1">
                   <p className="text-xs text-charcoal/60">Add a friendly comment or quote to your memory</p>
