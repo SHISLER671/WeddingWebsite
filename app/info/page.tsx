@@ -19,8 +19,13 @@ import { useChat } from "../../contexts/ChatContext"
 import { useAccount } from "wagmi"
 import { useLoginWithAbstract } from "@abstract-foundation/agw-react"
 import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
+import { useEffect } from "react"
 
 export default function InfoPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <div className="min-h-screen bg-wedding-romantic">
       {/* Header with Navigation */}
@@ -232,14 +237,12 @@ export default function InfoPage() {
                 </p>
               </div>
               <div>
-              <div>
                 <h5 className="text-xl font-semibold text-jewel-fuchsia mb-3 font-serif">The Reception</h5>
                 <p className="text-gray-700 mb-4">
                   After the ceremony, we're heading to the gorgeous Tasi Ballroom at Hotel Nikko Guam for the real
                   party! Think crystal chandeliers, a huge dance floor, and amazing lighting. The reception starts at
-                  6:00 PM, and we'll be dancing until late.
-                  Hotel Nikko is right in Tumon with valet parking, so getting there is a breeze. Come ready to eat,
-                  drink, and celebrate with us! 🎉
+                  6:00 PM, and we'll be dancing until late. Hotel Nikko is right in Tumon with valet parking, so getting
+                  there is a breeze. Come ready to eat, drink, and celebrate with us! 🎉
                 </p>
               </div>
             </div>
@@ -437,27 +440,12 @@ export default function InfoPage() {
 
           {/* Navigation Footer */}
           <section className="text-center">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link
-                href="/"
-                className="flex items-center border-2 border-jewel-burgundy text-jewel-burgundy hover:bg-jewel-burgundy hover:text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-md"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Link>
-
-              <Link
-                href="/rsvp"
-                className="flex items-center bg-jewel-fuchsia hover:bg-jewel-crimson text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-md"
-              >
-                RSVP Now
-              </Link>
-
+            <div className="flex justify-center">
               <Link
                 href="/gifts"
-                className="flex items-center bg-jewel-purple hover:bg-jewel-violet text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-md"
+                className="flex items-center bg-jewel-emerald hover:bg-emerald-600 text-white px-12 py-5 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl text-xl font-semibold"
               >
-                <Gift className="w-4 h-4 mr-2" />
+                <Gift className="w-6 h-6 mr-3" />
                 Registry & Gifts
               </Link>
             </div>

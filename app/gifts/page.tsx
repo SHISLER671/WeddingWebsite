@@ -3,11 +3,15 @@ import Link from "next/link"
 import { ArrowLeft, Heart, Wallet, Palmtree, Leaf, Copy } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function GiftsPage() {
   const [copied, setCopied] = useState(false)
   const groomAddress = "0x7674171719Ab79b8C0048aa8405BC2E76AF97d0D"
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(groomAddress)
@@ -16,7 +20,10 @@ export default function GiftsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-warm-white via-emerald-50/30 to-jewel-fuchsia/5">
+    <div
+      className="min-h-screen bg-fixed bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url(/gifts-background.jpg)" }}
+    >
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Link
           href="/"
@@ -41,7 +48,7 @@ export default function GiftsPage() {
         </div>
 
         <div className="grid gap-6 mb-12">
-          <Card className="border-jewel-crimson/20 shadow-lg">
+          <Card className="border-jewel-crimson/20 shadow-lg bg-white/40 backdrop-blur-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-jewel-crimson">
                 <Heart className="w-5 h-5" />
@@ -58,7 +65,7 @@ export default function GiftsPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-400/20 shadow-lg bg-gradient-to-br from-white to-emerald-50/30">
+          <Card className="border-emerald-400/20 shadow-lg bg-white/40 backdrop-blur-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-emerald-700">
                 <Wallet className="w-5 h-5" />
@@ -100,7 +107,7 @@ export default function GiftsPage() {
           </Card>
         </div>
 
-        <Card className="border-rose-gold/30 shadow-lg">
+        <Card className="border-rose-gold/30 shadow-lg bg-white/40 backdrop-blur-lg">
           <CardHeader>
             <CardTitle className="text-charcoal">Crypto Gift Questions</CardTitle>
             <CardDescription>Everything you need to know about gifting with Abstract</CardDescription>
