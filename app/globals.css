@@ -38,43 +38,44 @@
 
 @layer base {
   :root {
-    /* New 4-color classy and sexy palette */
+    /* Enhanced color palette to match luxurious wedding inspiration - richer, more saturated jewel tones */
     --background: 0 0% 98%; /* Warm white */
-    --foreground: 340 65% 25%; /* Deep burgundy for text */
+    --foreground: 340 75% 20%; /* Deeper burgundy for text */
     --card: 0 0% 100%;
-    --card-foreground: 340 65% 25%;
+    --card-foreground: 340 75% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 340 65% 25%;
-    --primary: 340 65% 35%; /* Burgundy */
+    --popover-foreground: 340 75% 20%;
+    --primary: 340 75% 30%; /* Richer burgundy */
     --primary-foreground: 0 0% 98%;
-    --secondary: 320 90% 65%; /* Fuchsia/Magenta */
+    --secondary: 320 95% 60%; /* More vibrant fuchsia */
     --secondary-foreground: 0 0% 98%;
     --muted: 15 15% 90%;
     --muted-foreground: 0 0% 45%;
-    --accent: 45 100% 50%; /* Gold */
-    --accent-foreground: 340 65% 25%;
+    --accent: 45 100% 55%; /* Brighter gold */
+    --accent-foreground: 340 75% 20%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 340 30% 85%;
     --input: 340 30% 85%;
-    --ring: 340 65% 35%;
+    --ring: 340 75% 30%;
     --radius: 0.75rem;
 
-    /* Wedding-specific colors - Updated to match inspiration images */
+    /* Wedding-specific colors - Enhanced for luxury */
     --charcoal: 0 0% 10%;
     --warm-white: 0 0% 98%;
-    --rose-gold: 45 100% 60%; /* Changed to gold */
-    --soft-blush: 340 50% 90%;
+    --rose-gold: 45 100% 55%; /* Brighter gold */
+    --soft-blush: 340 60% 88%;
 
-    /* Jewel tone palette - Updated to match wedding photos */
-    --jewel-burgundy: 340 65% 35%; /* Deep burgundy red */
-    --jewel-crimson: 350 85% 40%; /* Crimson red - darkened from 50% to 40% */
-    --jewel-fuchsia: 320 90% 65%; /* Vibrant fuchsia/magenta */
-    --jewel-purple: 280 70% 45%; /* Rich purple - darkened from 50% to 45% */
-    --jewel-violet: 270 60% 50%; /* Deep violet - darkened from 55% to 50% */
-    --jewel-gold: 45 100% 50%; /* Metallic gold */
-    --jewel-sapphire: 220 80% 40%; /* Deep sapphire blue - added */
-    --jewel-emerald: 160 70% 35%; /* Rich emerald green - added */
+    /* Jewel tone palette - Enhanced saturation and richness to match wedding photos */
+    --jewel-burgundy: 340 75% 30%; /* Deeper, richer burgundy */
+    --jewel-crimson: 350 90% 45%; /* More saturated crimson */
+    --jewel-fuchsia: 320 95% 60%; /* Vibrant fuchsia/magenta */
+    --jewel-purple: 280 80% 40%; /* Richer, deeper purple */
+    --jewel-violet: 270 70% 45%; /* More saturated violet */
+    --jewel-gold: 45 100% 55%; /* Brighter metallic gold */
+    --jewel-sapphire: 220 85% 35%; /* Deeper sapphire blue */
+    --jewel-emerald: 160 75% 32%; /* Richer emerald green */
+    --jewel-rose: 350 75% 55%; /* Deep rose pink */
   }
 
   .dark {
@@ -237,6 +238,10 @@
     border-color: hsl(var(--jewel-emerald));
   }
 
+  .border-jewel-rose {
+    border-color: hsl(var(--jewel-rose));
+  }
+
   /* Gradient backgrounds inspired by wedding photos */
   .bg-wedding-luxury {
     background: linear-gradient(
@@ -248,7 +253,16 @@
   }
 
   .bg-wedding-romantic {
-    background: linear-gradient(to bottom right, hsl(340 50% 95%), hsl(320 60% 95%), hsl(340 40% 90%));
+    background: linear-gradient(to bottom right, hsl(340 60% 92%), hsl(320 70% 90%), hsl(340 50% 85%));
+  }
+
+  .bg-wedding-opulent {
+    background: linear-gradient(
+      to bottom,
+      hsl(var(--jewel-crimson)) 0%,
+      hsl(var(--jewel-burgundy)) 50%,
+      hsl(var(--jewel-purple)) 100%
+    );
   }
 
   /* Gold shimmer effect */
@@ -257,5 +271,37 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* Utility class for rose pink */
+  .text-jewel-rose {
+    color: hsl(var(--jewel-rose));
+  }
+
+  .bg-jewel-rose {
+    background-color: hsl(var(--jewel-rose));
+  }
+
+  /* Glass morphism effect for luxury feel */
+  .glass-luxury {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Metallic gold border effect */
+  .border-gold-metallic {
+    border-image: linear-gradient(90deg, hsl(45 100% 45%), hsl(45 100% 65%), hsl(45 100% 45%)) 1;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
