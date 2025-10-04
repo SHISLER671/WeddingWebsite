@@ -118,17 +118,29 @@ export default function RSVPPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100">
-      <div className="container mx-auto px-4 py-16 font-sans">
+    <div className="min-h-screen relative">
+      {/* Fixed background image */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/hibiscusring.jpg')",
+          backgroundAttachment: 'fixed'
+        }}
+      />
+      {/* Overlay for better text readability */}
+      <div className="fixed inset-0 bg-black/20" />
+      
+      {/* Scrollable content */}
+      <div className="relative z-10 container mx-auto px-4 py-16 font-sans">
         {/* Header */}
         <div className="text-center mb-12">
-          <Link href="/" className="text-rose-600 hover:text-rose-800 font-medium mb-4 inline-block">
+          <Link href="/" className="text-white hover:text-rose-200 font-medium mb-4 inline-block bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm">
             ← Back to Home
           </Link>
-          <h1 className="text-4xl md:text-6xl font-serif text-rose-800 mb-4">
+          <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">
             {isEditMode ? "Edit Your RSVP" : "RSVP"}
           </h1>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+          <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
             {isEditMode
               ? "Update your RSVP details below. Your previous response will be updated."
               : "We're so excited to celebrate with you! Please let us know if you'll be joining us on February 13, 2026."}
@@ -136,7 +148,7 @@ export default function RSVPPage() {
         </div>
 
         {isEditMode && !foundRSVP && (
-          <div className="max-w-2xl mx-auto mb-8 bg-white rounded-lg shadow-lg p-6">
+          <div className="max-w-2xl mx-auto mb-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6 border border-white/20">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center gap-2 font-serif">
               <Search className="w-6 h-6 text-rose-600" />
               Find Your RSVP
@@ -183,7 +195,7 @@ export default function RSVPPage() {
         )}
 
         {isEditMode && foundRSVP && (
-          <div className="max-w-2xl mx-auto mb-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg shadow-lg p-6 border-2 border-green-200">
+          <div className="max-w-2xl mx-auto mb-8 bg-green-50/80 backdrop-blur-sm rounded-lg shadow-lg p-6 border-2 border-green-200/50">
             <div className="flex items-start gap-3 mb-4">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
@@ -219,7 +231,7 @@ export default function RSVPPage() {
         )}
 
         {/* RSVP Form */}
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-8 border border-white/20">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Guest Name */}
             <div>

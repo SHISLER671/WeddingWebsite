@@ -3,25 +3,37 @@ import Link from "next/link";
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100">
-      <div className="container mx-auto px-4 py-16">
+    <div className="min-h-screen relative">
+      {/* Fixed background image */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/hibiscusring.jpg')",
+          backgroundAttachment: 'fixed'
+        }}
+      />
+      {/* Overlay for better text readability */}
+      <div className="fixed inset-0 bg-black/20" />
+      
+      {/* Scrollable content */}
+      <div className="relative z-10 container mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-12">
           <Link 
             href="/" 
-            className="text-rose-600 hover:text-rose-800 font-medium inline-block text-left ml-0 mr-0 mb-20"
+            className="text-white hover:text-rose-200 font-medium mb-4 inline-block bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm"
           >
             ← Back to Home
           </Link>
-          <h1 className="text-4xl md:text-6xl font-serif text-rose-800 mb-4">Contact Us</h1>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+          <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">Contact Us</h1>
+          <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
             Have questions about the wedding? Need to update your RSVP? We're here to help!
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 text-center gap-px">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 text-center gap-6">
           {/* Contact Form */}
-          <div className="bg-white rounded-lg shadow-lg p-8 mx-px my-px px-10 py-10 text-left">
+          <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-8 border border-white/20 text-left">
             <h2 className="text-2xl font-serif text-rose-700 mb-6 text-center">Send us a Message</h2>
             <form className="space-y-4">
               <div>
