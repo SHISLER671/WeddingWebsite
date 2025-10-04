@@ -22,7 +22,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default function ConfirmationPage() {
   return (
-    <div className="min-h-screen bg-warm-white">
+    <div className="min-h-screen confirmation-page-bg">
       <div className="relative overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
