@@ -22,17 +22,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default function ConfirmationPage() {
   return (
-    <div className="min-h-screen bg-warm-white">
-      <div className="relative overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/tricho2.jpg')",
-            backgroundAttachment: 'fixed'
-          }}
-        ></div>
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 px-4 py-16">
+    <div className="min-h-screen relative">
+      {/* Fixed background image */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/tricho2.jpg')",
+          backgroundAttachment: 'fixed'
+        }}
+      />
+      {/* Overlay for better text readability */}
+      <div className="fixed inset-0 bg-black/20" />
+      
+      {/* Scrollable content */}
+      <div className="relative z-10 px-4 py-16">
           <div className="max-w-4xl mx-auto">
             <div className="flex justify-between items-start mb-8">
               <Link
@@ -42,25 +45,23 @@ export default function ConfirmationPage() {
                 <Edit className="w-4 h-4" />
                 Edit RSVP
               </Link>
-              <Link href="/" className="text-charcoal/70 hover:text-charcoal font-medium transition-colors">
+              <Link href="/" className="text-white/90 hover:text-white font-medium transition-colors bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm">
                 ← Home
               </Link>
             </div>
 
             <div className="text-center">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <Palmtree className="w-8 h-8 text-emerald-600" />
-                <Sparkles className="w-8 h-8 text-rose-gold" />
-                <h1 className="text-4xl md:text-6xl font-light text-charcoal tracking-wide">Thank You</h1>
-                <Sparkles className="w-8 h-8 text-rose-gold" />
-                <Palmtree className="w-8 h-8 text-emerald-600" />
+                <Palmtree className="w-8 h-8 text-emerald-300 drop-shadow-lg" />
+                <Sparkles className="w-8 h-8 text-yellow-300 drop-shadow-lg" />
+                <h1 className="text-4xl md:text-6xl font-light text-white tracking-wide drop-shadow-lg">Thank You</h1>
+                <Sparkles className="w-8 h-8 text-yellow-300 drop-shadow-lg" />
+                <Palmtree className="w-8 h-8 text-emerald-300 drop-shadow-lg" />
               </div>
-              <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-4">for taking the time to RSVP</p>
-              <p className="text-lg text-rose-gold font-medium">We can't wait to celebrate with you! 🌺</p>
+              <p className="text-xl md:text-2xl text-white/90 font-light mb-4 drop-shadow-md">for taking the time to RSVP</p>
+              <p className="text-lg text-yellow-300 font-medium drop-shadow-md">We can't wait to celebrate with you! 🌺</p>
             </div>
           </div>
-        </div>
-      </div>
 
       <div className="max-w-4xl mx-auto px-4 pb-16">
         <div className="grid gap-8">
@@ -85,7 +86,7 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Location Card */}
-          <div className="bg-warm-white rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center">
                 <MapPin className="h-6 w-6 text-emerald-600" />
@@ -155,7 +156,7 @@ export default function ConfirmationPage() {
         </div>
 
         <section className="max-w-4xl mx-auto mt-16 mb-8">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed">
