@@ -1,7 +1,7 @@
 // Gallery utility functions for Supabase Storage operations
 // Handles file uploads, metadata management, and image optimization
 
-import { createClient } from "@/utils/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 
 export interface GalleryItem {
   id: string
