@@ -6,12 +6,10 @@ import {
   Clock,
   Gift,
   Edit,
-  Sparkles,
   Heart,
   Flower2,
   MessageCircle,
   Wallet,
-  Palmtree,
 } from "lucide-react"
 import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
 import { useChat } from "../../contexts/ChatContext"
@@ -40,15 +38,9 @@ export default function ConfirmationPage() {
             </div>
 
             <div className="text-center">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <Palmtree className="w-8 h-8 text-emerald-600" />
-                <Sparkles className="w-8 h-8 text-rose-gold" />
-                <h1 className="text-4xl md:text-6xl font-light text-charcoal tracking-wide">Thank You</h1>
-                <Sparkles className="w-8 h-8 text-rose-gold" />
-                <Palmtree className="w-8 h-8 text-emerald-600" />
-              </div>
-              <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-4">for taking the time to RSVP</p>
-              <p className="text-lg text-rose-gold font-medium">We can't wait to celebrate with you! 🌺</p>
+              <h1 className="text-4xl md:text-6xl font-light text-white tracking-wide mb-6 drop-shadow-lg">Thank You</h1>
+              <p className="text-xl md:text-2xl text-white/90 font-light mb-4 drop-shadow-md">for taking the time to RSVP</p>
+              <p className="text-lg text-white font-medium drop-shadow-md">We can't wait to celebrate with you!</p>
             </div>
           </div>
         </div>
