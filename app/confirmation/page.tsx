@@ -24,14 +24,6 @@ export default function ConfirmationPage() {
   return (
     <div className="min-h-screen confirmation-page-bg">
       <div className="relative overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/tricho2.jpg')",
-            backgroundAttachment: 'fixed'
-          }}
-        ></div>
-        <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative z-10 px-4 py-16">
           <div className="max-w-4xl mx-auto">
             <div className="flex justify-between items-start mb-8">
