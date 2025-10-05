@@ -27,14 +27,19 @@ export default function InfoPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-100 via-purple-100/60 to-pink-100 relative">
-      <div
-        className="fixed inset-0 bg-contain bg-center bg-no-repeat pointer-events-none opacity-30"
+    <div className="min-h-screen relative">
+      {/* Fixed background image */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: "url('/r1tricho.jpg')",
-          zIndex: 0,
+          backgroundAttachment: 'fixed'
         }}
       />
+      {/* Overlay for better text readability */}
+      <div className="fixed inset-0 bg-black/20" />
+      
+      {/* Scrollable content */}
       <div className="relative z-10">
         {/* Header with Navigation */}
         <header className="relative bg-white/90 backdrop-blur-sm shadow-sm border-b-2 border-jewel-gold/20">
@@ -55,13 +60,13 @@ export default function InfoPage() {
           <div className="container mx-auto px-4 text-center">
             <div className="flex items-center justify-center gap-4 mb-4">
               <span className="text-4xl">🌹</span>
-              <h2 className="text-5xl md:text-6xl font-serif text-jewel-burgundy">Our Special Day</h2>
+              <h2 className="text-5xl md:text-6xl font-serif text-white drop-shadow-lg">Our Special Day</h2>
               <span className="text-4xl">🌹</span>
             </div>
-            <p className="text-xl text-gray-700 mb-4 font-sans">
+            <p className="text-xl text-white/90 mb-4 font-sans drop-shadow-md">
               Join us for a celebration of love on our island paradise
             </p>
-            <p className="text-lg text-jewel-purple italic font-medium font-sans">
+            <p className="text-lg text-yellow-300 italic font-medium font-sans drop-shadow-md">
               Good vibes, great food, and unforgettable memories
             </p>
           </div>

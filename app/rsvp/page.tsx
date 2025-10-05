@@ -123,7 +123,7 @@ export default function RSVPPage() {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('/p3Tricho.jpg')",
+          backgroundImage: isEditMode ? "url('/p3Tricho.jpg')" : "url('/hibiscusring.jpg')",
           backgroundAttachment: 'fixed'
         }}
       />
