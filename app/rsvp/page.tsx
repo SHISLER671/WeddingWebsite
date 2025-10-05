@@ -133,10 +133,13 @@ export default function RSVPPage() {
       {/* Scrollable content */}
       <div className="relative z-10 container mx-auto px-4 py-16 font-sans">
         {/* Header */}
-        <div className="text-center mb-12">
-          <Link href="/" className="text-white hover:text-rose-200 font-medium mb-4 inline-block bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm">
-            ← Back to Home
-          </Link>
+        <div className="mb-12">
+          <div className="flex justify-start mb-4">
+            <Link href="/" className="text-white hover:text-rose-200 font-medium inline-block bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm">
+              ← Back to Home
+            </Link>
+          </div>
+          <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">
             {isEditMode ? "Edit Your RSVP" : "RSVP"}
           </h1>
@@ -145,6 +148,7 @@ export default function RSVPPage() {
               ? "Update your RSVP details below. Your previous response will be updated."
               : "We're so excited to celebrate with you! Please let us know if you'll be joining us on February 13, 2026."}
           </p>
+          </div>
         </div>
 
         {isEditMode && !foundRSVP && (
