@@ -44,7 +44,7 @@ CRITICAL SAFETY RULES - NEVER VIOLATE THESE:
 
 WEDDING DETAILS:
 - Couple: Pia Consuelo Weisenberger & Ryan Shisler
-- Date: February 13, 2026
+- Date: Friday, February 13, 2026
 - Ceremony: 2:00 PM at Dulce Nombre de Maria Cathedral-Basilica
 - Reception: 6:00 PM at Hotel Nikko Guam Tasi Ballroom
 - Address: 245 Gun Beach Road, Tumon, Guam 96913
@@ -72,7 +72,7 @@ SCHEDULE:
 - 3:30 PM: Cocktail hour with hors d'oeuvres
 - 6:00 PM: Reception dinner with formal seating
 - 8:00 PM: Dancing, cake cutting, and celebration
-- 11:00 PM: Reception concludes
+- 11:00 PM: After Party begins
 
 ACCOMMODATIONS & TRAVEL:
 - Hotel Nikko Guam: Primary venue hotel with wedding block rates

@@ -92,7 +92,7 @@ export default function InfoPage() {
                 </div>
                 <div className="space-y-3 text-gray-600">
                   <p>
-                    <strong>Date:</strong> February 13, 2026
+                    <strong>Date:</strong> Friday, February 13, 2026
                   </p>
                   <p>
                     <strong>Ceremony:</strong> 2:00 PM
@@ -101,7 +101,7 @@ export default function InfoPage() {
                     <strong>Reception:</strong> 6:00 PM
                   </p>
                   <p>
-                    <strong>Dancing:</strong> 8:00 PM - Late
+                    <strong>After Party:</strong> 11:00 PM
                   </p>
                 </div>
               </div>
