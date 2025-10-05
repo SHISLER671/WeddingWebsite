@@ -211,7 +211,7 @@ export default function GalleryPage() {
             {/* Background Image Layer - now inside the modal container */}
             <div className="relative rounded-2xl shadow-2xl max-w-md w-full my-4 max-h-[90vh] overflow-hidden">
               <div className="absolute inset-0 z-0">
-                <Image src="/grokflowers.jpg" alt="Floral background" fill className="object-cover" priority />
+                <Image src="/underleaf.jpg" alt="Floral background" fill className="object-cover" priority />
                 {/* Overlay for readability */}
                 <div className="absolute inset-0 bg-warm-white/85 backdrop-blur-md" />
               </div>

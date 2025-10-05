@@ -31,7 +31,7 @@ export default function InfoPage() {
       <div
         className="fixed inset-0 bg-contain bg-center bg-no-repeat pointer-events-none opacity-30"
         style={{
-          backgroundImage: "url('/info-background.jpg')",
+          backgroundImage: "url('/r1tricho.jpg')",
           zIndex: 0,
         }}
       />
