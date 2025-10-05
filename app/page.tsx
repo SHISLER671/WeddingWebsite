@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="min-h-screen relative">
       <div className="absolute inset-0 z-0">
-        <Image src="/inthecar.jpg" alt="Wedding background" fill className="object-cover object-center" priority />
+        <Image src="/redroses.jpg" alt="Wedding background" fill className="object-cover object-center" priority />
       </div>
 
       <div className="absolute inset-0 z-10 bg-jewel-burgundy/20"></div>

@@ -22,7 +22,7 @@ export default function GiftsPage() {
   return (
     <div
       className="min-h-screen bg-fixed bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url(/gifts-background.jpg)" }}
+      style={{ backgroundImage: "url(/IMG-20251005-WA12.jpg)" }}
     >
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Link

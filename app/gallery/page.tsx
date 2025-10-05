@@ -168,7 +168,7 @@ export default function GalleryPage() {
     <div className="min-h-screen bg-gradient-to-br from-soft-blush via-warm-white to-rose-gold/20 relative">
       <div className="fixed inset-0 z-0">
         <Image
-          src="/romantic-wedding-background-with-soft-florals.jpg"
+          src="/hibiscusring.jpg"
           alt="Wedding background"
           fill
           className="object-cover opacity-30"

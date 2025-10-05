@@ -32,7 +32,7 @@ export default function InfoPage() {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('/r1tricho.jpg')",
+          backgroundImage: "url('/IMG-20251005-WA0013.jpg')",
           backgroundAttachment: 'fixed'
         }}
       />

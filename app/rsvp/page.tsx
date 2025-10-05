@@ -122,10 +122,10 @@ export default function RSVPPage() {
       {/* Fixed background image */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: isEditMode ? "url('/p3Tricho.jpg')" : "url('/hibiscusring.jpg')",
-          backgroundAttachment: 'fixed'
-        }}
+            style={{
+              backgroundImage: isEditMode ? "url('/IMG-20251005-WA0011.jpg')" : "url('/IMG-20251005-WA0014.jpg')",
+              backgroundAttachment: 'fixed'
+            }}
       />
       {/* Overlay for better text readability */}
       <div className="fixed inset-0 bg-black/20" />
