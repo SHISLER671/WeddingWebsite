@@ -18,17 +18,21 @@ export default function ContactPage() {
       {/* Scrollable content */}
       <div className="relative z-10 container mx-auto px-4 py-16">
         {/* Header */}
-        <div className="text-center mb-12">
-          <Link 
-            href="/" 
-            className="text-white hover:text-rose-200 font-medium mb-4 inline-block bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm"
-          >
-            ← Back to Home
-          </Link>
+        <div className="mb-12">
+          <div className="flex justify-start mb-4">
+            <Link 
+              href="/" 
+              className="text-white hover:text-rose-200 font-medium inline-block bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm"
+            >
+              ← Back to Home
+            </Link>
+          </div>
+          <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">Contact Us</h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
             Have questions about the wedding? Need to update your RSVP? We're here to help!
           </p>
+          </div>
         </div>
 
         <div className="max-w-4xl mx-auto grid md:grid-cols-2 text-center gap-6">
