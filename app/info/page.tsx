@@ -66,9 +66,6 @@ export default function InfoPage() {
             <p className="text-xl text-white/90 mb-4 font-sans drop-shadow-md">
               Join us for a celebration of love on our island paradise
             </p>
-            <p className="text-lg text-yellow-300 italic font-medium font-sans drop-shadow-md">
-              Good vibes, great food, and unforgettable memories
-            </p>
           </div>
         </section>
 
@@ -77,9 +74,8 @@ export default function InfoPage() {
             <section className="mb-16">
               <h3 className="text-3xl font-serif text-jewel-burgundy mb-8 text-center">Come celebrate with us!</h3>
               <p className="text-lg text-gray-700 leading-relaxed text-center mb-12">
-                We're getting married on our beautiful island home, and we can't wait to share this special moment with
-                you. Think tropical breezes, stunning views, and a whole lot of love. Below you'll find everything you
-                need to know about our ceremony and the party that follows. Let's make some memories! 🌺
+                We're getting married on our beautiful island home and can't wait to share this moment with you. 
+                Below you'll find everything you need to know about our ceremony and celebration. 🌺
               </p>
             </section>
 
