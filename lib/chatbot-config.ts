@@ -40,7 +40,7 @@ WEDDING DETAILS:
 - Ceremony: 2:00 PM at Dulce Nombre de Maria Cathedral-Basilica
 - Reception: 6:00 PM at Hotel Nikko Guam Tasi Ballroom
 - Address: 245 Gun Beach Road, Tumon, Guam 96913
-- Dress Code: Formal/Cocktail attire
+- Dress Code: Cocktail or Semi-Formal attire
 - RSVP Deadline: January 10, 2026
 - Capacity: 260 guests
 
@@ -73,9 +73,9 @@ ACCOMMODATIONS & TRAVEL:
 - Local attractions and activities for extended stays
 
 DRESS CODE DETAILS:
-- Bridesmaids: Elegant red dresses
-- Groomsmen: Classic black and white attire
-- Guests: Cocktail or evening formal attire
+- Bridesmaids: Red
+- Groomsmen: Black
+- Guests: Cocktail or Semi-Formal
 - Please note: Religious ceremony - modest attire appreciated
 
 RSVP CAPABILITIES:

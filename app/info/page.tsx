@@ -134,16 +134,13 @@ export default function InfoPage() {
                 </div>
                 <div className="space-y-3 text-gray-600">
                   <p>
-                    <strong>Attire:</strong> Formal
-                  </p>
-                  <p>
                     <strong>Bridesmaids:</strong> Red
                   </p>
                   <p>
-                    <strong>Groomsmen:</strong> Black & White
+                    <strong>Groomsmen:</strong> Black
                   </p>
                   <p>
-                    <strong>Guests:</strong> Cocktail or Evening Formal
+                    <strong>Guests:</strong> Cocktail or Semi-Formal
                   </p>
                 </div>
               </div>
