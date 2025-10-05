@@ -51,7 +51,7 @@ export default function InfoPage() {
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back to Home
             </Link>
-            <h1 className="text-2xl font-serif text-white drop-shadow-lg">Wedding Information</h1>
+            <h1 className="text-2xl font-serif text-jewel-burgundy">Wedding Information</h1>
             <ProfileMenu />
           </div>
         </header>
@@ -72,8 +72,8 @@ export default function InfoPage() {
         <div className="container mx-auto px-4 pb-16 font-sans">
           <main className="max-w-6xl mx-auto">
             <section className="mb-16">
-              <h3 className="text-3xl font-serif text-white mb-8 text-center drop-shadow-lg">Come celebrate with us!</h3>
-              <p className="text-lg text-white/90 leading-relaxed text-center mb-12 drop-shadow-md">
+              <h3 className="text-3xl font-serif text-jewel-burgundy mb-8 text-center">Come celebrate with us!</h3>
+              <p className="text-lg text-gray-700 leading-relaxed text-center mb-12">
                 We're getting married on our beautiful island home and can't wait to share this moment with you. 
                 Below you'll find everything you need to know about our ceremony and celebration. 🌺
               </p>

@@ -22,20 +22,23 @@ export default function GiftsPage() {
   return (
     <div
       className="min-h-screen bg-fixed bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url(/IMG-20251005-WA0012.jpg)" }}
+      style={{ backgroundImage: "url(/IMG-20251005-WA12.jpg)" }}
     >
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="flex justify-start mb-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-charcoal hover:text-jewel-crimson transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-        </div>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-charcoal hover:text-jewel-crimson transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Link>
 
         <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Palmtree className="w-10 h-10 text-emerald-600" />
+            <Heart className="w-12 h-12 text-jewel-crimson" />
+            <Leaf className="w-10 h-10 text-emerald-600" />
+          </div>
           <h1 className="text-4xl md:text-5xl font-light text-charcoal mb-4">Your Presence is Our Present</h1>
           <p className="text-lg text-charcoal/70 max-w-2xl mx-auto leading-relaxed mb-2">
             Seriously, having you celebrate with us is the best gift we could ask for. But if you'd like to honor us

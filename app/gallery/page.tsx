@@ -178,19 +178,16 @@ export default function GalleryPage() {
 
       <div className="relative z-10">
         {/* Header */}
-        <div className="py-16 px-4">
+        <div className="text-center py-16 px-4">
           <div className="max-w-4xl mx-auto">
             {/* Back Button */}
-            <div className="flex justify-start mb-6">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 text-charcoal/70 hover:text-charcoal transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span>Back to Home</span>
-              </Link>
-            </div>
-            <div className="text-center">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-charcoal/70 hover:text-charcoal mb-6 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Home</span>
+            </Link>
 
             <h1 className="text-4xl md:text-6xl font-light text-charcoal mb-4 tracking-wide">Wedding Memories</h1>
             <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-8">
@@ -205,7 +202,6 @@ export default function GalleryPage() {
               <Camera className="w-5 h-5" />
               Share a Memory
             </button>
-            </div>
           </div>
         </div>
 
