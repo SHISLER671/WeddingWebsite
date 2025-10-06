@@ -51,7 +51,7 @@ export default function InfoPage() {
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back to Home
             </Link>
-            <h1 className="text-3xl font-serif font-bold text-white drop-shadow-lg">Wedding Information</h1>
+            <h1 className="text-2xl font-serif text-white drop-shadow-lg">Wedding Information</h1>
             <ProfileMenu />
           </div>
         </header>
@@ -60,10 +60,10 @@ export default function InfoPage() {
           <div className="container mx-auto px-4 text-center">
             <div className="flex items-center justify-center gap-4 mb-4">
               <span className="text-4xl">🌹</span>
-              <h2 className="text-6xl md:text-7xl font-serif font-bold text-white drop-shadow-lg">Our Special Day</h2>
+              <h2 className="text-5xl md:text-6xl font-serif text-white drop-shadow-lg">Our Special Day</h2>
               <span className="text-4xl">🌹</span>
             </div>
-            <p className="text-2xl text-white/95 mb-4 font-sans font-medium drop-shadow-md">
+            <p className="text-xl text-white/90 mb-4 font-sans drop-shadow-md">
               Join us for a celebration of love on our island paradise
             </p>
           </div>
@@ -72,8 +72,8 @@ export default function InfoPage() {
         <div className="container mx-auto px-4 pb-16 font-sans">
           <main className="max-w-6xl mx-auto">
             <section className="mb-16">
-              <h3 className="text-4xl font-serif font-bold text-white mb-8 text-center drop-shadow-lg">Come celebrate with us!</h3>
-              <p className="text-xl text-white/95 leading-relaxed text-center mb-12 font-medium drop-shadow-md">
+              <h3 className="text-3xl font-serif text-white mb-8 text-center drop-shadow-lg">Come celebrate with us!</h3>
+              <p className="text-lg text-white/90 leading-relaxed text-center mb-12 drop-shadow-md">
                 We're getting married on our beautiful island home and can't wait to share this moment with you. 
                 Below you'll find everything you need to know about our ceremony and celebration. 🌺
               </p>
@@ -84,20 +84,20 @@ export default function InfoPage() {
               <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-l-4 border-jewel-burgundy">
                 <div className="flex items-center mb-4">
                   <Calendar className="w-6 h-6 text-jewel-burgundy mr-3" />
-                  <h4 className="text-3xl font-serif font-bold text-jewel-burgundy">When</h4>
+                  <h4 className="text-2xl font-serif text-jewel-burgundy">When</h4>
                 </div>
-                <div className="space-y-3 text-gray-900">
-                  <p className="text-lg">
-                    <strong className="text-xl">Date:</strong> <em>Friday, February 13, 2026</em>
+                <div className="space-y-3 text-gray-600">
+                  <p>
+                    <strong>Date:</strong> Friday, February 13, 2026
                   </p>
-                  <p className="text-lg">
-                    <strong className="text-xl">Ceremony:</strong> <em>2:00 PM</em>
+                  <p>
+                    <strong>Ceremony:</strong> 2:00 PM
                   </p>
-                  <p className="text-lg">
-                    <strong className="text-xl">Reception:</strong> <em>6:00 PM</em>
+                  <p>
+                    <strong>Reception:</strong> 6:00 PM
                   </p>
-                  <p className="text-lg">
-                    <strong className="text-xl">After Party:</strong> <em>11:00 PM</em>
+                  <p>
+                    <strong>After Party:</strong> 11:00 PM
                   </p>
                 </div>
               </div>
@@ -105,20 +105,20 @@ export default function InfoPage() {
               <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-l-4 border-jewel-fuchsia">
                 <div className="flex items-center mb-4">
                   <MapPin className="w-6 h-6 text-jewel-fuchsia mr-3" />
-                  <h4 className="text-3xl font-serif font-bold text-jewel-fuchsia">Where</h4>
+                  <h4 className="text-2xl font-serif text-jewel-fuchsia">Where</h4>
                 </div>
-                <div className="space-y-3 text-gray-900">
-                  <p className="text-lg">
-                    <strong className="text-xl">Ceremony:</strong> <em>Dulce Nombre de Maria Cathedral-Basilica</em>
+                <div className="space-y-3 text-gray-600">
+                  <p>
+                    <strong>Ceremony:</strong> Dulce Nombre de Maria Cathedral-Basilica
                   </p>
-                  <p className="text-lg">
-                    <strong className="text-xl">Reception:</strong> <em>Hotel Nikko Guam Tasi Ballroom</em>
+                  <p>
+                    <strong>Reception:</strong> Hotel Nikko Guam Tasi Ballroom
                   </p>
-                  <p className="text-lg">
-                    <strong className="text-xl">Address:</strong> <em>245 Gun Beach Road, Tumon, Guam 96913</em>
+                  <p>
+                    <strong>Address:</strong> 245 Gun Beach Road, Tumon, Guam 96913
                   </p>
-                  <p className="text-lg">
-                    <strong className="text-xl">Capacity:</strong> <em>260 guests</em>
+                  <p>
+                    <strong>Capacity:</strong> 260 guests
                   </p>
                 </div>
               </div>
@@ -126,17 +126,17 @@ export default function InfoPage() {
               <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-l-4 border-jewel-purple">
                 <div className="flex items-center mb-4">
                   <Users className="w-6 h-6 text-jewel-purple mr-3" />
-                  <h4 className="text-3xl font-serif font-bold text-jewel-purple">Dress Code</h4>
+                  <h4 className="text-2xl font-serif text-jewel-purple">Dress Code</h4>
                 </div>
-                <div className="space-y-3 text-gray-900">
-                  <p className="text-lg">
-                    <strong className="text-xl">Bridesmaids:</strong> <em>Red</em>
+                <div className="space-y-3 text-gray-600">
+                  <p>
+                    <strong>Bridesmaids:</strong> Red
                   </p>
-                  <p className="text-lg">
-                    <strong className="text-xl">Groomsmen:</strong> <em>Black</em>
+                  <p>
+                    <strong>Groomsmen:</strong> Black
                   </p>
-                  <p className="text-lg">
-                    <strong className="text-xl">Guests:</strong> <em>Cocktail or Semi-Formal</em>
+                  <p>
+                    <strong>Guests:</strong> Cocktail or Semi-Formal
                   </p>
                 </div>
               </div>
@@ -144,86 +144,86 @@ export default function InfoPage() {
 
             {/* Quick Questions */}
             <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-16 border-t-4 border-jewel-gold">
-              <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Quick Questions</h4>
+              <h4 className="text-3xl font-serif text-jewel-burgundy mb-6 text-center">Quick Questions</h4>
               <div className="space-y-4">
                 <details className="group border-b border-gray-200 pb-4">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-900 hover:text-jewel-burgundy">
+                  <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                     Who's getting hitched?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                   </summary>
-                  <div className="mt-3 text-gray-900">
-                    <p className="text-lg">
-                      That would be <strong className="text-xl">Pia Consuelo Weisenberger</strong> <em>(daughter of John & Elizabeth
-                      Weisenberger)</em> and <strong className="text-xl">Ryan Shisler</strong>! We're tying the knot on our beautiful island
+                  <div className="mt-3 text-gray-600">
+                    <p>
+                      That would be <strong>Pia Consuelo Weisenberger</strong> (daughter of John & Elizabeth
+                      Weisenberger) and <strong>Ryan Shisler</strong>! We're tying the knot on our beautiful island
                       home.
                     </p>
                   </div>
                 </details>
 
                 <details className="group border-b border-gray-200 pb-4">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-900 hover:text-jewel-burgundy">
+                  <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                     When and where is this party happening?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                   </summary>
-                  <div className="mt-3 text-gray-900">
-                    <p className="text-lg">
-                      <strong className="text-xl">Date:</strong> <em>February 13, 2026</em>
+                  <div className="mt-3 text-gray-600">
+                    <p>
+                      <strong>Date:</strong> February 13, 2026
                     </p>
-                    <p className="text-lg">
-                      <strong className="text-xl">Ceremony:</strong> <em>2:00 PM at Dulce Nombre de Maria Cathedral-Basilica</em>
+                    <p>
+                      <strong>Ceremony:</strong> 2:00 PM at Dulce Nombre de Maria Cathedral-Basilica
                     </p>
-                    <p className="text-lg">
-                      <strong className="text-xl">Reception:</strong> <em>6:00 PM at Hotel Nikko Guam Tasi Ballroom</em>
+                    <p>
+                      <strong>Reception:</strong> 6:00 PM at Hotel Nikko Guam Tasi Ballroom
                     </p>
-                    <p className="mt-2 text-lg font-bold text-jewel-purple">Then we dance until we can't dance anymore! 🌴</p>
+                    <p className="mt-2 text-jewel-purple">Then we dance until we can't dance anymore! 🌴</p>
                   </div>
                 </details>
 
                 <details className="group border-b border-gray-200 pb-4">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-900 hover:text-jewel-burgundy">
+                  <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                     Where exactly are these places?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                   </summary>
-                  <div className="mt-3 text-gray-900">
-                    <p className="text-lg">
-                      <strong className="text-xl">Ceremony:</strong> <em>Dulce Nombre de Maria Cathedral-Basilica</em> <em>(the beautiful historic
-                      cathedral in Hagåtña)</em>
+                  <div className="mt-3 text-gray-600">
+                    <p>
+                      <strong>Ceremony:</strong> Dulce Nombre de Maria Cathedral-Basilica (the beautiful historic
+                      cathedral in Hagåtña)
                     </p>
-                    <p className="text-lg">
-                      <strong className="text-xl">Reception:</strong> <em>Hotel Nikko Guam Tasi Ballroom</em>
+                    <p>
+                      <strong>Reception:</strong> Hotel Nikko Guam Tasi Ballroom
                     </p>
-                    <p className="text-lg">
-                      <strong className="text-xl">Address:</strong> <em>245 Gun Beach Road, Tumon, Guam 96913</em>
+                    <p>
+                      <strong>Address:</strong> 245 Gun Beach Road, Tumon, Guam 96913
                     </p>
-                    <p className="mt-2 text-lg font-bold">Valet parking available - because we've got you covered!</p>
+                    <p className="mt-2 text-sm">Valet parking available - because we've got you covered!</p>
                   </div>
                 </details>
 
                 <details className="group border-b border-gray-200 pb-4">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-900 hover:text-jewel-burgundy">
+                  <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                     When do I need to RSVP by?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                   </summary>
-                  <div className="mt-3 text-gray-900">
-                    <p className="text-lg">
-                      Please let us know by <strong className="text-xl">January 10, 2026</strong>. You can RSVP right here on the website -
-                      <em>super easy, super quick!</em>
+                  <div className="mt-3 text-gray-600">
+                    <p>
+                      Please let us know by <strong>January 10, 2026</strong>. You can RSVP right here on the website -
+                      super easy, super quick!
                     </p>
                   </div>
                 </details>
 
                 <details className="group">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-900 hover:text-jewel-burgundy">
+                  <summary className="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 hover:text-jewel-burgundy">
                     What should I wear?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-5 h-5 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
                   </summary>
-                  <div className="mt-3 text-gray-900">
-                    <p className="text-lg">
-                      Dress code is <strong className="text-xl">Formal</strong> - <em>think cocktail or evening formal attire. Look good, feel
-                      good!</em>
+                  <div className="mt-3 text-gray-600">
+                    <p>
+                      Dress code is <strong>Formal</strong> - think cocktail or evening formal attire. Look good, feel
+                      good!
                     </p>
-                    <p className="mt-2 text-lg">
-                      Since it's a religious ceremony, <strong>modest attire is appreciated</strong>. But don't stress - just dress up
+                    <p className="mt-2">
+                      Since it's a religious ceremony, modest attire is appreciated. But don't stress - just dress up
                       and you'll be perfect!
                     </p>
                   </div>
@@ -233,123 +233,44 @@ export default function InfoPage() {
 
             {/* About Our Venues */}
             <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-16 border-t-4 border-jewel-fuchsia">
-              <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">About Our Venues</h4>
+              <h4 className="text-3xl font-serif text-jewel-burgundy mb-6 text-center">About Our Venues</h4>
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
-                  <h5 className="text-2xl font-bold text-jewel-burgundy mb-4 font-serif">The Cathedral</h5>
-                  <p className="text-lg text-gray-900 mb-4">
-                    We're saying our vows at the stunning <strong>Dulce Nombre de Maria Cathedral-Basilica at 2:00 PM</strong>. It's a
-                    beautiful, historic place that means a lot to us. <em>Sacred, elegant, and the perfect spot to start our
-                    forever.</em>
+                  <h5 className="text-xl font-semibold text-jewel-burgundy mb-3 font-serif">The Cathedral</h5>
+                  <p className="text-gray-700 mb-4">
+                    We're saying our vows at the stunning Dulce Nombre de Maria Cathedral-Basilica at 2:00 PM. It's a
+                    beautiful, historic place that means a lot to us. Sacred, elegant, and the perfect spot to start our
+                    forever.
                   </p>
                 </div>
                 <div>
-                  <h5 className="text-2xl font-bold text-jewel-fuchsia mb-4 font-serif">The Reception</h5>
-                  <p className="text-lg text-gray-900 mb-4">
-                    After the ceremony, we're heading to the gorgeous <strong>Tasi Ballroom at Hotel Nikko Guam</strong> for the real
-                    party! <em>Think crystal chandeliers, a huge dance floor, and amazing lighting.</em> The reception starts at
-                    <strong>6:00 PM</strong>, and we'll be dancing until late. Hotel Nikko is right in Tumon with valet parking, so
-                    getting there is a breeze. <strong>Come ready to eat, drink, and celebrate with us! 🎉</strong>
+                  <h5 className="text-xl font-semibold text-jewel-fuchsia mb-3 font-serif">The Reception</h5>
+                  <p className="text-gray-700 mb-4">
+                    After the ceremony, we're heading to the gorgeous Tasi Ballroom at Hotel Nikko Guam for the real
+                    party! Think crystal chandeliers, a huge dance floor, and amazing lighting. The reception starts at
+                    6:00 PM, and we'll be dancing until late. Hotel Nikko is right in Tumon with valet parking, so
+                    getting there is a breeze. Come ready to eat, drink, and celebrate with us! 🎉
                   </p>
                 </div>
-              </div>
-            </section>
-
-            {/* Wedding Party */}
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-16 border-t-4 border-jewel-crimson">
-              <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-8 text-center">Wedding Party</h4>
-              
-              <div className="grid md:grid-cols-2 gap-8 mb-8">
-                {/* Bridesmaids & Maids of Honor */}
-                <div className="bg-gradient-to-br from-jewel-burgundy/10 to-jewel-fuchsia/10 rounded-lg p-6 border-l-4 border-jewel-fuchsia">
-                  <h5 className="text-2xl font-serif font-bold text-jewel-fuchsia mb-4 flex items-center gap-2">
-                    <Users className="w-6 h-6" />
-                    Bridesmaids & Maids of Honor
-                  </h5>
-                  <div className="space-y-3">
-                    <div className="text-center">
-                      <h6 className="text-xl font-bold text-jewel-burgundy mb-2">Maid of Honor</h6>
-                      <p className="text-lg text-gray-900"></p>
-                    </div>
-                    <div className="text-center">
-                      <h6 className="text-xl font-bold text-jewel-burgundy mb-2">Maid of Honor</h6>
-                      <p className="text-lg text-gray-900"></p>
-                    </div>
-                    <div className="border-t border-jewel-fuchsia/30 pt-3">
-                      <h6 className="text-lg font-bold text-jewel-fuchsia mb-3 text-center">Bridesmaids</h6>
-                      <div className="space-y-2">
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Groomsmen & Best Man */}
-                <div className="bg-gradient-to-br from-jewel-purple/10 to-jewel-emerald/10 rounded-lg p-6 border-l-4 border-jewel-purple">
-                  <h5 className="text-2xl font-serif font-bold text-jewel-purple mb-4 flex items-center gap-2">
-                    <Users className="w-6 h-6" />
-                    Groomsmen & Best Man
-                  </h5>
-                  <div className="space-y-3">
-                    <div className="text-center">
-                      <h6 className="text-xl font-bold text-jewel-purple mb-2">Best Man</h6>
-                      <p className="text-lg text-gray-900"></p>
-                    </div>
-                    <div className="border-t border-jewel-purple/30 pt-3">
-                      <h6 className="text-lg font-bold text-jewel-purple mb-3 text-center">Groomsmen</h6>
-                      <div className="space-y-2">
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                        <p className="text-lg text-gray-900"></p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="text-center mt-6">
-                <p className="text-lg text-gray-900 font-medium">
-                  <em>We're so grateful to have these amazing people standing with us on our special day!</em>
-                </p>
               </div>
             </section>
 
             {/* Meet Sofia */}
             <Card className="mb-16 border-jewel-burgundy/30 shadow-lg bg-white/40 backdrop-blur-lg">
               <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-jewel-fuchsia/10 border-b-2 border-jewel-gold/20">
-                <CardTitle className="flex items-center gap-3 text-jewel-burgundy text-3xl font-serif font-bold">
-                  <MessageCircle className="w-8 h-8" />
-                  Meet Jahmal - Your 24/7 Wedding Buddy
+                <CardTitle className="flex items-center gap-3 text-jewel-burgundy text-2xl font-serif">
+                  <MessageCircle className="w-7 h-7" />
+                  Meet Sofia - Your 24/7 Wedding Buddy
                 </CardTitle>
-                <CardDescription className="text-lg font-sans text-gray-800">
-                  He's basically your personal wedding guru, always online
+                <CardDescription className="text-base font-sans">
+                  She's basically your personal wedding guru, always online
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
-                <p className="text-lg text-gray-900 leading-relaxed mb-6">
-                  Jahmal is our AI wedding assistant who knows everything about our big day. <em>Got questions at 2 AM about
-                  what to wear? Wondering where to grab the best local food?</em> He's got you covered, day or night. <strong>No
-                  question is too small!</strong>
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  Sofia is our AI wedding assistant who knows everything about our big day. Got questions at 2 AM about
+                  what to wear? Wondering where to grab the best local food? She's got you covered, day or night. No
+                  question is too small!
                 </p>
 
                 <div className="flex justify-center mb-6">
@@ -358,65 +279,65 @@ export default function InfoPage() {
 
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="what-is-sofia">
-                    <AccordionTrigger className="text-left">So what exactly is Jahmal?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      Jahmal is like having a <strong>super knowledgeable friend who never sleeps!</strong> He's an AI assistant we built
-                      specifically for our wedding. <em>Ask him about the venue, what time things start, where to stay, what
-                      to do on the island, or literally anything wedding-related.</em> He's friendly, helpful, and always
+                    <AccordionTrigger className="text-left">So what exactly is Sofia?</AccordionTrigger>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Sofia is like having a super knowledgeable friend who never sleeps! She's an AI assistant we built
+                      specifically for our wedding. Ask her about the venue, what time things start, where to stay, what
+                      to do on the island, or literally anything wedding-related. She's friendly, helpful, and always
                       ready to chat.
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="how-to-use">
-                    <AccordionTrigger className="text-left">How do I chat with him?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      After you RSVP, you'll see a <strong>"Chat with Jahmal" button on your confirmation page.</strong> Click it and
-                      start asking away! <em>He's super chill and easy to talk to.</em> Ask about parking, local restaurants,
-                      beach recommendations, your RSVP status - <strong>whatever you need to know!</strong>
+                    <AccordionTrigger className="text-left">How do I chat with her?</AccordionTrigger>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      After you RSVP, you'll see a "Chat with Sofia" button on your confirmation page. Click it and
+                      start asking away! She's super chill and easy to talk to. Ask about parking, local restaurants,
+                      beach recommendations, your RSVP status - whatever you need to know!
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="what-can-ask">
                     <AccordionTrigger className="text-left">What kind of stuff can I ask?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      <strong>Pretty much anything!</strong> Here's what Jahmal can help with:
-                      <ul className="list-disc list-inside mt-3 space-y-2 text-lg">
-                        <li><strong>Venue details, directions, and parking info</strong></li>
-                        <li><strong>Full wedding day timeline and schedule</strong></li>
-                        <li><strong>Dress code questions and outfit suggestions</strong></li>
-                        <li><strong>Hotel recommendations and where to stay</strong></li>
-                        <li><strong>Best beaches, restaurants, and island activities</strong></li>
-                        <li><strong>Weather tips and what to pack for Guam</strong></li>
-                        <li><strong>Your RSVP status (just give him your email)</strong></li>
-                        <li><strong>Gift info and crypto wallet details</strong></li>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Pretty much anything! Here's what Sofia can help with:
+                      <ul className="list-disc list-inside mt-2 space-y-1">
+                        <li>Venue details, directions, and parking info</li>
+                        <li>Full wedding day timeline and schedule</li>
+                        <li>Dress code questions and outfit suggestions</li>
+                        <li>Hotel recommendations and where to stay</li>
+                        <li>Best beaches, restaurants, and island activities</li>
+                        <li>Weather tips and what to pack for Guam</li>
+                        <li>Your RSVP status (just give her your email)</li>
+                        <li>Gift info and crypto wallet details</li>
                       </ul>
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="is-it-safe">
-                    <AccordionTrigger className="text-left">Is my info safe with Jahmal?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      Jahmal uses <strong>secure connections and doesn't store your conversations.</strong> He only sees the wedding info
-                      you already shared when you RSVP'd. <em>We take your privacy seriously</em> - no weird data collection or
+                    <AccordionTrigger className="text-left">Is my info safe with Sofia?</AccordionTrigger>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Sofia uses secure connections and doesn't store your conversations. She only sees the wedding info
+                      you already shared when you RSVP'd. We take your privacy seriously - no weird data collection or
                       anything like that.
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="available-when">
-                    <AccordionTrigger className="text-left">When can I reach him?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      <strong>24/7, baby!</strong> Seriously, Jahmal never sleeps. <em>Middle of the night? He's there. Sunday morning? He's
-                      there.</em> Whenever a question pops into your head, just open the chat and he'll respond instantly.
-                      <strong>No waiting around!</strong>
+                    <AccordionTrigger className="text-left">When can I reach her?</AccordionTrigger>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      24/7, baby! Seriously, Sofia never sleeps. Middle of the night? She's there. Sunday morning? She's
+                      there. Whenever a question pops into your head, just open the chat and she'll respond instantly.
+                      No waiting around!
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="cant-answer">
-                    <AccordionTrigger className="text-left">What if he doesn't know something?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      Jahmal's pretty smart, but if he can't answer something specific, he'll be <strong>honest and suggest
-                      reaching out to us directly.</strong> <em>You can always contact the wedding party for anything Jahmal can't
-                      handle.</em> We're here to help!
+                    <AccordionTrigger className="text-left">What if she doesn't know something?</AccordionTrigger>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Sofia's pretty smart, but if she can't answer something specific, she'll be honest and suggest
+                      reaching out to us directly. You can always contact the wedding party for anything Sofia can't
+                      handle. We're here to help!
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -426,19 +347,19 @@ export default function InfoPage() {
             {/* Abstract Global Wallet */}
             <Card className="mb-16 border-jewel-purple/30 shadow-lg bg-white/40 backdrop-blur-lg">
               <CardHeader className="bg-gradient-to-r from-jewel-purple/10 to-jewel-fuchsia/10 border-b-2 border-jewel-gold/20">
-                <CardTitle className="flex items-center gap-3 text-jewel-purple text-3xl font-serif font-bold">
-                  <Wallet className="w-8 h-8" />
+                <CardTitle className="flex items-center gap-3 text-jewel-purple text-2xl font-serif">
+                  <Wallet className="w-7 h-7" />
                   Abstract Global Wallet - A Little Future Magic
                 </CardTitle>
-                <CardDescription className="text-lg font-sans text-gray-800">
+                <CardDescription className="text-base font-sans">
                   Connect your wallet for a surprise gift from us after the wedding
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
-                <p className="text-lg text-gray-900 leading-relaxed mb-6">
-                  We're mixing tradition with a little tech magic! <strong>Connect your Abstract Global Wallet when you RSVP,
-                  and we'll send you a special digital surprise after the wedding.</strong> It's our way of saying thanks for
-                  celebrating with us. <em>Plus, it's way cooler than it sounds - promise!</em>
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  We're mixing tradition with a little tech magic! Connect your Abstract Global Wallet when you RSVP,
+                  and we'll send you a special digital surprise after the wedding. It's our way of saying thanks for
+                  celebrating with us. Plus, it's way cooler than it sounds - promise!
                 </p>
 
                 <div className="flex justify-center mb-6">
@@ -448,39 +369,39 @@ export default function InfoPage() {
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="what-is-agw">
                     <AccordionTrigger className="text-left">What's Abstract Global Wallet?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      Think of it as a <strong>digital wallet for the future</strong> - like Venmo or PayPal, but built on blockchain
-                      technology. <em>It's super user-friendly and designed for people who've never touched crypto before.</em>
-                      No complicated tech jargon, no confusing setup. <strong>Just a simple, secure way to hold digital assets.</strong>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Think of it as a digital wallet for the future - like Venmo or PayPal, but built on blockchain
+                      technology. It's super user-friendly and designed for people who've never touched crypto before.
+                      No complicated tech jargon, no confusing setup. Just a simple, secure way to hold digital assets.
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="why-connect">
                     <AccordionTrigger className="text-left">Why should I bother connecting it?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      Because you'll get a <strong>special digital keepsake from us after the wedding!</strong> It's a unique memento
-                      that combines old-school wedding tradition with new-school tech. <em>Plus, it's completely free to set
-                      up and takes like 30 seconds.</em> Think of it as a fun way to remember our special day with something
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Because you'll get a special digital keepsake from us after the wedding! It's a unique memento
+                      that combines old-school wedding tradition with new-school tech. Plus, it's completely free to set
+                      up and takes like 30 seconds. Think of it as a fun way to remember our special day with something
                       totally unique.
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="how-to-connect">
                     <AccordionTrigger className="text-left">How do I connect this thing?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      <strong>Super easy!</strong> After you RSVP, you'll see a <strong>"Connect Wallet" button with a flower icon</strong> on the
-                      confirmation page. <em>Click it, and Abstract Global Wallet will walk you through everything.</em> If you
-                      don't have a wallet yet, it'll create one for you automatically. <strong>No forms, no hassle - just click
-                      and you're done!</strong>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Super easy! After you RSVP, you'll see a "Connect Wallet" button with a flower icon on the
+                      confirmation page. Click it, and Abstract Global Wallet will walk you through everything. If you
+                      don't have a wallet yet, it'll create one for you automatically. No forms, no hassle - just click
+                      and you're done!
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="never-used-crypto">
                     <AccordionTrigger className="text-left">I've never used crypto. Will I look dumb?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      <strong>Not at all!</strong> Abstract Global Wallet is literally designed for crypto newbies. <em>You don't need to
-                      understand blockchain or buy any cryptocurrency.</em> Just click the button and follow the super simple
-                      prompts. <strong>It's honestly easier than setting up most apps on your phone. Takes less than a minute!</strong>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Not at all! Abstract Global Wallet is literally designed for crypto newbies. You don't need to
+                      understand blockchain or buy any cryptocurrency. Just click the button and follow the super simple
+                      prompts. It's honestly easier than setting up most apps on your phone. Takes less than a minute!
                     </AccordionContent>
                   </AccordionItem>
 
@@ -488,38 +409,38 @@ export default function InfoPage() {
                     <AccordionTrigger className="text-left">
                       Does it make a wallet for me automatically?
                     </AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      <strong>Yep!</strong> If you don't already have an Abstract Global Wallet, the system creates one for you when you
-                      click <strong>"Connect Wallet."</strong> <em>You'll get your own unique wallet address that's securely linked to your
-                      account.</em> No paperwork, no verification emails - it just works. <strong>Like magic, but real.</strong>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Yep! If you don't already have an Abstract Global Wallet, the system creates one for you when you
+                      click "Connect Wallet." You'll get your own unique wallet address that's securely linked to your
+                      account. No paperwork, no verification emails - it just works. Like magic, but real.
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="is-it-safe">
                     <AccordionTrigger className="text-left">Is this safe? I don't want to get hacked.</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      <strong>Totally safe!</strong> Abstract Global Wallet uses <strong>bank-level security and encryption.</strong> Your wallet is
-                      protected by advanced cryptography, and only you have access to it. <em>We never see your private
-                      keys, and everything is transparent on the blockchain.</em> <strong>It's actually more secure than most
-                      traditional payment methods!</strong>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Totally safe! Abstract Global Wallet uses bank-level security and encryption. Your wallet is
+                      protected by advanced cryptography, and only you have access to it. We never see your private
+                      keys, and everything is transparent on the blockchain. It's actually more secure than most
+                      traditional payment methods!
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="what-surprise">
                     <AccordionTrigger className="text-left">What's the surprise? Give me a hint!</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      <strong>Nice try! 😉</strong> We're keeping it a secret for now, but we promise it'll be something <strong>special and
-                      meaningful</strong> - a digital keepsake that commemorates our wedding day. <em>You'll get it after the
-                      wedding, and it'll be a unique way to remember this celebration.</em> <strong>Trust us, it's worth the mystery!</strong>
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Nice try! 😉 We're keeping it a secret for now, but we promise it'll be something special and
+                      meaningful - a digital keepsake that commemorates our wedding day. You'll get it after the
+                      wedding, and it'll be a unique way to remember this celebration. Trust us, it's worth the mystery!
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="do-i-have-to">
                     <AccordionTrigger className="text-left">Do I HAVE to do this?</AccordionTrigger>
-                    <AccordionContent className="text-lg text-gray-900 leading-relaxed">
-                      <strong>Nope! It's 100% optional.</strong> Your RSVP is totally valid whether you connect a wallet or not. <em>We just
-                      wanted to offer this as a fun, modern option for anyone interested.</em> <strong>Your presence at our wedding
-                      is what matters most to us.</strong> Everything else is just bonus!
+                    <AccordionContent className="text-gray-700 leading-relaxed">
+                      Nope! It's 100% optional. Your RSVP is totally valid whether you connect a wallet or not. We just
+                      wanted to offer this as a fun, modern option for anyone interested. Your presence at our wedding
+                      is what matters most to us. Everything else is just bonus!
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -541,8 +462,8 @@ export default function InfoPage() {
           </main>
 
           {/* Footer */}
-          <footer className="text-center mt-16 text-gray-800 font-sans">
-            <p className="text-lg">&copy; 2026 Pia & Ryan's Wedding. <em>Made with love and Irie vibes.</em> 🌺</p>
+          <footer className="text-center mt-16 text-gray-500 font-sans">
+            <p>&copy; 2026 Pia & Ryan's Wedding. Made with love and Irie vibes. 🌺</p>
           </footer>
         </div>
         <WeddingChatbot />
@@ -564,7 +485,7 @@ function ChatbotButton() {
       className="flex flex-col items-center gap-3 p-6 bg-jewel-crimson hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
     >
       <Heart className="w-8 h-8 text-white" />
-      <span className="font-semibold text-lg text-white">Chat with Jahmal</span>
+      <span className="font-semibold text-lg text-white">Chat with Sofia</span>
       <span className="text-sm opacity-90 text-center text-white">AI Wedding Assistant</span>
     </button>
   )
