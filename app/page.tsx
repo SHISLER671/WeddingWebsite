@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 import Link from "next/link"
-import { Heart, Edit, Camera, Info } from "lucide-react"
+import { Heart, Edit, Gift, Camera, Info } from "lucide-react"
 
 export default function Home() {
   return (
@@ -34,6 +34,13 @@ export default function Home() {
           >
             <Edit className="w-5 h-5" />
             Edit My RSVP
+          </Link>
+          <Link
+            href="/gifts"
+            className="bg-jewel-emerald hover:bg-emerald-600 text-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 min-w-[200px] justify-center border-2 border-jewel-gold/30"
+          >
+            <Gift className="w-5 h-5" />
+            Registry & Gifts
           </Link>
           <Link
             href="/gallery"

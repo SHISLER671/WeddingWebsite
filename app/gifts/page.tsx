@@ -1,9 +1,11 @@
 "use client"
 import Link from "next/link"
-import { ArrowLeft, Heart, Wallet, Palmtree, Leaf, Copy } from "lucide-react"
+import { ArrowLeft, Heart, Wallet, Palmtree, Leaf, Copy, Flower2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useState, useEffect } from "react"
+import { useAccount } from "wagmi"
+import { useLoginWithAbstract } from "@abstract-foundation/agw-react"
 
 export default function GiftsPage() {
   const [copied, setCopied] = useState(false)
@@ -22,7 +24,7 @@ export default function GiftsPage() {
   return (
     <div
       className="min-h-screen bg-fixed bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url(/IMG-20251005-WA12.jpg)" }}
+      style={{ backgroundImage: "url(/IMG-20251005-WA0012.jpg)" }}
     >
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex justify-start mb-8">
@@ -104,6 +106,48 @@ export default function GiftsPage() {
           </Card>
         </div>
 
+        {/* Handmade Art Appreciation */}
+        <Card className="border-jewel-gold/30 shadow-lg bg-white/40 backdrop-blur-lg mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-jewel-gold">
+              <Palmtree className="w-5 h-5" />
+              Handmade Art & Crafts
+            </CardTitle>
+            <CardDescription>Your creativity means the world to us</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-charcoal/80 leading-relaxed">
+              We would <strong>super appreciate any handmade art you created!</strong> Whether it's a painting, drawing, 
+              pottery, jewelry, or any other craft you've poured your heart into - we'd love to have a piece of your 
+              creativity as part of our home. <em>There's something so special about gifts made with love and personal touch.</em>
+            </p>
+            <p className="text-charcoal/70 text-sm italic">
+              Bring your handmade treasures to the wedding, or let us know if you'd like to coordinate delivery. 
+              We can't wait to see what beautiful things you've created! 🎨✨
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Wallet Connect Button */}
+        <Card className="border-jewel-purple/30 shadow-lg bg-white/40 backdrop-blur-lg mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-jewel-purple">
+              <Flower2 className="w-5 h-5" />
+              Connect Your Wallet
+            </CardTitle>
+            <CardDescription>Get ready for a special digital surprise after the wedding</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-charcoal/80 leading-relaxed">
+              Connect your Abstract Global Wallet and we'll send you a <strong>special digital surprise after the wedding!</strong> 
+              It's our way of saying thanks for celebrating with us. <em>Plus, it's way cooler than it sounds - promise!</em>
+            </p>
+            <div className="flex justify-center">
+              <AGWWalletButton />
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="border-rose-gold/30 shadow-lg bg-white/40 backdrop-blur-lg">
           <CardHeader>
             <CardTitle className="text-charcoal">Crypto Gift Questions</CardTitle>
@@ -180,9 +224,93 @@ export default function GiftsPage() {
               <AccordionItem value="help">
                 <AccordionTrigger className="text-left">What if I get stuck or need help?</AccordionTrigger>
                 <AccordionContent className="text-charcoal/70 leading-relaxed">
-                  We've got you! Chat with Sofia, our AI wedding assistant - she can answer questions about crypto gifts
-                  and walk you through the whole process. Find her on the confirmation page after you RSVP, or on the
-                  Wedding Details page. She's available 24/7 and super helpful!
+                  We've got you! Chat with Jahmal, our AI wedding assistant - he can answer questions about crypto gifts
+                  and walk you through the whole process. Find him on the confirmation page after you RSVP, or on the
+                  Wedding Details page. He's available 24/7 and super helpful!
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </CardContent>
+        </Card>
+
+        {/* AGW Wallet FAQ */}
+        <Card className="border-jewel-purple/30 shadow-lg bg-white/40 backdrop-blur-lg">
+          <CardHeader>
+            <CardTitle className="text-jewel-purple">Abstract Global Wallet Questions</CardTitle>
+            <CardDescription>Everything you need to know about connecting your wallet</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="what-is-agw">
+                <AccordionTrigger className="text-left">What's Abstract Global Wallet?</AccordionTrigger>
+                <AccordionContent className="text-charcoal/70 leading-relaxed">
+                  Think of it as a <strong>digital wallet for the future</strong> - like Venmo or PayPal, but built on blockchain
+                  technology. <em>It's super user-friendly and designed for people who've never touched crypto before.</em>
+                  No complicated tech jargon, no confusing setup. <strong>Just a simple, secure way to hold digital assets.</strong>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="why-agw">
+                <AccordionTrigger className="text-left">Why are you using Abstract Global Wallet?</AccordionTrigger>
+                <AccordionContent className="text-charcoal/70 leading-relaxed">
+                  We're mixing tradition with a little tech magic! <strong>Connect your wallet when you RSVP, and we'll send you a special digital surprise after the wedding.</strong> 
+                  It's our way of saying thanks for celebrating with us. <em>Plus, it's way cooler than it sounds - promise!</em>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="how-to-connect">
+                <AccordionTrigger className="text-left">How do I connect this thing?</AccordionTrigger>
+                <AccordionContent className="text-charcoal/70 leading-relaxed">
+                  <strong>Super easy!</strong> Click the <strong>"Connect Wallet" button above</strong> and Abstract Global Wallet will walk you through everything. 
+                  If you don't have a wallet yet, it'll create one for you automatically. <strong>No forms, no hassle - just click and you're done!</strong>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="never-used-crypto">
+                <AccordionTrigger className="text-left">I've never used crypto. Will I look dumb?</AccordionTrigger>
+                <AccordionContent className="text-charcoal/70 leading-relaxed">
+                  <strong>Not at all!</strong> Abstract Global Wallet is literally designed for crypto newbies. <em>You don't need to
+                  understand blockchain or buy any cryptocurrency.</em> Just click the button and follow the super simple
+                  prompts. <strong>It's honestly easier than setting up most apps on your phone. Takes less than a minute!</strong>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="auto-create">
+                <AccordionTrigger className="text-left">
+                  Does it make a wallet for me automatically?
+                </AccordionTrigger>
+                <AccordionContent className="text-charcoal/70 leading-relaxed">
+                  <strong>Yep!</strong> If you don't already have an Abstract Global Wallet, the system creates one for you when you
+                  click <strong>"Connect Wallet."</strong> <em>You'll get your own unique wallet address that's securely linked to your
+                  account.</em> No paperwork, no verification emails - it just works. <strong>Like magic, but real.</strong>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="is-it-safe">
+                <AccordionTrigger className="text-left">Is this safe? I don't want to get hacked.</AccordionTrigger>
+                <AccordionContent className="text-charcoal/70 leading-relaxed">
+                  <strong>Totally safe!</strong> Abstract Global Wallet uses <strong>bank-level security and encryption.</strong> Your wallet is
+                  protected by advanced cryptography, and only you have access to it. <em>We never see your private
+                  keys, and everything is transparent on the blockchain.</em> <strong>It's actually more secure than most
+                  traditional payment methods!</strong>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="what-surprise">
+                <AccordionTrigger className="text-left">What's this "digital surprise" you keep mentioning?</AccordionTrigger>
+                <AccordionContent className="text-charcoal/70 leading-relaxed">
+                  <strong>That's the fun part - it's a surprise!</strong> <em>All we can say is that it's something special we're creating
+                  just for our wedding guests who connect their wallets.</em> Think of it as a modern take on wedding favors - 
+                  digital, unique, and something you can keep forever. <strong>Trust us, it'll be worth the click!</strong>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="do-i-have-to">
+                <AccordionTrigger className="text-left">Do I HAVE to do this?</AccordionTrigger>
+                <AccordionContent className="text-charcoal/70 leading-relaxed">
+                  <strong>Nope! It's 100% optional.</strong> Your RSVP is totally valid whether you connect a wallet or not. <em>We just
+                  wanted to offer this as a fun, modern option for anyone interested.</em> <strong>Your presence at our wedding
+                  is what matters most to us.</strong> Everything else is just bonus!
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -199,5 +327,40 @@ export default function GiftsPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function AGWWalletButton() {
+  const { address, status, isConnected } = useAccount()
+  const { login, logout } = useLoginWithAbstract()
+
+  const handleConnect = async () => {
+    try {
+      await login()
+    } catch (error) {
+      console.error("Failed to connect wallet:", error)
+    }
+  }
+
+  const handleDisconnect = async () => {
+    try {
+      await logout()
+    } catch (error) {
+      console.error("Failed to disconnect wallet:", error)
+    }
+  }
+
+  return (
+    <button
+      onClick={isConnected ? handleDisconnect : handleConnect}
+      disabled={status === "connecting"}
+      className="flex flex-col items-center gap-3 p-6 bg-jewel-purple hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <Flower2 className="w-8 h-8 text-white" />
+      <span className="font-semibold text-lg text-white">
+        {status === "connecting" ? "Connecting..." : isConnected ? "Disconnect" : "Connect Wallet"}
+      </span>
+      <span className="text-sm opacity-90 text-center text-white">Abstract Global Wallet</span>
+    </button>
   )
 }
