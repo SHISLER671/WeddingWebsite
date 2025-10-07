@@ -9,7 +9,6 @@ import {
   MessageCircle,
   Heart,
 } from "lucide-react"
-import ProfileMenu from "../../components/ProfileMenu"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useChat } from "../../contexts/ChatContext"
@@ -36,21 +35,6 @@ export default function InfoPage() {
       
       {/* Scrollable content */}
       <div className="relative z-10">
-        {/* Header with Navigation */}
-        <header className="relative bg-white/90 backdrop-blur-sm shadow-sm border-b-2 border-jewel-gold/20">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center text-jewel-burgundy hover:text-jewel-crimson transition-colors font-sans"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Home
-            </Link>
-            <h1 className="text-3xl font-serif font-bold text-white drop-shadow-lg">Wedding Information</h1>
-            <ProfileMenu />
-          </div>
-        </header>
-
         <section className="relative py-16">
           <div className="container mx-auto px-4 text-center">
             <div className="flex items-center justify-center gap-4 mb-4">
@@ -66,6 +50,16 @@ export default function InfoPage() {
 
         <div className="container mx-auto px-4 pb-16 font-sans">
           <main className="max-w-6xl mx-auto">
+            {/* Back to Home Button */}
+            <div className="flex justify-start mb-8">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-gray-800 hover:text-jewel-crimson transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Home
+              </Link>
+            </div>
             <section className="mb-16">
               <h3 className="text-4xl font-serif font-bold text-white mb-8 text-center drop-shadow-lg">Come celebrate with us!</h3>
               <p className="text-xl text-white/95 leading-relaxed text-center mb-12 font-medium drop-shadow-md">
@@ -97,9 +91,9 @@ export default function InfoPage() {
                 </div>
               </div>
 
-              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-l-4 border-jewel-fuchsia">
+              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-l-4 border-blue-800">
                 <div className="flex items-center mb-4">
-                  <MapPin className="w-6 h-6 text-jewel-fuchsia mr-3" />
+                  <MapPin className="w-6 h-6 text-blue-800 mr-3" />
                   <h4 className="text-3xl font-serif font-bold text-blue-800">Where</h4>
                 </div>
                 <div className="space-y-3 text-gray-800">
@@ -144,7 +138,7 @@ export default function InfoPage() {
                 <details className="group border-b border-gray-200 pb-4">
                   <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy">
                     Who's getting hitched?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-blue-800" />
                   </summary>
                   <div className="mt-3 text-gray-800">
                     <p className="text-lg">
@@ -158,7 +152,7 @@ export default function InfoPage() {
                 <details className="group border-b border-gray-200 pb-4">
                   <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy">
                     When and where is this party happening?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-blue-800" />
                   </summary>
                   <div className="mt-3 text-gray-800">
                     <p className="text-lg">
@@ -177,7 +171,7 @@ export default function InfoPage() {
                 <details className="group border-b border-gray-200 pb-4">
                   <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy">
                     Where exactly are these places?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-blue-800" />
                   </summary>
                   <div className="mt-3 text-gray-800">
                     <p className="text-lg">
@@ -197,7 +191,7 @@ export default function InfoPage() {
                 <details className="group border-b border-gray-200 pb-4">
                   <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy">
                     When do I need to RSVP by?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-blue-800" />
                   </summary>
                   <div className="mt-3 text-gray-800">
                     <p className="text-lg">
@@ -210,7 +204,7 @@ export default function InfoPage() {
                 <details className="group">
                   <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy">
                     What should I wear?
-                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-fuchsia" />
+                    <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-blue-800" />
                   </summary>
                   <div className="mt-3 text-gray-800">
                     <p className="text-lg">
@@ -227,7 +221,7 @@ export default function InfoPage() {
             </section>
 
             {/* About Our Venues */}
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-16 border-t-4 border-jewel-fuchsia">
+            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-16 border-t-4 border-blue-800">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">About Our Venues</h4>
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
@@ -256,8 +250,8 @@ export default function InfoPage() {
               
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 {/* Bridesmaids & Maids of Honor */}
-                <div className="bg-gradient-to-br from-jewel-burgundy/10 to-jewel-fuchsia/10 rounded-lg p-6 border-l-4 border-jewel-fuchsia">
-                  <h5 className="text-2xl font-serif font-bold text-jewel-fuchsia mb-4 flex items-center gap-2">
+                <div className="bg-gradient-to-br from-jewel-burgundy/10 to-blue-800/10 rounded-lg p-6 border-l-4 border-blue-800">
+                  <h5 className="text-2xl font-serif font-bold text-blue-800 mb-4 flex items-center gap-2">
                     <Users className="w-6 h-6" />
                     Bridesmaids & Maids of Honor
                   </h5>
@@ -270,8 +264,8 @@ export default function InfoPage() {
                       <h6 className="text-xl font-bold text-jewel-burgundy mb-2">Maid of Honor</h6>
                       <p className="text-lg text-gray-800"></p>
                     </div>
-                    <div className="border-t border-jewel-fuchsia/30 pt-3">
-                      <h6 className="text-lg font-bold text-jewel-fuchsia mb-3 text-center">Bridesmaids</h6>
+                    <div className="border-t border-blue-800/30 pt-3">
+                      <h6 className="text-lg font-bold text-blue-800 mb-3 text-center">Bridesmaids</h6>
                       <div className="space-y-2">
                         <p className="text-lg text-gray-800"></p>
                         <p className="text-lg text-gray-800"></p>
@@ -331,7 +325,7 @@ export default function InfoPage() {
 
             {/* Meet Marcus */}
             <Card className="mb-16 border-jewel-burgundy/30 shadow-lg bg-white/40 backdrop-blur-lg">
-              <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-jewel-fuchsia/10 border-b-2 border-jewel-gold/20">
+              <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-blue-800/10 border-b-2 border-jewel-gold/20">
                 <CardTitle className="flex items-center gap-3 text-jewel-burgundy text-3xl font-serif font-bold">
                   <MessageCircle className="w-8 h-8" />
                   Meet Jahmal - Your 24/7 Wedding Buddy
