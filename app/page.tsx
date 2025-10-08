@@ -37,14 +37,14 @@ export default function Home() {
           </Link>
           <Link
             href="/gifts"
-            className="bg-jewel-emerald hover:bg-emerald-600 text-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 min-w-[200px] justify-center border-2 border-jewel-gold/30"
+            className="border-2 border-jewel-emerald text-jewel-emerald hover:bg-jewel-emerald hover:text-warm-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 backdrop-blur-sm bg-warm-white/10 flex items-center gap-3 min-w-[200px] justify-center shadow-lg hover:shadow-xl"
           >
             <Gift className="w-5 h-5" />
             Registry & Gifts
           </Link>
           <Link
             href="/gallery"
-            className="border-2 border-jewel-purple text-jewel-purple hover:bg-jewel-purple hover:text-warm-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 backdrop-blur-sm bg-warm-white/10 flex items-center gap-3 min-w-[200px] justify-center shadow-lg"
+            className="border-2 border-sky-400 text-sky-400 hover:bg-sky-400 hover:text-warm-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 backdrop-blur-sm bg-warm-white/10 flex items-center gap-3 min-w-[200px] justify-center shadow-lg hover:shadow-xl"
           >
             <Camera className="w-5 h-5" />
             Photo Gallery
