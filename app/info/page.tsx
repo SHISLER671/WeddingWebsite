@@ -132,46 +132,6 @@ export default function InfoPage() {
               </div>
             </div>
 
-            {/* Wedding Party */}
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-l-4 border-jewel-emerald">
-              <div className="flex items-center mb-6">
-                <Users className="w-6 h-6 text-jewel-emerald mr-3" />
-                <h4 className="text-3xl font-serif font-bold text-jewel-emerald">Wedding Party</h4>
-              </div>
-              <div className="space-y-6">
-                <div className="bg-jewel-emerald/10 rounded-lg p-6">
-                  <h5 className="text-2xl font-bold text-jewel-emerald mb-4">Groomsmen</h5>
-                  <div className="grid md:grid-cols-2 gap-4 text-gray-800">
-                    <div>
-                      <h6 className="text-lg font-semibold text-jewel-emerald mb-2">Best Men</h6>
-                      <ul className="space-y-1">
-                        <li>• Kevin Leasiolagi</li>
-                        <li>• Shane Quintanilla</li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h6 className="text-lg font-semibold text-jewel-emerald mb-2">Groomsmen</h6>
-                      <ul className="space-y-1 text-sm">
-                        <li>• James Whippy</li>
-                        <li>• Teke Kaminaga</li>
-                        <li>• Ray Paul Jardon</li>
-                        <li>• Carter Young</li>
-                        <li>• Jesse Newby</li>
-                        <li>• Jose Santos</li>
-                        <li>• Vincent Camacho</li>
-                        <li>• Carl Nangauta</li>
-                        <li>• Jassen Guerro</li>
-                        <li>• Amos Taijeron</li>
-                        <li>• William Libby</li>
-                        <li>• Devin Quitugua</li>
-                        <li>• Brandon Cepeda</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
             {/* Quick Questions */}
             <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-gold">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Quick Questions</h4>
@@ -329,28 +289,32 @@ export default function InfoPage() {
                 <div className="bg-gradient-to-br from-jewel-purple/10 to-jewel-emerald/10 rounded-lg p-6 border-l-4 border-jewel-purple">
                   <h5 className="text-2xl font-serif font-bold text-jewel-purple mb-4 flex items-center gap-2">
                     <Users className="w-6 h-6" />
-                    Groomsmen & Best Man
+                    Groomsmen & Best Men
                   </h5>
                   <div className="space-y-3">
-                    <div className="text-center">
-                      <h6 className="text-xl font-bold text-jewel-purple mb-2">Best Man</h6>
-                      <p className="text-lg text-gray-800"></p>
+                    <div>
+                      <h6 className="text-lg font-bold text-jewel-purple mb-3">Best Men</h6>
+                      <div className="space-y-1 mb-4">
+                        <p className="text-gray-800">• Kevin Leasiolagi</p>
+                        <p className="text-gray-800">• Shane Quintanilla</p>
+                      </div>
                     </div>
                     <div className="border-t border-jewel-purple/30 pt-3">
-                      <h6 className="text-lg font-bold text-jewel-purple mb-3 text-center">Groomsmen</h6>
-                      <div className="space-y-2">
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
+                      <h6 className="text-lg font-bold text-jewel-purple mb-3">Groomsmen</h6>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                        <p className="text-gray-800">• James Whippy</p>
+                        <p className="text-gray-800">• Teke Kaminaga</p>
+                        <p className="text-gray-800">• Ray Paul Jardon</p>
+                        <p className="text-gray-800">• Carter Young</p>
+                        <p className="text-gray-800">• Jesse Newby</p>
+                        <p className="text-gray-800">• Jose Santos</p>
+                        <p className="text-gray-800">• Vincent Camacho</p>
+                        <p className="text-gray-800">• Carl Nangauta</p>
+                        <p className="text-gray-800">• Jassen Guerro</p>
+                        <p className="text-gray-800">• Amos Taijeron</p>
+                        <p className="text-gray-800">• William Libby</p>
+                        <p className="text-gray-800">• Devin Quitugua</p>
+                        <p className="text-gray-800">• Brandon Cepeda</p>
                       </div>
                     </div>
                   </div>
