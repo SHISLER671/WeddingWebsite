@@ -255,11 +255,33 @@ let openRouterClient: OpenRouterClient | null = null;
 export function getOpenRouterClient(): OpenRouterClient {
   if (!openRouterClient) {
     const apiKey = process.env.OPENROUTER_API_KEY;
-    const model = process.env.OPENROUTER_MODEL || process.env.NEXT_PUBLIC_OPENROUTER_MODEL || 'openai/gpt-4o-mini';
+    const envModel = process.env.OPENROUTER_MODEL || process.env.NEXT_PUBLIC_OPENROUTER_MODEL;
+    
+    // List of known working models on OpenRouter (prioritizing free tier)
+    const validModels = [
+      // Free tier models (primary choices)
+      'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+      'mistralai/mistral-small-3.1-24b-instruct:free',
+      'mistralai/mistral-medium-3.1-24b-instruct:free',
+      'meta-llama/llama-3.1-8b-instruct:free',
+      'meta-llama/llama-3.1-70b-instruct:free',
+      // Paid models (fallbacks)
+      'openai/gpt-4o-mini',
+      'openai/gpt-4o',
+      'anthropic/claude-3.5-sonnet',
+      'google/gemini-pro-1.5',
+      'meta-llama/llama-3.1-405b-instruct',
+      'mistralai/mistral-7b-instruct'
+    ];
+    
+    // Use environment model if it's valid, otherwise fall back to Venice AI (free)
+    const model = envModel && validModels.includes(envModel) ? envModel : 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free';
     
     console.log('🤖 [OpenRouter] Initializing client...');
     console.log('🤖 [OpenRouter] API Key configured:', apiKey ? '✅ Yes' : '❌ No');
-    console.log('🤖 [OpenRouter] Model:', model);
+    console.log('🤖 [OpenRouter] Environment model:', envModel || 'none');
+    console.log('🤖 [OpenRouter] Selected model:', model);
+    console.log('🤖 [OpenRouter] Model validation:', envModel === model ? '✅ Valid' : '⚠️ Using fallback');
     
     if (!apiKey) {
       const error = 'OpenRouter API key not configured. Please set OPENROUTER_API_KEY environment variable.';
