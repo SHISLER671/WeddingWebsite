@@ -5,9 +5,9 @@
 The wedding chatbot was failing with a 404 error because the OpenRouter model `x-ai/grok-4-fast:free` is not available on OpenRouter.
 
 **Error Details:**
-```
+\`\`\`
 OpenRouter API Error: 404 - No endpoints found for x-ai/grok-4-fast:free.
-```
+\`\`\`
 
 ## Root Cause
 
@@ -76,11 +76,11 @@ After updating the environment variables and redeploying:
 
 1. The chatbot should respond normally using Venice AI
 2. Check the logs - you should see:
-   ```
+   \`\`\`
    🤖 [OpenRouter] Environment model: cognitivecomputations/dolphin-mistral-24b-venice-edition:free
    🤖 [OpenRouter] Selected model: cognitivecomputations/dolphin-mistral-24b-venice-edition:free
    🤖 [OpenRouter] Model validation: ✅ Valid
-   ```
+   \`\`\`
 
 ## Alternative Quick Test
 
