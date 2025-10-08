@@ -30,24 +30,24 @@ export default function GiftsPage() {
         <div className="flex justify-start mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-gray-800 hover:text-jewel-crimson transition-colors"
+            className="inline-flex items-center gap-2 text-white hover:text-jewel-crimson transition-colors font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
         </div>
 
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-light text-gray-800 mb-4">Your Presence is Our Present</h1>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto leading-relaxed mb-2">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-light text-white mb-4 drop-shadow-lg">Your Presence is Our Present</h1>
+          <p className="text-lg text-white/90 max-w-2xl mx-auto leading-relaxed mb-2 drop-shadow-md">
             Seriously, having you celebrate with us is the best gift we could ask for. But if you'd like to honor us
             with a gift, we've made it super easy with both traditional and modern options.
           </p>
-          <p className="text-emerald-700 italic">Island vibes meet future tech 🌺</p>
+          <p className="text-emerald-200 italic drop-shadow-md">Island vibes meet future tech 🌺</p>
         </div>
 
         {/* Handmade Art Appreciation - MOVED TO TOP */}
-        <Card className="border-jewel-gold/30 shadow-lg bg-white/40 backdrop-blur-lg mb-6">
+        <Card className="border-jewel-gold/30 shadow-lg bg-white/40 backdrop-blur-lg mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-jewel-gold">
               <Palmtree className="w-5 h-5" />
@@ -68,7 +68,7 @@ export default function GiftsPage() {
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 mb-12">
+        <div className="grid gap-8 mb-8">
           <Card className="border-jewel-crimson/20 shadow-lg bg-white/40 backdrop-blur-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-jewel-crimson">
@@ -129,7 +129,7 @@ export default function GiftsPage() {
         </div>
 
         {/* Wallet Connect Button */}
-        <Card className="border-jewel-purple/30 shadow-lg bg-white/40 backdrop-blur-lg mb-6">
+        <Card className="border-jewel-purple/30 shadow-lg bg-white/40 backdrop-blur-lg mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-jewel-purple">
               <Flower2 className="w-5 h-5" />
@@ -155,7 +155,7 @@ export default function GiftsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-rose-gold/30 shadow-lg bg-white/40 backdrop-blur-lg">
+        <Card className="border-rose-gold/30 shadow-lg bg-white/40 backdrop-blur-lg mb-8">
           <CardHeader>
             <CardTitle className="text-gray-800">Crypto Gift Questions</CardTitle>
             <CardDescription>Everything you need to know about gifting with Abstract</CardDescription>
@@ -241,7 +241,7 @@ export default function GiftsPage() {
         </Card>
 
         {/* AGW Wallet FAQ */}
-        <Card className="border-jewel-purple/30 shadow-lg bg-white/40 backdrop-blur-lg">
+        <Card className="border-jewel-purple/30 shadow-lg bg-white/40 backdrop-blur-lg mb-8">
           <CardHeader>
             <CardTitle className="text-jewel-purple">Abstract Global Wallet Questions</CardTitle>
             <CardDescription>Everything you need to know about connecting your wallet</CardDescription>
@@ -324,13 +324,13 @@ export default function GiftsPage() {
           </CardContent>
         </Card>
 
-        <div className="text-center mt-12 p-6 bg-gradient-to-br from-rose-gold/10 to-emerald-50/30 rounded-lg border border-rose-gold/20">
-          <p className="text-gray-700 leading-relaxed italic mb-4">
+        <div className="text-center mt-8 p-6 bg-gradient-to-br from-rose-gold/10 to-emerald-50/30 rounded-lg border border-rose-gold/20">
+          <p className="text-gray-800 leading-relaxed italic mb-4 font-medium">
             "The best gift you can give us is your love, laughter, and presence on our special day. Whether you bring
             cash, crypto, or just your amazing self - we're just grateful you're celebrating with us on our island
             paradise."
           </p>
-          <p className="text-gray-800 font-medium">— Pia & Ryan 🌴💕</p>
+          <p className="text-gray-900 font-semibold">— Pia & Ryan 🌴💕</p>
         </div>
       </div>
     </div>

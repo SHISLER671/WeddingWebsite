@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function ContactPage() {
   return (
@@ -17,16 +18,19 @@ export default function ContactPage() {
       
       {/* Scrollable content */}
       <div className="relative z-10 container mx-auto px-4 py-16">
+        {/* Fixed Back to Home Button - Top Left */}
+        <div className="fixed top-4 left-4 z-20">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-white hover:text-jewel-crimson transition-colors font-medium bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="mb-12">
-          <div className="flex justify-start mb-4">
-            <Link 
-              href="/" 
-              className="text-white hover:text-rose-200 font-medium inline-block bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm"
-            >
-              ← Back to Home
-            </Link>
-          </div>
           <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">Contact Us</h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">

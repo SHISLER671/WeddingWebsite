@@ -35,6 +35,17 @@ export default function InfoPage() {
       
       {/* Scrollable content */}
       <div className="relative z-10">
+        {/* Fixed Back to Home Button - Top Left */}
+        <div className="fixed top-4 left-4 z-20">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-white hover:text-jewel-crimson transition-colors font-medium bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+        </div>
+
         <section className="relative py-16">
           <div className="container mx-auto px-4 text-center">
             <div className="flex items-center justify-center gap-4 mb-4">
@@ -50,43 +61,33 @@ export default function InfoPage() {
 
         <div className="container mx-auto px-4 pb-16 font-sans">
           <main className="max-w-6xl mx-auto">
-            {/* Back to Home Button */}
-            <div className="flex justify-start mb-8">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 text-gray-800 hover:text-jewel-crimson transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Home
-              </Link>
-            </div>
-            <section className="mb-16">
+            <section className="mb-8">
               <h3 className="text-4xl font-serif font-bold text-white mb-8 text-center drop-shadow-lg">Come celebrate with us!</h3>
-              <p className="text-xl text-white/95 leading-relaxed text-center mb-12 font-medium drop-shadow-md">
+              <p className="text-xl text-white/95 leading-relaxed text-center mb-8 font-medium drop-shadow-md">
                 We're getting married on our beautiful island home and can't wait to share this moment with you. 
                 Below you'll find everything you need to know about our ceremony and celebration. 🌺
               </p>
             </section>
 
             {/* Wedding Details Grid */}
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
               <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-l-4 border-jewel-burgundy">
                 <div className="flex items-center mb-4">
                   <Calendar className="w-6 h-6 text-jewel-burgundy mr-3" />
                   <h4 className="text-3xl font-serif font-bold text-jewel-burgundy">When</h4>
                 </div>
-                <div className="space-y-3 text-gray-800">
+                <div className="space-y-3 text-gray-800 font-sans">
                   <p className="text-lg">
-                    <strong className="text-xl">Date:</strong> <em>Friday, February 13, 2026</em>
+                    <strong className="text-xl font-semibold">Date:</strong> <em>Friday, February 13, 2026</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl">Ceremony:</strong> <em>2:00 PM</em>
+                    <strong className="text-xl font-semibold">Ceremony:</strong> <em>2:00 PM</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl">Reception:</strong> <em>6:00 PM</em>
+                    <strong className="text-xl font-semibold">Reception:</strong> <em>6:00 PM</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl">After Party:</strong> <em>11:00 PM</em>
+                    <strong className="text-xl font-semibold">After Party:</strong> <em>11:00 PM</em>
                   </p>
                 </div>
               </div>
@@ -96,18 +97,18 @@ export default function InfoPage() {
                   <MapPin className="w-6 h-6 text-blue-800 mr-3" />
                   <h4 className="text-3xl font-serif font-bold text-blue-800">Where</h4>
                 </div>
-                <div className="space-y-3 text-gray-800">
+                <div className="space-y-3 text-gray-800 font-sans">
                   <p className="text-lg">
-                    <strong className="text-xl">Ceremony:</strong> <em>Dulce Nombre de Maria Cathedral-Basilica</em>
+                    <strong className="text-xl font-semibold">Ceremony:</strong> <em>Dulce Nombre de Maria Cathedral-Basilica</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl">Reception:</strong> <em>Hotel Nikko Guam Tasi Ballroom</em>
+                    <strong className="text-xl font-semibold">Reception:</strong> <em>Hotel Nikko Guam Tasi Ballroom</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl">Address:</strong> <em>245 Gun Beach Road, Tumon, Guam 96913</em>
+                    <strong className="text-xl font-semibold">Address:</strong> <em>245 Gun Beach Road, Tumon, Guam 96913</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl">Capacity:</strong> <em>260 guests</em>
+                    <strong className="text-xl font-semibold">Capacity:</strong> <em>260 guests</em>
                   </p>
                 </div>
               </div>
@@ -117,22 +118,22 @@ export default function InfoPage() {
                   <Users className="w-6 h-6 text-jewel-purple mr-3" />
                   <h4 className="text-3xl font-serif font-bold text-jewel-purple">Dress Code</h4>
                 </div>
-                <div className="space-y-3 text-gray-800">
+                <div className="space-y-3 text-gray-800 font-sans">
                   <p className="text-lg">
-                    <strong className="text-xl">Bridesmaids:</strong> <em>Red</em>
+                    <strong className="text-xl font-semibold">Bridesmaids:</strong> <em>Red</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl">Groomsmen:</strong> <em>Black</em>
+                    <strong className="text-xl font-semibold">Groomsmen:</strong> <em>Black</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl">Guests:</strong> <em>Cocktail or Semi-Formal</em>
+                    <strong className="text-xl font-semibold">Guests:</strong> <em>Cocktail or Semi-Formal</em>
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Quick Questions */}
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-16 border-t-4 border-jewel-gold">
+            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-gold">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Quick Questions</h4>
               <div className="space-y-4">
                 <details className="group border-b border-gray-200 pb-4">
@@ -221,7 +222,7 @@ export default function InfoPage() {
             </section>
 
             {/* About Our Venues */}
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-16 border-t-4 border-blue-800">
+            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-blue-800">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">About Our Venues</h4>
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
@@ -245,7 +246,7 @@ export default function InfoPage() {
             </section>
 
             {/* Wedding Party */}
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-16 border-t-4 border-jewel-crimson">
+            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-crimson">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-8 text-center">Wedding Party</h4>
               
               <div className="grid md:grid-cols-2 gap-8 mb-8">
@@ -323,8 +324,8 @@ export default function InfoPage() {
               </div>
             </section>
 
-            {/* Meet Marcus */}
-            <Card className="mb-16 border-jewel-burgundy/30 shadow-lg bg-white/40 backdrop-blur-lg">
+            {/* Meet Jahmal */}
+            <Card className="mb-8 border-jewel-burgundy/30 shadow-lg bg-white/40 backdrop-blur-lg">
               <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-blue-800/10 border-b-2 border-jewel-gold/20">
                 <CardTitle className="flex items-center gap-3 text-jewel-burgundy text-3xl font-serif font-bold">
                   <MessageCircle className="w-8 h-8" />
@@ -417,7 +418,7 @@ export default function InfoPage() {
           </main>
 
           {/* Footer */}
-          <footer className="text-center mt-16 text-gray-800 font-sans">
+          <footer className="text-center mt-8 text-gray-800 font-sans">
             <p className="text-lg">&copy; 2026 Pia & Ryan's Wedding. <em>Made with love and Irie vibes.</em> 🌺</p>
           </footer>
         </div>

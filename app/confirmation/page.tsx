@@ -10,6 +10,7 @@ import {
   Flower2,
   MessageCircle,
   Wallet,
+  ArrowLeft,
 } from "lucide-react"
 import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
 import { useChat } from "../../contexts/ChatContext"
@@ -22,18 +23,26 @@ export default function ConfirmationPage() {
   return (
     <div className="min-h-screen confirmation-page-bg">
       <div className="relative overflow-hidden">
+        {/* Fixed Back to Home Button - Top Left */}
+        <div className="fixed top-4 left-4 z-20">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-white hover:text-jewel-crimson transition-colors font-medium bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+        </div>
+
         <div className="relative z-10 px-4 py-16">
           <div className="max-w-4xl mx-auto">
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex justify-start items-start mb-8">
               <Link
                 href="/rsvp?edit=true"
                 className="bg-charcoal hover:bg-charcoal/90 text-warm-white px-6 py-3 text-sm font-medium rounded-full transition-all duration-300 shadow-lg flex items-center gap-2"
               >
                 <Edit className="w-4 h-4" />
                 Edit RSVP
-              </Link>
-              <Link href="/" className="text-charcoal/70 hover:text-charcoal font-medium transition-colors">
-                ← Home
               </Link>
             </div>
 
