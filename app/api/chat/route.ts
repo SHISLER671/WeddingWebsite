@@ -23,9 +23,10 @@ export async function POST(request: NextRequest) {
 
     // Send to OpenRouter
     console.log("[v0] Chat API: Sending to OpenRouter...")
+    // This leaves plenty of room for input context while preventing token limit errors
     const response = await client.chatCompletion(messages as OpenRouterMessage[], {
       temperature: 0.7,
-      maxTokens: 33000,
+      maxTokens: 4000,
     })
 
     console.log("[v0] Chat API: OpenRouter response received")
