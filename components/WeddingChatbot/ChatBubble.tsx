@@ -86,68 +86,7 @@ export default function ChatBubble({ className = '' }: ChatBubbleProps) {
   };
 
   return (
-    <button
-      onClick={handleClick}
-      className={getThemeClasses()}
-      style={bubbleStyles}
-      aria-label={state.isOpen ? 'Close chat' : 'Open wedding assistant'}
-      aria-expanded={state.isOpen}
-      aria-haspopup="dialog"
-      onMouseEnter={(e) => {
-        if (!state.isOpen) {
-          e.currentTarget.style.backgroundColor = hoverStyles.backgroundColor || '';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!state.isOpen) {
-          e.currentTarget.style.backgroundColor = bubbleStyles.backgroundColor || '';
-        }
-      }}
-    >
-      {/* Icon */}
-      <div className="relative">
-        {state.isOpen ? (
-          <X className="w-8 h-8" strokeWidth={2.5} />
-        ) : (
-          <Heart className="w-8 h-8" strokeWidth={2.5} />
-        )}
-        
-        {/* Unread message indicator */}
-        {state.unreadCount > 0 && !state.isOpen && (
-          <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-bounce">
-            {state.unreadCount > 9 ? '9+' : state.unreadCount}
-          </div>
-        )}
-
-        {/* Loading indicator */}
-        {state.isLoading && (
-          <div className="absolute inset-0 rounded-full bg-black bg-opacity-20 flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        )}
-      </div>
-
-      {/* Tooltip */}
-      {!state.isOpen && (
-        <div className="absolute bottom-full right-0 mb-3 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-          {state.unreadCount > 0 
-            ? `${state.unreadCount} new message${state.unreadCount > 1 ? 's' : ''}`
-            : 'Chat with Wedding Assistant'
-          }
-          <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-        </div>
-      )}
-
-      {/* Pulsing ring effect */}
-      {isPulsing && !state.isOpen && (
-        <div className="absolute inset-0 rounded-full border-2 border-current animate-ping opacity-30"></div>
-      )}
-
-      {/* Accessibility announcement */}
-      <div className="sr-only" aria-live="polite" aria-atomic>
-        {state.unreadCount > 0 && !state.isOpen && `You have ${state.unreadCount} new message${state.unreadCount > 1 ? 's' : ''} from the wedding assistant.`}
-      </div>
-    </button>
+    null
   );
 }
 
