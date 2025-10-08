@@ -79,15 +79,16 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
     const baseClasses = `
       fixed z-50 bg-white rounded-2xl shadow-2xl border-2
       transition-all duration-300 ease-in-out transform
-      ${isMinimized ? 'h-16' : 'h-[600px]'}
+      ${isMinimized ? 'h-16' : 'h-[80vh] md:h-[600px]'}
       ${state.isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
+      max-h-[90vh] w-[90vw] md:w-[400px] max-w-md
     `;
 
     const positionClasses = {
-      'bottom-right': 'bottom-24 right-6',
-      'bottom-left': 'bottom-24 left-6',
-      'top-right': 'top-24 right-6',
-      'top-left': 'top-24 left-6',
+      'bottom-right': 'bottom-4 md:bottom-24 right-2 md:right-6',
+      'bottom-left': 'bottom-4 md:bottom-24 left-2 md:left-6',
+      'top-right': 'top-4 md:top-24 right-2 md:right-6',
+      'top-left': 'top-4 md:top-24 left-2 md:left-6',
     }[config.appearance.position];
 
     const borderClasses = `border-rose-gold/20`;
@@ -97,10 +98,12 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
 
   const getHeaderClasses = () => {
     return `
-      flex items-center justify-between p-4 border-b
+      flex items-center justify-between p-4 border-b border-white/20
       rounded-t-2xl cursor-pointer relative z-20
       ${isMinimized ? 'rounded-b-2xl' : ''}
-      bg-gradient-to-r from-jewel-fuchsia to-jewel-crimson text-warm-white
+      bg-gradient-to-r from-jewel-fuchsia via-jewel-burgundy to-jewel-crimson text-white
+      shadow-lg backdrop-blur-sm
+      hover:shadow-xl transition-all duration-300
     `;
   };
 
@@ -157,26 +160,28 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
         }}
       >
         <div className="flex items-center gap-3">
-          <Heart className="w-6 h-6" />
+          <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
+            <Heart className="w-5 h-5 text-white drop-shadow-sm" />
+          </div>
           <div>
-            <h3 className="font-semibold text-lg text-charcoal">{config.name}</h3>
+            <h3 className="font-bold text-lg text-white drop-shadow-md">{config.name}</h3>
             {!isMinimized && (
-              <p className="text-xs opacity-90 text-charcoal">{config.description}</p>
+              <p className="text-xs text-white/90 drop-shadow-sm">{config.description}</p>
             )}
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {!isMinimized && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleClearChat();
               }}
-              className="p-1 hover:bg-white/20 rounded transition-colors"
+              className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-200 backdrop-blur-sm border border-white/30 hover:border-white/50 group"
               title="Clear chat"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4 text-white drop-shadow-sm group-hover:scale-110 transition-transform" />
             </button>
           )}
           
@@ -185,13 +190,13 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
               e.stopPropagation();
               setIsMinimized(!isMinimized);
             }}
-            className="p-1 hover:bg-white/20 rounded transition-colors"
+            className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-200 backdrop-blur-sm border border-white/30 hover:border-white/50 group"
             title={isMinimized ? 'Maximize' : 'Minimize'}
           >
             {isMinimized ? (
-              <Maximize2 className="w-4 h-4" />
+              <Maximize2 className="w-4 h-4 text-white drop-shadow-sm group-hover:scale-110 transition-transform" />
             ) : (
-              <Minimize2 className="w-4 h-4" />
+              <Minimize2 className="w-4 h-4 text-white drop-shadow-sm group-hover:scale-110 transition-transform" />
             )}
           </button>
           
@@ -200,10 +205,10 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
               e.stopPropagation();
               actions.closeChat();
             }}
-            className="p-1 hover:bg-white/20 rounded transition-colors"
+            className="p-2 bg-red-500/80 hover:bg-red-600/90 rounded-lg transition-all duration-200 backdrop-blur-sm border border-red-400/50 hover:border-red-300/70 group"
             title="Close chat"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 text-white drop-shadow-sm group-hover:scale-110 transition-transform" />
           </button>
         </div>
       </div>
