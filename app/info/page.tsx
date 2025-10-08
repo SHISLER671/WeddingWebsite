@@ -132,6 +132,46 @@ export default function InfoPage() {
               </div>
             </div>
 
+            {/* Wedding Party */}
+            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-l-4 border-jewel-emerald">
+              <div className="flex items-center mb-6">
+                <Users className="w-6 h-6 text-jewel-emerald mr-3" />
+                <h4 className="text-3xl font-serif font-bold text-jewel-emerald">Wedding Party</h4>
+              </div>
+              <div className="space-y-6">
+                <div className="bg-jewel-emerald/10 rounded-lg p-6">
+                  <h5 className="text-2xl font-bold text-jewel-emerald mb-4">Groomsmen</h5>
+                  <div className="grid md:grid-cols-2 gap-4 text-gray-800">
+                    <div>
+                      <h6 className="text-lg font-semibold text-jewel-emerald mb-2">Best Men</h6>
+                      <ul className="space-y-1">
+                        <li>• Kevin Leasiolagi</li>
+                        <li>• Shane Quintanilla</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h6 className="text-lg font-semibold text-jewel-emerald mb-2">Groomsmen</h6>
+                      <ul className="space-y-1 text-sm">
+                        <li>• James Whippy</li>
+                        <li>• Teke Kaminaga</li>
+                        <li>• Ray Paul Jardon</li>
+                        <li>• Carter Young</li>
+                        <li>• Jesse Newby</li>
+                        <li>• Jose Santos</li>
+                        <li>• Vincent Camacho</li>
+                        <li>• Carl Nangauta</li>
+                        <li>• Jassen Guerro</li>
+                        <li>• Amos Taijeron</li>
+                        <li>• William Libby</li>
+                        <li>• Devin Quitugua</li>
+                        <li>• Brandon Cepeda</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* Quick Questions */}
             <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-gold">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Quick Questions</h4>
