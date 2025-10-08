@@ -136,7 +136,7 @@ export default function ChatWindow({ className = '' }: ChatWindowProps) {
       {!isMinimized && (
         <div className="absolute inset-0 z-0">
           <Image 
-            src="/tricho.jpg" 
+            src="/underleaf.jpg" 
             alt="Chat background" 
             fill
             className="object-cover opacity-20 rounded-2xl"

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The wedding chatbot "Jahmal" is a professional wedding planner assistant that can help guests with wedding information and check their RSVP status in real-time using the Supabase database.
+The wedding chatbot "Ezekiel" is a professional wedding planner assistant that can help guests with wedding information and check their RSVP status in real-time using the Supabase database.
 
 ## Features
 
@@ -20,7 +20,7 @@ The chatbot can check RSVP status using:
 - **Wallet Address** (for crypto-enabled RSVPs)
 
 ### 3. Professional Personality
-- **Name**: Jahmal - Wedding Planner
+- **Name**: Ezekiel - Wedding Planner
 - **Tone**: Professional, warm, organized, and knowledgeable
 - **Expertise**: Comprehensive knowledge of all wedding details
 

@@ -27,10 +27,11 @@ export default function GiftsPage() {
       style={{ backgroundImage: "url(/IMG-20251005-WA0012.jpg)" }}
     >
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="flex justify-start mb-8">
+        {/* Fixed Back to Home Button - Top Left */}
+        <div className="fixed top-4 left-4 z-20">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-white hover:text-jewel-crimson transition-colors font-medium"
+            className="inline-flex items-center gap-2 text-white hover:text-jewel-crimson transition-colors font-medium bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
@@ -231,7 +232,7 @@ export default function GiftsPage() {
               <AccordionItem value="help">
                 <AccordionTrigger className="text-left">What if I get stuck or need help?</AccordionTrigger>
                 <AccordionContent className="text-gray-700 leading-relaxed">
-                  We've got you! Chat with Jahmal, our AI wedding assistant - he can answer questions about crypto gifts
+                  We've got you! Chat with Ezekiel, our AI wedding assistant - he can answer questions about crypto gifts
                   and walk you through the whole process. Find him on the confirmation page after you RSVP, or on the
                   Wedding Details page. He's available 24/7 and super helpful!
                 </AccordionContent>
@@ -325,12 +326,12 @@ export default function GiftsPage() {
         </Card>
 
         <div className="text-center mt-8 p-6 bg-gradient-to-br from-rose-gold/10 to-emerald-50/30 rounded-lg border border-rose-gold/20">
-          <p className="text-gray-800 leading-relaxed italic mb-4 font-medium">
+          <p className="text-white leading-relaxed italic mb-4 font-medium drop-shadow-md">
             "The best gift you can give us is your love, laughter, and presence on our special day. Whether you bring
             cash, crypto, or just your amazing self - we're just grateful you're celebrating with us on our island
             paradise."
           </p>
-          <p className="text-gray-900 font-semibold">— Pia & Ryan 🌴💕</p>
+          <p className="text-white font-semibold drop-shadow-md">— Pia & Ryan 🌴💕</p>
         </div>
       </div>
     </div>

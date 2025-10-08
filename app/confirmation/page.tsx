@@ -152,7 +152,7 @@ export default function ConfirmationPage() {
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed">
-                Thanks for RSVPing! Now the fun part - chat with Jahmal (our AI wedding assistant) anytime you have
+                Thanks for RSVPing! Now the fun part - chat with Ezekiel (our AI wedding assistant) anytime you have
                 questions, and if you're feeling adventurous, click the flower button to connect your Abstract Global
                 Wallet. Then resubmit your RSVP to save your wallet info for a special surprise from us after the
                 wedding! 🎁
@@ -167,19 +167,19 @@ export default function ConfirmationPage() {
         </section>
 
         <div className="grid md:grid-cols-2 gap-8 mb-16">
-          {/* Jahmal FAQ */}
+          {/* Ezekiel FAQ */}
           <Card className="border-white/20 shadow-lg bg-white/80 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-jewel-crimson/10 to-jewel-fuchsia/10">
               <CardTitle className="flex items-center gap-2 text-jewel-crimson">
                 <MessageCircle className="w-5 h-5" />
-                About Jahmal
+                About Ezekiel
               </CardTitle>
               <CardDescription>Your 24/7 Wedding Buddy</CardDescription>
             </CardHeader>
             <CardContent className="pt-4">
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="what">
-                  <AccordionTrigger className="text-left text-sm">What can Jahmal help with?</AccordionTrigger>
+                  <AccordionTrigger className="text-left text-sm">What can Ezekiel help with?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
                     Pretty much everything! Venue details, schedule, dress code, travel tips, hotel recommendations,
                     local restaurant suggestions, your RSVP status - you name it. She's available 24/7 and never gets
@@ -190,7 +190,7 @@ export default function ConfirmationPage() {
                 <AccordionItem value="how">
                   <AccordionTrigger className="text-left text-sm">How do I chat with her?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
-                    Just click the "Chat with Jahmal" button above! The chat window will pop up and you can start asking
+                    Just click the "Chat with Ezekiel" button above! The chat window will pop up and you can start asking
                     questions right away. She's super friendly and easy to talk to - no complicated commands or
                     anything.
                   </AccordionContent>
@@ -199,7 +199,7 @@ export default function ConfirmationPage() {
                 <AccordionItem value="safe">
                   <AccordionTrigger className="text-left text-sm">Is my info safe?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
-                    Jahmal uses secure connections and only sees the wedding info you already shared when you RSVP'd. He
+                    Ezekiel uses secure connections and only sees the wedding info you already shared when you RSVP'd. He
                     doesn't store your conversations or collect any weird data. Your privacy is totally protected.
                   </AccordionContent>
                 </AccordionItem>
@@ -268,7 +268,7 @@ function ChatbotButton() {
       className="flex flex-col items-center gap-3 p-6 bg-jewel-crimson hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
     >
       <Heart className="w-8 h-8 text-white" />
-      <span className="font-semibold text-lg text-white">Chat with Jahmal</span>
+      <span className="font-semibold text-lg text-white">Chat with Ezekiel</span>
       <span className="text-sm opacity-90 text-center text-white">AI Wedding Assistant</span>
     </button>
   )

@@ -324,12 +324,12 @@ export default function InfoPage() {
               </div>
             </section>
 
-            {/* Meet Jahmal */}
+            {/* Meet Ezekiel */}
             <Card className="mb-8 border-jewel-burgundy/30 shadow-lg bg-white/40 backdrop-blur-lg">
               <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-blue-800/10 border-b-2 border-jewel-gold/20">
                 <CardTitle className="flex items-center gap-3 text-jewel-burgundy text-3xl font-serif font-bold">
                   <MessageCircle className="w-8 h-8" />
-                  Meet Jahmal - Your 24/7 Wedding Buddy
+                  Meet Ezekiel - Your 24/7 Wedding Buddy
                 </CardTitle>
                 <CardDescription className="text-lg font-sans text-gray-800">
                   He's basically your personal wedding guru, always online
@@ -337,7 +337,7 @@ export default function InfoPage() {
               </CardHeader>
               <CardContent className="pt-6">
                 <p className="text-lg text-gray-800 leading-relaxed mb-6">
-                  Jahmal is our AI wedding assistant who knows everything about our big day. <em>Got questions at 2 AM about
+                  Ezekiel is our AI wedding assistant who knows everything about our big day. <em>Got questions at 2 AM about
                   what to wear? Wondering where to grab the best local food?</em> He's got you covered, day or night. <strong>No
                   question is too small!</strong>
                 </p>
@@ -348,9 +348,9 @@ export default function InfoPage() {
 
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="what-is-sofia">
-                    <AccordionTrigger className="text-left">So what exactly is Jahmal?</AccordionTrigger>
+                    <AccordionTrigger className="text-left">So what exactly is Ezekiel?</AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
-                      Jahmal is like having a <strong>super knowledgeable friend who never sleeps!</strong> He's an AI assistant we built
+                      Ezekiel is like having a <strong>super knowledgeable friend who never sleeps!</strong> He's an AI assistant we built
                       specifically for our wedding. <em>Ask him about the venue, what time things start, where to stay, what
                       to do on the island, or literally anything wedding-related.</em> He's friendly, helpful, and always
                       ready to chat.
@@ -360,7 +360,7 @@ export default function InfoPage() {
                   <AccordionItem value="how-to-use">
                     <AccordionTrigger className="text-left">How do I chat with him?</AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
-                      After you RSVP, you'll see a <strong>"Chat with Jahmal" button on your confirmation page.</strong> Click it and
+                      After you RSVP, you'll see a <strong>"Chat with Ezekiel" button on your confirmation page.</strong> Click it and
                       start asking away! <em>He's super chill and easy to talk to.</em> Ask about parking, local restaurants,
                       beach recommendations, your RSVP status - <strong>whatever you need to know!</strong>
                     </AccordionContent>
@@ -369,7 +369,7 @@ export default function InfoPage() {
                   <AccordionItem value="what-can-ask">
                     <AccordionTrigger className="text-left">What kind of stuff can I ask?</AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
-                      <strong>Pretty much anything!</strong> Here's what Jahmal can help with:
+                      <strong>Pretty much anything!</strong> Here's what Ezekiel can help with:
                       <ul className="list-disc list-inside mt-3 space-y-2 text-lg">
                         <li><strong>Venue details, directions, and parking info</strong></li>
                         <li><strong>Full wedding day timeline and schedule</strong></li>
@@ -384,9 +384,9 @@ export default function InfoPage() {
                   </AccordionItem>
 
                   <AccordionItem value="is-it-safe">
-                    <AccordionTrigger className="text-left">Is my info safe with Jahmal?</AccordionTrigger>
+                    <AccordionTrigger className="text-left">Is my info safe with Ezekiel?</AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
-                      Jahmal uses <strong>secure connections and doesn't store your conversations.</strong> He only sees the wedding info
+                      Ezekiel uses <strong>secure connections and doesn't store your conversations.</strong> He only sees the wedding info
                       you already shared when you RSVP'd. <em>We take your privacy seriously</em> - no weird data collection or
                       anything like that.
                     </AccordionContent>
@@ -395,7 +395,7 @@ export default function InfoPage() {
                   <AccordionItem value="available-when">
                     <AccordionTrigger className="text-left">When can I reach him?</AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
-                      <strong>24/7, baby!</strong> Seriously, Jahmal never sleeps. <em>Middle of the night? He's there. Sunday morning? He's
+                      <strong>24/7, baby!</strong> Seriously, Ezekiel never sleeps. <em>Middle of the night? He's there. Sunday morning? He's
                       there.</em> Whenever a question pops into your head, just open the chat and he'll respond instantly.
                       <strong>No waiting around!</strong>
                     </AccordionContent>
@@ -404,8 +404,8 @@ export default function InfoPage() {
                   <AccordionItem value="cant-answer">
                     <AccordionTrigger className="text-left">What if he doesn't know something?</AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
-                      Jahmal's pretty smart, but if he can't answer something specific, he'll be <strong>honest and suggest
-                      reaching out to us directly.</strong> <em>You can always contact the wedding party for anything Jahmal can't
+                      Ezekiel's pretty smart, but if he can't answer something specific, he'll be <strong>honest and suggest
+                      reaching out to us directly.</strong> <em>You can always contact the wedding party for anything Ezekiel can't
                       handle.</em> We're here to help!
                     </AccordionContent>
                   </AccordionItem>
@@ -441,7 +441,7 @@ function ChatbotButton() {
       className="flex flex-col items-center gap-3 p-6 bg-jewel-crimson hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
     >
       <Heart className="w-8 h-8 text-white" />
-      <span className="font-semibold text-lg text-white">Chat with Jahmal</span>
+      <span className="font-semibold text-lg text-white">Chat with Ezekiel</span>
       <span className="text-sm opacity-90 text-center text-white">AI Wedding Assistant</span>
     </button>
   )
