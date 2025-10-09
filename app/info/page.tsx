@@ -310,7 +310,7 @@ export default function InfoPage() {
                         <p className="text-gray-800">• Jose Santos</p>
                         <p className="text-gray-800">• Vincent Camacho</p>
                         <p className="text-gray-800">• Carl Nangauta</p>
-                        <p className="text-gray-800">• Jassen Guerro</p>
+                        <p className="text-gray-800">• Jassen Guerrero</p>
                         <p className="text-gray-800">• Amos Taijeron</p>
                         <p className="text-gray-800">• William Libby</p>
                         <p className="text-gray-800">• Devin Quitugua</p>

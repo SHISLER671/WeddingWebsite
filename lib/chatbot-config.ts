@@ -90,7 +90,7 @@ WEDDING PARTY:
 GROOMSMEN:
 - Best Man: Kevin Leasiolagi
 - Best Man: Shane Quintanilla
-- Groomsmen: James Whippy, Teke Kaminaga, Ray Paul Jardon, Carter Young, Jesse Newby, Jose Santos, Vincent Camacho, Carl Nangauta, Jassen Guerro, Amos Taijeron, William Libby, Devin Quitugua, Brandon Cepeda
+- Groomsmen: James Whippy, Teke Kaminaga, Ray Paul Jardon, Carter Young, Jesse Newby, Jose Santos, Vincent Camacho, Carl Nangauta, Jassen Guerrero, Amos Taijeron, William Libby, Devin Quitugua, Brandon Cepeda
 
 RSVP CAPABILITIES:
 - You can check RSVP status using email, name, or wallet address
