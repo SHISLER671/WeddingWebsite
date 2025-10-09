@@ -1,16 +1,19 @@
-// Wedding Gallery Page
-// Displays uploaded photos and videos in a responsive grid
+// Wedding Gallery Page - Carousel + Grid View with Spotify
+// Displays photos in an immersive carousel or quick-scan grid
 
 "use client"
 
 import type React from "react"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import Image from "next/image"
-import { Heart, Upload, Camera, Video, X, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react"
+import { Heart, Upload, Camera, Video, X, CheckCircle, AlertCircle, ArrowLeft, ChevronLeft, ChevronRight, Grid3x3, Maximize2 } from "lucide-react"
 import { getGalleryItems, type GalleryItem } from "@/lib/utils/gallery"
 import { uploadGalleryItem } from "@/app/actions/upload-gallery-item"
 import Link from "next/link"
 import { SpinningRoseLoader } from "@/components/spinning-rose-loader"
+import useEmblaCarousel from 'embla-carousel-react'
+
+type ViewMode = 'carousel' | 'grid'
 
 export default function GalleryPage() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
@@ -23,18 +26,39 @@ export default function GalleryPage() {
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle")
   const [uploadMessage, setUploadMessage] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [displayedItems, setDisplayedItems] = useState<GalleryItem[]>([])
-  const [itemsToShow, setItemsToShow] = useState(12)
-  const [hasMore, setHasMore] = useState(false)
+  
+  // View mode state
+  const [viewMode, setViewMode] = useState<ViewMode>('carousel')
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  
+  // Embla Carousel
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    align: 'center',
+    slidesToScroll: 1,
+    breakpoints: {
+      '(min-width: 768px)': { slidesToScroll: 1 }
+    }
+  })
 
   useEffect(() => {
     loadGalleryItems()
   }, [])
 
   useEffect(() => {
-    setDisplayedItems(galleryItems.slice(0, itemsToShow))
-    setHasMore(galleryItems.length > itemsToShow)
-  }, [galleryItems, itemsToShow])
+    if (!emblaApi) return
+
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap())
+    }
+
+    emblaApi.on('select', onSelect)
+    onSelect()
+
+    return () => {
+      emblaApi.off('select', onSelect)
+    }
+  }, [emblaApi])
 
   const loadGalleryItems = async () => {
     try {
@@ -48,8 +72,21 @@ export default function GalleryPage() {
     }
   }
 
-  const loadMore = () => {
-    setItemsToShow((prev) => prev + 12)
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev()
+  }, [emblaApi])
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext()
+  }, [emblaApi])
+
+  const scrollTo = useCallback((index: number) => {
+    if (emblaApi) emblaApi.scrollTo(index)
+  }, [emblaApi])
+
+  const handleGridItemClick = (index: number) => {
+    setViewMode('carousel')
+    setTimeout(() => scrollTo(index), 100)
   }
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,11 +129,7 @@ export default function GalleryPage() {
       formData.append("caption", uploadCaption)
       formData.append("uploaderName", uploadName || "Anonymous")
 
-      console.log("[v0] Uploading file with Server Action")
-
       const result = await uploadGalleryItem(formData)
-
-      console.log("[v0] Server Action result:", result)
 
       if (result.success) {
         setUploadStatus("success")
@@ -134,12 +167,12 @@ export default function GalleryPage() {
     }
   }
 
-  const renderMediaItem = (item: GalleryItem) => {
+  const renderMediaItem = (item: GalleryItem, isCarousel: boolean = false) => {
     if (item.file_type === "video") {
       return (
         <video
           controls
-          className="w-full h-full object-cover rounded-lg"
+          className={`w-full h-full object-contain ${isCarousel ? 'max-h-[60vh]' : 'object-cover rounded-lg'}`}
           poster={item.file_url}
           preload="metadata"
           playsInline
@@ -151,16 +184,31 @@ export default function GalleryPage() {
         </video>
       )
     } else {
-      return (
-        <Image
-          src={item.file_url || ""}
-          alt={item.caption || "Wedding memory"}
-          fill
-          className="object-cover rounded-lg"
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          loading="lazy"
-        />
-      )
+      if (isCarousel) {
+        return (
+          <div className="relative w-full h-full flex items-center justify-center">
+            <Image
+              src={item.file_url || ""}
+              alt={item.caption || "Wedding memory"}
+              width={800}
+              height={600}
+              className="object-contain max-h-[60vh] w-auto"
+              loading="lazy"
+            />
+          </div>
+        )
+      } else {
+        return (
+          <Image
+            src={item.file_url || ""}
+            alt={item.caption || "Wedding memory"}
+            fill
+            className="object-cover rounded-lg"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            loading="lazy"
+          />
+        )
+      }
     }
   }
 
@@ -190,22 +238,51 @@ export default function GalleryPage() {
 
         {/* Header */}
         <div className="py-16 px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl md:text-6xl font-light text-charcoal mb-4 tracking-wide">Wedding Memories</h1>
+              <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-8">
+                Share your favorite moments from our special day
+              </p>
 
-            <h1 className="text-4xl md:text-6xl font-light text-charcoal mb-4 tracking-wide">Wedding Memories</h1>
-            <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-8">
-              Share your favorite moments from our special day
-            </p>
+              {/* View Toggle & Upload Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button
+                  onClick={() => setShowUploadForm(true)}
+                  className="bg-jewel-sapphire hover:bg-jewel-emerald text-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3"
+                >
+                  <Camera className="w-5 h-5" />
+                  Share a Memory
+                </button>
 
-            {/* Upload Button */}
-            <button
-              onClick={() => setShowUploadForm(true)}
-              className="bg-jewel-sapphire hover:bg-jewel-emerald text-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto"
-            >
-              <Camera className="w-5 h-5" />
-              Share a Memory
-            </button>
+                {/* View Mode Toggles */}
+                {galleryItems.length > 0 && (
+                  <div className="flex gap-2 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg">
+                    <button
+                      onClick={() => setViewMode('carousel')}
+                      className={`px-6 py-3 rounded-full transition-all duration-300 flex items-center gap-2 ${
+                        viewMode === 'carousel'
+                          ? 'bg-jewel-sapphire text-white shadow-md'
+                          : 'text-charcoal hover:bg-white/50'
+                      }`}
+                    >
+                      <Maximize2 className="w-4 h-4" />
+                      Carousel
+                    </button>
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`px-6 py-3 rounded-full transition-all duration-300 flex items-center gap-2 ${
+                        viewMode === 'grid'
+                          ? 'bg-jewel-sapphire text-white shadow-md'
+                          : 'text-charcoal hover:bg-white/50'
+                      }`}
+                    >
+                      <Grid3x3 className="w-4 h-4" />
+                      Grid
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -213,15 +290,12 @@ export default function GalleryPage() {
         {/* Upload Form Modal */}
         {showUploadForm && (
           <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
-            {/* Background Image Layer - now inside the modal container */}
             <div className="relative rounded-2xl shadow-2xl max-w-md w-full my-4 max-h-[90vh] overflow-hidden">
               <div className="absolute inset-0 z-0">
                 <Image src="/underleaf.jpg" alt="Floral background" fill className="object-cover" priority />
-                {/* Overlay for readability */}
                 <div className="absolute inset-0 bg-warm-white/85 backdrop-blur-md" />
               </div>
 
-              {/* Content Layer - now with transparent background */}
               <div className="relative z-10 p-4 sm:p-6 overflow-y-auto max-h-[90vh]">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-semibold text-charcoal">Share a Memory</h3>
@@ -254,20 +328,12 @@ export default function GalleryPage() {
                       <CheckCircle className="w-12 h-12 text-jewel-emerald mx-auto" />
                       <p className="text-charcoal font-medium">{selectedFile.name}</p>
                       <p className="text-sm text-charcoal/60">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                      {!uploadCaption && (
-                        <p className="text-xs text-rose-gold/80 flex items-center justify-center gap-1">
-                          💡 Add a caption below to share your memory!
-                        </p>
-                      )}
                     </div>
                   ) : (
                     <div className="space-y-2">
                       <Upload className="w-12 h-12 text-rose-gold mx-auto" />
                       <p className="text-charcoal font-medium">Click or drag to upload</p>
                       <p className="text-sm text-charcoal/60">Images and videos up to 10MB</p>
-                      <p className="text-xs text-rose-gold/80 flex items-center justify-center gap-1">
-                        💬 Don't forget to add a caption!
-                      </p>
                     </div>
                   )}
                 </div>
@@ -284,7 +350,7 @@ export default function GalleryPage() {
                     type="text"
                     value={uploadName}
                     onChange={(e) => setUploadName(e.target.value)}
-                    placeholder="Enter your name or leave blank for anonymous"
+                    placeholder="Enter your name"
                     className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 text-base bg-white/80 backdrop-blur-sm"
                   />
                 </div>
@@ -300,15 +366,12 @@ export default function GalleryPage() {
                   <textarea
                     value={uploadCaption}
                     onChange={(e) => setUploadCaption(e.target.value)}
-                    placeholder="Share a memory, quote, or special moment... ✨"
+                    placeholder="Share a memory... ✨"
                     rows={3}
                     maxLength={200}
-                    className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 resize-none text-base placeholder:text-charcoal/50 bg-white/80 backdrop-blur-sm"
+                    className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 resize-none text-base bg-white/80 backdrop-blur-sm"
                   />
-                  <div className="flex justify-between items-center mt-1">
-                    <p className="text-xs text-charcoal/60">Add a friendly comment or quote to your memory</p>
-                    <span className="text-xs text-charcoal/40">{uploadCaption.length}/200</span>
-                  </div>
+                  <span className="text-xs text-charcoal/40 float-right mt-1">{uploadCaption.length}/200</span>
                 </div>
 
                 {/* Status Message */}
@@ -333,14 +396,14 @@ export default function GalleryPage() {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => setShowUploadForm(false)}
-                    className="flex-1 px-4 py-3 border border-rose-gold text-rose-gold rounded-lg hover:bg-rose-gold/10 transition-colors touch-manipulation"
+                    className="flex-1 px-4 py-3 border border-rose-gold text-rose-gold rounded-lg hover:bg-rose-gold/10 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleUpload}
                     disabled={uploading || !selectedFile}
-                    className="flex-1 px-4 py-3 bg-jewel-sapphire text-white rounded-lg hover:bg-jewel-emerald disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation"
+                    className="flex-1 px-4 py-3 bg-jewel-sapphire text-white rounded-lg hover:bg-jewel-emerald disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {uploading ? "Uploading..." : "Upload"}
                   </button>
@@ -350,7 +413,7 @@ export default function GalleryPage() {
           </div>
         )}
 
-        {/* Gallery Grid */}
+        {/* Gallery Content */}
         <div className="max-w-7xl mx-auto px-4 pb-16">
           {loading ? (
             <div className="text-center py-16">
@@ -371,63 +434,159 @@ export default function GalleryPage() {
             </div>
           ) : (
             <>
-              <div className="text-center mb-6">
-                <p className="text-charcoal/60">
-                  Showing {displayedItems.length} of {galleryItems.length} memories
-                </p>
-              </div>
+              {/* Carousel View */}
+              {viewMode === 'carousel' && (
+                <div className="space-y-8">
+                  <div className="relative">
+                    {/* Carousel Container */}
+                    <div className="overflow-hidden rounded-2xl bg-black/5 backdrop-blur-sm" ref={emblaRef}>
+                      <div className="flex">
+                        {galleryItems.map((item, index) => (
+                          <div
+                            key={item.id}
+                            className="flex-[0_0_100%] md:flex-[0_0_100%] min-w-0 px-4"
+                          >
+                            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden">
+                              {/* Media Container */}
+                              <div className="relative bg-black flex items-center justify-center min-h-[50vh] md:min-h-[60vh]">
+                                {renderMediaItem(item, true)}
+                                
+                                {/* File Type Indicator */}
+                                <div className="absolute top-4 right-4">
+                                  {item.file_type === "video" ? (
+                                    <Video className="w-6 h-6 text-white drop-shadow-lg" />
+                                  ) : (
+                                    <Camera className="w-6 h-6 text-white drop-shadow-lg" />
+                                  )}
+                                </div>
+                              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                {displayedItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="group relative bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 touch-manipulation flex flex-col"
-                  >
-                    <div className="relative aspect-square overflow-hidden">
-                      {renderMediaItem(item)}
-
-                      {/* File Type Indicator */}
-                      <div className="absolute top-2 right-2">
-                        {item.file_type === "video" ? (
-                          <Video className="w-4 h-4 text-white drop-shadow-lg" />
-                        ) : (
-                          <Camera className="w-4 h-4 text-white drop-shadow-lg" />
-                        )}
+                              {/* Caption Area */}
+                              <div className="p-6 bg-gradient-to-b from-warm-white to-soft-blush/30">
+                                {item.uploader_name && (
+                                  <div className="mb-3">
+                                    <p className="text-lg font-semibold text-charcoal flex items-center gap-2">
+                                      <span className="text-rose-gold">📸</span>
+                                      {item.uploader_name}
+                                    </p>
+                                  </div>
+                                )}
+                                {item.caption && (
+                                  <div className="mb-3">
+                                    <p className="text-base text-charcoal/80 italic">"{item.caption}"</p>
+                                  </div>
+                                )}
+                                <div className="flex items-center justify-between text-sm text-charcoal/60 pt-3 border-t border-rose-gold/20">
+                                  <p>{new Date(item.created_at).toLocaleDateString()}</p>
+                                  <p className="text-rose-gold font-medium">
+                                    {index + 1} / {galleryItems.length}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
-                    <div className="p-3 sm:p-4 bg-gradient-to-b from-warm-white to-soft-blush/30">
-                      {item.uploader_name && (
-                        <div className="mb-2">
-                          <p className="text-sm font-semibold text-charcoal flex items-center gap-1.5">
-                            <span className="text-rose-gold">📸</span>
-                            {item.uploader_name}
-                          </p>
-                        </div>
-                      )}
-                      {item.caption && (
-                        <div className="mb-2">
-                          <p className="text-sm text-charcoal/80 line-clamp-3 italic">"{item.caption}"</p>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between text-xs text-charcoal/60 pt-2 border-t border-rose-gold/20">
-                        <p>{new Date(item.created_at).toLocaleDateString()}</p>
-                        {item.caption && <span className="text-rose-gold">💬</span>}
+                    {/* Navigation Buttons */}
+                    {galleryItems.length > 1 && (
+                      <>
+                        <button
+                          onClick={scrollPrev}
+                          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-charcoal p-3 md:p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-10"
+                          aria-label="Previous photo"
+                        >
+                          <ChevronLeft className="w-6 h-6" />
+                        </button>
+                        <button
+                          onClick={scrollNext}
+                          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-charcoal p-3 md:p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-10"
+                          aria-label="Next photo"
+                        >
+                          <ChevronRight className="w-6 h-6" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Spotify Player */}
+                  <div className="max-w-4xl mx-auto">
+                    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-jewel-purple/20">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-3xl">🎵</span>
+                        <h3 className="text-2xl font-semibold text-jewel-purple">The Soundtrack to Our Story</h3>
+                      </div>
+                      <p className="text-charcoal/70 mb-4 italic">
+                        Let the music move you as you browse our memories...
+                      </p>
+                      <div className="rounded-xl overflow-hidden shadow-lg">
+                        <iframe 
+                          data-testid="embed-iframe" 
+                          style={{borderRadius: '12px'}} 
+                          src="https://open.spotify.com/embed/playlist/6zaH3KMo6AGlFtKv9jn3vT?utm_source=generator" 
+                          width="100%" 
+                          height="352" 
+                          frameBorder="0" 
+                          allowFullScreen 
+                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                          loading="lazy"
+                        />
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
 
-              {/* Load More Button */}
-              {hasMore && (
-                <div className="text-center mt-12">
-                  <button
-                    onClick={loadMore}
-                    className="bg-jewel-sapphire hover:bg-jewel-emerald text-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    Load More Memories
-                  </button>
+              {/* Grid View */}
+              {viewMode === 'grid' && (
+                <div>
+                  <div className="text-center mb-6">
+                    <p className="text-charcoal/60">
+                      Showing {galleryItems.length} {galleryItems.length === 1 ? 'memory' : 'memories'} - Click any photo to view in carousel
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                    {galleryItems.map((item, index) => (
+                      <div
+                        key={item.id}
+                        onClick={() => handleGridItemClick(index)}
+                        className="group relative bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105"
+                      >
+                        <div className="relative aspect-square overflow-hidden">
+                          {renderMediaItem(item)}
+
+                          {/* File Type Indicator */}
+                          <div className="absolute top-2 right-2">
+                            {item.file_type === "video" ? (
+                              <Video className="w-4 h-4 text-white drop-shadow-lg" />
+                            ) : (
+                              <Camera className="w-4 h-4 text-white drop-shadow-lg" />
+                            )}
+                          </div>
+
+                          {/* Hover Overlay */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <Maximize2 className="w-12 h-12 text-white" />
+                          </div>
+                        </div>
+
+                        <div className="p-3 sm:p-4 bg-gradient-to-b from-warm-white to-soft-blush/30">
+                          {item.uploader_name && (
+                            <p className="text-sm font-semibold text-charcoal flex items-center gap-1.5 mb-1">
+                              <span className="text-rose-gold">📸</span>
+                              {item.uploader_name}
+                            </p>
+                          )}
+                          {item.caption && (
+                            <p className="text-sm text-charcoal/80 line-clamp-2 italic mb-2">"{item.caption}"</p>
+                          )}
+                          <p className="text-xs text-charcoal/60">{new Date(item.created_at).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </>
