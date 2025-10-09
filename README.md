@@ -43,7 +43,7 @@ A modern, full-featured wedding website built with Next.js, featuring RSVP manag
 ## 📁 Project Structure
 
 \`\`\`
-debugWW2026/
+WeddingWebsite2026/
 ├── app/                    # Next.js app directory
 │   ├── actions/           # Server actions for gallery
 │   ├── api/               # API routes (chat, gallery, RSVP)
