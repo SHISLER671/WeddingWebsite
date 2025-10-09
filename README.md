@@ -42,7 +42,7 @@ A modern, full-featured wedding website built with Next.js, featuring RSVP manag
 
 ## 📁 Project Structure
 
-```
+\`\`\`
 debugWW2026/
 ├── app/                    # Next.js app directory
 │   ├── actions/           # Server actions for gallery
@@ -67,7 +67,7 @@ debugWW2026/
 │   └── openrouter.ts     # OpenRouter API integration
 ├── public/                # Static assets (images)
 └── docs/                  # Documentation files
-```
+\`\`\`
 
 ## 🚀 Getting Started
 
@@ -80,7 +80,7 @@ debugWW2026/
 ### Environment Variables
 Create a `.env.local` file with:
 
-```env
+\`\`\`env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -93,11 +93,11 @@ NEXT_PUBLIC_AGW_PROJECT_ID=your_agw_project_id
 
 # Encryption (for RSVP lookup)
 ENCRYPTION_KEY=your_32_byte_encryption_key
-```
+\`\`\`
 
 ### Installation
 
-```bash
+\`\`\`bash
 # Install dependencies
 pnpm install
 
@@ -109,7 +109,7 @@ pnpm build
 
 # Start production server
 pnpm start
-```
+\`\`\`
 
 Visit [http://localhost:3000](http://localhost:3000) to see the website.
 
