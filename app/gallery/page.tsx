@@ -436,111 +436,83 @@ export default function GalleryPage() {
             <>
               {/* Carousel View */}
               {viewMode === 'carousel' && (
-                <div className="space-y-8">
-                  <div className="relative">
-                    {/* Carousel Container */}
-                    <div className="overflow-hidden rounded-2xl bg-black/5 backdrop-blur-sm" ref={emblaRef}>
-                      <div className="flex">
-                        {galleryItems.map((item, index) => (
-                          <div
-                            key={item.id}
-                            className="flex-[0_0_100%] md:flex-[0_0_100%] min-w-0 px-4"
-                          >
-                            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden">
-                              {/* Media Container */}
-                              <div className="relative bg-black flex items-center justify-center min-h-[50vh] md:min-h-[60vh]">
-                                {renderMediaItem(item, true)}
-                                
-                                {/* File Type Indicator */}
-                                <div className="absolute top-4 right-4">
-                                  {item.file_type === "video" ? (
-                                    <Video className="w-6 h-6 text-white drop-shadow-lg" />
-                                  ) : (
-                                    <Camera className="w-6 h-6 text-white drop-shadow-lg" />
-                                  )}
-                                </div>
+                <div className="relative mb-8">
+                  {/* Carousel Container */}
+                  <div className="overflow-hidden rounded-2xl bg-black/5 backdrop-blur-sm" ref={emblaRef}>
+                    <div className="flex">
+                      {galleryItems.map((item, index) => (
+                        <div
+                          key={item.id}
+                          className="flex-[0_0_100%] md:flex-[0_0_100%] min-w-0 px-4"
+                        >
+                          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden">
+                            {/* Media Container */}
+                            <div className="relative bg-black flex items-center justify-center min-h-[50vh] md:min-h-[60vh]">
+                              {renderMediaItem(item, true)}
+                              
+                              {/* File Type Indicator */}
+                              <div className="absolute top-4 right-4">
+                                {item.file_type === "video" ? (
+                                  <Video className="w-6 h-6 text-white drop-shadow-lg" />
+                                ) : (
+                                  <Camera className="w-6 h-6 text-white drop-shadow-lg" />
+                                )}
                               </div>
+                            </div>
 
-                              {/* Caption Area */}
-                              <div className="p-6 bg-gradient-to-b from-warm-white to-soft-blush/30">
-                                {item.uploader_name && (
-                                  <div className="mb-3">
-                                    <p className="text-lg font-semibold text-charcoal flex items-center gap-2">
-                                      <span className="text-rose-gold">📸</span>
-                                      {item.uploader_name}
-                                    </p>
-                                  </div>
-                                )}
-                                {item.caption && (
-                                  <div className="mb-3">
-                                    <p className="text-base text-charcoal/80 italic">"{item.caption}"</p>
-                                  </div>
-                                )}
-                                <div className="flex items-center justify-between text-sm text-charcoal/60 pt-3 border-t border-rose-gold/20">
-                                  <p>{new Date(item.created_at).toLocaleDateString()}</p>
-                                  <p className="text-rose-gold font-medium">
-                                    {index + 1} / {galleryItems.length}
+                            {/* Caption Area */}
+                            <div className="p-6 bg-gradient-to-b from-warm-white to-soft-blush/30">
+                              {item.uploader_name && (
+                                <div className="mb-3">
+                                  <p className="text-lg font-semibold text-charcoal flex items-center gap-2">
+                                    <span className="text-rose-gold">📸</span>
+                                    {item.uploader_name}
                                   </p>
                                 </div>
+                              )}
+                              {item.caption && (
+                                <div className="mb-3">
+                                  <p className="text-base text-charcoal/80 italic">"{item.caption}"</p>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between text-sm text-charcoal/60 pt-3 border-t border-rose-gold/20">
+                                <p>{new Date(item.created_at).toLocaleDateString()}</p>
+                                <p className="text-rose-gold font-medium">
+                                  {index + 1} / {galleryItems.length}
+                                </p>
                               </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Navigation Buttons */}
-                    {galleryItems.length > 1 && (
-                      <>
-                        <button
-                          onClick={scrollPrev}
-                          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-charcoal p-3 md:p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-10"
-                          aria-label="Previous photo"
-                        >
-                          <ChevronLeft className="w-6 h-6" />
-                        </button>
-                        <button
-                          onClick={scrollNext}
-                          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-charcoal p-3 md:p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-10"
-                          aria-label="Next photo"
-                        >
-                          <ChevronRight className="w-6 h-6" />
-                        </button>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Spotify Player */}
-                  <div className="max-w-4xl mx-auto">
-                    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-jewel-purple/20">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="text-3xl">🎵</span>
-                        <h3 className="text-2xl font-semibold text-jewel-purple">The Soundtrack to Our Story</h3>
-                      </div>
-                      <p className="text-charcoal/70 mb-4 italic">
-                        Let the music move you as you browse our memories...
-                      </p>
-                      <div className="rounded-xl overflow-hidden shadow-lg">
-                        <iframe 
-                          data-testid="embed-iframe" 
-                          style={{borderRadius: '12px'}} 
-                          src="https://open.spotify.com/embed/playlist/6zaH3KMo6AGlFtKv9jn3vT?utm_source=generator" 
-                          width="100%" 
-                          height="352" 
-                          frameBorder="0" 
-                          allowFullScreen 
-                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                          loading="lazy"
-                        />
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
+
+                  {/* Navigation Buttons */}
+                  {galleryItems.length > 1 && (
+                    <>
+                      <button
+                        onClick={scrollPrev}
+                        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-charcoal p-3 md:p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-10"
+                        aria-label="Previous photo"
+                      >
+                        <ChevronLeft className="w-6 h-6" />
+                      </button>
+                      <button
+                        onClick={scrollNext}
+                        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-charcoal p-3 md:p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-10"
+                        aria-label="Next photo"
+                      >
+                        <ChevronRight className="w-6 h-6" />
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
 
               {/* Grid View */}
               {viewMode === 'grid' && (
-                <div>
+                <div className="mb-8">
                   <div className="text-center mb-6">
                     <p className="text-charcoal/60">
                       Showing {galleryItems.length} {galleryItems.length === 1 ? 'memory' : 'memories'} - Click any photo to view in carousel
@@ -589,6 +561,32 @@ export default function GalleryPage() {
                   </div>
                 </div>
               )}
+
+              {/* Spotify Player - Always Visible */}
+              <div className="max-w-4xl mx-auto mt-8">
+                <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-jewel-purple/20">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-3xl">🎵</span>
+                    <h3 className="text-2xl font-semibold text-jewel-purple">The Soundtrack to Our Story</h3>
+                  </div>
+                  <p className="text-charcoal/70 mb-4 italic">
+                    Let the music move you as you browse our memories...
+                  </p>
+                  <div className="rounded-xl overflow-hidden shadow-lg">
+                    <iframe 
+                      data-testid="embed-iframe" 
+                      style={{borderRadius: '12px'}} 
+                      src="https://open.spotify.com/embed/playlist/6zaH3KMo6AGlFtKv9jn3vT?utm_source=generator" 
+                      width="100%" 
+                      height="352" 
+                      frameBorder="0" 
+                      allowFullScreen 
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
             </>
           )}
         </div>
