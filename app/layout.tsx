@@ -3,6 +3,7 @@ import { Playfair_Display, Lato } from "next/font/google"
 import type React from "react"
 import "./globals.css"
 import { Providers } from "./providers"
+import NavigationWrapper from "@/components/NavigationWrapper"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -37,7 +38,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${playfair.variable} ${lato.variable} font-sans antialiased`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <NavigationWrapper />
+        </Providers>
       </body>
     </html>
   )
