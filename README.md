@@ -181,7 +181,7 @@ This is a private wedding website project. All rights reserved.
 Built with love for Pia & Ryan's wedding celebration 💕
 
 **Wedding Date:** February 2026  
-**Location:** Paradise Island 🌴
+**Location:** Guam 🌴
 
 ---
 
