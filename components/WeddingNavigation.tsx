@@ -24,7 +24,7 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
       {/* Navigation Toggle Button */}
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="fixed top-4 right-4 z-50 bg-jewel-burgundy/90 backdrop-blur-sm text-warm-white p-3 rounded-full shadow-lg hover:bg-jewel-crimson transition-all duration-300 hover:scale-105 border-2 border-jewel-gold/30"
+        className="fixed bottom-6 right-6 z-50 bg-jewel-burgundy/90 backdrop-blur-sm text-warm-white p-4 rounded-full shadow-lg hover:bg-jewel-crimson transition-all duration-300 hover:scale-105 border-2 border-jewel-gold/30"
         aria-label="Toggle navigation menu"
       >
         {isMenuOpen ? (
@@ -43,8 +43,8 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
         />
         
         {/* Menu Panel */}
-        <div className={`absolute top-0 right-0 h-full w-80 max-w-[85vw] bg-jewel-burgundy/95 backdrop-blur-md border-l-2 border-jewel-gold/50 transform transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          <div className="p-6 pt-16">
+        <div className={`absolute bottom-0 right-0 h-[70vh] w-full max-w-md bg-jewel-burgundy/95 backdrop-blur-md border-t-2 border-jewel-gold/50 transform transition-transform duration-300 ${isMenuOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+          <div className="p-6 pb-8">
             <h3 className="text-xl font-serif font-semibold text-gold-shimmer mb-6 text-center">
               Wedding Navigation
             </h3>
