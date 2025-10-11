@@ -50,7 +50,7 @@ export default function GiftsPage() {
             Seriously, having you celebrate with us is the best gift we could ask for. But if you'd like to honor us
             with a gift, we've made it super easy with both traditional and modern options.
           </p>
-          <p className="text-emerald-200 italic drop-shadow-md">Island vibes meet future tech 🌺</p>
+          
         </div>
 
         {/* Handmade Art Appreciation - MOVED TO TOP */}
