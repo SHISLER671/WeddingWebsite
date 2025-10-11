@@ -326,6 +326,13 @@ export default function RSVPPage() {
                 <option value="4">4 Guests</option>
                 <option value="5">5+ Guests</option>
               </select>
+              
+              {/* Adults Only Notice */}
+              <div className="mt-4 bg-rose-50 border border-rose-200 rounded-lg p-4">
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  💕 <strong>Adults-Only Celebration:</strong> We love your little ones, but we've planned this as an adults-only evening so you can relax and enjoy a night out! We hope this gives you a wonderful excuse for a date night. If you absolutely need to bring your children due to exceptional circumstances, please let us know in the message section below and we'll do our best to accommodate.
+                </p>
+              </div>
             </div>
 
             {/* Dietary Restrictions */}

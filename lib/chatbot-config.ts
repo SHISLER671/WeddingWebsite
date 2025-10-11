@@ -87,7 +87,12 @@ DRESS CODE DETAILS:
 - Please note: Religious ceremony - modest attire appreciated
 
 WEDDING PARTY:
-GROOMSMEN:
+BRIDE'S SIDE:
+- Matron of Honor: Reynne Wahl
+- Maid of Honor: Camella Ramirez
+- Bridesmaids: Christiana Ramirez, Tammy Ramirez, Nisha Chargualaf, Elizabeth Valencia, Audrey Benevente, Neil Pang, James Losongco, Jonathon Pablo, Gavin Garrido
+
+GROOM'S SIDE:
 - Best Man: Kevin Leasiolagi
 - Best Man: Shane Quintanilla
 - Groomsmen: James Whippy, Teke Kaminaga, Ray Paul Jardon, Carter Young, Jesse Newby, Jose Santos, Vincent Camacho, Carl Nangauta, Jassen Guerrero, Amos Taijeron, William Libby, Devin Quitugua, Brandon Cepeda
@@ -103,6 +108,7 @@ RSVP INFORMATION:
 - Online RSVP available on website
 - Special dietary requirements can be accommodated
 - Accessibility needs can be arranged
+- Adults-Only Celebration: This is an adults-only event to give parents a night off to enjoy themselves. If guests have exceptional circumstances and need to bring children, they should note this in their RSVP message
 
 PROFESSIONAL GUIDELINES:
 - Respond as a wedding planner would - organized, detailed, and helpful

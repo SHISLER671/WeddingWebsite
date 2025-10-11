@@ -258,28 +258,25 @@ export default function InfoPage() {
                   </h5>
                   <div className="space-y-3">
                     <div className="text-center">
-                      <h6 className="text-xl font-bold text-jewel-burgundy mb-2">Maid of Honor</h6>
-                      <p className="text-lg text-gray-800"></p>
+                      <h6 className="text-xl font-bold text-jewel-burgundy mb-2">Matron of Honor</h6>
+                      <p className="text-lg text-gray-800">Reynne Wahl</p>
                     </div>
                     <div className="text-center">
                       <h6 className="text-xl font-bold text-jewel-burgundy mb-2">Maid of Honor</h6>
-                      <p className="text-lg text-gray-800"></p>
+                      <p className="text-lg text-gray-800">Camella Ramirez</p>
                     </div>
                     <div className="border-t border-blue-800/30 pt-3">
                       <h6 className="text-lg font-bold text-blue-800 mb-3 text-center">Bridesmaids</h6>
-                      <div className="space-y-2">
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
-                        <p className="text-lg text-gray-800"></p>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                        <p className="text-gray-800">• Christiana Ramirez</p>
+                        <p className="text-gray-800">• Tammy Ramirez</p>
+                        <p className="text-gray-800">• Nisha Chargualaf</p>
+                        <p className="text-gray-800">• Elizabeth Valencia</p>
+                        <p className="text-gray-800">• Audrey Benevente</p>
+                        <p className="text-gray-800">• Neil Pang</p>
+                        <p className="text-gray-800">• James Losongco</p>
+                        <p className="text-gray-800">• Jonathon Pablo</p>
+                        <p className="text-gray-800">• Gavin Garrido</p>
                       </div>
                     </div>
                   </div>
