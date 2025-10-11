@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Calendar, MapPin, Clock, Gift, Edit, Heart, Flower2, MessageCircle, Wallet, ArrowLeft } from "lucide-react"
+import { Calendar, MapPin, Clock, Gift, Edit, Heart, Flower2, MessageCircle, Wallet } from "lucide-react"
 import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
 import { useChat } from "../../contexts/ChatContext"
 import { useAccount } from "wagmi"
@@ -12,16 +12,6 @@ export default function ConfirmationPage() {
   return (
     <div className="min-h-screen confirmation-page-bg">
       <div className="relative overflow-hidden">
-        {/* Fixed Back to Home Button - Top Left */}
-        <div className="fixed top-4 left-4 z-20">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-white hover:text-jewel-crimson transition-colors font-medium bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-        </div>
 
         <div className="relative z-10 px-4 py-16">
           <div className="max-w-4xl mx-auto">

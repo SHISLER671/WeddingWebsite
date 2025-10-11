@@ -5,6 +5,11 @@ import WeddingNavigation from "./WeddingNavigation"
 export default function NavigationWrapper() {
   const pathname = usePathname()
   
+  // Don't show navigation on landing page (home)
+  if (pathname === "/") {
+    return null
+  }
+  
   // Determine current page for navigation highlighting
   let currentPage = pathname
   if (pathname === "/rsvp" && typeof window !== "undefined") {

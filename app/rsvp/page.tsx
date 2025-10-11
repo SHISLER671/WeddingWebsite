@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useAccount } from "wagmi"
 import { useSearchParams, useRouter } from "next/navigation"
 import { lookupRSVP, type RSVPRecord } from "@/lib/rsvp-lookup"
-import { Search, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react"
+import { Search, CheckCircle, AlertCircle } from "lucide-react"
 
 const Charcoal = "#333333"
 
@@ -134,16 +134,6 @@ export default function RSVPPage() {
 
       {/* Scrollable content */}
       <div className="relative z-10 container mx-auto px-4 py-16 font-sans">
-        {/* Fixed Back to Home Button - Top Left */}
-        <div className="fixed top-4 left-4 z-20">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-white hover:text-jewel-crimson transition-colors font-medium bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-        </div>
 
         {/* Header */}
         <div className="mb-12">
