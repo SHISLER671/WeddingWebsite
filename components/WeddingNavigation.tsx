@@ -16,22 +16,34 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // Keyboard navigation
+  // Keyboard navigation and focus management
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isMenuOpen) {
         setIsMenuOpen(false)
         buttonRef.current?.focus()
       }
-      if (event.key === 'm' || event.key === 'M') {
+      if ((event.key === 'm' || event.key === 'M') && !event.ctrlKey && !event.metaKey) {
         if (!isMenuOpen) {
           setIsMenuOpen(true)
+          event.preventDefault()
         }
       }
     }
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isMenuOpen])
+
+  // Focus management for menu
+  useEffect(() => {
+    if (isMenuOpen && menuRef.current) {
+      // Focus first menu item when menu opens
+      const firstMenuItem = menuRef.current.querySelector('a[href]') as HTMLAnchorElement
+      if (firstMenuItem) {
+        setTimeout(() => firstMenuItem.focus(), 100)
+      }
+    }
   }, [isMenuOpen])
 
   // Close menu when clicking outside
@@ -132,6 +144,10 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Wedding navigation menu"
+        aria-hidden={!isMenuOpen}
       >
         {/* Backdrop */}
         <div 
@@ -152,7 +168,7 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
               Wedding Navigation
             </h3>
             
-            <nav className="space-y-3">
+            <nav className="space-y-3" role="menu" aria-label="Wedding website navigation">
               {navigationItems.map((item, index) => {
                 const Icon = item.icon
                 const isCurrentPage = currentPage === item.href
@@ -161,6 +177,9 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
                   <Link
                     key={item.href}
                     href={item.href}
+                    role="menuitem"
+                    aria-label={`Navigate to ${item.label}${isCurrentPage ? ' (current page)' : ''}`}
+                    aria-current={isCurrentPage ? 'page' : undefined}
                     onMouseEnter={() => {
                       // Preload the page on hover for faster navigation
                       const link = document.createElement('link')
