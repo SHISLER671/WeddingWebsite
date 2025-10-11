@@ -1,21 +1,20 @@
-import React from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
 
 export default function ContactPage() {
   return (
     <div className="min-h-screen relative">
       {/* Fixed background image */}
-      <div 
+      <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: "url('/hibiscusring.jpg')",
-          backgroundAttachment: 'fixed'
+          backgroundAttachment: "fixed",
         }}
       />
       {/* Overlay for better text readability */}
       <div className="fixed inset-0 bg-black/20" />
-      
+
       {/* Scrollable content */}
       <div className="relative z-10 container mx-auto px-4 py-16">
         {/* Fixed Back to Home Button - Top Left */}
@@ -32,52 +31,52 @@ export default function ContactPage() {
         {/* Header */}
         <div className="mb-12">
           <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">Contact Us</h1>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
-            Have questions about the wedding? Need to update your RSVP? We're here to help!
-          </p>
+            <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">Contact Us</h1>
+            <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
+              Have questions about the wedding? Need to update your RSVP? We're here to help!
+            </p>
           </div>
         </div>
 
         <div className="max-w-4xl mx-auto grid md:grid-cols-2 text-center gap-6">
           {/* Contact Form */}
           <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-8 border border-white/20 text-left">
-            <h2 className="text-2xl font-serif text-rose-700 mb-6 text-center">Send us a Message</h2>
+            <h2 className="text-2xl font-serif text-jewel-burgundy mb-6 text-center">Send us a Message</h2>
             <form className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-semibold text-charcoal mb-2">
                   Your Name
                 </label>
                 <input
                   type="text"
                   id="name"
                   name="name"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                  className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                   placeholder="Your name"
                 />
               </div>
-              
+
               <div>
-                <label htmlFor="contactEmail" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="contactEmail" className="block text-sm font-semibold text-charcoal mb-2">
                   Email Address
                 </label>
                 <input
                   type="email"
                   id="contactEmail"
                   name="contactEmail"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                  className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                   placeholder="your.email@example.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="subject" className="block text-sm font-semibold text-charcoal mb-2">
                   Subject
                 </label>
                 <select
                   id="subject"
                   name="subject"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                  className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                 >
                   <option value="">Select a topic</option>
                   <option value="rsvp">RSVP Question/Change</option>
@@ -90,21 +89,21 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="contactMessage" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="contactMessage" className="block text-sm font-semibold text-charcoal mb-2">
                   Message
                 </label>
                 <textarea
                   id="contactMessage"
                   name="contactMessage"
                   rows={5}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                  className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                   placeholder="How can we help you?"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 text-lg font-semibold rounded-lg transition-colors duration-200"
+                className="w-full bg-jewel-burgundy hover:bg-jewel-crimson text-white py-3 text-lg font-semibold rounded-full transition-colors duration-200 shadow-lg"
               >
                 Send Message
               </button>
@@ -112,9 +111,8 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Information */}
-          
         </div>
       </div>
     </div>
-  );
+  )
 }
