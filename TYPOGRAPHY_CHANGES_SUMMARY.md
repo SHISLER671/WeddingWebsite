@@ -108,4 +108,3 @@ Your wedding website now has:
 - **Balance**: Perfect mix of sexy-elegant (serif) and professional-fun (sans)
 
 **Status**: Ready to impress your guests! 💕✨
-

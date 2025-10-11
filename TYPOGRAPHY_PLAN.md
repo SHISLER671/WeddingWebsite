@@ -208,7 +208,7 @@
 
 ## 🎨 Quick Reference Guide
 
-```tsx
+\`\`\`tsx
 // Hero/Page Titles
 className="font-serif font-semibold"  // Pia & Ryan style
 
@@ -231,5 +231,4 @@ className="font-sans font-semibold"
 
 // Italic Emphasis
 <em>subtle emphasis</em>  // Uses current font
-```
-
+\`\`\`
