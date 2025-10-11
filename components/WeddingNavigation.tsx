@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { Heart, Edit, Gift, Camera, Info, Menu, X, Home } from "lucide-react"
+import { Heart, Edit, Gift, Camera, Info, Menu, X, Home, Loader2 } from "lucide-react"
 
 interface WeddingNavigationProps {
   currentPage?: string
@@ -9,6 +9,8 @@ interface WeddingNavigationProps {
 
 export default function WeddingNavigation({ currentPage }: WeddingNavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isNavigating, setIsNavigating] = useState(false)
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -56,6 +58,18 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
 
   return (
     <>
+      {/* Global Loading Overlay */}
+      {isNavigating && (
+        <div className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-jewel-burgundy/95 backdrop-blur-lg rounded-lg p-6 border-2 border-jewel-gold/50">
+            <div className="flex items-center gap-3 text-warm-white">
+              <Loader2 className="w-6 h-6 animate-spin text-jewel-gold" />
+              <span className="font-medium">Navigating...</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Navigation Toggle Button */}
       <button
         ref={buttonRef}
@@ -98,7 +112,16 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
                   <Link
                     key={item.href}
                     href={item.href}
+                    onMouseEnter={() => {
+                      // Preload the page on hover for faster navigation
+                      const link = document.createElement('link')
+                      link.rel = 'prefetch'
+                      link.href = item.href
+                      document.head.appendChild(link)
+                    }}
                     onClick={() => {
+                      setIsNavigating(true)
+                      setNavigatingTo(item.href)
                       setIsMenuOpen(false)
                       // Add a small delay for smooth transition
                       setTimeout(() => {
@@ -115,7 +138,11 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
                       animation: isMenuOpen ? 'slideInLeft 0.3s ease-out forwards' : 'none'
                     }}
                   >
-                    <Icon className="w-5 h-5" />
+                    {isNavigating && navigatingTo === item.href ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Icon className="w-5 h-5" />
+                    )}
                     <span className="font-medium">{item.label}</span>
                     {isCurrentPage && (
                       <span className="ml-auto text-xs bg-jewel-gold/20 px-2 py-1 rounded-full text-gold-shimmer">
