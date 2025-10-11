@@ -36,7 +36,7 @@ export default function Home() {
             <span className="text-gold-shimmer font-serif font-semibold">Pia & Ryan</span>
           </h1>
           <p className="text-xl md:text-2xl text-warm-white font-light drop-shadow-md font-sans mb-3">
-            February 13, 2026
+            Friday, February 13, 2026
           </p>
           {daysUntilWedding !== null && daysUntilWedding > 0 && (
             <div className="inline-block bg-jewel-gold/20 backdrop-blur-sm border-2 border-jewel-gold/50 rounded-full px-6 py-2 mt-2">
