@@ -115,7 +115,7 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
       <button
         ref={buttonRef}
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="fixed top-4 left-4 z-50 bg-jewel-burgundy/90 backdrop-blur-sm text-warm-white p-3 rounded-full shadow-lg hover:bg-jewel-crimson transition-all duration-300 hover:scale-105 border-2 border-jewel-gold/30 animate-pulse"
+        className="fixed top-4 left-4 z-50 bg-jewel-burgundy/90 backdrop-blur-sm text-warm-white p-3 rounded-full shadow-lg hover:bg-jewel-crimson transition-all duration-300 hover:scale-105 border-2 border-jewel-gold/30 hover:shadow-jewel-gold/20 hover:shadow-2xl"
         aria-label="Toggle navigation menu (Press 'M' to open, 'Escape' to close)"
         title="Navigation Menu (M to open, Esc to close)"
       >
@@ -142,10 +142,13 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
         {/* Menu Panel */}
         <div 
           ref={menuRef}
-          className={`absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-jewel-burgundy/95 backdrop-blur-lg border-r-2 border-jewel-gold/50 transform transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          className={`absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-jewel-burgundy/95 backdrop-blur-lg border-r-2 border-jewel-gold/50 transform transition-all duration-300 ${isMenuOpen ? 'translate-x-0 shadow-2xl shadow-jewel-burgundy/20' : '-translate-x-full'}`}
+          style={{
+            background: 'linear-gradient(135deg, rgba(139, 69, 19, 0.95) 0%, rgba(101, 67, 33, 0.95) 100%)'
+          }}
         >
           <div className="p-6 pt-16">
-            <h3 className="text-xl font-serif font-semibold text-gold-shimmer mb-6 text-center">
+            <h3 className="text-xl font-serif font-semibold text-gold-shimmer mb-6 text-center animate-fade-in-up">
               Wedding Navigation
             </h3>
             
@@ -200,8 +203,8 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
               })}
             </nav>
 
-            <div className="mt-8 pt-6 border-t border-jewel-gold/30">
-              <p className="text-sm text-warm-white/70 text-center">
+            <div className="mt-8 pt-6 border-t border-jewel-gold/30 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+              <p className="text-sm text-warm-white/70 text-center font-medium">
                 Pia & Ryan Wedding
               </p>
               <p className="text-xs text-warm-white/50 text-center mt-1">
