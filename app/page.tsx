@@ -80,7 +80,7 @@ export default function Home() {
           {/* Clear instruction text */}
           <div className="mt-4 text-center">
             <p className="text-sm md:text-base text-warm-white/80 drop-shadow-md font-medium">
-              Tap the countdown to explore wedding details
+              Tap the countdown to join our celebration! 🎊
             </p>
           </div>
         </div>
