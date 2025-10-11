@@ -136,8 +136,8 @@ export default function ConfirmationPage() {
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <h3 className="font-medium text-charcoal mb-2">Dress Code</h3>
-                <p className="text-charcoal/80">Formal Attire</p>
-                <p className="text-sm text-charcoal/60 mt-1">Elegant and dressy</p>
+                <p className="text-charcoal/80">Semi-Formal Attire</p>
+                <p className="text-sm text-charcoal/60 mt-1">Cocktail or elegant dressy attire</p>
               </div>
               <div>
                 <h3 className="font-medium text-charcoal mb-2">RSVP Deadline</h3>

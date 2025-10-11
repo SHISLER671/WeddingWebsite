@@ -209,7 +209,7 @@ export default function InfoPage() {
                   </summary>
                   <div className="mt-3 text-gray-800">
                     <p className="text-lg">
-                      Dress code is <strong className="text-xl">Formal</strong> - <em>think cocktail or evening formal attire. Look good, feel
+                      Dress code is <strong className="text-xl">Semi-Formal</strong> - <em>think cocktail or evening attire. Look good, feel
                       good!</em>
                     </p>
                     <p className="mt-2 text-lg">
