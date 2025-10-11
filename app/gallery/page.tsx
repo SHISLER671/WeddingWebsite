@@ -1,19 +1,29 @@
-// Wedding Gallery Page - Carousel + Grid View with Spotify
-// Displays photos in an immersive carousel or quick-scan grid
-
 "use client"
 
 import type React from "react"
 import { useState, useEffect, useRef, useCallback } from "react"
 import Image from "next/image"
-import { Heart, Upload, Camera, Video, X, CheckCircle, AlertCircle, ArrowLeft, ChevronLeft, ChevronRight, Grid3x3, Maximize2 } from "lucide-react"
+import {
+  Heart,
+  Upload,
+  Camera,
+  Video,
+  X,
+  CheckCircle,
+  AlertCircle,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Grid3x3,
+  Maximize2,
+} from "lucide-react"
 import { getGalleryItems, type GalleryItem } from "@/lib/utils/gallery"
 import { uploadGalleryItem } from "@/app/actions/upload-gallery-item"
 import Link from "next/link"
 import { SpinningRoseLoader } from "@/components/spinning-rose-loader"
-import useEmblaCarousel from 'embla-carousel-react'
+import useEmblaCarousel from "embla-carousel-react"
 
-type ViewMode = 'carousel' | 'grid'
+type ViewMode = "carousel" | "grid"
 
 export default function GalleryPage() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
@@ -26,19 +36,19 @@ export default function GalleryPage() {
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle")
   const [uploadMessage, setUploadMessage] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
-  
+
   // View mode state
-  const [viewMode, setViewMode] = useState<ViewMode>('carousel')
+  const [viewMode, setViewMode] = useState<ViewMode>("carousel")
   const [selectedIndex, setSelectedIndex] = useState(0)
-  
+
   // Embla Carousel
-  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+  const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
-    align: 'center',
+    align: "center",
     slidesToScroll: 1,
     breakpoints: {
-      '(min-width: 768px)': { slidesToScroll: 1 }
-    }
+      "(min-width: 768px)": { slidesToScroll: 1 },
+    },
   })
 
   useEffect(() => {
@@ -52,11 +62,11 @@ export default function GalleryPage() {
       setSelectedIndex(emblaApi.selectedScrollSnap())
     }
 
-    emblaApi.on('select', onSelect)
+    emblaApi.on("select", onSelect)
     onSelect()
 
     return () => {
-      emblaApi.off('select', onSelect)
+      emblaApi.off("select", onSelect)
     }
   }, [emblaApi])
 
@@ -80,12 +90,15 @@ export default function GalleryPage() {
     if (emblaApi) emblaApi.scrollNext()
   }, [emblaApi])
 
-  const scrollTo = useCallback((index: number) => {
-    if (emblaApi) emblaApi.scrollTo(index)
-  }, [emblaApi])
+  const scrollTo = useCallback(
+    (index: number) => {
+      if (emblaApi) emblaApi.scrollTo(index)
+    },
+    [emblaApi],
+  )
 
   const handleGridItemClick = (index: number) => {
-    setViewMode('carousel')
+    setViewMode("carousel")
     setTimeout(() => scrollTo(index), 100)
   }
 
@@ -167,12 +180,12 @@ export default function GalleryPage() {
     }
   }
 
-  const renderMediaItem = (item: GalleryItem, isCarousel: boolean = false) => {
+  const renderMediaItem = (item: GalleryItem, isCarousel = false) => {
     if (item.file_type === "video") {
       return (
         <video
           controls
-          className={`w-full h-full object-contain ${isCarousel ? 'max-h-[60vh]' : 'object-cover rounded-lg'}`}
+          className={`w-full h-full object-contain ${isCarousel ? "max-h-[60vh]" : "object-cover rounded-lg"}`}
           poster={item.file_url}
           preload="metadata"
           playsInline
@@ -215,13 +228,7 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-soft-blush via-warm-white to-rose-gold/20 relative">
       <div className="fixed inset-0 z-0">
-        <Image
-          src="/hibiscusring.jpg"
-          alt="Wedding background"
-          fill
-          className="object-cover"
-          priority
-        />
+        <Image src="/hibiscusring.jpg" alt="Wedding background" fill className="object-cover" priority />
       </div>
 
       <div className="relative z-10">
@@ -249,7 +256,7 @@ export default function GalleryPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <button
                   onClick={() => setShowUploadForm(true)}
-                  className="bg-jewel-sapphire hover:bg-jewel-emerald text-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3"
+                  className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-8 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3"
                 >
                   <Camera className="w-5 h-5" />
                   Share a Memory
@@ -259,22 +266,22 @@ export default function GalleryPage() {
                 {galleryItems.length > 0 && (
                   <div className="flex gap-2 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg">
                     <button
-                      onClick={() => setViewMode('carousel')}
+                      onClick={() => setViewMode("carousel")}
                       className={`px-6 py-3 rounded-full transition-all duration-300 flex items-center gap-2 ${
-                        viewMode === 'carousel'
-                          ? 'bg-jewel-sapphire text-white shadow-md'
-                          : 'text-charcoal hover:bg-white/50'
+                        viewMode === "carousel"
+                          ? "bg-jewel-burgundy text-white shadow-md"
+                          : "text-charcoal hover:bg-white/50"
                       }`}
                     >
                       <Maximize2 className="w-4 h-4" />
                       Carousel
                     </button>
                     <button
-                      onClick={() => setViewMode('grid')}
+                      onClick={() => setViewMode("grid")}
                       className={`px-6 py-3 rounded-full transition-all duration-300 flex items-center gap-2 ${
-                        viewMode === 'grid'
-                          ? 'bg-jewel-sapphire text-white shadow-md'
-                          : 'text-charcoal hover:bg-white/50'
+                        viewMode === "grid"
+                          ? "bg-jewel-burgundy text-white shadow-md"
+                          : "text-charcoal hover:bg-white/50"
                       }`}
                     >
                       <Grid3x3 className="w-4 h-4" />
@@ -427,7 +434,7 @@ export default function GalleryPage() {
               <p className="text-charcoal/60 mb-6">Be the first to share a special moment!</p>
               <button
                 onClick={() => setShowUploadForm(true)}
-                className="bg-jewel-sapphire hover:bg-jewel-emerald text-white px-6 py-3 rounded-full transition-all duration-300"
+                className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-6 py-3 rounded-full transition-all duration-300"
               >
                 Share a Memory
               </button>
@@ -435,21 +442,18 @@ export default function GalleryPage() {
           ) : (
             <>
               {/* Carousel View */}
-              {viewMode === 'carousel' && (
+              {viewMode === "carousel" && (
                 <div className="relative mb-8">
                   {/* Carousel Container */}
                   <div className="overflow-hidden rounded-2xl bg-black/5 backdrop-blur-sm" ref={emblaRef}>
                     <div className="flex">
                       {galleryItems.map((item, index) => (
-                        <div
-                          key={item.id}
-                          className="flex-[0_0_100%] md:flex-[0_0_100%] min-w-0 px-4"
-                        >
+                        <div key={item.id} className="flex-[0_0_100%] md:flex-[0_0_100%] min-w-0 px-4">
                           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden">
                             {/* Media Container */}
                             <div className="relative bg-black flex items-center justify-center min-h-[50vh] md:min-h-[60vh]">
                               {renderMediaItem(item, true)}
-                              
+
                               {/* File Type Indicator */}
                               <div className="absolute top-4 right-4">
                                 {item.file_type === "video" ? (
@@ -511,11 +515,12 @@ export default function GalleryPage() {
               )}
 
               {/* Grid View */}
-              {viewMode === 'grid' && (
+              {viewMode === "grid" && (
                 <div className="mb-8">
                   <div className="text-center mb-6">
                     <p className="text-charcoal/60">
-                      Showing {galleryItems.length} {galleryItems.length === 1 ? 'memory' : 'memories'} - Click any photo to view in carousel
+                      Showing {galleryItems.length} {galleryItems.length === 1 ? "memory" : "memories"} - Click any
+                      photo to view in carousel
                     </p>
                   </div>
 
@@ -564,24 +569,22 @@ export default function GalleryPage() {
 
               {/* Spotify Player - Always Visible */}
               <div className="max-w-4xl mx-auto mt-8">
-                <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-jewel-purple/20">
+                <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-jewel-fuchsia/20">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl">🎵</span>
-                    <h3 className="text-2xl font-semibold text-jewel-purple">The Soundtrack to Our Story</h3>
+                    <h3 className="text-2xl font-semibold text-jewel-fuchsia">The Soundtrack to Our Story</h3>
                   </div>
-                  <p className="text-charcoal/70 mb-4 italic">
-                    Let the music move you as you browse our memories...
-                  </p>
+                  <p className="text-charcoal/70 mb-4 italic">Let the music move you as you browse our memories...</p>
                   <div className="rounded-xl overflow-hidden shadow-lg">
-                    <iframe 
-                      data-testid="embed-iframe" 
-                      style={{borderRadius: '12px'}} 
-                      src="https://open.spotify.com/embed/playlist/6zaH3KMo6AGlFtKv9jn3vT?utm_source=generator" 
-                      width="100%" 
-                      height="352" 
-                      frameBorder="0" 
-                      allowFullScreen 
-                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    <iframe
+                      data-testid="embed-iframe"
+                      style={{ borderRadius: "12px" }}
+                      src="https://open.spotify.com/embed/playlist/6zaH3KMo6AGlFtKv9jn3vT?utm_source=generator"
+                      width="100%"
+                      height="352"
+                      frameBorder="0"
+                      allowFullScreen
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                       loading="lazy"
                     />
                   </div>

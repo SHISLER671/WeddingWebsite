@@ -8,6 +8,8 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { lookupRSVP, type RSVPRecord } from "@/lib/rsvp-lookup"
 import { Search, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react"
 
+const Charcoal = "#333333"
+
 export default function RSVPPage() {
   const { address } = useAccount()
   const searchParams = useSearchParams()
@@ -120,16 +122,16 @@ export default function RSVPPage() {
   return (
     <div className="min-h-screen relative">
       {/* Fixed background image */}
-      <div 
+      <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: isEditMode ? "url('/IMG-20251005-WA0011.jpg')" : "url('/IMG-20251005-WA0014.jpg')",
-              backgroundAttachment: 'fixed'
-            }}
+        style={{
+          backgroundImage: isEditMode ? "url('/IMG-20251005-WA0011.jpg')" : "url('/IMG-20251005-WA0014.jpg')",
+          backgroundAttachment: "fixed",
+        }}
       />
       {/* Overlay for better text readability */}
       <div className="fixed inset-0 bg-black/20" />
-      
+
       {/* Scrollable content */}
       <div className="relative z-10 container mx-auto px-4 py-16 font-sans">
         {/* Fixed Back to Home Button - Top Left */}
@@ -146,24 +148,24 @@ export default function RSVPPage() {
         {/* Header */}
         <div className="mb-12">
           <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">
-            {isEditMode ? "Edit Your RSVP" : "RSVP"}
-          </h1>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
-            {isEditMode
-              ? "Update your RSVP details below. Your previous response will be updated."
-              : "We're so excited to celebrate with you! Please let us know if you'll be joining us on February 13, 2026."}
-          </p>
+            <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">
+              {isEditMode ? "Edit Your RSVP" : "RSVP"}
+            </h1>
+            <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
+              {isEditMode
+                ? "Update your RSVP details below. Your previous response will be updated."
+                : "We're so excited to celebrate with you! Please let us know if you'll be joining us on February 13, 2026."}
+            </p>
           </div>
         </div>
 
         {isEditMode && !foundRSVP && (
           <div className="max-w-2xl mx-auto mb-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6 border border-white/20">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center gap-2 font-serif">
-              <Search className="w-6 h-6 text-rose-600" />
+            <h2 className="text-2xl font-semibold text-jewel-burgundy mb-4 flex items-center gap-2 font-serif">
+              <Search className="w-6 h-6 text-jewel-crimson" />
               Find Your RSVP
             </h2>
-            <p className="text-gray-600 mb-4">Enter your email address to look up and edit your existing RSVP.</p>
+            <p className="text-charcoal/80 mb-4">Enter your email address to look up and edit your existing RSVP.</p>
 
             <div className="flex flex-col sm:flex-row gap-3">
               <input
@@ -172,12 +174,12 @@ export default function RSVPPage() {
                 onChange={(e) => setLookupEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleLookup()}
                 placeholder="your.email@example.com"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                className="flex-1 px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
               />
               <button
                 onClick={handleLookup}
                 disabled={isLookingUp}
-                className="px-6 py-3 bg-rose-600 hover:bg-rose-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors"
+                className="px-6 py-3 bg-jewel-burgundy hover:bg-jewel-crimson disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors shadow-lg"
               >
                 {isLookingUp ? "Searching..." : "Look Up"}
               </button>
@@ -245,7 +247,7 @@ export default function RSVPPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Guest Name */}
             <div>
-              <label htmlFor="guestName" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="guestName" className="block text-sm font-semibold text-charcoal mb-2">
                 Full Name *
               </label>
               <input
@@ -255,14 +257,14 @@ export default function RSVPPage() {
                 value={formData.guestName}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                 placeholder="Your full name"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-charcoal mb-2">
                 Email Address *
               </label>
               <input
@@ -272,14 +274,14 @@ export default function RSVPPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                 placeholder="your.email@example.com"
               />
             </div>
 
             {/* Attendance */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">Will you be attending? *</label>
+              <label className="block text-sm font-semibold text-charcoal mb-3">Will you be attending? *</label>
               <div className="space-y-2">
                 <label className="flex items-center">
                   <input
@@ -288,10 +290,10 @@ export default function RSVPPage() {
                     value="yes"
                     checked={formData.attendance === "yes"}
                     onChange={handleInputChange}
-                    className="w-4 h-4 text-rose-600 border-gray-300 focus:ring-rose-500"
+                    className="w-4 h-4 text-jewel-crimson border-jewel-burgundy/30 focus:ring-jewel-crimson"
                     required
                   />
-                  <span className="ml-2 text-gray-700">Yes, I'll be there! 🎉</span>
+                  <span className="ml-2 text-charcoal">Yes, I'll be there! 🎉</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -300,17 +302,17 @@ export default function RSVPPage() {
                     value="no"
                     checked={formData.attendance === "no"}
                     onChange={handleInputChange}
-                    className="w-4 h-4 text-rose-600 border-gray-300 focus:ring-rose-500"
+                    className="w-4 h-4 text-jewel-crimson border-jewel-burgundy/30 focus:ring-jewel-crimson"
                     required
                   />
-                  <span className="ml-2 text-gray-700">Sorry, I can't make it 💔</span>
+                  <span className="ml-2 text-charcoal">Sorry, I can't make it 💔</span>
                 </label>
               </div>
             </div>
 
             {/* Number of Guests */}
             <div>
-              <label htmlFor="guestCount" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="guestCount" className="block text-sm font-semibold text-charcoal mb-2">
                 Number of Guests (including yourself)
               </label>
               <select
@@ -318,7 +320,7 @@ export default function RSVPPage() {
                 name="guestCount"
                 value={formData.guestCount}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
               >
                 <option value="1">1 Guest</option>
                 <option value="2">2 Guests</option>
@@ -326,18 +328,21 @@ export default function RSVPPage() {
                 <option value="4">4 Guests</option>
                 <option value="5">5+ Guests</option>
               </select>
-              
+
               {/* Adults Only Notice */}
-              <div className="mt-4 bg-rose-50 border border-rose-200 rounded-lg p-4">
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  💕 <strong>Adults-Only Celebration:</strong> We love your little ones, but we've planned this as an adults-only evening so you can relax and enjoy a night out! We hope this gives you a wonderful excuse for a date night. If you absolutely need to bring your children due to exceptional circumstances, please let us know in the message section below and we'll do our best to accommodate.
+              <div className="mt-4 bg-jewel-fuchsia/10 border border-jewel-fuchsia/30 rounded-lg p-4">
+                <p className="text-sm text-charcoal leading-relaxed">
+                  💕 <strong>Adults-Only Celebration:</strong> We love your little ones, but we've planned this as an
+                  adults-only evening so you can relax and enjoy a night out! We hope this gives you a wonderful excuse
+                  for a date night. If you absolutely need to bring your children due to exceptional circumstances,
+                  please let us know in the message section below and we'll do our best to accommodate.
                 </p>
               </div>
             </div>
 
             {/* Dietary Restrictions */}
             <div>
-              <label htmlFor="dietary" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="dietary" className="block text-sm font-semibold text-charcoal mb-2">
                 Dietary Restrictions or Allergies
               </label>
               <textarea
@@ -346,14 +351,14 @@ export default function RSVPPage() {
                 rows={3}
                 value={formData.dietary}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                 placeholder="Please let us know about any dietary restrictions, allergies, or special meal preferences..."
               />
             </div>
 
             {/* Special Message */}
             <div>
-              <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="message" className="block text-sm font-semibold text-charcoal mb-2">
                 Special Message (Optional)
               </label>
               <textarea
@@ -362,7 +367,7 @@ export default function RSVPPage() {
                 rows={4}
                 value={formData.message}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                 placeholder="Share a message, memory, or well wishes for the happy couple..."
               />
             </div>
@@ -372,7 +377,7 @@ export default function RSVPPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-rose-600 hover:bg-rose-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-8 py-4 text-lg font-semibold rounded-lg transition-colors duration-200 shadow-lg"
+                className="bg-jewel-burgundy hover:bg-jewel-crimson disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-10 py-4 text-lg font-semibold rounded-full transition-colors duration-200 shadow-lg"
               >
                 {isSubmitting ? "Submitting..." : isEditMode ? "Update RSVP" : "Submit RSVP"}
               </button>

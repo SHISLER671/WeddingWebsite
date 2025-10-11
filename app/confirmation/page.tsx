@@ -1,17 +1,6 @@
 "use client"
 import Link from "next/link"
-import {
-  Calendar,
-  MapPin,
-  Clock,
-  Gift,
-  Edit,
-  Heart,
-  Flower2,
-  MessageCircle,
-  Wallet,
-  ArrowLeft,
-} from "lucide-react"
+import { Calendar, MapPin, Clock, Gift, Edit, Heart, Flower2, MessageCircle, Wallet, ArrowLeft } from "lucide-react"
 import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
 import { useChat } from "../../contexts/ChatContext"
 import { useAccount } from "wagmi"
@@ -47,8 +36,12 @@ export default function ConfirmationPage() {
             </div>
 
             <div className="text-center">
-              <h1 className="text-4xl md:text-6xl font-light text-white tracking-wide mb-6 drop-shadow-lg">Thank You</h1>
-              <p className="text-xl md:text-2xl text-white/90 font-light mb-4 drop-shadow-md">for taking the time to RSVP</p>
+              <h1 className="text-4xl md:text-6xl font-light text-white tracking-wide mb-6 drop-shadow-lg">
+                Thank You
+              </h1>
+              <p className="text-xl md:text-2xl text-white/90 font-light mb-4 drop-shadow-md">
+                for taking the time to RSVP
+              </p>
               <p className="text-lg text-white font-medium drop-shadow-md">We can't wait to celebrate with you!</p>
             </div>
           </div>
@@ -60,8 +53,8 @@ export default function ConfirmationPage() {
           {/* Date & Time Card */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-rose-gold/20 rounded-full flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-rose-gold" />
+              <div className="w-12 h-12 bg-jewel-gold/20 rounded-full flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-jewel-gold" />
               </div>
               <h2 className="text-2xl font-light text-charcoal">Date & Time</h2>
             </div>
@@ -80,8 +73,8 @@ export default function ConfirmationPage() {
           {/* Location Card */}
           <div className="bg-warm-white rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-emerald-600" />
+              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
+                <MapPin className="h-6 w-6 text-jewel-emerald" />
               </div>
               <h2 className="text-2xl font-light text-charcoal">Venues</h2>
             </div>
@@ -102,8 +95,8 @@ export default function ConfirmationPage() {
           {/* Schedule Card */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-rose-gold/20 rounded-full flex items-center justify-center">
-                <Clock className="h-6 w-6 text-rose-gold" />
+              <div className="w-12 h-12 bg-jewel-gold/20 rounded-full flex items-center justify-center">
+                <Clock className="h-6 w-6 text-jewel-gold" />
               </div>
               <h2 className="text-2xl font-light text-charcoal">Schedule</h2>
             </div>
@@ -118,7 +111,7 @@ export default function ConfirmationPage() {
                   key={index}
                   className="flex items-center gap-4 p-3 rounded-lg hover:bg-soft-blush/30 transition-colors"
                 >
-                  <div className="w-20 text-rose-gold font-medium">{item.time}</div>
+                  <div className="w-20 text-jewel-gold font-medium">{item.time}</div>
                   <div className="flex-1 text-charcoal">{item.event}</div>
                 </div>
               ))}
@@ -128,8 +121,8 @@ export default function ConfirmationPage() {
           {/* Important Info Card */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-rose-gold/20 rounded-full flex items-center justify-center">
-                <Gift className="h-6 w-6 text-rose-gold" />
+              <div className="w-12 h-12 bg-jewel-gold/20 rounded-full flex items-center justify-center">
+                <Gift className="h-6 w-6 text-jewel-gold" />
               </div>
               <h2 className="text-2xl font-light text-charcoal">Details</h2>
             </div>
@@ -190,8 +183,8 @@ export default function ConfirmationPage() {
                 <AccordionItem value="how">
                   <AccordionTrigger className="text-left text-sm">How do I chat with her?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
-                    Just click the "Chat with Ezekiel" button above! The chat window will pop up and you can start asking
-                    questions right away. She's super friendly and easy to talk to - no complicated commands or
+                    Just click the "Chat with Ezekiel" button above! The chat window will pop up and you can start
+                    asking questions right away. She's super friendly and easy to talk to - no complicated commands or
                     anything.
                   </AccordionContent>
                 </AccordionItem>
@@ -199,8 +192,8 @@ export default function ConfirmationPage() {
                 <AccordionItem value="safe">
                   <AccordionTrigger className="text-left text-sm">Is my info safe?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
-                    Ezekiel uses secure connections and only sees the wedding info you already shared when you RSVP'd. He
-                    doesn't store your conversations or collect any weird data. Your privacy is totally protected.
+                    Ezekiel uses secure connections and only sees the wedding info you already shared when you RSVP'd.
+                    He doesn't store your conversations or collect any weird data. Your privacy is totally protected.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
@@ -209,8 +202,8 @@ export default function ConfirmationPage() {
 
           {/* AGW FAQ */}
           <Card className="border-white/20 shadow-lg bg-white/80 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-emerald-400/10 to-teal-400/10">
-              <CardTitle className="flex items-center gap-2 text-emerald-700">
+            <CardHeader className="bg-gradient-to-r from-jewel-emerald/10 to-teal-400/10">
+              <CardTitle className="flex items-center gap-2 text-jewel-emerald">
                 <Wallet className="w-5 h-5" />
                 About the Wallet
               </CardTitle>
@@ -304,7 +297,7 @@ function AGWWalletButton() {
       <button
         onClick={isConnected ? handleDisconnect : handleConnect}
         disabled={status === "connecting"}
-        className="flex flex-col items-center gap-3 p-6 bg-jewel-sapphire hover:bg-jewel-emerald disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
+        className="flex flex-col items-center gap-3 p-6 bg-jewel-emerald hover:bg-jewel-emerald/90 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
       >
         <Flower2 className="w-8 h-8 text-white" />
         <span className="font-semibold text-lg text-white">
