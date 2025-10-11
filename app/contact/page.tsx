@@ -31,7 +31,7 @@ export default function ContactPage() {
         {/* Header */}
         <div className="mb-12">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">Contact Us</h1>
+            <h1 className="text-4xl md:text-6xl font-serif font-semibold text-white mb-4 drop-shadow-lg">Contact Us</h1>
             <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
               Have questions about the wedding? Need to update your RSVP? We're here to help!
             </p>
@@ -103,7 +103,7 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="w-full bg-jewel-burgundy hover:bg-jewel-crimson text-white py-3 text-lg font-semibold rounded-full transition-colors duration-200 shadow-lg"
+                className="w-full bg-jewel-burgundy hover:bg-jewel-crimson text-white py-3 text-lg font-medium rounded-full transition-colors duration-200 shadow-lg"
               >
                 Send Message
               </button>

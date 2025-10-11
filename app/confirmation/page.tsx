@@ -36,7 +36,7 @@ export default function ConfirmationPage() {
             </div>
 
             <div className="text-center">
-              <h1 className="text-4xl md:text-6xl font-light text-white tracking-wide mb-6 drop-shadow-lg">
+              <h1 className="text-4xl md:text-6xl font-serif font-semibold text-white tracking-wide mb-6 drop-shadow-lg">
                 Thank You
               </h1>
               <p className="text-xl md:text-2xl text-white/90 font-light mb-4 drop-shadow-md">

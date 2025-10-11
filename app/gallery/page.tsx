@@ -247,7 +247,7 @@ export default function GalleryPage() {
         <div className="py-16 px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-8">
-              <h1 className="text-4xl md:text-6xl font-light text-charcoal mb-4 tracking-wide">Wedding Memories</h1>
+              <h1 className="text-4xl md:text-6xl font-serif font-semibold text-charcoal mb-4 tracking-wide">Wedding Memories</h1>
               <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-8">
                 Share your favorite moments from our special day
               </p>
@@ -434,7 +434,7 @@ export default function GalleryPage() {
               <p className="text-charcoal/60 mb-6">Be the first to share a special moment!</p>
               <button
                 onClick={() => setShowUploadForm(true)}
-                className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-6 py-3 rounded-full transition-all duration-300"
+                className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-6 py-3 rounded-full transition-all duration-300 font-medium"
               >
                 Share a Memory
               </button>
@@ -572,7 +572,7 @@ export default function GalleryPage() {
                 <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-jewel-fuchsia/20">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl">🎵</span>
-                    <h3 className="text-2xl font-semibold text-jewel-fuchsia">The Soundtrack to Our Story</h3>
+                    <h3 className="text-2xl font-serif font-bold text-jewel-fuchsia">The Soundtrack to Our Story</h3>
                   </div>
                   <p className="text-charcoal/70 mb-4 italic">Let the music move you as you browse our memories...</p>
                   <div className="rounded-xl overflow-hidden shadow-lg">

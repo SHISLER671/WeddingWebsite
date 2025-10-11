@@ -148,7 +148,7 @@ export default function RSVPPage() {
         {/* Header */}
         <div className="mb-12">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 drop-shadow-lg">
+            <h1 className="text-4xl md:text-6xl font-serif font-semibold text-white mb-4 drop-shadow-lg">
               {isEditMode ? "Edit Your RSVP" : "RSVP"}
             </h1>
             <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
@@ -179,7 +179,7 @@ export default function RSVPPage() {
               <button
                 onClick={handleLookup}
                 disabled={isLookingUp}
-                className="px-6 py-3 bg-jewel-burgundy hover:bg-jewel-crimson disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors shadow-lg"
+                className="px-6 py-3 bg-jewel-burgundy hover:bg-jewel-crimson disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors shadow-lg"
               >
                 {isLookingUp ? "Searching..." : "Look Up"}
               </button>
@@ -377,7 +377,7 @@ export default function RSVPPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-jewel-burgundy hover:bg-jewel-crimson disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-10 py-4 text-lg font-semibold rounded-full transition-colors duration-200 shadow-lg"
+                className="bg-jewel-burgundy hover:bg-jewel-crimson disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-10 py-4 text-lg font-medium rounded-full transition-colors duration-200 shadow-lg"
               >
                 {isSubmitting ? "Submitting..." : isEditMode ? "Update RSVP" : "Submit RSVP"}
               </button>

@@ -45,7 +45,7 @@ export default function GiftsPage() {
         </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-light text-white mb-4 drop-shadow-lg">Your Presence is Our Present</h1>
+          <h1 className="text-4xl md:text-5xl font-serif font-semibold text-white mb-4 drop-shadow-lg">Your Presence is Our Present</h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto leading-relaxed mb-2 drop-shadow-md">
             Seriously, having you celebrate with us is the best gift we could ask for. But if you'd like to honor us
             with a gift, we've made it super easy with both traditional and modern options.
