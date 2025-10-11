@@ -11,6 +11,8 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isNavigating, setIsNavigating] = useState(false)
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null)
+  const [touchEnd, setTouchEnd] = useState<{ x: number; y: number } | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -46,6 +48,45 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isMenuOpen])
+
+  // Swipe gesture handling
+  const minSwipeDistance = 50
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null)
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    })
+  }
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    })
+  }
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    
+    const distanceX = touchStart.x - touchEnd.x
+    const distanceY = touchStart.y - touchEnd.y
+    const isLeftSwipe = distanceX > minSwipeDistance
+    const isRightSwipe = distanceX < -minSwipeDistance
+    const isVerticalSwipe = Math.abs(distanceY) > Math.abs(distanceX)
+
+    // Only handle horizontal swipes
+    if (!isVerticalSwipe) {
+      if (isLeftSwipe && !isMenuOpen) {
+        // Swipe left to open menu
+        setIsMenuOpen(true)
+      } else if (isRightSwipe && isMenuOpen) {
+        // Swipe right to close menu
+        setIsMenuOpen(false)
+      }
+    }
+  }
 
   const navigationItems = [
     { href: "/", label: "Home", icon: Home, color: "text-jewel-gold hover:bg-jewel-gold hover:text-jewel-burgundy" },
@@ -86,7 +127,12 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
       </button>
 
       {/* Navigation Menu Overlay */}
-      <div className={`fixed inset-0 z-40 transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+      <div 
+        className={`fixed inset-0 z-40 transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         {/* Backdrop */}
         <div 
           className="absolute inset-0 bg-black/50 backdrop-blur-md"
@@ -128,11 +174,11 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
                         window.location.href = item.href
                       }, 150)
                     }}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 border-2 backdrop-blur-sm bg-warm-white/10 ${item.color} ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 border-2 backdrop-blur-sm bg-warm-white/10 ${item.color} ${
                       isCurrentPage 
                         ? 'border-jewel-gold bg-jewel-gold/20 shadow-lg' 
-                        : 'border-transparent hover:shadow-lg hover:scale-105'
-                    } transform transition-transform`}
+                        : 'border-transparent hover:shadow-lg hover:scale-105 active:scale-95'
+                    } transform transition-transform touch-manipulation touch-feedback`}
                     style={{
                       animationDelay: `${index * 50}ms`,
                       animation: isMenuOpen ? 'slideInLeft 0.3s ease-out forwards' : 'none'
