@@ -21,40 +21,102 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Verify Environment
+        run: |
+          echo "🔍 Environment Verification:"
+          echo "  • GitHub Actions: ✅ Running"
+          echo "  • Runner: ${{ runner.os }}"
+          echo "  • Node Version: $(node --version 2>/dev/null || echo 'Not available')"
+          echo "  • Curl Version: $(curl --version | head -n1)"
+          echo "  • Date/Time: $(date)"
+          echo "  • Timezone: $(date +%Z)"
+          
       - name: Ping Supabase Keep-Alive
         run: |
           echo "🔄 Pinging Supabase to keep project active..."
           echo "⏰ Timestamp: $(date)"
           echo "🌐 Environment: ${{ github.event.inputs.environment || 'production' }}"
           
-          # Ping the RSVP endpoint with invalid data to trigger validation logging
-          # This counts as activity without upserting any data
-          response=$(curl -s -w "\n%{http_code}" -X POST https://pia-ryan-wedding.vercel.app/api/rsvp \
-            -H "Content-Type: application/json" \
-            -d '{"guest_name": "", "email": "", "attendance": ""}' \
-            --max-time 30)
+          # Set timeout and retry logic
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          SUCCESS=false
           
-          # Extract HTTP status code (last line)
-          http_code=$(echo "$response" | tail -n1)
-          # Extract response body (all lines except last)
-          response_body=$(echo "$response" | head -n -1)
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$SUCCESS" = false ]; do
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "🔄 Attempt $RETRY_COUNT of $MAX_RETRIES"
+            
+            # Ping the RSVP endpoint with invalid data to trigger validation logging
+            # This counts as activity without upserting any data
+            response=$(curl -s -w "\n%{http_code}" -X POST https://pia-ryan-wedding.vercel.app/api/rsvp \
+              -H "Content-Type: application/json" \
+              -d '{"guest_name": "", "email": "", "attendance": ""}' \
+              --max-time 30 \
+              --connect-timeout 10 \
+              --retry 2 \
+              --retry-delay 1)
+            
+            # Check if curl command succeeded
+            curl_exit_code=$?
+            if [ $curl_exit_code -ne 0 ]; then
+              echo "❌ Curl failed with exit code: $curl_exit_code"
+              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                echo "⏳ Waiting 5 seconds before retry..."
+                sleep 5
+                continue
+              else
+                echo "💥 All retry attempts failed"
+                exit 1
+              fi
+            fi
+            
+            # Extract HTTP status code (last line)
+            http_code=$(echo "$response" | tail -n1)
+            # Extract response body (all lines except last)
+            response_body=$(echo "$response" | sed '$d')
+            
+            echo "📊 HTTP Status: $http_code"
+            echo "📝 Response: $response_body"
+            
+            # Check if the request was successful (should return 400 for validation error)
+            if [ "$http_code" -eq 400 ]; then
+              echo "✅ Keep-alive ping successful! Supabase activity logged."
+              echo "🎯 Expected validation error received - this confirms the endpoint is active."
+              SUCCESS=true
+            elif [ "$http_code" -eq 200 ]; then
+              echo "⚠️  Unexpected 200 response - endpoint may have changed behavior"
+              echo "🔍 This might indicate the validation logic has changed"
+              SUCCESS=true  # Still consider this a success as the endpoint is responding
+            elif [ "$http_code" -eq 000 ]; then
+              echo "❌ Connection failed (HTTP 000) - possible network issue"
+              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                echo "⏳ Waiting 5 seconds before retry..."
+                sleep 5
+                continue
+              else
+                echo "💥 All retry attempts failed"
+                exit 1
+              fi
+            else
+              echo "❌ Keep-alive ping failed with status: $http_code"
+              echo "🔍 Response: $response_body"
+              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                echo "⏳ Waiting 5 seconds before retry..."
+                sleep 5
+                continue
+              else
+                echo "💥 All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
           
-          echo "📊 HTTP Status: $http_code"
-          echo "📝 Response: $response_body"
-          
-          # Check if the request was successful (should return 400 for validation error)
-          if [ "$http_code" -eq 400 ]; then
-            echo "✅ Keep-alive ping successful! Supabase activity logged."
-            echo "🎯 Expected validation error received - this confirms the endpoint is active."
-          elif [ "$http_code" -eq 200 ]; then
-            echo "⚠️  Unexpected 200 response - endpoint may have changed behavior"
+          if [ "$SUCCESS" = true ]; then
+            echo "🏁 Keep-alive process completed successfully!"
           else
-            echo "❌ Keep-alive ping failed with status: $http_code"
-            echo "🔍 Response: $response_body"
+            echo "💥 Keep-alive process failed after $MAX_RETRIES attempts"
             exit 1
           fi
-          
-          echo "🏁 Keep-alive process completed successfully!"
 
       - name: Log Activity Summary
         run: |
@@ -65,3 +127,13 @@ jobs:
           echo "  • Frequency: Weekly (Sundays at 2 AM ChST)"
           echo "  • Purpose: Prevent 7-day Supabase inactivity pause"
           echo "  • Last run: $(date)"
+          echo "  • Status: ✅ SUCCESS"
+          
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "🚨 Keep-Alive Failed!"
+          echo "  • Check the logs above for details"
+          echo "  • Verify the endpoint is accessible"
+          echo "  • Check Vercel deployment status"
+          echo "  • Consider manual intervention if needed"

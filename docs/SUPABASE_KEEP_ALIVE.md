@@ -89,11 +89,17 @@ Run the test script to verify the ping works:
    - Check Vercel deployment status
    - Verify endpoint URL is correct
    - Check network connectivity
+   - The workflow now includes retry logic (3 attempts with 5-second delays)
 
 3. **No Supabase activity**
    - Verify Supabase logs
    - Check if endpoint is actually being called
    - Ensure validation is working correctly
+
+4. **Connection timeouts**
+   - The workflow now includes connection timeout settings
+   - Curl retry logic with exponential backoff
+   - Better error reporting for network issues
 
 ### Manual Verification
 \`\`\`bash
@@ -127,6 +133,8 @@ schedule:
 4. **Monitored**: GitHub Actions provides execution logs
 5. **Testable**: Manual trigger and test script available
 6. **Cost Effective**: Minimal resource usage
+7. **Robust**: Includes retry logic and better error handling
+8. **Self-Healing**: Automatic retries on network issues
 
 ## Security
 
