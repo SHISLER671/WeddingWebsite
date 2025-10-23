@@ -31,6 +31,8 @@ export default function RSVPPage() {
   const [lookupStatus, setLookupStatus] = useState<"idle" | "success" | "error" | "not-found">("idle")
   const [lookupMessage, setLookupMessage] = useState("")
   const [foundRSVP, setFoundRSVP] = useState<RSVPRecord | null>(null)
+  const [seatingAssignment, setSeatingAssignment] = useState<any>(null)
+  const [seatingStatus, setSeatingStatus] = useState<"idle" | "loading" | "found" | "not-found">("idle")
 
   const handleLookup = async () => {
     if (!lookupEmail) {
@@ -60,6 +62,9 @@ export default function RSVPPage() {
           dietary: result.rsvp.dietary_restrictions || "",
           message: result.rsvp.special_message || "",
         })
+
+        // Look up seating assignment
+        await lookupSeatingAssignment(lookupEmail, result.rsvp.guest_name)
       } else {
         setLookupStatus("not-found")
         setLookupMessage("No RSVP found with this email. You can create a new RSVP below.")
@@ -70,6 +75,30 @@ export default function RSVPPage() {
       setLookupMessage("Error looking up RSVP. Please try again.")
     } finally {
       setIsLookingUp(false)
+    }
+  }
+
+  const lookupSeatingAssignment = async (email: string, guestName?: string) => {
+    setSeatingStatus("loading")
+    try {
+      let url = `/api/seating?email=${encodeURIComponent(email)}`
+      if (guestName) {
+        url += `&name=${encodeURIComponent(guestName)}`
+      }
+      
+      const response = await fetch(url)
+      const result = await response.json()
+      
+      if (result.success && result.hasSeating) {
+        setSeatingAssignment(result.data)
+        setSeatingStatus("found")
+      } else {
+        setSeatingAssignment(null)
+        setSeatingStatus("not-found")
+      }
+    } catch (error) {
+      console.error("Seating lookup error:", error)
+      setSeatingStatus("not-found")
     }
   }
 
@@ -105,7 +134,7 @@ export default function RSVPPage() {
       const result = await response.json()
 
       if (response.ok && result.success) {
-        router.push("/confirmation")
+        router.push(`/confirmation?email=${encodeURIComponent(formData.email)}&name=${encodeURIComponent(formData.guestName)}`)
       } else {
         throw new Error(result.error || "Failed to submit RSVP")
       }
@@ -191,6 +220,55 @@ export default function RSVPPage() {
                   <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 )}
                 <span className="text-sm">{lookupMessage}</span>
+              </div>
+            )}
+
+            {/* Seating Assignment Display */}
+            {lookupStatus === "success" && (
+              <div className="mt-4">
+                {seatingStatus === "loading" && (
+                  <div className="bg-blue-50 text-blue-800 border border-blue-200 p-4 rounded-lg flex items-center gap-3">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <span className="text-sm">Looking up your seating assignment...</span>
+                  </div>
+                )}
+                
+                {seatingStatus === "found" && seatingAssignment && (
+                  <div className="bg-jewel-gold/10 text-jewel-burgundy border border-jewel-gold/30 p-4 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 bg-jewel-gold rounded-full"></div>
+                      <span className="font-semibold text-sm">Your Seating Assignment</span>
+                    </div>
+                    <div className="text-lg font-serif">
+                      <strong>Table {seatingAssignment.table_number}, Seat {seatingAssignment.seat_number}</strong>
+                    </div>
+                    {seatingAssignment.plus_one_name && (
+                      <div className="text-sm text-jewel-burgundy/80 mt-1">
+                        Plus One: {seatingAssignment.plus_one_name} (Seat {seatingAssignment.plus_one_seat})
+                      </div>
+                    )}
+                    {seatingAssignment.dietary_notes && (
+                      <div className="text-xs text-jewel-burgundy/70 mt-2">
+                        Dietary Notes: {seatingAssignment.dietary_notes}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {seatingStatus === "not-found" && (
+                  <div className="bg-jewel-gold/10 text-jewel-burgundy border border-jewel-gold/30 p-4 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 bg-jewel-gold rounded-full"></div>
+                      <span className="font-semibold text-sm">Seating Assignment</span>
+                    </div>
+                    <div className="text-sm text-jewel-burgundy/80 mb-2">
+                      We're still finalizing seating arrangements for your table. 
+                    </div>
+                    <div className="text-xs text-jewel-burgundy/70">
+                      💌 Please contact us directly to confirm your seating - we want to make sure you have the perfect spot!
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
