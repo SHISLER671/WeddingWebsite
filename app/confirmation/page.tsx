@@ -18,12 +18,8 @@ export default function ConfirmationPage() {
 
             <div className="text-center">
               <h1 className="text-4xl md:text-6xl font-serif font-semibold text-blue-600 tracking-wide mb-6 drop-shadow-lg">
-                Thank You
+                Thank you for taking the time to RSVP - we can't wait to celebrate with you!
               </h1>
-              <p className="text-xl md:text-2xl text-blue-500 font-light mb-4 drop-shadow-md">
-                for taking the time to RSVP
-              </p>
-              <p className="text-lg text-blue-600 font-medium drop-shadow-md">We can't wait to celebrate with you!</p>
             </div>
           </div>
         </div>
@@ -34,8 +30,8 @@ export default function ConfirmationPage() {
           {/* Date & Time Card */}
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-jewel-gold/20 rounded-full flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-jewel-gold" />
+              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-jewel-emerald" />
               </div>
               <h2 className="text-2xl font-light text-charcoal text-xl">Date & Time</h2>
             </div>
@@ -65,7 +61,7 @@ export default function ConfirmationPage() {
                 <p className="text-xl text-charcoal">Dulce Nombre de Maria Cathedral-Basilica</p>
                 <p className="text-charcoal/70 text-lg">Hagåtña, Guam • 2:00 PM</p>
               </div>
-              <div className="p-4 bg-emerald-50/50 rounded-xl">
+              <div className="p-4 rounded-xl">
                 <h3 className="font-medium text-charcoal mb-2 text-lg">Reception</h3>
                 <p className="text-xl text-charcoal">Hotel Nikko Guam Tasi Ballroom</p>
                 <p className="text-charcoal/70 text-lg">Tumon, Guam • 6:00 PM</p>
@@ -76,17 +72,24 @@ export default function ConfirmationPage() {
           {/* Schedule Card */}
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-jewel-gold/20 rounded-full flex items-center justify-center">
-                <Clock className="h-6 w-6 text-jewel-gold" />
+              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
+                <Clock className="h-6 w-6 text-jewel-emerald" />
               </div>
               <h2 className="text-2xl font-light text-charcoal text-xl">Schedule</h2>
             </div>
             <div className="space-y-4">
               {[
-                { time: "2:00 PM", event: "Mass at Cathedral-Basilica" },
-                { time: "4:00 PM", event: "Photos & Travel" },
-                { time: "6:00 PM", event: "Reception Begins" },
-                { time: "8:00 PM", event: "Dancing & Celebration" },
+                { time: "2:00 PM", event: "Wedding Mass at Dulce Nombre de Maria Cathedral-Basilica" },
+                { time: "2:45 PM", event: "Ceremony concludes - Family photos at Cathedral" },
+                { time: "3:15 PM", event: "Travel to photo locations around Hagåtña" },
+                { time: "4:00 PM", event: "Couple & wedding party photos at scenic locations" },
+                { time: "5:00 PM", event: "Travel to Hotel Nikko Guam for reception" },
+                { time: "6:00 PM", event: "Cocktail hour begins at Tasi Ballroom" },
+                { time: "6:30 PM", event: "Reception dinner service begins" },
+                { time: "7:30 PM", event: "Toasts and speeches" },
+                { time: "8:00 PM", event: "First dance and dancing begins" },
+                { time: "9:00 PM", event: "Cake cutting ceremony" },
+                { time: "10:00 PM", event: "Reception concludes - send-off celebration" },
               ].map((item, index) => (
                 <div
                   key={index}
@@ -115,34 +118,31 @@ export default function ConfirmationPage() {
           </div>
         </div>
 
-        {/* Edit RSVP Button - Prominent at bottom */}
-        <div className="max-w-4xl mx-auto px-4 mb-8">
-          <div className="flex justify-center">
-            <Link
-              href="/rsvp?edit=true"
-              className="bg-jewel-burgundy hover:bg-jewel-burgundy/90 text-white px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center gap-3 transform hover:scale-105 border-2 border-jewel-burgundy/20"
-            >
-              <Edit className="w-6 h-6" />
-              Edit RSVP
-            </Link>
-          </div>
-        </div>
-
         <section className="max-w-4xl mx-auto mt-16 mb-8">
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed text-lg">
-                Thanks for RSVPing! Now the fun part - chat with Ezekiel (our AI wedding assistant) anytime you have
-                questions, and if you're feeling adventurous, click the flower button to connect your Abstract Global
-                Wallet. Then connect your wallet and click the 'Edit RSVP' button to save your wallet info for a special surprise from us after the
+                Thanks for RSVPing! Now the extra fun part - chat with Ezekiel (our AI wedding assistant) anytime you have
+                questions, and if you're feeling adventurous, connect your AbstractGlobalWallet and click the 'Edit RSVP' button to save your wallet info for a special surprise from us after the
                 wedding! 🎁
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
               <ChatbotButton />
               <AGWWalletButton />
+            </div>
+
+            {/* Edit RSVP Button - Right below the wallet connection */}
+            <div className="flex justify-center">
+              <Link
+                href="/rsvp?edit=true"
+                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 transform hover:scale-105"
+              >
+                <Edit className="w-6 h-6" />
+                Edit RSVP
+              </Link>
             </div>
           </div>
         </section>
