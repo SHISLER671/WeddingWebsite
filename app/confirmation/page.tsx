@@ -119,7 +119,7 @@ export default function ConfirmationPage() {
             <div className="text-sm text-blue-800 mb-4">
               💌 Please contact us directly to confirm your seating - we want to make sure you have the perfect spot for our special day!
             </div>
-            <div className="bg-white/60 rounded-lg p-4">
+            <div className="bg-white/40 rounded-lg p-4">
               <div className="text-sm text-blue-700 mb-2">
                 <strong>Need to reach us?</strong>
               </div>
@@ -132,7 +132,7 @@ export default function ConfirmationPage() {
 
         <div className="grid gap-8">
           {/* Date & Time Card */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
                 <Calendar className="h-6 w-6 text-jewel-emerald" />
@@ -174,7 +174,7 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Schedule Card */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
                 <Clock className="h-6 w-6 text-jewel-emerald" />
@@ -207,7 +207,7 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Dress Code Card */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
                 <Gift className="h-6 w-6 text-jewel-emerald" />
@@ -223,7 +223,7 @@ export default function ConfirmationPage() {
         </div>
 
         <section className="max-w-4xl mx-auto mt-16 mb-8">
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
+          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed text-lg">
@@ -253,7 +253,7 @@ export default function ConfirmationPage() {
 
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Ezekiel FAQ */}
-          <Card className="border-white/20 shadow-lg bg-white/60 backdrop-blur-sm">
+          <Card className="border-white/20 shadow-lg bg-white/40 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-jewel-crimson/10 to-jewel-fuchsia/10">
               <CardTitle className="flex items-center gap-2 text-jewel-crimson">
                 <MessageCircle className="w-5 h-5" />
@@ -293,7 +293,7 @@ export default function ConfirmationPage() {
           </Card>
 
           {/* AGW FAQ */}
-          <Card className="border-white/20 shadow-lg bg-white/60 backdrop-blur-sm">
+          <Card className="border-white/20 shadow-lg bg-white/40 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-jewel-emerald/10 to-teal-400/10">
               <CardTitle className="flex items-center gap-2 text-jewel-emerald">
                 <Wallet className="w-5 h-5" />
@@ -336,7 +336,7 @@ export default function ConfirmationPage() {
 
       {/* Footer - Encourage exploration */}
       <footer className="max-w-4xl mx-auto px-4 py-12 mt-8">
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 text-center">
+        <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 text-center">
           <h3 className="text-2xl font-serif text-jewel-burgundy mb-6">Don't Miss Out!</h3>
           <p className="text-lg text-charcoal/80 mb-6 leading-relaxed">
             Your RSVP is confirmed, but the fun doesn't stop here! Explore our wedding website to discover all the
