@@ -399,7 +399,29 @@ export async function handleRSVPStatusRequest(userMessage: string): Promise<stri
     }
     
     const result = await lookupRSVP(searchParams);
-    return generateRSVPStatusMessage(result);
+    let message = generateRSVPStatusMessage(result);
+    
+    // If RSVP is found and confirmed, try to get seating assignment
+    if (result.found && result.rsvp?.attendance === 'yes') {
+      try {
+        const seatingResponse = await fetch(`/api/seating?email=${encodeURIComponent(searchParams.email || '')}&name=${encodeURIComponent(searchParams.name || '')}`);
+        const seatingData = await seatingResponse.json();
+        
+        if (seatingData.success && seatingData.hasSeating) {
+          message += `\n\n🪑 **Your Seating Assignment:**\nTable ${seatingData.data.table_number}, Seat ${seatingData.data.seat_number}`;
+          if (seatingData.data.plus_one_name) {
+            message += `\nPlus One: ${seatingData.data.plus_one_name} (Seat ${seatingData.data.plus_one_seat})`;
+          }
+        } else {
+          message += `\n\n🪑 **Seating Assignment:** We're still finalizing seating arrangements. Please contact us directly if you need your table assignment.`;
+        }
+      } catch (seatingError) {
+        console.error('Error fetching seating assignment:', seatingError);
+        // Don't add seating info if there's an error, just continue with RSVP info
+      }
+    }
+    
+    return message;
     
   } catch (error) {
     console.error('Error handling RSVP status request:', error);
