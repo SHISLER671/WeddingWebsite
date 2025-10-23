@@ -12,26 +12,26 @@ The system now uses fuzzy matching that handles:
 ### 2. **Admin Tools for Validation**
 
 #### **Search for Guests:**
-```bash
+\`\`\`bash
 # Exact name search
 node scripts/admin-seating.js search "John Smith"
 
 # Fuzzy search (finds partial matches)
 node scripts/admin-seating.js fuzzy "john"
 node scripts/admin-seating.js fuzzy "smith"
-```
+\`\`\`
 
 #### **Validate All Assignments:**
-```bash
+\`\`\`bash
 # Check for duplicate seats, missing plus-ones, etc.
 node scripts/admin-seating.js validate
-```
+\`\`\`
 
 #### **Export for Review:**
-```bash
+\`\`\`bash
 # Export all assignments to CSV for review
 node scripts/admin-seating.js export
-```
+\`\`\`
 
 ### 3. **Best Practices for Guest List Import**
 
@@ -41,11 +41,11 @@ node scripts/admin-seating.js export
 - ✅ Include common variations in notes field
 
 #### **Example CSV Format:**
-```csv
+\`\`\`csv
 guest_name,email,table_number,seat_number,plus_one_name,plus_one_seat,dietary_notes,special_notes
 John Smith,,1,1,Jane Smith,2,Vegetarian,Also known as Johnny
 Sarah Johnson,,1,3,,,,
-```
+\`\`\`
 
 ### 4. **Guest Communication Strategy**
 
@@ -79,29 +79,29 @@ Sarah Johnson,,1,3,,,,
 ## 🔧 Admin Workflow
 
 ### **Step 1: Import Guest List**
-```bash
+\`\`\`bash
 # Import your guest list
 node scripts/import-seating.js your-guest-list.csv
-```
+\`\`\`
 
 ### **Step 2: Validate Assignments**
-```bash
+\`\`\`bash
 # Check for issues
 node scripts/admin-seating.js validate
-```
+\`\`\`
 
 ### **Step 3: Test with Sample Guests**
-```bash
+\`\`\`bash
 # Search for test guests
 node scripts/admin-seating.js search "John Smith"
 node scripts/admin-seating.js fuzzy "john"
-```
+\`\`\`
 
 ### **Step 4: Export for Review**
-```bash
+\`\`\`bash
 # Export to CSV for final review
 node scripts/admin-seating.js export
-```
+\`\`\`
 
 ## 📋 Pre-Wedding Checklist
 
