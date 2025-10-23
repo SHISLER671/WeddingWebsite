@@ -251,7 +251,7 @@ export default function ConfirmationPage() {
           </div>
         </section>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Ezekiel FAQ */}
           <Card className="border-white/20 shadow-lg bg-white/60 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-jewel-crimson/10 to-jewel-fuchsia/10">
@@ -378,7 +378,7 @@ export default function ConfirmationPage() {
               Take your time to explore - there's so much more to discover!
             </p>
             <p className="text-jewel-burgundy font-semibold text-sm mb-6">
-              👆 Click the buttons below to explore:
+              👇 Click the buttons below to explore:
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <Link
