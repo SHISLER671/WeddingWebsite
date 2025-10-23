@@ -41,9 +41,6 @@ export async function POST(request: NextRequest) {
 
     console.log("[v0] Attempting to upsert RSVP into database...")
 
-    if (guest_name === "Douglas" && email === "doug@pretend.com") {
-      console.log("[v0] Processing test RSVP for Douglas")
-    }
 
     const { data, error } = await supabase
       .from("rsvps")
