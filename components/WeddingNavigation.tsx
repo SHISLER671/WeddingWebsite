@@ -23,7 +23,7 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
         setIsMenuOpen(false)
         buttonRef.current?.focus()
       }
-      if ((event.key === 'm' || event.key === 'M') && !event.ctrlKey && !event.metaKey) {
+      if ((event.key === 'm' || event.key === 'M') && (event.ctrlKey || event.metaKey)) {
         if (!isMenuOpen) {
           setIsMenuOpen(true)
           event.preventDefault()
@@ -128,8 +128,8 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
         ref={buttonRef}
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         className="fixed top-4 left-4 z-50 bg-jewel-burgundy/90 backdrop-blur-sm text-warm-white p-3 rounded-full shadow-lg hover:bg-jewel-crimson transition-all duration-300 hover:scale-105 border-2 border-jewel-gold/30 hover:shadow-jewel-gold/20 hover:shadow-2xl"
-        aria-label="Toggle navigation menu (Press 'M' to open, 'Escape' to close)"
-        title="Navigation Menu (M to open, Esc to close)"
+        aria-label="Toggle navigation menu (Press 'Ctrl+M' or 'Cmd+M' to open, 'Escape' to close)"
+        title="Navigation Menu (Ctrl+M or Cmd+M to open, Esc to close)"
       >
         {isMenuOpen ? (
           <X className="w-5 h-5" />
