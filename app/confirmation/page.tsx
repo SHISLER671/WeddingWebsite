@@ -134,8 +134,8 @@ export default function ConfirmationPage() {
           {/* Date & Time Card */}
           <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-jewel-emerald" />
+              <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-green-700" />
               </div>
               <h2 className="text-2xl font-light text-charcoal text-xl">Date & Time</h2>
             </div>
@@ -154,8 +154,8 @@ export default function ConfirmationPage() {
           {/* Location Card */}
           <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-jewel-emerald" />
+              <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
+                <MapPin className="h-6 w-6 text-green-700" />
               </div>
               <h2 className="text-2xl font-light text-charcoal text-xl">Venues</h2>
             </div>
@@ -176,8 +176,8 @@ export default function ConfirmationPage() {
           {/* Schedule Card */}
           <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
-                <Clock className="h-6 w-6 text-jewel-emerald" />
+              <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
+                <Clock className="h-6 w-6 text-green-700" />
               </div>
               <h2 className="text-2xl font-light text-charcoal text-xl">Schedule</h2>
             </div>
@@ -199,7 +199,7 @@ export default function ConfirmationPage() {
                   key={index}
                   className="flex items-center gap-4 p-3 rounded-lg hover:bg-soft-blush/30 transition-colors"
                 >
-                  <div className="w-20 text-jewel-emerald font-medium text-lg">{item.time}</div>
+                  <div className="w-20 text-green-700 font-medium text-lg">{item.time}</div>
                   <div className="flex-1 text-charcoal text-lg">{item.event}</div>
                 </div>
               ))}
@@ -209,8 +209,8 @@ export default function ConfirmationPage() {
           {/* Dress Code Card */}
           <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
-                <Gift className="h-6 w-6 text-jewel-emerald" />
+              <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
+                <Gift className="h-6 w-6 text-green-700" />
               </div>
               <h2 className="text-2xl font-light text-charcoal">Dress Code</h2>
             </div>
@@ -294,8 +294,8 @@ export default function ConfirmationPage() {
 
           {/* AGW FAQ */}
           <Card className="border-white/20 shadow-lg bg-white/40 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-jewel-emerald/10 to-teal-400/10">
-              <CardTitle className="flex items-center gap-2 text-jewel-emerald">
+            <CardHeader className="bg-gradient-to-r from-green-700/10 to-teal-400/10">
+              <CardTitle className="flex items-center gap-2 text-green-700">
                 <Wallet className="w-5 h-5" />
                 About the Wallet
               </CardTitle>
@@ -345,31 +345,31 @@ export default function ConfirmationPage() {
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {/* Gallery Feature */}
-            <div className="bg-soft-blush/30 rounded-xl p-6">
-              <Camera className="w-8 h-8 text-jewel-fuchsia mx-auto mb-3" />
+            <div className="bg-blue-100/30 rounded-xl p-6">
+              <Camera className="w-8 h-8 text-blue-600 mx-auto mb-3" />
               <h4 className="font-semibold text-charcoal mb-2">Live Photo Gallery</h4>
               <p className="text-sm text-charcoal/70 mb-3">
                 The gallery is open now! Upload your favorite photos and memories.
               </p>
-              <p className="text-xs text-jewel-fuchsia font-medium">
+              <p className="text-xs text-blue-600 font-medium">
                 📱 QR code available on wedding day for live event uploads!
               </p>
             </div>
 
             {/* Registry Feature */}
-            <div className="bg-jewel-gold/10 rounded-xl p-6">
-              <Gift className="w-8 h-8 text-jewel-gold mx-auto mb-3" />
+            <div className="bg-green-100/30 rounded-xl p-6">
+              <Gift className="w-8 h-8 text-green-600 mx-auto mb-3" />
               <h4 className="font-semibold text-charcoal mb-2">Gift Registry</h4>
               <p className="text-sm text-charcoal/70 mb-3">Browse our curated registry and find the perfect gift.</p>
-              <p className="text-xs text-jewel-gold font-medium">💎 Crypto gifts and traditional options available!</p>
+              <p className="text-xs text-green-600 font-medium">💎 Crypto gifts and traditional options available!</p>
             </div>
 
             {/* AI Assistant Feature */}
-            <div className="bg-jewel-emerald/10 rounded-xl p-6">
-              <Heart className="w-8 h-8 text-jewel-emerald mx-auto mb-3" />
+            <div className="bg-jewel-crimson/10 rounded-xl p-6">
+              <Heart className="w-8 h-8 text-jewel-crimson mx-auto mb-3" />
               <h4 className="font-semibold text-charcoal mb-2">AI Wedding Assistant</h4>
               <p className="text-sm text-charcoal/70 mb-3">Chat with Ezekiel anytime for wedding questions and tips.</p>
-              <p className="text-xs text-jewel-emerald font-medium">🤖 Available 24/7 to help with anything!</p>
+              <p className="text-xs text-jewel-crimson font-medium">🤖 Available 24/7 to help with anything!</p>
             </div>
           </div>
 
@@ -383,19 +383,19 @@ export default function ConfirmationPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <Link
                 href="/gallery"
-                className="bg-jewel-fuchsia/10 hover:bg-jewel-fuchsia/20 border border-jewel-fuchsia/30 hover:border-jewel-fuchsia text-jewel-fuchsia hover:text-jewel-crimson font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
+                className="bg-blue-100/20 hover:bg-blue-100/30 border border-blue-300/30 hover:border-blue-300 text-blue-600 hover:text-blue-700 font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
               >
                 📸 Photo Gallery
               </Link>
               <Link 
                 href="/gifts" 
-                className="bg-jewel-gold/10 hover:bg-jewel-gold/20 border border-jewel-gold/30 hover:border-jewel-gold text-jewel-gold hover:text-jewel-burgundy font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
+                className="bg-green-100/20 hover:bg-green-100/30 border border-green-300/30 hover:border-green-300 text-green-600 hover:text-green-700 font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
               >
                 🎁 Gift Registry
               </Link>
               <Link 
                 href="/info" 
-                className="bg-jewel-emerald/10 hover:bg-jewel-emerald/20 border border-jewel-emerald/30 hover:border-jewel-emerald text-jewel-emerald hover:text-jewel-burgundy font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
+                className="bg-jewel-gold/10 hover:bg-jewel-gold/20 border border-jewel-gold/30 hover:border-jewel-gold text-jewel-gold hover:text-jewel-burgundy font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
               >
                 ℹ️ Wedding Details
               </Link>
@@ -465,7 +465,7 @@ function AGWWalletButton() {
       <button
         onClick={isConnected ? handleDisconnect : handleConnect}
         disabled={status === "connecting"}
-        className="flex flex-col items-center gap-3 p-6 bg-jewel-emerald hover:bg-jewel-emerald/90 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
+        className="flex flex-col items-center gap-3 p-6 bg-green-700 hover:bg-green-700/90 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
       >
         <Flower2 className="w-8 h-8 text-white" />
         <span className="font-semibold text-lg text-white">
