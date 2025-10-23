@@ -15,24 +15,15 @@ export default function ConfirmationPage() {
 
         <div className="relative z-10 px-4 py-16">
           <div className="max-w-4xl mx-auto">
-            <div className="flex justify-start items-start mb-8">
-              <Link
-                href="/rsvp?edit=true"
-                className="bg-charcoal hover:bg-charcoal/90 text-warm-white px-6 py-3 text-sm font-medium rounded-full transition-all duration-300 shadow-lg flex items-center gap-2"
-              >
-                <Edit className="w-4 h-4" />
-                Edit RSVP
-              </Link>
-            </div>
 
             <div className="text-center">
-              <h1 className="text-4xl md:text-6xl font-serif font-semibold text-white tracking-wide mb-6 drop-shadow-lg">
+              <h1 className="text-4xl md:text-6xl font-serif font-semibold text-blue-600 tracking-wide mb-6 drop-shadow-lg">
                 Thank You
               </h1>
-              <p className="text-xl md:text-2xl text-white/90 font-light mb-4 drop-shadow-md">
+              <p className="text-xl md:text-2xl text-blue-500 font-light mb-4 drop-shadow-md">
                 for taking the time to RSVP
               </p>
-              <p className="text-lg text-white font-medium drop-shadow-md">We can't wait to celebrate with you!</p>
+              <p className="text-lg text-blue-600 font-medium drop-shadow-md">We can't wait to celebrate with you!</p>
             </div>
           </div>
         </div>
@@ -41,54 +32,54 @@ export default function ConfirmationPage() {
       <div className="max-w-4xl mx-auto px-4 pb-16">
         <div className="grid gap-8">
           {/* Date & Time Card */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-jewel-gold/20 rounded-full flex items-center justify-center">
                 <Calendar className="h-6 w-6 text-jewel-gold" />
               </div>
-              <h2 className="text-2xl font-light text-charcoal">Date & Time</h2>
+              <h2 className="text-2xl font-light text-charcoal text-xl">Date & Time</h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h3 className="font-medium text-charcoal/80 mb-2">Wedding Date</h3>
-                <p className="text-lg text-charcoal">Thursday, February 13, 2026</p>
+                <h3 className="font-medium text-charcoal/80 mb-2 text-lg">Wedding Date</h3>
+                <p className="text-xl text-charcoal">Thursday, February 13, 2026</p>
               </div>
               <div>
-                <h3 className="font-medium text-charcoal/80 mb-2">Timeline</h3>
-                <p className="text-lg text-charcoal">2:00 PM - 10:00 PM</p>
+                <h3 className="font-medium text-charcoal/80 mb-2 text-lg">Timeline</h3>
+                <p className="text-xl text-charcoal">2:00 PM - 10:00 PM</p>
               </div>
             </div>
           </div>
 
           {/* Location Card */}
-          <div className="bg-warm-white rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
                 <MapPin className="h-6 w-6 text-jewel-emerald" />
               </div>
-              <h2 className="text-2xl font-light text-charcoal">Venues</h2>
+              <h2 className="text-2xl font-light text-charcoal text-xl">Venues</h2>
             </div>
             <div className="space-y-6">
               <div className="p-4 bg-soft-blush/50 rounded-xl">
-                <h3 className="font-medium text-charcoal mb-2">Ceremony</h3>
-                <p className="text-lg text-charcoal">Dulce Nombre de Maria Cathedral-Basilica</p>
-                <p className="text-charcoal/70">Hagåtña, Guam • 2:00 PM</p>
+                <h3 className="font-medium text-charcoal mb-2 text-lg">Ceremony</h3>
+                <p className="text-xl text-charcoal">Dulce Nombre de Maria Cathedral-Basilica</p>
+                <p className="text-charcoal/70 text-lg">Hagåtña, Guam • 2:00 PM</p>
               </div>
               <div className="p-4 bg-emerald-50/50 rounded-xl">
-                <h3 className="font-medium text-charcoal mb-2">Reception</h3>
-                <p className="text-lg text-charcoal">Hotel Nikko Guam Tasi Ballroom</p>
-                <p className="text-charcoal/70">Tumon, Guam • 6:00 PM</p>
+                <h3 className="font-medium text-charcoal mb-2 text-lg">Reception</h3>
+                <p className="text-xl text-charcoal">Hotel Nikko Guam Tasi Ballroom</p>
+                <p className="text-charcoal/70 text-lg">Tumon, Guam • 6:00 PM</p>
               </div>
             </div>
           </div>
 
           {/* Schedule Card */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-jewel-gold/20 rounded-full flex items-center justify-center">
                 <Clock className="h-6 w-6 text-jewel-gold" />
               </div>
-              <h2 className="text-2xl font-light text-charcoal">Schedule</h2>
+              <h2 className="text-2xl font-light text-charcoal text-xl">Schedule</h2>
             </div>
             <div className="space-y-4">
               {[
@@ -101,43 +92,50 @@ export default function ConfirmationPage() {
                   key={index}
                   className="flex items-center gap-4 p-3 rounded-lg hover:bg-soft-blush/30 transition-colors"
                 >
-                  <div className="w-20 text-jewel-gold font-medium">{item.time}</div>
-                  <div className="flex-1 text-charcoal">{item.event}</div>
+                  <div className="w-20 text-jewel-emerald font-medium text-lg">{item.time}</div>
+                  <div className="flex-1 text-charcoal text-lg">{item.event}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Important Info Card */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          {/* Dress Code Card */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-jewel-gold/20 rounded-full flex items-center justify-center">
-                <Gift className="h-6 w-6 text-jewel-gold" />
+              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
+                <Gift className="h-6 w-6 text-jewel-emerald" />
               </div>
-              <h2 className="text-2xl font-light text-charcoal">Details</h2>
+              <h2 className="text-2xl font-light text-charcoal">Dress Code</h2>
             </div>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-medium text-charcoal mb-2">Dress Code</h3>
-                <p className="text-charcoal/80">Semi-Formal Attire</p>
-                <p className="text-sm text-charcoal/60 mt-1">Cocktail or elegant dressy attire</p>
-              </div>
-              <div>
-                <h3 className="font-medium text-charcoal mb-2">RSVP Deadline</h3>
-                <p className="text-charcoal/80">January 10, 2026</p>
-              </div>
+            <div>
+              <h3 className="font-medium text-charcoal mb-2 text-lg">Dress Code</h3>
+              <p className="text-charcoal/80 text-lg">Semi-Formal Attire</p>
+              <p className="text-charcoal/60 mt-1 text-base">Cocktail or elegant dressy attire</p>
             </div>
           </div>
         </div>
 
+        {/* Edit RSVP Button - Prominent at bottom */}
+        <div className="max-w-4xl mx-auto px-4 mb-8">
+          <div className="flex justify-center">
+            <Link
+              href="/rsvp?edit=true"
+              className="bg-jewel-burgundy hover:bg-jewel-burgundy/90 text-white px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center gap-3 transform hover:scale-105 border-2 border-jewel-burgundy/20"
+            >
+              <Edit className="w-6 h-6" />
+              Edit RSVP
+            </Link>
+          </div>
+        </div>
+
         <section className="max-w-4xl mx-auto mt-16 mb-8">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
-              <p className="text-charcoal/80 leading-relaxed">
+              <p className="text-charcoal/80 leading-relaxed text-lg">
                 Thanks for RSVPing! Now the fun part - chat with Ezekiel (our AI wedding assistant) anytime you have
                 questions, and if you're feeling adventurous, click the flower button to connect your Abstract Global
-                Wallet. Then resubmit your RSVP to save your wallet info for a special surprise from us after the
+                Wallet. Then connect your wallet and click the 'Edit RSVP' button to save your wallet info for a special surprise from us after the
                 wedding! 🎁
               </p>
             </div>
@@ -151,7 +149,7 @@ export default function ConfirmationPage() {
 
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* Ezekiel FAQ */}
-          <Card className="border-white/20 shadow-lg bg-white/80 backdrop-blur-sm">
+          <Card className="border-white/20 shadow-lg bg-white/60 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-jewel-crimson/10 to-jewel-fuchsia/10">
               <CardTitle className="flex items-center gap-2 text-jewel-crimson">
                 <MessageCircle className="w-5 h-5" />
@@ -165,16 +163,16 @@ export default function ConfirmationPage() {
                   <AccordionTrigger className="text-left text-sm">What can Ezekiel help with?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
                     Pretty much everything! Venue details, schedule, dress code, travel tips, hotel recommendations,
-                    local restaurant suggestions, your RSVP status - you name it. She's available 24/7 and never gets
+                    local restaurant suggestions, your RSVP status - you name it. He's available 24/7 and never gets
                     tired of answering questions!
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="how">
-                  <AccordionTrigger className="text-left text-sm">How do I chat with her?</AccordionTrigger>
+                  <AccordionTrigger className="text-left text-sm">How do I chat with him?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
                     Just click the "Chat with Ezekiel" button above! The chat window will pop up and you can start
-                    asking questions right away. She's super friendly and easy to talk to - no complicated commands or
+                    asking questions right away. He's super friendly and easy to talk to - no complicated commands or
                     anything.
                   </AccordionContent>
                 </AccordionItem>
@@ -191,7 +189,7 @@ export default function ConfirmationPage() {
           </Card>
 
           {/* AGW FAQ */}
-          <Card className="border-white/20 shadow-lg bg-white/80 backdrop-blur-sm">
+          <Card className="border-white/20 shadow-lg bg-white/60 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-jewel-emerald/10 to-teal-400/10">
               <CardTitle className="flex items-center gap-2 text-jewel-emerald">
                 <Wallet className="w-5 h-5" />
