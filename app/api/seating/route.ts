@@ -22,11 +22,13 @@ export async function GET(request: NextRequest) {
 
     let query = supabase.from("seating_assignments").select("*")
     
-    // Try to find by email first, then by name
+    // Try to find by email first, then by name (with normalization)
     if (email) {
       query = query.eq("email", email)
     } else {
-      query = query.eq("guest_name", guestName)
+      // Normalize the name for better matching
+      const normalizedName = guestName?.trim().toLowerCase()
+      query = query.ilike("guest_name", `%${normalizedName}%`)
     }
 
     const { data, error } = await query.single()
@@ -36,10 +38,11 @@ export async function GET(request: NextRequest) {
         // No seating assignment found, try alternative lookup
         if (email && guestName) {
           console.log("[v0] No seating found by email, trying name lookup:", guestName)
+          const normalizedName = guestName.trim().toLowerCase()
           const { data: nameData, error: nameError } = await supabase
             .from("seating_assignments")
             .select("*")
-            .eq("guest_name", guestName)
+            .ilike("guest_name", `%${normalizedName}%`)
             .single()
           
           if (nameError) {

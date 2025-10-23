@@ -82,23 +82,23 @@ export default function ConfirmationPage() {
         )}
         
         {seatingStatus === "found" && seatingAssignment && (
-          <div className="mb-8 bg-jewel-gold/10 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-gold/30 p-6">
+          <div className="mb-8 bg-blue-50/80 backdrop-blur-sm rounded-2xl shadow-lg border border-blue-200 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-jewel-gold/20 rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-jewel-gold rounded-full"></div>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
               </div>
-              <h2 className="text-xl font-serif text-jewel-burgundy">Your Seating Assignment</h2>
+              <h2 className="text-xl font-serif text-blue-900">Your Seating Assignment</h2>
             </div>
-            <div className="text-2xl font-bold text-jewel-burgundy mb-2">
+            <div className="text-2xl font-bold text-blue-900 mb-2">
               Table {seatingAssignment.table_number}, Seat {seatingAssignment.seat_number}
             </div>
             {seatingAssignment.plus_one_name && (
-              <div className="text-jewel-burgundy/80">
+              <div className="text-blue-700">
                 Plus One: {seatingAssignment.plus_one_name} (Seat {seatingAssignment.plus_one_seat})
               </div>
             )}
             {seatingAssignment.dietary_notes && (
-              <div className="text-sm text-jewel-burgundy/70 mt-2">
+              <div className="text-sm text-blue-600 mt-2">
                 Dietary Notes: {seatingAssignment.dietary_notes}
               </div>
             )}
@@ -106,24 +106,24 @@ export default function ConfirmationPage() {
         )}
 
         {seatingStatus === "not-found" && (
-          <div className="mb-8 bg-jewel-gold/10 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-gold/30 p-6">
+          <div className="mb-8 bg-blue-50/80 backdrop-blur-sm rounded-2xl shadow-lg border border-blue-200 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-jewel-gold/20 rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-jewel-gold rounded-full"></div>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
               </div>
-              <h2 className="text-xl font-serif text-jewel-burgundy">Seating Assignment</h2>
+              <h2 className="text-xl font-serif text-blue-900">Seating Assignment</h2>
             </div>
-            <div className="text-lg text-jewel-burgundy mb-3">
+            <div className="text-lg text-blue-900 mb-3">
               We're still finalizing seating arrangements for your table.
             </div>
-            <div className="text-sm text-jewel-burgundy/80 mb-4">
+            <div className="text-sm text-blue-800 mb-4">
               💌 Please contact us directly to confirm your seating - we want to make sure you have the perfect spot for our special day!
             </div>
             <div className="bg-white/60 rounded-lg p-4">
-              <div className="text-sm text-jewel-burgundy/70 mb-2">
+              <div className="text-sm text-blue-700 mb-2">
                 <strong>Need to reach us?</strong>
               </div>
-              <div className="text-xs text-jewel-burgundy/60">
+              <div className="text-xs text-blue-600">
                 Use the "Contact Us" button below or reach out directly. We'll get you sorted with the perfect seat! 🪑
               </div>
             </div>
