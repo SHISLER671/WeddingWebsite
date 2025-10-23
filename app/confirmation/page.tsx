@@ -235,7 +235,7 @@ export default function ConfirmationPage() {
       </div>
 
       {/* Footer - Encourage exploration */}
-      <footer className="max-w-4xl mx-auto px-4 py-12 mt-16">
+      <footer className="max-w-4xl mx-auto px-4 py-12 mt-8">
         <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 text-center">
           <h3 className="text-2xl font-serif text-jewel-burgundy mb-6">Don't Miss Out!</h3>
           <p className="text-lg text-charcoal/80 mb-6 leading-relaxed">
@@ -274,28 +274,34 @@ export default function ConfirmationPage() {
           </div>
 
           <div className="border-t border-jewel-burgundy/20 pt-6">
-            <p className="text-charcoal/60 text-sm mb-4">
+            <p className="text-charcoal/60 text-sm mb-2">
               Take your time to explore - there's so much more to discover!
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <p className="text-jewel-burgundy font-semibold text-sm mb-6">
+              👆 Click the buttons below to explore:
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <Link
                 href="/gallery"
-                className="text-jewel-fuchsia hover:text-jewel-crimson font-medium transition-colors"
+                className="bg-jewel-fuchsia/10 hover:bg-jewel-fuchsia/20 border border-jewel-fuchsia/30 hover:border-jewel-fuchsia text-jewel-fuchsia hover:text-jewel-crimson font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
               >
                 📸 Photo Gallery
               </Link>
-              <span className="text-charcoal/40">•</span>
-              <Link href="/gifts" className="text-jewel-gold hover:text-jewel-burgundy font-medium transition-colors">
+              <Link 
+                href="/gifts" 
+                className="bg-jewel-gold/10 hover:bg-jewel-gold/20 border border-jewel-gold/30 hover:border-jewel-gold text-jewel-gold hover:text-jewel-burgundy font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
+              >
                 🎁 Gift Registry
               </Link>
-              <span className="text-charcoal/40">•</span>
-              <Link href="/info" className="text-jewel-emerald hover:text-jewel-burgundy font-medium transition-colors">
+              <Link 
+                href="/info" 
+                className="bg-jewel-emerald/10 hover:bg-jewel-emerald/20 border border-jewel-emerald/30 hover:border-jewel-emerald text-jewel-emerald hover:text-jewel-burgundy font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
+              >
                 ℹ️ Wedding Details
               </Link>
-              <span className="text-charcoal/40">•</span>
               <Link
                 href="/contact"
-                className="text-jewel-burgundy hover:text-jewel-crimson font-medium transition-colors"
+                className="bg-jewel-burgundy/10 hover:bg-jewel-burgundy/20 border border-jewel-burgundy/30 hover:border-jewel-burgundy text-jewel-burgundy hover:text-jewel-crimson font-medium transition-all duration-200 py-3 px-4 rounded-lg text-center text-sm hover:shadow-md"
               >
                 📞 Contact Us
               </Link>
