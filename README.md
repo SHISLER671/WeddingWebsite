@@ -1,25 +1,40 @@
 # Pia & Ryan's Wedding Website 💍
 
-A modern, full-featured wedding website built with Next.js, featuring RSVP management, AI chatbot assistant, photo gallery, and crypto gift integration.
+> **February 13, 2026** • A luxury wedding website with modern tech features
+
+A sophisticated, full-featured wedding website built with Next.js 14, featuring elegant design, RSVP management, AI chatbot assistant, photo gallery, and crypto gift integration. Designed with jewel-tone aesthetics and optimized for wedding guests of all ages.
 
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js%2014-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 
 ## 🌟 Features
 
-### Core Features
-- **RSVP System** - Secure guest registration and management with Supabase backend
-- **AI Wedding Assistant** - "Ezekiel" chatbot powered by OpenRouter AI to answer guest questions
-- **Photo Gallery** - Upload and share wedding photos with captions and comments
-- **Wedding Information** - Detailed event information, venue details, and FAQ
-- **Contact Page** - Easy way for guests to reach out with questions
+### 💒 Wedding Essentials
+- **📅 Live Countdown** - Real-time countdown to February 13, 2026
+- **📝 RSVP System** - Secure guest registration with dietary restrictions and guest counts
+- **📸 Photo Gallery** - Upload and share wedding photos with captions and comments
+- **ℹ️ Wedding Info** - Detailed event information, venue details, and FAQ
+- **📞 Contact** - Easy way for guests to reach out with questions
 
-### Modern Tech Features
-- **Crypto Gifts** - Accept cryptocurrency gifts via Abstract Global Wallet
-- **Wallet Connection** - Guests can connect wallets for digital wedding favors
-- **Responsive Design** - Fully optimized for mobile and desktop experiences
-- **Real-time Updates** - Live data synchronization with Supabase
-- **Security** - Server-side authentication and encrypted RSVP lookup
+### 🤖 AI & Automation
+- **💬 AI Wedding Assistant** - "Ezekiel" chatbot powered by OpenRouter AI
+- **🎯 Smart Responses** - Answers questions about wedding details, directions, and logistics
+- **🔐 Secure Lookup** - Encrypted RSVP lookup system for guest privacy
+
+### 💎 Modern Tech Features
+- **💰 Crypto Gifts** - Accept cryptocurrency gifts via Abstract Global Wallet
+- **🔗 Wallet Connection** - Guests can connect wallets for digital wedding surprises
+- **📱 Mobile-First** - Fully optimized for mobile and desktop experiences
+- **⚡ Real-time Updates** - Live data synchronization with Supabase
+- **🛡️ Security** - Server-side authentication and encrypted data handling
+
+### 🎨 Design & UX
+- **💎 Jewel-Tone Aesthetics** - Rich burgundy, fuchsia, gold, and rose color palette
+- **✨ Smooth Animations** - Elegant transitions and touch feedback
+- **📱 Touch Optimized** - Mobile gestures and responsive interactions
+- **♿ Accessible** - WCAG compliant for all guests
 
 ## 🛠 Tech Stack
 
@@ -176,11 +191,36 @@ The site is configured for Vercel deployment:
 
 This is a private wedding website project. All rights reserved.
 
+## 🎯 Key Improvements Made
+
+### Performance & Reliability
+- ✅ **Fixed Supabase Keep-Alive** - Automated weekly pings prevent 7-day inactivity pause
+- ✅ **Optimized Dependencies** - Cleaned up duplicate packages for faster builds
+- ✅ **Enhanced Error Handling** - Robust retry logic and better error reporting
+- ✅ **Mobile Optimization** - Touch gestures, smooth animations, and responsive design
+
+### Security & Privacy
+- 🔐 **Encrypted RSVP Lookup** - Secure guest data with 32-byte encryption
+- 🛡️ **Server-side Authentication** - Protected API endpoints and data access
+- 🔒 **Environment Variables** - Secure configuration management
+
+### User Experience
+- 💎 **Jewel-Tone Design** - Rich burgundy, fuchsia, gold, and rose color palette
+- ✨ **Smooth Animations** - Elegant transitions and touch feedback
+- 📱 **Mobile-First** - Optimized for all devices and touch interactions
+- ♿ **Accessibility** - WCAG compliant for all guests
+
+## 🚀 Deployment Status
+
+- **Production:** [pia-ryan-wedding.vercel.app](https://pia-ryan-wedding.vercel.app)
+- **GitHub Actions:** Automated Supabase keep-alive (Sundays 2 AM ChST)
+- **Monitoring:** Real-time error tracking and performance monitoring
+
 ## 👥 Credits
 
 Built with love for Pia & Ryan's wedding celebration 💕
 
-**Wedding Date:** February 2026  
+**Wedding Date:** February 13, 2026  
 **Location:** Guam 🌴
 
 ---
