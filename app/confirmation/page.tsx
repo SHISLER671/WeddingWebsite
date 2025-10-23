@@ -15,9 +15,15 @@ export default function ConfirmationPage() {
         <div className="relative z-10 px-4 py-16">
           <div className="max-w-4xl mx-auto">
             <div className="text-center">
-              <h1 className="text-4xl md:text-6xl font-serif font-semibold text-blue-600 tracking-wide mb-6 drop-shadow-lg">
-                Thank you for taking the time to RSVP - we can't wait to celebrate with you!
+              <h1 className="text-3xl md:text-5xl font-serif font-bold text-white tracking-wide mb-4 drop-shadow-2xl">
+                🎉 Thank You for RSVPing! 🎉
               </h1>
+              <p className="text-xl md:text-2xl text-soft-blush font-medium mb-2 drop-shadow-lg">
+                We're absolutely thrilled you'll be joining us
+              </p>
+              <p className="text-lg md:text-xl text-white/90 font-light drop-shadow-md">
+                for our special day on February 13th, 2026
+              </p>
             </div>
           </div>
         </div>

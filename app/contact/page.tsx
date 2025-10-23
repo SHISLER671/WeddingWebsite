@@ -7,7 +7,7 @@ export default function ContactPage() {
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('/hibiscusring.jpg')",
+          backgroundImage: "url('/p1Tricho.jpg')",
           backgroundAttachment: "fixed",
         }}
       />
