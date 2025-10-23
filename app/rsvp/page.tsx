@@ -184,6 +184,22 @@ export default function RSVPPage() {
               <Search className="w-6 h-6 text-jewel-crimson" />
               Find Your RSVP
             </h2>
+            
+            {/* Edit Mode Helpful Note */}
+            <div className="bg-amber-50/80 border border-amber-200 rounded-lg p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center mt-0.5">
+                  <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-amber-900 text-sm mb-1">📝 Edit RSVP Reminder</h4>
+                  <p className="text-amber-800 text-sm leading-relaxed">
+                    Use the <strong>exact name from your invitation</strong> when you fill out the form below. 
+                    If you're bringing a plus-one, please add their name(s) in the special message box. This helps us keep everything organized! 💕
+                  </p>
+                </div>
+              </div>
+            </div>
             <p className="text-charcoal/80 mb-4">Enter your email address to look up and edit your existing RSVP.</p>
 
             <div className="flex flex-col sm:flex-row gap-3">
@@ -313,6 +329,22 @@ export default function RSVPPage() {
         {/* RSVP Form */}
         <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-8 border border-white/20">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Helpful Note */}
+            <div className="bg-blue-50/80 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-blue-900 text-sm mb-1">💡 Quick Tip</h4>
+                  <p className="text-blue-800 text-sm leading-relaxed">
+                    Please use the <strong>exact name from your invitation</strong> to RSVP so it matches our database and we can avoid any issues. 
+                    If you're bringing a plus-one, please add their name(s) in the special message box below. Thank you! 💕
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             {/* Guest Name */}
             <div>
               <label htmlFor="guestName" className="block text-sm font-semibold text-charcoal mb-2">
