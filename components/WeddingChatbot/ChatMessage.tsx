@@ -33,7 +33,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
       transition-all duration-200 ease-in-out
       ${isUser 
         ? 'bg-jewel-sapphire text-white rounded-br-none shadow-md' 
-        : 'bg-warm-white/80 text-charcoal rounded-bl-none border border-jewel-fuchsia/20'
+        : 'bg-gray-700/90 text-gray-100 rounded-bl-none border border-gray-600/30'
       }
       ${message.isLoading ? 'opacity-70' : ''}
     `;
@@ -44,7 +44,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
   const getAvatarClasses = () => {
     const baseClasses = `
       w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-      ${isUser ? 'bg-jewel-sapphire text-white' : 'bg-jewel-emerald text-warm-white'}
+      ${isUser ? 'bg-jewel-sapphire text-white' : 'bg-green-600 text-white'}
     `;
 
     return baseClasses;
@@ -104,7 +104,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
           {/* Timestamp */}
           <div className={`
             text-xs mt-2 opacity-70
-            ${isUser ? 'text-white/90' : 'text-charcoal/60'}
+            ${isUser ? 'text-white/90' : 'text-gray-400'}
           `}>
             {formatTimestamp(message.timestamp)}
           </div>

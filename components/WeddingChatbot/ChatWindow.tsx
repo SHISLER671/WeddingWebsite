@@ -78,7 +78,7 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
 
   const getWindowClasses = () => {
     const baseClasses = `
-      fixed z-50 bg-white rounded-2xl shadow-2xl border-2
+      fixed z-50 bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border-2 border-gray-700/50
       transition-all duration-300 ease-in-out transform
       ${isMinimized ? "h-16" : "h-[80vh] md:h-[600px]"}
       ${state.isOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}
@@ -99,7 +99,7 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
 
   const getHeaderClasses = () => {
     return `
-      flex items-center justify-between p-5 border-b border-white/30
+      flex items-center justify-between p-5 border-b border-gray-600/30
       rounded-t-2xl cursor-pointer relative z-20
       ${isMinimized ? "rounded-b-2xl" : ""}
       bg-gradient-to-br from-jewel-fuchsia via-jewel-burgundy to-jewel-crimson text-navy
@@ -124,7 +124,7 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
 
   const getInputContainerClasses = () => {
     return `
-      border-t border-rose-gold/20 p-4 bg-white/90 rounded-b-2xl relative z-10
+      border-t border-gray-600/30 p-4 bg-gray-800/90 rounded-b-2xl relative z-10
     `
   }
 
@@ -178,8 +178,8 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
                 e.stopPropagation()
                 handleClearChat()
               }}
-              className="p-2.5 bg-white/90 hover:bg-white rounded-xl transition-all duration-200 
-                         shadow-md hover:shadow-lg border border-white/50 group
+              className="p-2.5 bg-gray-700/90 hover:bg-gray-600 rounded-xl transition-all duration-200 
+                         shadow-md hover:shadow-lg border border-gray-600/50 group
                          hover:scale-110 active:scale-95"
               title="Clear chat"
             >
@@ -192,8 +192,8 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
               e.stopPropagation()
               setIsMinimized(!isMinimized)
             }}
-            className="p-2.5 bg-white/90 hover:bg-white rounded-xl transition-all duration-200 
-                       shadow-md hover:shadow-lg border border-white/50 group
+            className="p-2.5 bg-gray-700/90 hover:bg-gray-600 rounded-xl transition-all duration-200 
+                       shadow-md hover:shadow-lg border border-gray-600/50 group
                        hover:scale-110 active:scale-95"
             title={isMinimized ? "Maximize" : "Minimize"}
           >
@@ -259,8 +259,8 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
                 inputRef.current?.focus()
               }}
               placeholder="Ask about the wedding..."
-              className="flex-1 resize-none rounded-lg border border-rose-gold/30 px-3 py-2 
-                        focus:outline-none focus:ring-2 focus:ring-rose-gold/50 
+              className="flex-1 resize-none rounded-lg border border-gray-600/50 bg-gray-700/50 text-white placeholder-gray-400 px-3 py-2 
+                        focus:outline-none focus:ring-2 focus:ring-jewel-fuchsia/50 
                         focus:border-transparent text-sm"
               rows={1}
               disabled={state.isLoading}
@@ -276,7 +276,7 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
                 ${
                   inputMessage.trim() && !state.isLoading
                     ? "bg-jewel-fuchsia text-warm-white hover:bg-jewel-crimson transform hover:scale-105"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-600 text-gray-500 cursor-not-allowed"
                 }
               `}
             >
@@ -292,8 +292,8 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
                   key={index}
                   onClick={() => actions.sendMessage(action.action)}
                   disabled={state.isLoading}
-                  className="text-xs px-3 py-1 rounded-full bg-jewel-emerald/20 text-jewel-emerald 
-                           hover:bg-jewel-emerald hover:text-warm-white transition-colors"
+                  className="text-xs px-3 py-1 rounded-full bg-green-700/30 text-green-400 
+                           hover:bg-green-600 hover:text-white transition-colors"
                 >
                   {action.label}
                 </button>
@@ -369,7 +369,7 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-end justify-center">
       <div
-        className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col"
+        className="w-full max-w-md bg-gray-900/95 backdrop-blur-md rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col border-t-2 border-gray-700/50"
         onClick={handleMobileChatWindowClick}
       >
         {/* Header */}
@@ -386,7 +386,7 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-gray-700/20 rounded-full transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -414,7 +414,7 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
         </div>
 
         {/* Input */}
-        <div className="border-t border-rose-gold/20 p-4 bg-white">
+        <div className="border-t border-gray-600/30 p-4 bg-gray-800/90">
           <div className="flex gap-2">
             <textarea
               ref={inputRef}
@@ -426,8 +426,8 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
                 inputRef.current?.focus()
               }}
               placeholder="Ask about the wedding..."
-              className="flex-1 resize-none rounded-lg border border-rose-gold/30 px-3 py-2 
-                        focus:outline-none focus:ring-2 focus:ring-rose-gold/50 
+              className="flex-1 resize-none rounded-lg border border-gray-600/50 bg-gray-700/50 text-white placeholder-gray-400 px-3 py-2 
+                        focus:outline-none focus:ring-2 focus:ring-jewel-fuchsia/50 
                         focus:border-transparent text-sm"
               rows={1}
               disabled={state.isLoading}
@@ -442,7 +442,7 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
                 ${
                   inputMessage.trim() && !state.isLoading
                     ? "bg-jewel-fuchsia text-warm-white hover:bg-jewel-crimson"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-600 text-gray-500 cursor-not-allowed"
                 }
               `}
             >
@@ -458,8 +458,8 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
                   key={index}
                   onClick={() => actions.sendMessage(action.action)}
                   disabled={state.isLoading}
-                  className="text-xs px-3 py-1 rounded-full bg-jewel-emerald/20 text-jewel-emerald 
-                           hover:bg-jewel-emerald hover:text-warm-white transition-colors"
+                  className="text-xs px-3 py-1 rounded-full bg-green-700/30 text-green-400 
+                           hover:bg-green-600 hover:text-white transition-colors"
                 >
                   {action.label}
                 </button>
