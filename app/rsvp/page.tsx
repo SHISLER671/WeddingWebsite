@@ -192,15 +192,14 @@ export default function RSVPPage() {
                   <div className="w-2 h-2 bg-jewel-gold rounded-full"></div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-jewel-gold text-sm mb-1">📝 Edit RSVP Reminder</h4>
+                  <h4 className="font-semibold text-jewel-burgundy text-sm mb-1">📝 Edit RSVP Reminder</h4>
                   <p className="text-jewel-burgundy text-sm leading-relaxed">
-                    Use the <strong>exact name from your invitation</strong> when you fill out the form below. 
-                    If you're bringing a plus-one, please add their name(s) in the special message box. This helps us keep everything organized! 💕
+                    Use the <strong>same name from your invitation</strong>, or enter your email address to look up and edit your existing RSVP. This helps us keep everything organized! 💕
                   </p>
                 </div>
               </div>
             </div>
-            <p className="text-charcoal/80 mb-4">Enter your email address to look up and edit your existing RSVP.</p>
+
 
             <div className="flex flex-col sm:flex-row gap-3">
               <input
