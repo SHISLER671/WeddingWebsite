@@ -73,32 +73,32 @@ export default function ConfirmationPage() {
       <div className="max-w-4xl mx-auto px-4 pb-16">
         {/* Seating Assignment Display */}
         {seatingStatus === "loading" && (
-          <div className="mb-8 bg-blue-50/80 backdrop-blur-sm rounded-2xl shadow-lg border border-blue-200/50 p-6">
+          <div className="mb-8 bg-soft-blush/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-              <span className="text-blue-800 font-medium">Looking up your seating assignment...</span>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-jewel-burgundy"></div>
+              <span className="text-jewel-burgundy font-medium">Looking up your seating assignment...</span>
             </div>
           </div>
         )}
         
         {seatingStatus === "found" && seatingAssignment && (
-          <div className="mb-8 bg-blue-50/80 backdrop-blur-sm rounded-2xl shadow-lg border border-blue-200 p-6">
+          <div className="mb-8 bg-soft-blush/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>
               </div>
-              <h2 className="text-xl font-serif text-blue-900">Your Seating Assignment</h2>
+              <h2 className="text-xl font-serif text-jewel-burgundy">Your Seating Assignment</h2>
             </div>
-            <div className="text-2xl font-bold text-blue-900 mb-2">
+            <div className="text-2xl font-bold text-jewel-burgundy mb-2">
               Table {seatingAssignment.table_number}, Seat {seatingAssignment.seat_number}
             </div>
             {seatingAssignment.plus_one_name && (
-              <div className="text-blue-700">
+              <div className="text-jewel-crimson">
                 Plus One: {seatingAssignment.plus_one_name} (Seat {seatingAssignment.plus_one_seat})
               </div>
             )}
             {seatingAssignment.dietary_notes && (
-              <div className="text-sm text-blue-600 mt-2">
+              <div className="text-sm text-jewel-burgundy/80 mt-2">
                 Dietary Notes: {seatingAssignment.dietary_notes}
               </div>
             )}
@@ -106,24 +106,24 @@ export default function ConfirmationPage() {
         )}
 
         {seatingStatus === "not-found" && (
-          <div className="mb-8 bg-blue-50/80 backdrop-blur-sm rounded-2xl shadow-lg border border-blue-200 p-6">
+          <div className="mb-8 bg-soft-blush/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>
               </div>
-              <h2 className="text-xl font-serif text-blue-900">Seating Assignment</h2>
+              <h2 className="text-xl font-serif text-jewel-burgundy">Seating Assignment</h2>
             </div>
-            <div className="text-lg text-blue-900 mb-3">
+            <div className="text-lg text-jewel-burgundy mb-3">
               We're still finalizing seating arrangements for your table.
             </div>
-            <div className="text-sm text-blue-800 mb-4">
+            <div className="text-sm text-jewel-crimson mb-4">
               💌 Please contact us directly to confirm your seating - we want to make sure you have the perfect spot for our special day!
             </div>
             <div className="bg-white/40 rounded-lg p-4">
-              <div className="text-sm text-blue-700 mb-2">
+              <div className="text-sm text-jewel-burgundy mb-2">
                 <strong>Need to reach us?</strong>
               </div>
-              <div className="text-xs text-blue-600">
+              <div className="text-xs text-jewel-burgundy/80">
                 Use the "Contact Us" button below or reach out directly. We'll get you sorted with the perfect seat! 🪑
               </div>
             </div>
@@ -134,8 +134,8 @@ export default function ConfirmationPage() {
           {/* Date & Time Card */}
           <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-green-700" />
+              <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-jewel-emerald" />
               </div>
               <h2 className="text-2xl font-light text-charcoal text-xl">Date & Time</h2>
             </div>
@@ -199,7 +199,7 @@ export default function ConfirmationPage() {
                   key={index}
                   className="flex items-center gap-4 p-3 rounded-lg hover:bg-soft-blush/30 transition-colors"
                 >
-                  <div className="w-20 text-green-700 font-medium text-lg">{item.time}</div>
+                  <div className="w-20 text-jewel-emerald font-medium text-lg">{item.time}</div>
                   <div className="flex-1 text-charcoal text-lg">{item.event}</div>
                 </div>
               ))}
@@ -233,27 +233,27 @@ export default function ConfirmationPage() {
 
             <div className="grid md:grid-cols-3 gap-6 mb-2">
               {/* Gallery Feature */}
-              <Link href="/gallery" className="bg-blue-100/30 hover:bg-blue-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
-                <Camera className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+              <Link href="/gallery" className="bg-jewel-sapphire/10 hover:bg-jewel-sapphire/20 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+                <Camera className="w-8 h-8 text-jewel-sapphire mx-auto mb-3" />
                 <h4 className="font-semibold text-charcoal mb-2">Live Photo Gallery</h4>
                 <p className="text-sm text-charcoal/70 mb-3">
                   The gallery is open now! Upload your favorite photos and memories.
                 </p>
-                <p className="text-xs text-blue-600 font-medium">
+                <p className="text-xs text-jewel-sapphire font-medium">
                   📱 QR code available on wedding day for live event uploads!
                 </p>
               </Link>
 
               {/* Registry Feature */}
-              <Link href="/gifts" className="bg-green-100/30 hover:bg-green-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
-                <Gift className="w-8 h-8 text-green-600 mx-auto mb-3" />
+              <Link href="/gifts" className="bg-jewel-emerald/10 hover:bg-jewel-emerald/20 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+                <Gift className="w-8 h-8 text-jewel-emerald mx-auto mb-3" />
                 <h4 className="font-semibold text-charcoal mb-2">Gift Registry</h4>
                 <p className="text-sm text-charcoal/70 mb-3">Browse our curated registry and find the perfect gift.</p>
-                <p className="text-xs text-green-600 font-medium">💎 Crypto gifts and traditional options available!</p>
+                <p className="text-xs text-jewel-emerald font-medium">💎 Crypto gifts and traditional options available!</p>
               </Link>
 
               {/* Wedding Details Feature */}
-              <Link href="/info" className="bg-yellow-100/30 hover:bg-yellow-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+              <Link href="/info" className="bg-jewel-gold/10 hover:bg-jewel-gold/20 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
                 <div className="w-8 h-8 text-jewel-gold mx-auto mb-3 flex items-center justify-center">
                   <div className="w-6 h-6 bg-jewel-gold rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">i</span>
@@ -291,7 +291,7 @@ export default function ConfirmationPage() {
             <div className="flex justify-center">
               <Link
                 href="/rsvp?edit=true"
-                className="border-2 border-blue-600 text-white hover:bg-blue-600 hover:text-white px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 transform hover:scale-105"
+                className="border-2 border-jewel-sapphire text-white hover:bg-jewel-sapphire hover:text-white px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 transform hover:scale-105"
               >
                 <Edit className="w-6 h-6" />
                 Edit RSVP
@@ -344,8 +344,8 @@ export default function ConfirmationPage() {
 
           {/* AGW FAQ */}
           <Card className="border-white/20 shadow-lg bg-white/40 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-green-700/10 to-teal-400/10">
-              <CardTitle className="flex items-center gap-2 text-green-700">
+            <CardHeader className="bg-gradient-to-r from-jewel-emerald/10 to-jewel-sapphire/10">
+              <CardTitle className="flex items-center gap-2 text-jewel-emerald">
                 <Wallet className="w-5 h-5" />
                 About the Wallet
               </CardTitle>
@@ -451,7 +451,7 @@ function AGWWalletButton() {
       <button
         onClick={isConnected ? handleDisconnect : handleConnect}
         disabled={status === "connecting"}
-        className="flex flex-col items-center gap-3 p-6 bg-green-700 hover:bg-green-700/90 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
+        className="flex flex-col items-center gap-3 p-6 bg-jewel-emerald hover:bg-jewel-emerald/90 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
       >
         <Flower2 className="w-8 h-8 text-white" />
         <span className="font-semibold text-lg text-white">

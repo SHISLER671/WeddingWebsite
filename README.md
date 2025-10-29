@@ -2,9 +2,9 @@
 
 > **February 13, 2026** • A luxury wedding website with modern tech features
 
-A sophisticated, full-featured wedding website built with Next.js 14, featuring elegant design, RSVP management, AI chatbot assistant, photo gallery, and crypto gift integration. Designed with jewel-tone aesthetics and optimized for wedding guests of all ages.
+A sophisticated, full-featured wedding website built with Next.js 15 (App Router) and React 19, featuring elegant design, RSVP management, AI chatbot assistant, photo gallery, and crypto gift integration. Designed with unified jewel-tone aesthetics and optimized for wedding guests of all ages.
 
-[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js%2014-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js%2015-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
@@ -13,7 +13,9 @@ A sophisticated, full-featured wedding website built with Next.js 14, featuring 
 
 ### 💒 Wedding Essentials
 - **📅 Live Countdown** - Real-time countdown to February 13, 2026
-- **📝 RSVP System** - Secure guest registration with dietary restrictions and guest counts
+- **📝 RSVP System** - Secure guest registration with dietary restrictions and guest counts, with edit mode
+- **🪑 Seating Lookup** - Seating assignment lookup and Admin seating dashboard
+- **✅ Confirmation Page** - Personalized confirmation with follow-up actions (wallet connect, gallery, info)
 - **📸 Photo Gallery** - Upload and share wedding photos with captions and comments
 - **ℹ️ Wedding Info** - Detailed event information, venue details, and FAQ
 - **📞 Contact** - Easy way for guests to reach out with questions
@@ -39,14 +41,16 @@ A sophisticated, full-featured wedding website built with Next.js 14, featuring 
 ## 🛠 Tech Stack
 
 ### Frontend
-- **Next.js 14** - React framework with App Router
+- **Next.js 15** - React 19 with App Router
 - **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
+- **Tailwind CSS** - Utility-first styling with custom CSS variables (see `app/globals.css`) and theme (`tailwind.config.ts`)
 - **Shadcn/ui** - Beautiful, accessible component library
+- **Fonts via `next/font`** - Playfair Display (headings) and Lato (body) configured in `app/layout.tsx`
 
 ### Backend & Database
 - **Supabase** - PostgreSQL database with real-time capabilities
-- **Next.js API Routes** - Serverless API endpoints
+- **Server Client Pattern** - Use `createClient()` from `@/lib/supabase/server` for server-side operations
+- **Next.js API Routes** - Serverless API endpoints (App Router)
 - **Server-side Auth** - Secure authentication flow
 
 ### Integrations
@@ -126,6 +130,8 @@ pnpm build
 pnpm start
 \`\`\`
 
+> **Vercel Tip:** Use `pnpm install --no-frozen-lockfile` in build settings to avoid lockfile conflicts.
+
 Visit [http://localhost:3000](http://localhost:3000) to see the website.
 
 ## 📊 Database Setup
@@ -168,10 +174,11 @@ Additional documentation available in `/docs`:
 ## 🎨 Customization
 
 ### Theme Colors
-Defined in `tailwind.config.ts`:
-- Rose gold, jewel tones (crimson, fuchsia, burgundy)
-- Soft blush and warm neutrals
-- Island-inspired emerald and gold accents
+Defined in `tailwind.config.ts` and `app/globals.css`:
+- **Jewel Tones:** Burgundy, Crimson, Fuchsia, Purple, Violet, Sapphire, Emerald, Rose, Gold
+- **Neutrals:** Soft Blush, Warm White, Charcoal
+- **Custom Utilities:** Gold shimmer effects and glass-morphism utilities available in `app/globals.css`
+- **Unified Theme:** All pages and components use the consistent jewel-tone palette standardized site-wide
 
 ### Content Updates
 - Wedding details: `lib/chatbot-config.ts`

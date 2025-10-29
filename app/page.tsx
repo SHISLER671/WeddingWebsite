@@ -111,7 +111,7 @@ export default function Home() {
             </Link>
             <Link
               href="/gallery"
-              className="border-2 border-sky-400 text-sky-400 hover:bg-sky-400 hover:text-warm-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 backdrop-blur-sm bg-warm-white/10 flex items-center gap-3 min-w-[200px] justify-center shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="border-2 border-jewel-sapphire text-jewel-sapphire hover:bg-jewel-sapphire hover:text-warm-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 backdrop-blur-sm bg-warm-white/10 flex items-center gap-3 min-w-[200px] justify-center shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <Camera className="w-5 h-5" />
               Photo Gallery

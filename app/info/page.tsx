@@ -54,7 +54,7 @@ export default function InfoPage() {
                   <Calendar className="w-6 h-6 text-jewel-burgundy mr-3" />
                   <h4 className="text-3xl font-serif font-bold text-jewel-burgundy">When</h4>
                 </div>
-                <div className="space-y-3 text-gray-800 font-sans text-center">
+                <div className="space-y-3 text-charcoal font-sans text-center">
                   <p className="text-lg">
                     <strong className="text-xl font-semibold text-jewel-burgundy">Date:</strong>{" "}
                     <em>Friday, February 13, 2026</em>
@@ -77,7 +77,7 @@ export default function InfoPage() {
                   <MapPin className="w-6 h-6 text-jewel-crimson mr-3" />
                   <h4 className="text-3xl font-serif font-bold text-jewel-crimson">Where</h4>
                 </div>
-                <div className="space-y-3 text-gray-800 font-sans text-center">
+                <div className="space-y-3 text-charcoal font-sans text-center">
                   <p className="text-lg">
                     <strong className="text-xl font-semibold text-jewel-crimson">Ceremony:</strong>{" "}
                     <em>Dulce Nombre de Maria Cathedral-Basilica</em>
@@ -96,23 +96,23 @@ export default function InfoPage() {
                 </div>
               </div>
 
-              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-t-4 border-blue-900">
+              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-t-4 border-jewel-sapphire">
                 <div className="flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-blue-900 mr-3" />
-                  <h4 className="text-3xl font-serif font-bold text-blue-900">Dress Code</h4>
+                  <Users className="w-6 h-6 text-jewel-sapphire mr-3" />
+                  <h4 className="text-3xl font-serif font-bold text-jewel-sapphire">Dress Code</h4>
                 </div>
-                <div className="space-y-3 text-gray-800 font-sans text-center">
+                <div className="space-y-3 text-charcoal font-sans text-center">
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-blue-900">Bridesmaids:</strong> <em>Red</em>
+                    <strong className="text-xl font-semibold text-jewel-sapphire">Bridesmaids:</strong> <em>Red</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-blue-900">Groomsmen:</strong> <em>Black</em>
+                    <strong className="text-xl font-semibold text-jewel-sapphire">Groomsmen:</strong> <em>Black</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-blue-900">Guests:</strong>{" "}
+                    <strong className="text-xl font-semibold text-jewel-sapphire">Guests:</strong>{" "}
                     <em>Cocktail or Semi-Formal</em>
                   </p>
-                  <p className="text-base mt-4 text-gray-700 italic">
+                  <p className="text-base mt-4 text-charcoal/80 italic">
                     We encourage jewel tones - think emerald, sapphire, ruby, amethyst
                   </p>
                 </div>
@@ -123,11 +123,11 @@ export default function InfoPage() {
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Quick Questions</h4>
               <div className="space-y-4">
                 <details className="group border-b border-jewel-burgundy/20 pb-4">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy transition-colors">
+                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-charcoal hover:text-jewel-burgundy transition-colors">
                     Who's getting hitched?
                     <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-burgundy" />
                   </summary>
-                  <div className="mt-3 text-gray-800">
+                  <div className="mt-3 text-charcoal">
                     <p className="text-lg">
                       That would be <strong className="text-xl text-jewel-burgundy">Pia Consuelo Weisenberger</strong>{" "}
                       <em>(daughter of John & Elizabeth Weisenberger)</em> and{" "}
@@ -139,11 +139,11 @@ export default function InfoPage() {
                 </details>
 
                 <details className="group border-b border-jewel-burgundy/20 pb-4">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy transition-colors">
+                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-charcoal hover:text-jewel-burgundy transition-colors">
                     When and where is this party happening?
                     <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-burgundy" />
                   </summary>
-                  <div className="mt-3 text-gray-800">
+                  <div className="mt-3 text-charcoal">
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Date:</strong> <em>February 13, 2026</em>
                     </p>
@@ -162,11 +162,11 @@ export default function InfoPage() {
                 </details>
 
                 <details className="group border-b border-jewel-burgundy/20 pb-4">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy transition-colors">
+                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-charcoal hover:text-jewel-burgundy transition-colors">
                     Where exactly are these places?
                     <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-burgundy" />
                   </summary>
-                  <div className="mt-3 text-gray-800">
+                  <div className="mt-3 text-charcoal">
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Ceremony:</strong>{" "}
                       <em>Dulce Nombre de Maria Cathedral-Basilica</em>{" "}
@@ -187,11 +187,11 @@ export default function InfoPage() {
                 </details>
 
                 <details className="group border-b border-jewel-burgundy/20 pb-4">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy transition-colors">
+                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-charcoal hover:text-jewel-burgundy transition-colors">
                     When do I need to RSVP by?
                     <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-burgundy" />
                   </summary>
-                  <div className="mt-3 text-gray-800">
+                  <div className="mt-3 text-charcoal">
                     <p className="text-lg">
                       Please let us know by <strong className="text-xl text-jewel-burgundy">January 10, 2026</strong>.
                       You can RSVP right here on the website - <em>super easy, super quick!</em>
@@ -200,11 +200,11 @@ export default function InfoPage() {
                 </details>
 
                 <details className="group">
-                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-gray-800 hover:text-jewel-burgundy transition-colors">
+                  <summary className="flex justify-between items-center cursor-pointer text-xl font-bold text-charcoal hover:text-jewel-burgundy transition-colors">
                     What should I wear?
                     <ChevronDown className="w-6 h-6 group-open:rotate-180 transition-transform text-jewel-burgundy" />
                   </summary>
-                  <div className="mt-3 text-gray-800">
+                  <div className="mt-3 text-charcoal">
                     <p className="text-lg">
                       Dress code is <strong className="text-xl text-jewel-burgundy">Semi-Formal</strong> -{" "}
                       <em>think cocktail or evening attire. Look good, feel good!</em>

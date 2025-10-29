@@ -102,7 +102,7 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
       flex items-center justify-between p-5 border-b border-gray-600/30
       rounded-t-2xl cursor-pointer relative z-20
       ${isMinimized ? "rounded-b-2xl" : ""}
-      bg-gradient-to-br from-jewel-fuchsia via-jewel-burgundy to-jewel-crimson text-navy
+      bg-gradient-to-br from-jewel-fuchsia via-jewel-burgundy to-jewel-crimson text-warm-white
       shadow-xl backdrop-blur-md
       hover:shadow-2xl transition-all duration-300
     `
@@ -160,11 +160,11 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
             <Heart className="w-6 h-6 text-white fill-white/20 drop-shadow-lg" />
           </div>
             <div className="flex-1">
-            <h3 className="font-bold text-xl text-navy tracking-tight leading-tight">
+            <h3 className="font-bold text-xl text-warm-white tracking-tight leading-tight">
               {config.name}
             </h3>
             {!isMinimized && (
-              <p className="text-sm text-navy/90 mt-0.5 font-medium">
+              <p className="text-sm text-warm-white/90 mt-0.5 font-medium">
                 {config.description}
               </p>
             )}
@@ -292,8 +292,8 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
                   key={index}
                   onClick={() => actions.sendMessage(action.action)}
                   disabled={state.isLoading}
-                  className="text-xs px-3 py-1 rounded-full bg-green-700/30 text-green-400 
-                           hover:bg-green-600 hover:text-white transition-colors"
+                  className="text-xs px-3 py-1 rounded-full bg-jewel-emerald/30 text-jewel-emerald 
+                           hover:bg-jewel-emerald/50 hover:text-white transition-colors"
                 >
                   {action.label}
                 </button>
@@ -373,14 +373,14 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
         onClick={handleMobileChatWindowClick}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-jewel-fuchsia to-jewel-crimson text-navy rounded-t-3xl">
+        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-jewel-fuchsia to-jewel-crimson text-warm-white rounded-t-3xl">
           <div className="flex items-center gap-3">
             <Heart className="w-6 h-6" />
             <div>
-              <h3 className="font-semibold text-lg text-navy">
+              <h3 className="font-semibold text-lg text-warm-white">
                 {config.name}
               </h3>
-              <p className="text-xs opacity-90 text-navy">
+              <p className="text-xs opacity-90 text-warm-white">
                 {config.description}
               </p>
             </div>
@@ -458,8 +458,8 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
                   key={index}
                   onClick={() => actions.sendMessage(action.action)}
                   disabled={state.isLoading}
-                  className="text-xs px-3 py-1 rounded-full bg-green-700/30 text-green-400 
-                           hover:bg-green-600 hover:text-white transition-colors"
+                  className="text-xs px-3 py-1 rounded-full bg-jewel-emerald/30 text-jewel-emerald 
+                           hover:bg-jewel-emerald/50 hover:text-white transition-colors"
                 >
                   {action.label}
                 </button>

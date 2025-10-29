@@ -194,7 +194,7 @@ export default function AdminPage() {
           </form>
           
           {message && (
-            <div className="mt-4 p-3 bg-red-50 text-red-800 rounded-lg text-sm">
+            <div className="mt-4 p-3 bg-jewel-crimson/10 text-jewel-crimson rounded-lg text-sm">
               {message}
             </div>
           )}
@@ -264,7 +264,7 @@ export default function AdminPage() {
           <div className="flex gap-4">
             <button
               onClick={validateAssignments}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              className="bg-jewel-sapphire hover:bg-jewel-sapphire/90 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               <AlertTriangle className="w-4 h-4" />
               Validate Assignments

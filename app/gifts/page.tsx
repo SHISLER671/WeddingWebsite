@@ -312,7 +312,7 @@ function AGWWalletButton() {
     <button
       onClick={isConnected ? handleDisconnect : handleConnect}
       disabled={status === "connecting"}
-      className="flex flex-col items-center gap-3 p-6 bg-green-700 hover:bg-green-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex flex-col items-center gap-3 p-6 bg-jewel-emerald hover:bg-jewel-emerald/90 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Flower2 className="w-8 h-8 text-white" />
       <span className="font-semibold text-lg text-white">

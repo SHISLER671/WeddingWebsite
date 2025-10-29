@@ -376,8 +376,8 @@ export default function GalleryPage() {
                   <div
                     className={`mb-4 p-3 rounded-lg flex items-center gap-2 ${
                       uploadStatus === "success"
-                        ? "bg-green-50 text-green-700 border border-green-200"
-                        : "bg-red-50 text-red-700 border border-red-200"
+                        ? "bg-jewel-emerald/10 text-jewel-emerald border border-jewel-emerald/30"
+                        : "bg-jewel-crimson/10 text-jewel-crimson border border-jewel-crimson/30"
                     }`}
                   >
                     {uploadStatus === "success" ? (

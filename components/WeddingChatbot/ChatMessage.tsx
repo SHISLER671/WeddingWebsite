@@ -44,7 +44,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
   const getAvatarClasses = () => {
     const baseClasses = `
       w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-      ${isUser ? 'bg-jewel-sapphire text-white' : 'bg-green-600 text-white'}
+      ${isUser ? 'bg-jewel-sapphire text-white' : 'bg-jewel-emerald text-white'}
     `;
 
     return baseClasses;
@@ -61,7 +61,7 @@ export default function ChatMessageComponent({ message, isLatest = false }: Chat
             href={part}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 underline"
+            className="text-jewel-sapphire hover:text-jewel-sapphire/80 underline"
           >
             {part}
           </a>

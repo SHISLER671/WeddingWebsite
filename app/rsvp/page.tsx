@@ -186,14 +186,14 @@ export default function RSVPPage() {
             </h2>
             
             {/* Edit Mode Helpful Note */}
-            <div className="bg-amber-50/80 border border-amber-200 rounded-lg p-4 mb-6">
+            <div className="bg-jewel-gold/10 border border-jewel-gold/30 rounded-lg p-4 mb-6">
               <div className="flex items-start gap-3">
-                <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center mt-0.5">
-                  <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
+                <div className="w-5 h-5 bg-jewel-gold/20 rounded-full flex items-center justify-center mt-0.5">
+                  <div className="w-2 h-2 bg-jewel-gold rounded-full"></div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-amber-900 text-sm mb-1">📝 Edit RSVP Reminder</h4>
-                  <p className="text-amber-800 text-sm leading-relaxed">
+                  <h4 className="font-semibold text-jewel-gold text-sm mb-1">📝 Edit RSVP Reminder</h4>
+                  <p className="text-jewel-burgundy text-sm leading-relaxed">
                     Use the <strong>exact name from your invitation</strong> when you fill out the form below. 
                     If you're bringing a plus-one, please add their name(s) in the special message box. This helps us keep everything organized! 💕
                   </p>
@@ -224,10 +224,10 @@ export default function RSVPPage() {
               <div
                 className={`mt-4 p-4 rounded-lg flex items-start gap-3 ${
                   lookupStatus === "success"
-                    ? "bg-green-50 text-green-800 border border-green-200"
+                    ? "bg-jewel-emerald/10 text-jewel-emerald border border-jewel-emerald/30"
                     : lookupStatus === "not-found"
-                      ? "bg-blue-50 text-blue-800 border border-blue-200"
-                      : "bg-red-50 text-red-800 border border-red-200"
+                      ? "bg-soft-blush/80 text-jewel-sapphire border border-jewel-sapphire/30"
+                      : "bg-jewel-crimson/10 text-jewel-crimson border border-jewel-crimson/30"
                 }`}
               >
                 {lookupStatus === "success" ? (
@@ -243,28 +243,28 @@ export default function RSVPPage() {
             {lookupStatus === "success" && (
               <div className="mt-4">
                 {seatingStatus === "loading" && (
-                  <div className="bg-blue-50 text-blue-800 border border-blue-200 p-4 rounded-lg flex items-center gap-3">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  <div className="bg-soft-blush/80 text-jewel-burgundy border border-jewel-burgundy/30 p-4 rounded-lg flex items-center gap-3">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-jewel-burgundy"></div>
                     <span className="text-sm">Looking up your seating assignment...</span>
                   </div>
                 )}
                 
                 {seatingStatus === "found" && seatingAssignment && (
-                  <div className="bg-blue-50/80 text-blue-900 border border-blue-200 p-4 rounded-lg">
+                  <div className="bg-soft-blush/80 text-jewel-burgundy border border-jewel-burgundy/30 p-4 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                      <span className="font-semibold text-sm text-blue-900">Your Seating Assignment</span>
+                      <div className="w-2 h-2 bg-jewel-burgundy rounded-full"></div>
+                      <span className="font-semibold text-sm text-jewel-burgundy">Your Seating Assignment</span>
                     </div>
-                    <div className="text-lg font-serif text-blue-900">
+                    <div className="text-lg font-serif text-jewel-burgundy">
                       <strong>Table {seatingAssignment.table_number}, Seat {seatingAssignment.seat_number}</strong>
                     </div>
                     {seatingAssignment.plus_one_name && (
-                      <div className="text-sm text-blue-700 mt-1">
+                      <div className="text-sm text-jewel-crimson mt-1">
                         Plus One: {seatingAssignment.plus_one_name} (Seat {seatingAssignment.plus_one_seat})
                       </div>
                     )}
                     {seatingAssignment.dietary_notes && (
-                      <div className="text-xs text-blue-600 mt-2">
+                      <div className="text-xs text-jewel-burgundy/80 mt-2">
                         Dietary Notes: {seatingAssignment.dietary_notes}
                       </div>
                     )}
@@ -272,15 +272,15 @@ export default function RSVPPage() {
                 )}
                 
                 {seatingStatus === "not-found" && (
-                  <div className="bg-blue-50/80 text-blue-900 border border-blue-200 p-4 rounded-lg">
+                  <div className="bg-soft-blush/80 text-jewel-burgundy border border-jewel-burgundy/30 p-4 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                      <span className="font-semibold text-sm text-blue-900">Seating Assignment</span>
+                      <div className="w-2 h-2 bg-jewel-burgundy rounded-full"></div>
+                      <span className="font-semibold text-sm text-jewel-burgundy">Seating Assignment</span>
                     </div>
-                    <div className="text-sm text-blue-800 mb-2">
+                    <div className="text-sm text-jewel-burgundy mb-2">
                       We're still finalizing seating arrangements for your table. 
                     </div>
-                    <div className="text-xs text-blue-700">
+                    <div className="text-xs text-jewel-crimson">
                       💌 Please contact us directly to confirm your seating - we want to make sure you have the perfect spot!
                     </div>
                   </div>
@@ -291,9 +291,9 @@ export default function RSVPPage() {
         )}
 
         {isEditMode && foundRSVP && (
-          <div className="max-w-2xl mx-auto mb-8 bg-green-50/80 backdrop-blur-sm rounded-lg shadow-lg p-6 border-2 border-green-200/50">
+          <div className="max-w-2xl mx-auto mb-8 bg-jewel-emerald/10 backdrop-blur-sm rounded-lg shadow-lg p-6 border-2 border-jewel-emerald/30">
             <div className="flex items-start gap-3 mb-4">
-              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <CheckCircle className="w-6 h-6 text-jewel-emerald flex-shrink-0 mt-1" />
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800 mb-2 font-serif">Your Current RSVP</h2>
                 <div className="space-y-2 text-gray-700">
@@ -330,14 +330,14 @@ export default function RSVPPage() {
         <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-8 border border-white/20">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Helpful Note */}
-            <div className="bg-blue-50/80 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="bg-soft-blush/80 border border-jewel-sapphire/30 rounded-lg p-4 mb-6">
               <div className="flex items-start gap-3">
-                <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-5 h-5 bg-jewel-sapphire/20 rounded-full flex items-center justify-center mt-0.5">
+                  <div className="w-2 h-2 bg-jewel-sapphire rounded-full"></div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-blue-900 text-sm mb-1">💡 Quick Tip</h4>
-                  <p className="text-blue-800 text-sm leading-relaxed">
+                  <h4 className="font-semibold text-jewel-sapphire text-sm mb-1">💡 Quick Tip</h4>
+                  <p className="text-jewel-burgundy text-sm leading-relaxed">
                     Please use the <strong>same name from your invitation</strong> so it matches up with what we have saved to help avoid issues. 
                     If you're bringing a plus-one, please add their name(s) in the special message box below. Thank you! 💕
                   </p>
