@@ -131,7 +131,8 @@ export default function InfoPage() {
                     <p className="text-lg">
                       That would be <strong className="text-xl text-jewel-burgundy">Pia Consuelo Weisenberger</strong>{" "}
                       <em>(daughter of John & Elizabeth Weisenberger)</em> and{" "}
-                      <strong className="text-xl text-jewel-burgundy">Ryan Shisler</strong>! We're tying the knot on our
+                      <strong className="text-xl text-jewel-burgundy">Ryan Shisler</strong>{" "}
+                      <em>(son of Karl & Bernadette Shisler)</em>! We're tying the knot on our
                       beautiful island home.
                     </p>
                   </div>
