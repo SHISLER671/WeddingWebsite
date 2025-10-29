@@ -338,7 +338,7 @@ export default function RSVPPage() {
                 <div>
                   <h4 className="font-semibold text-blue-900 text-sm mb-1">💡 Quick Tip</h4>
                   <p className="text-blue-800 text-sm leading-relaxed">
-                    Please use the <strong>exact name from your invitation</strong> to RSVP so it matches our database and we can avoid any issues. 
+                    Please use the <strong>same name from your invitation</strong> so it matches up with what we have saved to help avoid issues. 
                     If you're bringing a plus-one, please add their name(s) in the special message box below. Thank you! 💕
                   </p>
                 </div>
@@ -432,7 +432,7 @@ export default function RSVPPage() {
               {/* Children Policy Notice */}
               <div className="mt-4 bg-jewel-fuchsia/10 border border-jewel-fuchsia/30 rounded-lg p-4">
                 <p className="text-sm text-charcoal leading-relaxed">
-                  💕 For those with little ones: We are looking forawrd to having a night full of dancing, drinking, and celebration. We would love for you to enjoy the night child-free with us. However, if you are unable to secure a baby sitter, you are welcome to bring your children. please just let us know if you are, and include them in your rsvp with their ages. Thank you and cant wait to have you there!
+                  💕 For those with little ones: We are looking forward to having a night full of dancing, drinking, and celebration. We would love for you to enjoy the night child-free with us. However, if you are unable to arrange for a babysitter, you are welcome to bring your children. Please let us know if you are bringing children and include them in your RSVP with their ages. Thank you and can't wait to have you there!
                 </p>
               </div>
             </div>

@@ -79,7 +79,7 @@ export default function Home() {
           
           {/* Clear instruction text */}
           <div className="mt-4 text-center">
-            <p className="text-sm md:text-base text-warm-white/80 drop-shadow-md font-medium">
+            <p className="text-base md:text-lg text-gold-shimmer drop-shadow-md font-semibold">
               Tap the countdown to join our celebration! 🎊
             </p>
           </div>

@@ -222,7 +222,56 @@ export default function ConfirmationPage() {
           </div>
         </div>
 
+        {/* Don't Miss Out - moved up to appear right after Dress Code */}
         <section className="max-w-4xl mx-auto mt-16 mb-8">
+          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 text-center">
+            <h3 className="text-2xl font-serif text-jewel-burgundy mb-6">Don't Miss Out!</h3>
+            <p className="text-lg text-charcoal/80 mb-6 leading-relaxed">
+              Your RSVP is confirmed, but the fun doesn't stop here! Explore our wedding website to discover all the
+              amazing features we've prepared for you.
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-2">
+              {/* Gallery Feature */}
+              <Link href="/gallery" className="bg-blue-100/30 hover:bg-blue-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+                <Camera className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+                <h4 className="font-semibold text-charcoal mb-2">Live Photo Gallery</h4>
+                <p className="text-sm text-charcoal/70 mb-3">
+                  The gallery is open now! Upload your favorite photos and memories.
+                </p>
+                <p className="text-xs text-blue-600 font-medium">
+                  📱 QR code available on wedding day for live event uploads!
+                </p>
+              </Link>
+
+              {/* Registry Feature */}
+              <Link href="/gifts" className="bg-green-100/30 hover:bg-green-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+                <Gift className="w-8 h-8 text-green-600 mx-auto mb-3" />
+                <h4 className="font-semibold text-charcoal mb-2">Gift Registry</h4>
+                <p className="text-sm text-charcoal/70 mb-3">Browse our curated registry and find the perfect gift.</p>
+                <p className="text-xs text-green-600 font-medium">💎 Crypto gifts and traditional options available!</p>
+              </Link>
+
+              {/* Wedding Details Feature */}
+              <Link href="/info" className="bg-yellow-100/30 hover:bg-yellow-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+                <div className="w-8 h-8 text-jewel-gold mx-auto mb-3 flex items-center justify-center">
+                  <div className="w-6 h-6 bg-jewel-gold rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">i</span>
+                  </div>
+                </div>
+                <h4 className="font-semibold text-charcoal mb-2">Wedding Details</h4>
+                <p className="text-sm text-charcoal/70 mb-3">Everything you need to know about our special day.</p>
+                <p className="text-xs text-jewel-gold font-medium">📅 Schedule, venues, and all the important info!</p>
+              </Link>
+            </div>
+            <div className="border-t border-jewel-burgundy/20 pt-4">
+              <p className="text-charcoal/60 text-sm">👆 Tap any card to explore more</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Let's Get Connected comes after Don't Miss Out */}
+        <section className="max-w-4xl mx-auto mt-6 mb-8">
           <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
@@ -242,7 +291,7 @@ export default function ConfirmationPage() {
             <div className="flex justify-center">
               <Link
                 href="/rsvp?edit=true"
-                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 transform hover:scale-105"
+                className="border-2 border-blue-600 text-white hover:bg-blue-600 hover:text-white px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 transform hover:scale-105"
               >
                 <Edit className="w-6 h-6" />
                 Edit RSVP
@@ -251,6 +300,7 @@ export default function ConfirmationPage() {
           </div>
         </section>
 
+        {/* About sections follow */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Ezekiel FAQ */}
           <Card className="border-white/20 shadow-lg bg-white/40 backdrop-blur-sm">
@@ -334,67 +384,17 @@ export default function ConfirmationPage() {
         </div>
       </div>
 
-      {/* Footer - Encourage exploration */}
-      <footer className="max-w-4xl mx-auto px-4 py-12 mt-8">
-        <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 text-center">
-          <h3 className="text-2xl font-serif text-jewel-burgundy mb-6">Don't Miss Out!</h3>
-          <p className="text-lg text-charcoal/80 mb-6 leading-relaxed">
-            Your RSVP is confirmed, but the fun doesn't stop here! Explore our wedding website to discover all the
-            amazing features we've prepared for you.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {/* Gallery Feature */}
-            <Link href="/gallery" className="bg-blue-100/30 hover:bg-blue-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
-              <Camera className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-              <h4 className="font-semibold text-charcoal mb-2">Live Photo Gallery</h4>
-              <p className="text-sm text-charcoal/70 mb-3">
-                The gallery is open now! Upload your favorite photos and memories.
-              </p>
-              <p className="text-xs text-blue-600 font-medium">
-                📱 QR code available on wedding day for live event uploads!
-              </p>
-            </Link>
-
-            {/* Registry Feature */}
-            <Link href="/gifts" className="bg-green-100/30 hover:bg-green-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
-              <Gift className="w-8 h-8 text-green-600 mx-auto mb-3" />
-              <h4 className="font-semibold text-charcoal mb-2">Gift Registry</h4>
-              <p className="text-sm text-charcoal/70 mb-3">Browse our curated registry and find the perfect gift.</p>
-              <p className="text-xs text-green-600 font-medium">💎 Crypto gifts and traditional options available!</p>
-            </Link>
-
-            {/* Wedding Details Feature */}
-            <Link href="/info" className="bg-yellow-100/30 hover:bg-yellow-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
-              <div className="w-8 h-8 text-jewel-gold mx-auto mb-3 flex items-center justify-center">
-                <div className="w-6 h-6 bg-jewel-gold rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">i</span>
-                </div>
-              </div>
-              <h4 className="font-semibold text-charcoal mb-2">Wedding Details</h4>
-              <p className="text-sm text-charcoal/70 mb-3">Everything you need to know about our special day.</p>
-              <p className="text-xs text-jewel-gold font-medium">📅 Schedule, venues, and all the important info!</p>
-            </Link>
-          </div>
-
-          <div className="border-t border-jewel-burgundy/20 pt-6">
-            <p className="text-charcoal/60 text-sm mb-2">
-              Take your time to discover!
-            </p>
-            <p className="text-jewel-burgundy font-semibold text-sm mb-6">
-              👆 Click the buttons above to explore!
-            </p>
-            <div className="flex justify-center">
-              <Link
-                href="/contact"
-                className="bg-jewel-burgundy/10 hover:bg-jewel-burgundy/20 border border-jewel-burgundy/30 hover:border-jewel-burgundy text-jewel-burgundy hover:text-jewel-crimson font-medium transition-all duration-200 py-3 px-8 rounded-lg text-center text-sm hover:shadow-md"
-              >
-                📞 Contact Us
-              </Link>
-            </div>
-          </div>
+      {/* Final CTA - Contact Us */}
+      <section className="max-w-4xl mx-auto px-4 py-12 mt-2">
+        <div className="flex justify-center">
+          <Link
+            href="/contact"
+            className="bg-jewel-burgundy/10 hover:bg-jewel-burgundy/20 border border-jewel-burgundy/30 hover:border-jewel-burgundy text-jewel-burgundy hover:text-jewel-crimson font-medium transition-all duration-200 py-3 px-8 rounded-lg text-center text-sm hover:shadow-md"
+          >
+            📞 Contact Us
+          </Link>
         </div>
-      </footer>
+      </section>
 
       <WeddingChatbot />
     </div>

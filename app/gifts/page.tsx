@@ -130,8 +130,8 @@ export default function GiftsPage() {
             {/* Connect Wallet Section */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-3">
-                <Flower2 className="w-5 h-5 text-jewel-purple" />
-                <h3 className="text-lg font-semibold text-jewel-purple">Connect Your Wallet for a Surprise</h3>
+                <Flower2 className="w-5 h-5 text-green-700" />
+                <h3 className="text-lg font-semibold text-green-700">Connect Your Wallet for a Surprise</h3>
               </div>
               <p className="text-gray-800 leading-relaxed">
                 Connect your Abstract Global Wallet and we'll send you a <strong>special digital surprise after the wedding!</strong> 
@@ -312,7 +312,7 @@ function AGWWalletButton() {
     <button
       onClick={isConnected ? handleDisconnect : handleConnect}
       disabled={status === "connecting"}
-      className="flex flex-col items-center gap-3 p-6 bg-jewel-purple hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex flex-col items-center gap-3 p-6 bg-green-700 hover:bg-green-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Flower2 className="w-8 h-8 text-white" />
       <span className="font-semibold text-lg text-white">

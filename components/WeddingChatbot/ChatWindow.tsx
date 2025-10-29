@@ -159,12 +159,12 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
           <div className="p-3 bg-white/30 rounded-full backdrop-blur-md shadow-lg border border-white/40">
             <Heart className="w-6 h-6 text-white fill-white/20 drop-shadow-lg" />
           </div>
-          <div className="flex-1">
-            <h3 className="font-bold text-xl text-navy drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)] tracking-tight leading-tight">
+            <div className="flex-1">
+            <h3 className="font-bold text-xl text-navy tracking-tight leading-tight">
               {config.name}
             </h3>
             {!isMinimized && (
-              <p className="text-sm text-navy/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.6)] mt-0.5 font-medium">
+              <p className="text-sm text-navy/90 mt-0.5 font-medium">
                 {config.description}
               </p>
             )}
@@ -209,12 +209,12 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
               e.stopPropagation()
               actions.closeChat()
             }}
-            className="p-2.5 bg-red-500 hover:bg-red-600 rounded-xl transition-all duration-200 
-                       shadow-md hover:shadow-lg border border-red-400 group
+            className="p-2.5 bg-gray-700/90 hover:bg-gray-600 rounded-xl transition-all duration-200 
+                       shadow-md hover:shadow-lg border border-gray-600/50 group
                        hover:scale-110 active:scale-95"
             title="Close chat"
           >
-            <X className="w-4 h-4 text-white group-hover:rotate-90 transition-transform duration-200" />
+            <X className="w-4 h-4 text-jewel-burgundy group-hover:text-jewel-crimson transition-colors" />
           </button>
         </div>
       </div>
@@ -227,8 +227,8 @@ export default function ChatWindow({ className = "" }: ChatWindowProps) {
             <div className="flex flex-col items-center justify-center h-full text-gray-500 space-y-4">
               <Heart className="w-12 h-12 text-rose-gold/50" />
               <div className="text-center">
-                <p className="font-medium text-gray-700">Welcome to the Wedding Assistant!</p>
-                <p className="text-sm">How can I help you today?</p>
+                <p className="font-medium text-white">Welcome to the Wedding Assistant!</p>
+                <p className="text-sm text-white">How can I help you today?</p>
               </div>
             </div>
           ) : (
@@ -377,10 +377,10 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
           <div className="flex items-center gap-3">
             <Heart className="w-6 h-6" />
             <div>
-              <h3 className="font-semibold text-lg text-navy drop-shadow-[0_1px_2px_rgba(255,255,255,0.6)]">
+              <h3 className="font-semibold text-lg text-navy">
                 {config.name}
               </h3>
-              <p className="text-xs opacity-90 text-navy drop-shadow-[0_1px_2px_rgba(255,255,255,0.4)]">
+              <p className="text-xs opacity-90 text-navy">
                 {config.description}
               </p>
             </div>
@@ -397,8 +397,8 @@ export function MobileChatWindow({ isOpen, onClose }: MobileChatWindowProps) {
             <div className="flex flex-col items-center justify-center h-full text-gray-500 space-y-4">
               <Heart className="w-12 h-12 text-rose-gold/50" />
               <div className="text-center">
-                <p className="font-medium text-gray-700">Welcome to the Wedding Assistant!</p>
-                <p className="text-sm">How can I help you today?</p>
+                <p className="font-medium text-white">Welcome to the Wedding Assistant!</p>
+                <p className="text-sm text-white">How can I help you today?</p>
               </div>
             </div>
           ) : (
