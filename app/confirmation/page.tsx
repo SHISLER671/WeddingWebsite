@@ -142,11 +142,11 @@ export default function ConfirmationPage() {
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <h3 className="font-medium text-charcoal/80 mb-2 text-lg">Wedding Date</h3>
-                <p className="text-xl text-charcoal">Thursday, February 13, 2026</p>
+                <p className="text-xl text-charcoal">Friday, February 13, 2026</p>
               </div>
               <div>
                 <h3 className="font-medium text-charcoal/80 mb-2 text-lg">Timeline</h3>
-                <p className="text-xl text-charcoal">2:00 PM - 10:00 PM</p>
+                <p className="text-xl text-charcoal">TBD</p>
               </div>
             </div>
           </div>
@@ -163,12 +163,12 @@ export default function ConfirmationPage() {
               <div className="p-4 bg-soft-blush/50 rounded-xl">
                 <h3 className="font-medium text-charcoal mb-2 text-lg">Ceremony</h3>
                 <p className="text-xl text-charcoal">Dulce Nombre de Maria Cathedral-Basilica</p>
-                <p className="text-charcoal/70 text-lg">Hagåtña, Guam • 2:00 PM</p>
+                <p className="text-charcoal/70 text-lg">Hagåtña, Guam • TBD</p>
               </div>
               <div className="p-4 rounded-xl">
                 <h3 className="font-medium text-charcoal mb-2 text-lg">Reception</h3>
                 <p className="text-xl text-charcoal">Hotel Nikko Guam Tasi Ballroom</p>
-                <p className="text-charcoal/70 text-lg">Tumon, Guam • 6:00 PM</p>
+                <p className="text-charcoal/70 text-lg">Tumon, Guam • TBD</p>
               </div>
             </div>
           </div>
@@ -183,17 +183,17 @@ export default function ConfirmationPage() {
             </div>
             <div className="space-y-4">
               {[
-                { time: "2:00 PM", event: "Wedding Mass at Dulce Nombre de Maria Cathedral-Basilica" },
-                { time: "2:45 PM", event: "Ceremony concludes - Family photos at Cathedral" },
-                { time: "3:15 PM", event: "Travel to photo locations around Hagåtña" },
-                { time: "4:00 PM", event: "Couple & wedding party photos at scenic locations" },
-                { time: "5:00 PM", event: "Travel to Hotel Nikko Guam for reception" },
-                { time: "6:00 PM", event: "Cocktail hour begins at Tasi Ballroom" },
-                { time: "6:30 PM", event: "Reception dinner service begins" },
-                { time: "7:30 PM", event: "Toasts and speeches" },
-                { time: "8:00 PM", event: "First dance and dancing begins" },
-                { time: "9:00 PM", event: "Cake cutting ceremony" },
-                { time: "10:00 PM", event: "Reception concludes - send-off celebration" },
+                { time: "TBD", event: "Wedding Mass at Dulce Nombre de Maria Cathedral-Basilica" },
+                { time: "TBD", event: "Ceremony concludes - Family photos at Cathedral" },
+                { time: "TBD", event: "Travel to photo locations around Hagåtña" },
+                { time: "TBD", event: "Couple & wedding party photos at scenic locations" },
+                { time: "TBD", event: "Travel to Hotel Nikko Guam for reception" },
+                { time: "TBD", event: "Cocktail hour begins at Tasi Ballroom" },
+                { time: "TBD", event: "Reception dinner service begins" },
+                { time: "TBD", event: "Toasts and speeches" },
+                { time: "TBD", event: "First dance and dancing begins" },
+                { time: "TBD", event: "Cake cutting ceremony" },
+                { time: "TBD", event: "Reception concludes - send-off celebration" },
               ].map((item, index) => (
                 <div
                   key={index}
@@ -228,7 +228,7 @@ export default function ConfirmationPage() {
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed text-lg">
                 Thanks for RSVPing! Now the extra fun part - chat with Ezekiel (our AI wedding assistant) anytime you
-                have questions, and if you're feeling adventurous, connect your AbstractGlobalWallet and click the 'Edit
+                have questions, and if you're feeling adventurous, connect your AbstractGlobalWallet ( What's this? See below ) and click the 'Edit
                 RSVP' button to save your wallet info for a special surprise from us after the wedding! 🎁
               </p>
             </div>
@@ -315,7 +315,7 @@ export default function ConfirmationPage() {
                 <AccordionItem value="easy">
                   <AccordionTrigger className="text-left text-sm">Is it easy to set up?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
-                    Super easy! Click the flower button and Abstract Global Wallet will automatically create a wallet
+                    Super easy! Click the button above and Abstract Global Wallet will automatically create a wallet
                     for you if you don't have one. No forms, no verification, no complicated setup. It literally takes
                     less than a minute - easier than most apps!
                   </AccordionContent>
@@ -365,7 +365,7 @@ export default function ConfirmationPage() {
             </Link>
 
             {/* Wedding Details Feature */}
-            <Link href="/info" className="bg-jewel-gold/10 hover:bg-jewel-gold/20 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+            <Link href="/info" className="bg-yellow-100/30 hover:bg-yellow-100/40 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
               <div className="w-8 h-8 text-jewel-gold mx-auto mb-3 flex items-center justify-center">
                 <div className="w-6 h-6 bg-jewel-gold rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-sm">i</span>

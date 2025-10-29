@@ -37,7 +37,7 @@ export default function GiftsPage() {
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-serif font-semibold text-white mb-4 drop-shadow-lg">Your Presence is Our Present</h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto leading-relaxed mb-2 drop-shadow-md">
-            Seriously, having you celebrate with us is the best gift we could ask for. But if you'd like to honor us
+            Having you with us on our wedding day is the only gift we ask for! But if you'd like to honor us
             with a gift, we've made it super easy with both traditional and modern options.
           </p>
           
@@ -76,9 +76,7 @@ export default function GiftsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-800 leading-relaxed">
-              We happily accept cash gifts, which will help us build our future together (and maybe fund a few island
-              adventures!). Bring your gift to the wedding, or if you prefer, we can share bank transfer details.
-              Whatever works best for you!
+              If you would like to give us cash as a gift, we would more than appreciate it because it will help build our new life!
             </p>
           </CardContent>
         </Card>
@@ -281,9 +279,7 @@ export default function GiftsPage() {
 
         <div className="text-center mt-8 p-6 bg-gradient-to-br from-rose-gold/10 to-emerald-50/30 rounded-lg border border-rose-gold/20">
           <p className="text-white leading-relaxed italic mb-4 font-medium drop-shadow-md">
-            "The best gift you can give us is your love, laughter, and presence on our special day. Whether you bring
-            cash, crypto, or just your amazing self - we're just grateful you're celebrating with us on our island
-            paradise."
+            "We just want to celebrate the best day of our lives with the people who mean the most, and  have a great time together, full of love and life!"
           </p>
           <p className="text-white font-semibold drop-shadow-md">— Pia & Ryan 🌴💕</p>
         </div>

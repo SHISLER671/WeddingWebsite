@@ -60,14 +60,14 @@ export default function InfoPage() {
                     <em>Friday, February 13, 2026</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-burgundy">Ceremony:</strong> <em>2:00 PM</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Ceremony:</strong> <em>TBD</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-burgundy">Reception:</strong> <em>6:00 PM</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Reception:</strong> <em>TBD</em>
                   </p>
                   <p className="text-lg">
                     <strong className="text-xl font-semibold text-jewel-burgundy">After Party:</strong>{" "}
-                    <em>11:00 PM</em>
+                    <em>TBD</em>
                   </p>
                 </div>
               </div>
@@ -148,11 +148,11 @@ export default function InfoPage() {
                     </p>
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Ceremony:</strong>{" "}
-                      <em>2:00 PM at Dulce Nombre de Maria Cathedral-Basilica</em>
+                      <em>TBD at Dulce Nombre de Maria Cathedral-Basilica</em>
                     </p>
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Reception:</strong>{" "}
-                      <em>6:00 PM at Hotel Nikko Guam Tasi Ballroom</em>
+                      <em>TBD at Hotel Nikko Guam Tasi Ballroom</em>
                     </p>
                     <p className="mt-2 text-lg font-bold text-jewel-crimson">
                       Then we dance until we can't dance anymore! 🌴
@@ -223,20 +223,20 @@ export default function InfoPage() {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="text-center">
                   <h5 className="text-2xl font-bold text-jewel-burgundy mb-4 font-serif">The Cathedral</h5>
-                  <p className="text-lg text-gray-800 mb-4 leading-relaxed">
+                    <p className="text-lg text-gray-800 mb-4 leading-relaxed">
                     We're saying our vows at the stunning{" "}
-                    <strong className="text-jewel-burgundy">Dulce Nombre de Maria Cathedral-Basilica at 2:00 PM</strong>
+                    <strong className="text-jewel-burgundy">Dulce Nombre de Maria Cathedral-Basilica at TBD</strong>
                     . It's a beautiful, historic place that means a lot to us.{" "}
                     <em>Sacred, elegant, and the perfect spot to start our forever.</em>
                   </p>
                 </div>
                 <div className="text-center">
                   <h5 className="text-2xl font-bold text-jewel-crimson mb-4 font-serif">The Reception</h5>
-                  <p className="text-lg text-gray-800 mb-4 leading-relaxed">
+                    <p className="text-lg text-gray-800 mb-4 leading-relaxed">
                     After the ceremony, we're heading to the gorgeous{" "}
                     <strong className="text-jewel-crimson">Tasi Ballroom at Hotel Nikko Guam</strong> for the real
                     party! <em>Think crystal chandeliers, a huge dance floor, and amazing lighting.</em> The reception
-                    starts at <strong className="text-jewel-crimson">6:00 PM</strong>, and we'll be dancing until late.
+                    starts at <strong className="text-jewel-crimson">TBD</strong>, and we'll be dancing until late.
                     Hotel Nikko is right in Tumon with valet parking, so getting there is a breeze.{" "}
                     <strong className="text-jewel-crimson">Come ready to eat, drink, and celebrate with us! 🎉</strong>
                   </p>

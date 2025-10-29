@@ -429,13 +429,10 @@ export default function RSVPPage() {
                 <option value="5">5+ Guests</option>
               </select>
 
-              {/* Adults Only Notice */}
+              {/* Children Policy Notice */}
               <div className="mt-4 bg-jewel-fuchsia/10 border border-jewel-fuchsia/30 rounded-lg p-4">
                 <p className="text-sm text-charcoal leading-relaxed">
-                  💕 <strong>Adults-Only Celebration:</strong> We love your little ones, but we've planned this as an
-                  adults-only evening so you can relax and enjoy a night out! We hope this gives you a wonderful excuse
-                  for a date night. If you absolutely need to bring your children due to exceptional circumstances,
-                  please let us know in the message section below and we'll do our best to accommodate.
+                  💕 For those with little ones: We are looking forawrd to having a night full of dancing, drinking, and celebration. We would love for you to enjoy the night child-free with us. However, if you are unable to secure a baby sitter, you are welcome to bring your children. please just let us know if you are, and include them in your rsvp with their ages. Thank you and cant wait to have you there!
                 </p>
               </div>
             </div>
