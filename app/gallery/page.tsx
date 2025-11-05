@@ -355,15 +355,15 @@ export default function GalleryPage() {
                 {/* Caption Input */}
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-charcoal mb-2">
-                    <span className="flex items-center gap-2">
-                      💬 Add a Caption
+                      <span className="flex items-center gap-2">
+                      Add a Caption
                       <span className="text-xs text-charcoal/60 font-normal">(optional)</span>
                     </span>
                   </label>
                   <textarea
                     value={uploadCaption}
                     onChange={(e) => setUploadCaption(e.target.value)}
-                    placeholder="Share a memory... ✨"
+                    placeholder="Share a memory..."
                     rows={3}
                     maxLength={200}
                     className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 resize-none text-base bg-white/80 backdrop-blur-sm"
@@ -459,7 +459,6 @@ export default function GalleryPage() {
                               {item.uploader_name && (
                                 <div className="mb-3">
                                   <p className="text-lg font-semibold text-charcoal flex items-center gap-2">
-                                    <span className="text-rose-gold">📸</span>
                                     {item.uploader_name}
                                   </p>
                                 </div>
@@ -541,8 +540,7 @@ export default function GalleryPage() {
 
                         <div className="p-3 sm:p-4 bg-gradient-to-b from-warm-white to-soft-blush/30">
                           {item.uploader_name && (
-                            <p className="text-sm font-semibold text-charcoal flex items-center gap-1.5 mb-1">
-                              <span className="text-rose-gold">📸</span>
+                            <p className="text-sm font-semibold text-charcoal mb-1">
                               {item.uploader_name}
                             </p>
                           )}
@@ -561,7 +559,7 @@ export default function GalleryPage() {
               <div className="max-w-4xl mx-auto mt-8">
                 <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-jewel-fuchsia/20">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="text-3xl">🎵</span>
+                    <span className="text-3xl">Music</span>
                     <h3 className="text-2xl font-serif font-bold text-jewel-fuchsia">The Soundtrack to Our Story</h3>
                   </div>
                   <p className="text-charcoal/70 mb-4 italic">Let the music move you as you browse our memories...</p>

@@ -192,9 +192,9 @@ export default function RSVPPage() {
                   <div className="w-2 h-2 bg-jewel-gold rounded-full"></div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-jewel-burgundy text-sm mb-1">📝 Edit RSVP Reminder</h4>
+                  <h4 className="font-semibold text-jewel-burgundy text-sm mb-1">Edit RSVP Reminder</h4>
                   <p className="text-jewel-burgundy text-sm leading-relaxed">
-                    Use the <strong>same name from your invitation</strong>, or enter your email address to look up and edit your existing RSVP. This helps us keep everything organized! 💕
+                    Use the <strong>same name from your invitation</strong>, or enter your email address to look up and edit your existing RSVP. This helps us keep everything organized!
                   </p>
                 </div>
               </div>
@@ -280,7 +280,7 @@ export default function RSVPPage() {
                       We're still finalizing seating arrangements for your table. 
                     </div>
                     <div className="text-xs text-jewel-crimson">
-                      💌 Please contact us directly to confirm your seating - we want to make sure you have the perfect spot!
+                      Please contact us directly to confirm your seating - we want to make sure you have the perfect spot!
                     </div>
                   </div>
                 )}
@@ -335,10 +335,10 @@ export default function RSVPPage() {
                   <div className="w-2 h-2 bg-jewel-sapphire rounded-full"></div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-jewel-sapphire text-sm mb-1">💡 Quick Tip</h4>
+                  <h4 className="font-semibold text-jewel-sapphire text-sm mb-1">Quick Tip</h4>
                   <p className="text-jewel-burgundy text-sm leading-relaxed">
                     Please use the <strong>same name from your invitation</strong> so it matches up with what we have saved to help avoid issues. 
-                    If you're bringing a plus-one, please add their name(s) in the special message box below. Thank you! 💕
+                    If you're bringing a plus-one, please add their name(s) in the special message box below. Thank you!
                   </p>
                 </div>
               </div>
@@ -346,7 +346,7 @@ export default function RSVPPage() {
             
             {/* Guest Name */}
             <div>
-              <label htmlFor="guestName" className="block text-sm font-semibold text-charcoal mb-2">
+              <label htmlFor="guestName" className="block text-base md:text-sm font-semibold text-charcoal mb-2">
                 Full Name *
               </label>
               <input
@@ -363,7 +363,7 @@ export default function RSVPPage() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-charcoal mb-2">
+              <label htmlFor="email" className="block text-base md:text-sm font-semibold text-charcoal mb-2">
                 Email Address *
               </label>
               <input
@@ -380,7 +380,7 @@ export default function RSVPPage() {
 
             {/* Attendance */}
             <div>
-              <label className="block text-sm font-semibold text-charcoal mb-3">Will you be attending? *</label>
+              <label className="block text-base md:text-sm font-semibold text-charcoal mb-3">Will you be attending? *</label>
               <div className="space-y-2">
                 <label className="flex items-center">
                   <input
@@ -392,7 +392,7 @@ export default function RSVPPage() {
                     className="w-4 h-4 text-jewel-crimson border-jewel-burgundy/30 focus:ring-jewel-crimson"
                     required
                   />
-                  <span className="ml-2 text-charcoal">Yes, I'll be there! 🎉</span>
+                  <span className="ml-2 text-charcoal">Yes, I'll be there!</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -404,14 +404,14 @@ export default function RSVPPage() {
                     className="w-4 h-4 text-jewel-crimson border-jewel-burgundy/30 focus:ring-jewel-crimson"
                     required
                   />
-                  <span className="ml-2 text-charcoal">Sorry, I can't make it 💔</span>
+                  <span className="ml-2 text-charcoal">Sorry, I can't make it</span>
                 </label>
               </div>
             </div>
 
             {/* Number of Guests */}
             <div>
-              <label htmlFor="guestCount" className="block text-sm font-semibold text-charcoal mb-2">
+              <label htmlFor="guestCount" className="block text-base md:text-sm font-semibold text-charcoal mb-2">
                 Number of Guests (including yourself)
               </label>
               <select
@@ -430,15 +430,15 @@ export default function RSVPPage() {
 
               {/* Children Policy Notice */}
               <div className="mt-4 bg-jewel-fuchsia/10 border border-jewel-fuchsia/30 rounded-lg p-4">
-                <p className="text-sm text-charcoal leading-relaxed">
-                  💕 For those with little ones: We are looking forward to having a night full of dancing, drinking, and celebration. We would love for you to enjoy the night child-free with us. However, if you are unable to arrange for a babysitter, you are welcome to bring your children. Please let us know if you are bringing children and include them in your RSVP with their ages. Thank you and can't wait to have you there!
+                <p className="text-base md:text-sm text-charcoal leading-relaxed">
+                  For those with little ones: We are looking forward to having a night full of dancing, drinking, and celebration. We would love for you to enjoy the night child-free with us, so please arrange for a babysitter if you have younglings. We can't wait to have you there!
                 </p>
               </div>
             </div>
 
             {/* Dietary Restrictions */}
             <div>
-              <label htmlFor="dietary" className="block text-sm font-semibold text-charcoal mb-2">
+              <label htmlFor="dietary" className="block text-base md:text-sm font-semibold text-charcoal mb-2">
                 Dietary Restrictions or Allergies
               </label>
               <textarea
@@ -454,7 +454,7 @@ export default function RSVPPage() {
 
             {/* Special Message */}
             <div>
-              <label htmlFor="message" className="block text-sm font-semibold text-charcoal mb-2">
+              <label htmlFor="message" className="block text-base md:text-sm font-semibold text-charcoal mb-2">
                 Special Message (Optional)
               </label>
               <textarea

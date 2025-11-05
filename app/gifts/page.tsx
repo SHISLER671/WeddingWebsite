@@ -60,7 +60,7 @@ export default function GiftsPage() {
             </p>
             <p className="text-gray-700 text-sm italic">
               Bring your handmade treasures to the wedding, or let us know if you'd like to coordinate delivery. 
-              We can't wait to see what beautiful things you've created! 🎨✨
+              We can't wait to see what beautiful things you've created!
             </p>
           </CardContent>
         </Card>
@@ -115,10 +115,10 @@ export default function GiftsPage() {
                       <Copy className="w-4 h-4 text-emerald-600" />
                     </button>
                   </div>
-                  {copied && <p className="text-xs text-emerald-600 mt-1">Copied! 🎉</p>}
+                  {copied && <p className="text-xs text-emerald-600 mt-1">Copied!</p>}
                   <p className="text-xs text-gray-600 mt-2 italic">
                     Pro tip: Ryan checks this wallet more often than his text messages. Send crypto here and he'll
-                    probably see it before you can say "blockchain"! 😄
+                    probably see it before you can say "blockchain"!
                   </p>
                 </div>
               </div>
@@ -281,7 +281,7 @@ export default function GiftsPage() {
           <p className="text-white leading-relaxed italic mb-4 font-medium drop-shadow-md">
             "We just want to celebrate the best day of our lives with the people who mean the most, and  have a great time together, full of love and life!"
           </p>
-          <p className="text-white font-semibold drop-shadow-md">— Pia & Ryan 🌴💕</p>
+          <p className="text-white font-semibold drop-shadow-md">— Pia & Ryan</p>
         </div>
       </div>
     </div>

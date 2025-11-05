@@ -44,7 +44,7 @@ export default function InfoPage() {
               </h3>
               <p className="text-xl text-white/95 leading-relaxed text-center mb-8 font-medium drop-shadow-md">
                 We're getting married on our beautiful island home and can't wait to share this moment with you. Below
-                you'll find everything you need to know about our ceremony and celebration. 🌺
+                you'll find everything you need to know about our ceremony and celebration.
               </p>
             </section>
 
@@ -465,9 +465,9 @@ export default function InfoPage() {
           </main>
 
           {/* Footer */}
-          <footer className="text-center mt-8 text-gray-800 font-sans">
+          <footer className="text-center mt-8 text-white font-sans">
             <p className="text-lg">
-              &copy; 2026 Pia & Ryan's Wedding. <em>Made with love and Irie vibes.</em> 🌺
+              &copy; 2026 Pia & Ryan's Wedding. <em>Made with love and Irie vibes.</em>
             </p>
           </footer>
         </div>

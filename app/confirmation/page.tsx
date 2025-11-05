@@ -57,7 +57,7 @@ export default function ConfirmationPage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center">
               <h1 className="text-3xl md:text-5xl font-serif font-bold text-white tracking-wide mb-4 drop-shadow-2xl">
-                🎉 Thank You for RSVPing! 🎉
+                Thank You for RSVPing!
               </h1>
               <p className="text-xl md:text-2xl text-soft-blush font-medium mb-2 drop-shadow-lg">
                 We're absolutely thrilled you'll be joining us
@@ -116,15 +116,15 @@ export default function ConfirmationPage() {
             <div className="text-lg text-jewel-burgundy mb-3">
               We're still finalizing seating arrangements for your table.
             </div>
-            <div className="text-sm text-jewel-crimson mb-4">
-              💌 Please contact us directly to confirm your seating - we want to make sure you have the perfect spot for our special day!
+            <div className="text-base md:text-sm text-jewel-crimson mb-4">
+              Please contact us directly to confirm your seating - we want to make sure you have the perfect spot for our special day!
             </div>
             <div className="bg-white/40 rounded-lg p-4">
               <div className="text-sm text-jewel-burgundy mb-2">
                 <strong>Need to reach us?</strong>
               </div>
               <div className="text-xs text-jewel-burgundy/80">
-                Use the "Contact Us" button below or reach out directly. We'll get you sorted with the perfect seat! 🪑
+                Use the "Contact Us" button below or reach out directly. We'll get you sorted with the perfect seat!
               </div>
             </div>
           </div>
@@ -173,38 +173,7 @@ export default function ConfirmationPage() {
             </div>
           </div>
 
-          {/* Schedule Card */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
-                <Clock className="h-6 w-6 text-green-700" />
-              </div>
-              <h2 className="text-2xl font-light text-charcoal text-xl">Schedule</h2>
-            </div>
-            <div className="space-y-4">
-              {[
-                { time: "TBD", event: "Wedding Mass at Dulce Nombre de Maria Cathedral-Basilica" },
-                { time: "TBD", event: "Ceremony concludes - Family photos at Cathedral" },
-                { time: "TBD", event: "Travel to photo locations around Hagåtña" },
-                { time: "TBD", event: "Couple & wedding party photos at scenic locations" },
-                { time: "TBD", event: "Travel to Hotel Nikko Guam for reception" },
-                { time: "TBD", event: "Cocktail hour begins at Tasi Ballroom" },
-                { time: "TBD", event: "Reception dinner service begins" },
-                { time: "TBD", event: "Toasts and speeches" },
-                { time: "TBD", event: "First dance and dancing begins" },
-                { time: "TBD", event: "Cake cutting ceremony" },
-                { time: "TBD", event: "Reception concludes - send-off celebration" },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-4 p-3 rounded-lg hover:bg-soft-blush/30 transition-colors"
-                >
-                  <div className="w-20 text-jewel-emerald font-medium text-lg">{item.time}</div>
-                  <div className="flex-1 text-charcoal text-lg">{item.event}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Schedule Card removed as requested */}
 
           {/* Dress Code Card */}
           <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
@@ -233,39 +202,39 @@ export default function ConfirmationPage() {
 
             <div className="grid md:grid-cols-3 gap-6 mb-2">
               {/* Gallery Feature */}
-              <Link href="/gallery" className="bg-jewel-sapphire/10 hover:bg-jewel-sapphire/20 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+              <Link href="/gallery" className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-sapphire text-jewel-sapphire hover:bg-jewel-sapphire hover:text-warm-white">
                 <Camera className="w-8 h-8 text-jewel-sapphire mx-auto mb-3" />
                 <h4 className="font-semibold text-charcoal mb-2">Live Photo Gallery</h4>
-                <p className="text-sm text-charcoal/70 mb-3">
+                <p className="text-base md:text-sm text-charcoal/70 mb-3">
                   The gallery is open now! Upload your favorite photos and memories.
                 </p>
                 <p className="text-xs text-jewel-sapphire font-medium">
-                  📱 QR code available on wedding day for live event uploads!
+                  QR code available on wedding day for live event uploads.
                 </p>
               </Link>
 
               {/* Registry Feature */}
-              <Link href="/gifts" className="bg-jewel-emerald/10 hover:bg-jewel-emerald/20 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+              <Link href="/gifts" className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-emerald text-jewel-emerald hover:bg-jewel-emerald hover:text-warm-white">
                 <Gift className="w-8 h-8 text-jewel-emerald mx-auto mb-3" />
                 <h4 className="font-semibold text-charcoal mb-2">Gift Registry</h4>
-                <p className="text-sm text-charcoal/70 mb-3">Browse our curated registry and find the perfect gift.</p>
-                <p className="text-xs text-jewel-emerald font-medium">💎 Crypto gifts and traditional options available!</p>
+                <p className="text-base md:text-sm text-charcoal/70 mb-3">Browse our curated registry and find the perfect gift.</p>
+                <p className="text-xs text-jewel-emerald font-medium">Crypto gifts and traditional options available.</p>
               </Link>
 
               {/* Wedding Details Feature */}
-              <Link href="/info" className="bg-jewel-gold/10 hover:bg-jewel-gold/20 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer">
+              <Link href="/info" className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-gold text-jewel-gold hover:bg-jewel-gold hover:text-jewel-burgundy">
                 <div className="w-8 h-8 text-jewel-gold mx-auto mb-3 flex items-center justify-center">
                   <div className="w-6 h-6 bg-jewel-gold rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">i</span>
                   </div>
                 </div>
                 <h4 className="font-semibold text-charcoal mb-2">Wedding Details</h4>
-                <p className="text-sm text-charcoal/70 mb-3">Everything you need to know about our special day.</p>
-                <p className="text-xs text-jewel-gold font-medium">📅 Schedule, venues, and all the important info!</p>
+                <p className="text-base md:text-sm text-charcoal/70 mb-3">Everything you need to know about our special day.</p>
+                <p className="text-xs text-jewel-gold font-medium">Schedule, venues, and all the important info.</p>
               </Link>
             </div>
             <div className="border-t border-jewel-burgundy/20 pt-4">
-              <p className="text-charcoal/60 text-sm">👆 Tap any card to explore more</p>
+              <p className="text-charcoal/60 text-sm">Tap any card to explore more</p>
             </div>
           </div>
         </section>
@@ -389,9 +358,9 @@ export default function ConfirmationPage() {
         <div className="flex justify-center">
           <Link
             href="/contact"
-            className="bg-jewel-burgundy/10 hover:bg-jewel-burgundy/20 border border-jewel-burgundy/30 hover:border-jewel-burgundy text-jewel-burgundy hover:text-jewel-crimson font-medium transition-all duration-200 py-3 px-8 rounded-lg text-center text-sm hover:shadow-md"
+            className="bg-jewel-burgundy/10 hover:bg-jewel-burgundy/20 border border-jewel-burgundy/30 hover:border-jewel-burgundy text-white font-medium transition-all duration-200 py-3 px-8 rounded-lg text-center text-sm hover:shadow-md"
           >
-            📞 Contact Us
+            Contact Us
           </Link>
         </div>
       </section>

@@ -86,12 +86,12 @@ export default function ContactPage() {
               {/* Status Messages */}
               {submitStatus === "success" && (
                 <div className="bg-jewel-emerald/20 border border-jewel-emerald text-jewel-emerald px-4 py-3 rounded-lg">
-                  ✅ {submitMessage}
+                  {submitMessage}
                 </div>
               )}
               {submitStatus === "error" && (
                 <div className="bg-jewel-crimson/20 border border-jewel-crimson text-jewel-crimson px-4 py-3 rounded-lg">
-                  ❌ {submitMessage}
+                  {submitMessage}
                 </div>
               )}
 
