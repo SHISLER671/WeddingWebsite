@@ -84,7 +84,7 @@ export default function InfoPage() {
                   </p>
                   <p className="text-lg">
                     <strong className="text-xl font-semibold text-jewel-burgundy">Reception:</strong>{" "}
-                    <em>Hotel Nikko Guam Tasi Ballroom, Tumon</em>
+                    <em>Hotel Nikko Guam, Tasi Ballroom, Tumon</em>
                   </p>
                 </div>
               </div>
@@ -146,10 +146,10 @@ export default function InfoPage() {
                     </p>
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Reception:</strong>{" "}
-                      <em>6:30pm at Hotel Nikko Guam Tasi Ballroom</em>
+                      <em>6:30pm at Hotel Nikko Guam, Tasi Ballroom</em>
                     </p>
                     <p className="mt-2 text-lg font-bold text-jewel-burgundy">
-                      Then we dance until we can't dance anymore! 🌴
+                      Then we dance until we can't dance anymore! 
                     </p>
                   </div>
                 </details>
@@ -167,7 +167,7 @@ export default function InfoPage() {
                     </p>
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Reception:</strong>{" "}
-                      <em>Hotel Nikko Guam Tasi Ballroom</em>
+                      <em>Hotel Nikko Guam, Tasi Ballroom</em>
                     </p>
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Address:</strong>{" "}
@@ -238,81 +238,94 @@ export default function InfoPage() {
               </div>
             </section>
 
-            {/* Wedding Party - Already redesigned, keeping as is */}
+            {/* Wedding Party - Inclusive redesign */}
             <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
-              <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-8 text-center">Wedding Party</h4>
+              <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Wedding Party</h4>
+              
+              <p className="text-xl text-gray-800 text-center mb-8 leading-relaxed">
+                These are the people in our lives we wish to celebrate this momentous occasion with!
+              </p>
 
-              <div className="space-y-8">
-                {/* Bridesmaids & Maids of Honor */}
-                <div className="bg-gradient-to-br from-white/50 to-jewel-burgundy/5 rounded-lg p-8 border-2 border-jewel-burgundy">
-                  <h5 className="text-3xl font-serif font-bold text-jewel-burgundy mb-6 text-center flex items-center justify-center gap-3">
-                    <Users className="w-7 h-7" />
-                    Bridesmaids & Maids of Honor
-                  </h5>
-
-                  <div className="space-y-6">
-                    <div className="text-center">
-                      <h6 className="text-2xl font-bold text-jewel-burgundy mb-3">Matron of Honor</h6>
-                      <p className="text-xl text-gray-800 font-medium">Reynne Wahl</p>
-                    </div>
-
-                    <div className="text-center border-t border-jewel-burgundy/20 pt-6">
-                      <h6 className="text-2xl font-bold text-jewel-burgundy mb-3">Maid of Honor</h6>
-                      <p className="text-xl text-gray-800 font-medium">Camella Ramirez</p>
-                    </div>
-
-                    <div className="border-t border-jewel-burgundy/20 pt-6">
-                      <h6 className="text-2xl font-bold text-jewel-burgundy mb-4 text-center">Bridesmaids</h6>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
-                        <p className="text-lg text-gray-800 font-medium">Christiana Ramirez</p>
-                        <p className="text-lg text-gray-800 font-medium">Tammy Ramirez</p>
-                        <p className="text-lg text-gray-800 font-medium">Nisha Chargualaf</p>
-                        <p className="text-lg text-gray-800 font-medium">Elizabeth Valencia</p>
-                        <p className="text-lg text-gray-800 font-medium">Audrey Benevente</p>
-                        <p className="text-lg text-gray-800 font-medium">Neil Pang</p>
-                        <p className="text-lg text-gray-800 font-medium">James Losongco</p>
-                        <p className="text-lg text-gray-800 font-medium">Jonathon Pablo</p>
-                        <p className="text-lg text-gray-800 font-medium">Gavin Garrido</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Groomsmen & Best Men */}
-                <div className="bg-gradient-to-br from-white/50 to-jewel-burgundy/5 rounded-lg p-8 border-2 border-jewel-burgundy">
-                  <h5 className="text-3xl font-serif font-bold text-jewel-burgundy mb-6 text-center flex items-center justify-center gap-3">
-                    <Users className="w-7 h-7" />
-                    Groomsmen & Best Men
-                  </h5>
-
-                  <div className="space-y-6">
-                    <div className="text-center">
-                      <h6 className="text-2xl font-bold text-jewel-burgundy mb-4">Best Men</h6>
-                      <div className="space-y-2">
-                        <p className="text-xl text-gray-800 font-medium">Kevin Leasiolagi</p>
-                        <p className="text-xl text-gray-800 font-medium">Shane Quintanilla</p>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-jewel-burgundy/20 pt-6">
-                      <h6 className="text-2xl font-bold text-jewel-burgundy mb-4 text-center">Groomsmen</h6>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
-                        <p className="text-lg text-gray-800 font-medium">James Whippy</p>
-                        <p className="text-lg text-gray-800 font-medium">Teke Kaminaga</p>
-                        <p className="text-lg text-gray-800 font-medium">Ray Paul Jardon</p>
-                        <p className="text-lg text-gray-800 font-medium">Carter Young</p>
-                        <p className="text-lg text-gray-800 font-medium">Jesse Newby</p>
-                        <p className="text-lg text-gray-800 font-medium">Jose Santos</p>
-                        <p className="text-lg text-gray-800 font-medium">Vincent Camacho</p>
-                        <p className="text-lg text-gray-800 font-medium">Carl Nangauta</p>
-                        <p className="text-lg text-gray-800 font-medium">Jassen Guerrero</p>
-                        <p className="text-lg text-gray-800 font-medium">Amos Taijeron</p>
-                        <p className="text-lg text-gray-800 font-medium">William Libby</p>
-                        <p className="text-lg text-gray-800 font-medium">Devin Quitugua</p>
-                        <p className="text-lg text-gray-800 font-medium">Brandon Cepeda</p>
-                      </div>
-                    </div>
-                  </div>
+              <div className="bg-gradient-to-br from-white/50 to-jewel-burgundy/5 rounded-lg p-8 border-2 border-jewel-burgundy">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+                  <p className="text-lg text-gray-800 font-medium">
+                    Amos Taijeron
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Audrey Benevente
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Brandon Cepeda
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Camella Ramirez <span className="text-jewel-burgundy text-sm font-semibold">(Maid of Honor)</span>
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Carl Nangauta
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Carter Young
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Christiana Ramirez
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Devin Quitugua
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Elizabeth Valencia
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Gavin Garrido
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    James Losongco
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    James Whippy
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Jassen Guerrero
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Jesse Newby
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Jonathon Pablo
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Jose Santos
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Kevin Leasiolagi <span className="text-jewel-burgundy text-sm font-semibold">(Best Man)</span>
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Neil Pang
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Nisha Chargualaf
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Ray Paul Jardon
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Reynne Wahl <span className="text-jewel-burgundy text-sm font-semibold">(Matron of Honor)</span>
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Shane Quintanilla <span className="text-jewel-burgundy text-sm font-semibold">(Best Man)</span>
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Tammy Ramirez
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Teke Kaminaga
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Vincent Camacho
+                  </p>
+                  <p className="text-lg text-gray-800 font-medium">
+                    William Libby
+                  </p>
                 </div>
               </div>
 

@@ -167,7 +167,7 @@ export default function ConfirmationPage() {
               </div>
               <div className="p-4 rounded-xl">
                 <h3 className="font-medium text-charcoal mb-2 text-lg">Reception</h3>
-                <p className="text-xl text-charcoal">Hotel Nikko Guam Tasi Ballroom</p>
+                <p className="text-xl text-charcoal">Hotel Nikko Guam, Tasi Ballroom</p>
                 <p className="text-charcoal/70 text-lg">Tumon, Guam • TBD</p>
               </div>
             </div>
