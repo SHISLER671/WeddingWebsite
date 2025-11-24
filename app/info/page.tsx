@@ -60,38 +60,31 @@ export default function InfoPage() {
                     <em>Friday, February 13, 2026</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-burgundy">Ceremony:</strong> <em>TBD</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Ceremony:</strong> <em>2pm</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-burgundy">Reception:</strong> <em>TBD</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Reception:</strong> <em>6:30pm</em>
                   </p>
                   <p className="text-lg">
                     <strong className="text-xl font-semibold text-jewel-burgundy">After Party:</strong>{" "}
-                    <em>TBD</em>
+                    <em>10:30pm</em>
                   </p>
                 </div>
               </div>
 
-              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-t-4 border-jewel-crimson">
+              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-t-4 border-jewel-burgundy">
                 <div className="flex items-center justify-center mb-4">
-                  <MapPin className="w-6 h-6 text-jewel-crimson mr-3" />
-                  <h4 className="text-3xl font-serif font-bold text-jewel-crimson">Where</h4>
+                  <MapPin className="w-6 h-6 text-jewel-burgundy mr-3" />
+                  <h4 className="text-3xl font-serif font-bold text-jewel-burgundy">Where</h4>
                 </div>
                 <div className="space-y-3 text-charcoal font-sans text-center">
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-crimson">Ceremony:</strong>{" "}
-                    <em>Dulce Nombre de Maria Cathedral-Basilica</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Ceremony:</strong>{" "}
+                    <em>Dulce Nombre de Maria Cathedral-Basilica, Hagatña</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-crimson">Reception:</strong>{" "}
-                    <em>Hotel Nikko Guam Tasi Ballroom</em>
-                  </p>
-                  <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-crimson">Address:</strong>{" "}
-                    <em>245 Gun Beach Road, Tumon, Guam 96913</em>
-                  </p>
-                  <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-crimson">Capacity:</strong> <em>260 guests</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Reception:</strong>{" "}
+                    <em>Hotel Nikko Guam Tasi Ballroom, Tumon</em>
                   </p>
                 </div>
               </div>
@@ -130,9 +123,9 @@ export default function InfoPage() {
                   <div className="mt-3 text-charcoal">
                     <p className="text-lg">
                       That would be <strong className="text-xl text-jewel-burgundy">Pia Consuelo Weisenberger</strong>{" "}
-                      <em>(daughter of John & Elizabeth Weisenberger)</em> and{" "}
+                      <em>(daughter of John & Elizabeth Mandell Weisenberger)</em> and{" "}
                       <strong className="text-xl text-jewel-burgundy">Ryan Shisler</strong>{" "}
-                      <em>(son of Karl & Bernadette Shisler)</em>! We're tying the knot on our
+                      <em>(son of Karl & Bernadette Roberto Shisler)</em>! We're tying the knot on our
                       beautiful island home.
                     </p>
                   </div>
@@ -145,17 +138,17 @@ export default function InfoPage() {
                   </summary>
                   <div className="mt-3 text-charcoal">
                     <p className="text-lg">
-                      <strong className="text-xl text-jewel-burgundy">Date:</strong> <em>February 13, 2026</em>
+                      <strong className="text-xl text-jewel-burgundy">Date:</strong> <em>Friday, February 13, 2026</em>
                     </p>
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Ceremony:</strong>{" "}
-                      <em>TBD at Dulce Nombre de Maria Cathedral-Basilica</em>
+                      <em>2pm at Dulce Nombre de Maria Cathedral-Basilica</em>
                     </p>
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Reception:</strong>{" "}
-                      <em>TBD at Hotel Nikko Guam Tasi Ballroom</em>
+                      <em>6:30pm at Hotel Nikko Guam Tasi Ballroom</em>
                     </p>
-                    <p className="mt-2 text-lg font-bold text-jewel-crimson">
+                    <p className="mt-2 text-lg font-bold text-jewel-burgundy">
                       Then we dance until we can't dance anymore! 🌴
                     </p>
                   </div>
@@ -219,57 +212,57 @@ export default function InfoPage() {
               </div>
             </section>
 
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-crimson">
+            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">About Our Venues</h4>
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="text-center">
                   <h5 className="text-2xl font-bold text-jewel-burgundy mb-4 font-serif">The Cathedral</h5>
                     <p className="text-lg text-gray-800 mb-4 leading-relaxed">
                     We're saying our vows at the stunning{" "}
-                    <strong className="text-jewel-burgundy">Dulce Nombre de Maria Cathedral-Basilica at TBD</strong>
+                    <strong className="text-jewel-burgundy">Dulce Nombre de Maria Cathedral-Basilica at 2pm</strong>
                     . It's a beautiful, historic place that means a lot to us.{" "}
                     <em>Sacred, elegant, and the perfect spot to start our forever.</em>
                   </p>
                 </div>
                 <div className="text-center">
-                  <h5 className="text-2xl font-bold text-jewel-crimson mb-4 font-serif">The Reception</h5>
+                  <h5 className="text-2xl font-bold text-jewel-burgundy mb-4 font-serif">The Reception</h5>
                     <p className="text-lg text-gray-800 mb-4 leading-relaxed">
                     After the ceremony, we're heading to the gorgeous{" "}
-                    <strong className="text-jewel-crimson">Tasi Ballroom at Hotel Nikko Guam</strong> for the real
+                    <strong className="text-jewel-burgundy">Tasi Ballroom at Hotel Nikko Guam</strong> for the real
                     party! <em>Think crystal chandeliers, a huge dance floor, and amazing lighting.</em> The reception
-                    starts at <strong className="text-jewel-crimson">TBD</strong>, and we'll be dancing until late.
+                    starts at <strong className="text-jewel-burgundy">6:30pm</strong>, and we'll be dancing until late.
                     Hotel Nikko is right in Tumon with valet parking, so getting there is a breeze.{" "}
-                    <strong className="text-jewel-crimson">Come ready to eat, drink, and celebrate with us! 🎉</strong>
+                    <strong className="text-jewel-burgundy">Come ready to eat, drink, and celebrate with us! 🎉</strong>
                   </p>
                 </div>
               </div>
             </section>
 
             {/* Wedding Party - Already redesigned, keeping as is */}
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-crimson">
+            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-8 text-center">Wedding Party</h4>
 
               <div className="space-y-8">
                 {/* Bridesmaids & Maids of Honor */}
-                <div className="bg-gradient-to-br from-white/50 to-jewel-crimson/5 rounded-lg p-8 border-2 border-jewel-crimson">
-                  <h5 className="text-3xl font-serif font-bold text-jewel-crimson mb-6 text-center flex items-center justify-center gap-3">
+                <div className="bg-gradient-to-br from-white/50 to-jewel-burgundy/5 rounded-lg p-8 border-2 border-jewel-burgundy">
+                  <h5 className="text-3xl font-serif font-bold text-jewel-burgundy mb-6 text-center flex items-center justify-center gap-3">
                     <Users className="w-7 h-7" />
                     Bridesmaids & Maids of Honor
                   </h5>
 
                   <div className="space-y-6">
                     <div className="text-center">
-                      <h6 className="text-2xl font-bold text-jewel-crimson mb-3">Matron of Honor</h6>
+                      <h6 className="text-2xl font-bold text-jewel-burgundy mb-3">Matron of Honor</h6>
                       <p className="text-xl text-gray-800 font-medium">Reynne Wahl</p>
                     </div>
 
-                    <div className="text-center border-t border-jewel-crimson/20 pt-6">
-                      <h6 className="text-2xl font-bold text-jewel-crimson mb-3">Maid of Honor</h6>
+                    <div className="text-center border-t border-jewel-burgundy/20 pt-6">
+                      <h6 className="text-2xl font-bold text-jewel-burgundy mb-3">Maid of Honor</h6>
                       <p className="text-xl text-gray-800 font-medium">Camella Ramirez</p>
                     </div>
 
-                    <div className="border-t border-jewel-crimson/20 pt-6">
-                      <h6 className="text-2xl font-bold text-jewel-crimson mb-4 text-center">Bridesmaids</h6>
+                    <div className="border-t border-jewel-burgundy/20 pt-6">
+                      <h6 className="text-2xl font-bold text-jewel-burgundy mb-4 text-center">Bridesmaids</h6>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
                         <p className="text-lg text-gray-800 font-medium">Christiana Ramirez</p>
                         <p className="text-lg text-gray-800 font-medium">Tammy Ramirez</p>
@@ -331,7 +324,7 @@ export default function InfoPage() {
             </section>
 
             <Card className="mb-8 border-jewel-burgundy/30 shadow-lg bg-white/40 backdrop-blur-lg">
-              <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-jewel-crimson/10 border-b-2 border-blue-900/30">
+              <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-jewel-burgundy/10 border-b-2 border-blue-900/30">
                 <CardTitle className="flex items-center justify-center gap-3 text-jewel-burgundy text-3xl font-serif font-bold">
                   <MessageCircle className="w-8 h-8" />
                   Meet Ezekiel - Your 24/7 Wedding Buddy
@@ -354,7 +347,7 @@ export default function InfoPage() {
 
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="what-is-sofia">
-                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-crimson">
+                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-burgundy">
                       So what exactly is Ezekiel?
                     </AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
@@ -370,7 +363,7 @@ export default function InfoPage() {
                   </AccordionItem>
 
                   <AccordionItem value="how-to-use">
-                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-crimson">
+                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-burgundy">
                       How do I chat with him?
                     </AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
@@ -385,7 +378,7 @@ export default function InfoPage() {
                   </AccordionItem>
 
                   <AccordionItem value="what-can-ask">
-                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-crimson">
+                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-burgundy">
                       What kind of stuff can I ask?
                     </AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
@@ -423,7 +416,7 @@ export default function InfoPage() {
                   </AccordionItem>
 
                   <AccordionItem value="is-it-safe">
-                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-crimson">
+                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-burgundy">
                       Is my info safe with Ezekiel?
                     </AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
@@ -437,7 +430,7 @@ export default function InfoPage() {
                   </AccordionItem>
 
                   <AccordionItem value="available-when">
-                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-crimson">
+                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-burgundy">
                       When can I reach him?
                     </AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
@@ -449,7 +442,7 @@ export default function InfoPage() {
                   </AccordionItem>
 
                   <AccordionItem value="cant-answer">
-                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-crimson">
+                    <AccordionTrigger className="text-left text-jewel-burgundy hover:text-jewel-burgundy">
                       What if he doesn't know something?
                     </AccordionTrigger>
                     <AccordionContent className="text-lg text-gray-800 leading-relaxed">
@@ -487,7 +480,7 @@ function ChatbotButton() {
   return (
     <button
       onClick={handleChatbotClick}
-      className="flex flex-col items-center gap-3 p-6 bg-jewel-crimson hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
+      className="flex flex-col items-center gap-3 p-6 bg-jewel-burgundy hover:bg-jewel-burgundy text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
     >
       <Heart className="w-8 h-8 text-white" />
       <span className="font-semibold text-lg text-white">Chat with Ezekiel</span>
