@@ -4489,4 +4489,3 @@ COMMIT;
 -- Clean import complete!
 -- Table now contains ONLY the 223 guests from CSV
 -- ============================================
-
