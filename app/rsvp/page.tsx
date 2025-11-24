@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useAccount } from "wagmi"
 import { useSearchParams, useRouter } from "next/navigation"
@@ -9,6 +9,14 @@ import { lookupRSVP, type RSVPRecord } from "@/lib/rsvp-lookup"
 import { Search, CheckCircle, AlertCircle } from "lucide-react"
 
 const Charcoal = "#333333"
+
+interface AutocompleteGuest {
+  id: string
+  guest_name: string
+  email: string | null
+  allowed_party_size: number
+  display_name: string
+}
 
 export default function RSVPPage() {
   const { address } = useAccount()
@@ -33,6 +41,17 @@ export default function RSVPPage() {
   const [foundRSVP, setFoundRSVP] = useState<RSVPRecord | null>(null)
   const [seatingAssignment, setSeatingAssignment] = useState<any>(null)
   const [seatingStatus, setSeatingStatus] = useState<"idle" | "loading" | "found" | "not-found">("idle")
+
+  // Autocomplete state
+  const [autocompleteSuggestions, setAutocompleteSuggestions] = useState<AutocompleteGuest[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
+  const [selectedGuest, setSelectedGuest] = useState<AutocompleteGuest | null>(null) // Track selected guest
+  const [nameValidationError, setNameValidationError] = useState<string>("") // Validation error
+  const autocompleteRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleLookup = async () => {
     if (!lookupEmail) {
@@ -62,6 +81,17 @@ export default function RSVPPage() {
           dietary: result.rsvp.dietary_restrictions || "",
           message: result.rsvp.special_message || "",
         })
+
+        // In edit mode, mark as valid (they already have an RSVP)
+        if (isEditMode) {
+          setSelectedGuest({
+            id: 'existing',
+            guest_name: result.rsvp.guest_name,
+            email: result.rsvp.email || null,
+            allowed_party_size: result.rsvp.guest_count || 1,
+            display_name: result.rsvp.guest_name
+          })
+        }
 
         // Look up seating assignment
         await lookupSeatingAssignment(lookupEmail, result.rsvp.guest_name)
@@ -102,16 +132,160 @@ export default function RSVPPage() {
     }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+  // Autocomplete search function with debouncing
+  const searchGuests = async (query: string) => {
+    if (query.length < 2) {
+      setAutocompleteSuggestions([])
+      setShowSuggestions(false)
+      return
+    }
+
+    setIsLoadingSuggestions(true)
+    try {
+      const response = await fetch(`/api/guests/autocomplete?q=${encodeURIComponent(query)}&limit=10`)
+      const result = await response.json()
+
+      if (result.success && result.results) {
+        setAutocompleteSuggestions(result.results)
+        setShowSuggestions(result.results.length > 0)
+        setSelectedSuggestionIndex(-1)
+      } else {
+        setAutocompleteSuggestions([])
+        setShowSuggestions(false)
+      }
+    } catch (error) {
+      console.error("Autocomplete error:", error)
+      setAutocompleteSuggestions([])
+      setShowSuggestions(false)
+    } finally {
+      setIsLoadingSuggestions(false)
+    }
+  }
+
+  // Debounced search
+  const debouncedSearch = (query: string) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      searchGuests(query)
+    }, 300) // 300ms debounce
+  }
+
+  // Handle guest name input change
+  const handleGuestNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      guestName: value,
     }))
+
+    // Clear selected guest if user types (they need to select from dropdown)
+    if (selectedGuest && value !== selectedGuest.guest_name) {
+      setSelectedGuest(null)
+      setNameValidationError("")
+    }
+
+    // Trigger autocomplete search
+    if (value.length >= 2) {
+      debouncedSearch(value)
+    } else {
+      setAutocompleteSuggestions([])
+      setShowSuggestions(false)
+    }
+  }
+
+  // Handle suggestion selection
+  const selectSuggestion = (guest: AutocompleteGuest) => {
+    setFormData((prev) => ({
+      ...prev,
+      guestName: guest.guest_name,
+      email: guest.email || prev.email, // Pre-fill email if available
+    }))
+    setSelectedGuest(guest) // Mark as selected from dropdown
+    setNameValidationError("") // Clear any validation errors
+    setShowSuggestions(false)
+    setAutocompleteSuggestions([])
+    setSelectedSuggestionIndex(-1)
+    inputRef.current?.blur()
+  }
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || autocompleteSuggestions.length === 0) return
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault()
+        setSelectedSuggestionIndex((prev) =>
+          prev < autocompleteSuggestions.length - 1 ? prev + 1 : prev
+        )
+        break
+      case "ArrowUp":
+        e.preventDefault()
+        setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : -1))
+        break
+      case "Enter":
+        e.preventDefault()
+        if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < autocompleteSuggestions.length) {
+          selectSuggestion(autocompleteSuggestions[selectedSuggestionIndex])
+        }
+        break
+      case "Escape":
+        setShowSuggestions(false)
+        setSelectedSuggestionIndex(-1)
+        inputRef.current?.blur()
+        break
+    }
+  }
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    
+    // Special handling for guest name to trigger autocomplete
+    if (name === "guestName") {
+      handleGuestNameChange(e as React.ChangeEvent<HTMLInputElement>)
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate that a guest was selected from the dropdown (skip in edit mode if already has RSVP)
+    if (!isEditMode || !foundRSVP) {
+      if (!selectedGuest) {
+        setNameValidationError("Please select your name from the dropdown list")
+        inputRef.current?.focus()
+        return
+      }
+
+      // Ensure the name matches the selected guest
+      if (formData.guestName !== selectedGuest.guest_name) {
+        setNameValidationError("Please select your name from the dropdown list")
+        inputRef.current?.focus()
+        return
+      }
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -337,28 +511,89 @@ export default function RSVPPage() {
                 <div>
                   <h4 className="font-semibold text-jewel-sapphire text-sm mb-1">Quick Tip</h4>
                   <p className="text-jewel-burgundy text-sm leading-relaxed">
-                    Please use the <strong>same name from your invitation</strong> so it matches up with what we have saved to help avoid issues. 
+                    <strong>Start typing your name</strong> and select it from the dropdown that appears. This helps ensure you select the correct name (especially if you share a first name with other guests). 
                     If you're bringing a plus-one, please add their name(s) in the special message box below. Thank you!
                   </p>
                 </div>
               </div>
             </div>
             
-            {/* Guest Name */}
-            <div>
+            {/* Guest Name with Autocomplete */}
+            <div ref={autocompleteRef} className="relative">
               <label htmlFor="guestName" className="block text-base md:text-sm font-semibold text-charcoal mb-2">
                 Full Name *
               </label>
-              <input
-                type="text"
-                id="guestName"
-                name="guestName"
-                value={formData.guestName}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
-                placeholder="Your full name"
-              />
+              <div className="relative">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  id="guestName"
+                  name="guestName"
+                  value={formData.guestName}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => {
+                    if (formData.guestName.length >= 2 && autocompleteSuggestions.length > 0) {
+                      setShowSuggestions(true)
+                    }
+                  }}
+                  required
+                  className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
+                  placeholder="Start typing your name..."
+                  autoComplete="off"
+                />
+                {isLoadingSuggestions && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-jewel-burgundy"></div>
+                  </div>
+                )}
+              </div>
+
+              {/* Autocomplete Suggestions Dropdown */}
+              {showSuggestions && autocompleteSuggestions.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-jewel-burgundy/30 rounded-lg shadow-lg max-h-60 overflow-auto">
+                  {autocompleteSuggestions.map((guest, index) => (
+                    <button
+                      key={guest.id}
+                      type="button"
+                      onClick={() => selectSuggestion(guest)}
+                      className={`w-full text-left px-4 py-3 hover:bg-jewel-burgundy/10 transition-colors ${
+                        index === selectedSuggestionIndex ? "bg-jewel-burgundy/20" : ""
+                      } ${
+                        index === 0 ? "rounded-t-lg" : ""
+                      } ${
+                        index === autocompleteSuggestions.length - 1 ? "rounded-b-lg" : ""
+                      }`}
+                    >
+                      <div className="font-medium text-charcoal">{guest.display_name}</div>
+                      {guest.email && (
+                        <div className="text-xs text-gray-500 mt-0.5">{guest.email}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Helpful hint */}
+              {formData.guestName.length > 0 && formData.guestName.length < 2 && (
+                <p className="text-xs text-gray-500 mt-1">Type at least 2 characters to see suggestions</p>
+              )}
+              
+              {/* Validation error */}
+              {nameValidationError && (
+                <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {nameValidationError}
+                </p>
+              )}
+              
+              {/* Success indicator */}
+              {selectedGuest && formData.guestName === selectedGuest.guest_name && (
+                <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" />
+                  Name selected from guest list
+                </p>
+              )}
             </div>
 
             {/* Email */}
