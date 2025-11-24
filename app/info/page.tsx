@@ -238,9 +238,9 @@ export default function InfoPage() {
               </div>
             </section>
 
-            {/* Wedding Party - Inclusive redesign */}
+            {/* Wedding Entourage - Inclusive redesign */}
             <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
-              <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Wedding Party</h4>
+              <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Wedding Entourage</h4>
               
               <p className="text-xl text-gray-800 text-center mb-8 leading-relaxed">
                 These are the people in our lives we wish to celebrate this momentous occasion with!
@@ -257,9 +257,10 @@ export default function InfoPage() {
                   <p className="text-lg text-gray-800 font-medium">
                     Brandon Cepeda
                   </p>
-                  <p className="text-lg text-gray-800 font-medium">
-                    Camella Ramirez <span className="text-jewel-burgundy text-sm font-semibold">(Maid of Honor)</span>
-                  </p>
+                  <div className="text-lg text-gray-800 font-medium">
+                    <p>Camella Ramirez</p>
+                    <p className="text-jewel-burgundy text-sm font-semibold">(Maid of Honor)</p>
+                  </div>
                   <p className="text-lg text-gray-800 font-medium">
                     Carl Nangauta
                   </p>
@@ -296,9 +297,10 @@ export default function InfoPage() {
                   <p className="text-lg text-gray-800 font-medium">
                     Jose Santos
                   </p>
-                  <p className="text-lg text-gray-800 font-medium">
-                    Kevin Leasiolagi <span className="text-jewel-burgundy text-sm font-semibold">(Best Man)</span>
-                  </p>
+                  <div className="text-lg text-gray-800 font-medium">
+                    <p>Kevin Leasiolagi</p>
+                    <p className="text-jewel-burgundy text-sm font-semibold">(Best Man)</p>
+                  </div>
                   <p className="text-lg text-gray-800 font-medium">
                     Neil Pang
                   </p>
@@ -308,12 +310,14 @@ export default function InfoPage() {
                   <p className="text-lg text-gray-800 font-medium">
                     Ray Paul Jardon
                   </p>
-                  <p className="text-lg text-gray-800 font-medium">
-                    Reynne Wahl <span className="text-jewel-burgundy text-sm font-semibold">(Matron of Honor)</span>
-                  </p>
-                  <p className="text-lg text-gray-800 font-medium">
-                    Shane Quintanilla <span className="text-jewel-burgundy text-sm font-semibold">(Best Man)</span>
-                  </p>
+                  <div className="text-lg text-gray-800 font-medium">
+                    <p>Reynne Wahl</p>
+                    <p className="text-jewel-burgundy text-sm font-semibold">(Matron of Honor)</p>
+                  </div>
+                  <div className="text-lg text-gray-800 font-medium">
+                    <p>Shane Quintanilla</p>
+                    <p className="text-jewel-burgundy text-sm font-semibold">(Best Man)</p>
+                  </div>
                   <p className="text-lg text-gray-800 font-medium">
                     Tammy Ramirez
                   </p>
@@ -337,7 +341,7 @@ export default function InfoPage() {
             </section>
 
             <Card className="mb-8 border-jewel-burgundy/30 shadow-lg bg-white/40 backdrop-blur-lg">
-              <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-jewel-burgundy/10 border-b-2 border-blue-900/30">
+              <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-jewel-burgundy/10 border-b-2 border-jewel-burgundy/30">
                 <CardTitle className="flex items-center justify-center gap-3 text-jewel-burgundy text-3xl font-serif font-bold">
                   <MessageCircle className="w-8 h-8" />
                   Meet Ezekiel - Your 24/7 Wedding Buddy
