@@ -75,4 +75,3 @@ CREATE POLICY "Allow update to invited_guests"
 -- ============================================
 -- After running this, try the import again:
 -- node scripts/import-guest-list-simple.js tmp/master-guest-list.csv
-

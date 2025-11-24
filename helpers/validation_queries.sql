@@ -22,4 +22,3 @@ JOIN public.invited_guests b ON a.id <> b.id
 WHERE a.guest_name % b.guest_name
 ORDER BY sim DESC
 LIMIT 100;
-

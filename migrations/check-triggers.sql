@@ -49,4 +49,3 @@ SELECT
 FROM information_schema.routines
 WHERE routine_definition LIKE '%dietary_restrictions%'
   AND routine_schema = 'public';
-

@@ -187,4 +187,3 @@ GRANT USAGE, SELECT ON SEQUENCE rsvps_id_seq TO anon, authenticated;
 -- SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual 
 -- FROM pg_policies 
 -- WHERE tablename IN ('invited_guests', 'rsvps');
-

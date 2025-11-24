@@ -19,4 +19,3 @@ CREATE INDEX IF NOT EXISTS idx_invited_guests_name_trgm
 
 CREATE INDEX IF NOT EXISTS idx_invited_guests_email
   ON public.invited_guests (email);
-

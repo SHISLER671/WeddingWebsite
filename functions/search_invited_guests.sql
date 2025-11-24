@@ -27,4 +27,3 @@ $$
   ORDER BY score DESC, guest_name
   LIMIT limit_rows;
 $$;
-

@@ -56,7 +56,7 @@ The RSVP form uses an autocomplete feature that requires guests to select their 
 ## Database Schema
 
 ### `invited_guests` table
-```sql
+\`\`\`sql
 - id (uuid, primary key)
 - guest_name (text, required)
 - email (text, nullable)
@@ -65,10 +65,10 @@ The RSVP form uses an autocomplete feature that requires guests to select their 
 - rsvp_id (uuid, nullable)
 - created_at (timestamptz)
 - updated_at (timestamptz)
-```
+\`\`\`
 
 ### `rsvps` table
-```sql
+\`\`\`sql
 - id (integer, primary key)
 - guest_name (text, required)
 - email (text, required, unique)
@@ -79,7 +79,7 @@ The RSVP form uses an autocomplete feature that requires guests to select their 
 - wallet_address (text, nullable)
 - created_at (timestamptz)
 - updated_at (timestamptz)
-```
+\`\`\`
 
 ## Setup Instructions
 
@@ -125,4 +125,3 @@ The RSVP form uses an autocomplete feature that requires guests to select their 
 - `app/api/rsvp/route.ts` - RSVP submission API
 - `app/confirmation/page.tsx` - Confirmation page
 - `migrations/20251112_create_invited_guests.sql` - Database schema
-

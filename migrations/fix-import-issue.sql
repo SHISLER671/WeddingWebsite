@@ -32,4 +32,3 @@ GRANT INSERT, UPDATE ON public.invited_guests TO anon;
 -- ============================================
 -- After running this, try the import again:
 -- node scripts/import-guest-list-to-supabase.js tmp/master-guest-list.csv
-

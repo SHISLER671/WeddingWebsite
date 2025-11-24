@@ -12,4 +12,3 @@ ON public.invited_guests USING btree (lower(guest_name));
 -- Note: The existing trigram index (idx_invited_guests_name_trgm) is still useful
 -- for fuzzy/similarity searches, but this new index will be faster for prefix matching
 -- which is what the autocomplete feature uses.
-

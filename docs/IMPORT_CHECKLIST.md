@@ -17,7 +17,7 @@
 ### Step 1: Remove Problematic Function (REQUIRED)
 Run this SQL in Supabase SQL Editor:
 
-```sql
+\`\`\`sql
 -- Drop the problematic function that's causing the dietary_restrictions error
 DROP FUNCTION IF EXISTS sync_invited_guest_to_rsvp() CASCADE;
 
@@ -25,12 +25,12 @@ DROP FUNCTION IF EXISTS sync_invited_guest_to_rsvp() CASCADE;
 SELECT routine_name 
 FROM information_schema.routines 
 WHERE routine_name LIKE '%sync_invited%';
-```
+\`\`\`
 
 ### Step 2: Verify Database Setup
 Run this SQL to check if tables exist:
 
-```sql
+\`\`\`sql
 -- Check if invited_guests table exists
 SELECT table_name 
 FROM information_schema.tables 
@@ -42,7 +42,7 @@ SELECT column_name, data_type
 FROM information_schema.columns 
 WHERE table_name = 'invited_guests'
 ORDER BY ordinal_position;
-```
+\`\`\`
 
 **Expected columns:**
 - `id` (uuid)
@@ -69,19 +69,19 @@ Copy the entire file and run it in Supabase SQL Editor. This will:
 ### Step 4: Import Guest List
 Once the database is set up correctly, run:
 
-```bash
+\`\`\`bash
 cd "/Users/ipan/Desktop/working website/WeddingWebsite2026"
 node scripts/import-guest-list-simple.js tmp/master-guest-list.csv
-```
+\`\`\`
 
 **Expected output:**
-```
+\`\`\`
 📊 Import Summary:
    ✅ Successfully imported: [number]
    ⏭️  Skipped/Updated: [number]
    ❌ Errors: 0
    📋 Total: 223
-```
+\`\`\`
 
 ### Step 5: Test Autocomplete
 1. Go to your RSVP page (`/rsvp`)
@@ -105,7 +105,7 @@ node scripts/import-guest-list-simple.js tmp/master-guest-list.csv
 ### If You Get RLS Errors
 Run this SQL:
 
-```sql
+\`\`\`sql
 -- Allow inserts to invited_guests
 DROP POLICY IF EXISTS "Allow insert to invited_guests" ON public.invited_guests;
 CREATE POLICY "Allow insert to invited_guests" 
@@ -124,7 +124,7 @@ CREATE POLICY "Allow update to invited_guests"
 -- Grant permissions
 GRANT INSERT, UPDATE ON public.invited_guests TO authenticated;
 GRANT INSERT, UPDATE ON public.invited_guests TO anon;
-```
+\`\`\`
 
 ## Files Reference
 
@@ -132,4 +132,3 @@ GRANT INSERT, UPDATE ON public.invited_guests TO anon;
 - **Import Script:** `scripts/import-guest-list-simple.js`
 - **Full Setup SQL:** `migrations/setup-rsvp-autocomplete.sql`
 - **Fix RLS SQL:** `migrations/fix-import-issue.sql`
-
