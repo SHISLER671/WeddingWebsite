@@ -61,4 +61,3 @@ SELECT
 FROM information_schema.triggers
 WHERE event_object_table = 'rsvps'
 AND trigger_name = 'update_rsvps_updated_at';
-
