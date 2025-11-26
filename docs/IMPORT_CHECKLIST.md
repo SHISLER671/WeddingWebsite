@@ -74,6 +74,11 @@ cd "/Users/ipan/Desktop/working website/WeddingWebsite2026"
 node scripts/import-guest-list-simple.js tmp/master-guest-list.csv
 \`\`\`
 
+**What the script does:**
+1. ✅ Imports/updates guests in the `invited_guests` table from your CSV
+2. ✅ Syncs `rsvps.guest_name` to match `invited_guests.guest_name` where emails match
+3. ✅ Preserves all existing RSVP data (attendance, guest_count, dietary_restrictions, etc.)
+
 **Expected output:**
 \`\`\`
 📊 Import Summary:
@@ -81,6 +86,12 @@ node scripts/import-guest-list-simple.js tmp/master-guest-list.csv
    ⏭️  Skipped/Updated: [number]
    ❌ Errors: 0
    📋 Total: 223
+
+🔄 Syncing RSVP guest names from invited_guests...
+📊 RSVP Sync Summary:
+   ✅ Synced: [number]
+   ⏭️  Unchanged: [number]
+   ❌ Errors: 0
 \`\`\`
 
 ### Step 5: Test Autocomplete

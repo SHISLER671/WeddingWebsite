@@ -15,7 +15,7 @@ export default function ConfirmationPage() {
   const email = searchParams.get("email")
   const guestName = searchParams.get("name")
   const [seatingAssignment, setSeatingAssignment] = useState<any>(null)
-  const [seatingStatus, setSeatingStatus] = useState<"idle" | "loading" | "found" | "not-found">("idle")
+  const [seatingStatus, setSeatingStatus] = useState<"idle" | "loading" | "found" | "not-found" | "seating-full">("idle")
 
   useEffect(() => {
     if (email || guestName) {
@@ -41,6 +41,9 @@ export default function ConfirmationPage() {
       if (result.success && result.hasSeating) {
         setSeatingAssignment(result.data)
         setSeatingStatus("found")
+      } else if (result.seatingFull) {
+        setSeatingAssignment(null)
+        setSeatingStatus("seating-full")
       } else {
         setSeatingAssignment(null)
         setSeatingStatus("not-found")
@@ -89,12 +92,12 @@ export default function ConfirmationPage() {
               </div>
               <h2 className="text-xl font-serif text-jewel-burgundy">Your Seating Assignment</h2>
             </div>
-            <div className="text-2xl font-bold text-jewel-burgundy mb-2">
-              Table {seatingAssignment.table_number}, Seat {seatingAssignment.seat_number}
+            <div className="text-2xl font-bold text-jewel-sapphire mb-2">
+              Table {seatingAssignment.table_number}
             </div>
             {seatingAssignment.plus_one_name && (
-              <div className="text-jewel-crimson">
-                Plus One: {seatingAssignment.plus_one_name} (Seat {seatingAssignment.plus_one_seat})
+              <div className="text-jewel-sapphire">
+                Plus One: {seatingAssignment.plus_one_name}
               </div>
             )}
             {seatingAssignment.dietary_notes && (
@@ -102,6 +105,23 @@ export default function ConfirmationPage() {
                 Dietary Notes: {seatingAssignment.dietary_notes}
               </div>
             )}
+          </div>
+        )}
+
+        {seatingStatus === "seating-full" && (
+          <div className="mb-8 bg-soft-blush/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>
+              </div>
+              <h2 className="text-xl font-serif text-jewel-burgundy">Seating Assignment</h2>
+            </div>
+            <div className="text-2xl font-bold text-jewel-sapphire mb-2">
+              Please check with the wedding party regarding your seating
+            </div>
+            <div className="text-base text-jewel-burgundy/80 mt-3">
+              We're so excited you'll be joining us! Please reach out to us directly so we can ensure you have a wonderful spot for our celebration.
+            </div>
           </div>
         )}
 

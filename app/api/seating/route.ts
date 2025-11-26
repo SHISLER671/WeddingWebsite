@@ -35,6 +35,33 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       if (error.code === "PGRST116") {
+        // No seating assignment found, check if seating is full
+        // Check if table 26 has any assignments (indicates we've reached capacity)
+        const { data: table26Assignments, error: table26Error } = await supabase
+          .from("seating_assignments")
+          .select("table_number")
+          .eq("table_number", 26)
+          .limit(1)
+        
+        if (!table26Error && table26Assignments && table26Assignments.length > 0) {
+          // Table 26 has assignments, check if it's full or near full
+          const { data: allTable26, error: allTable26Error } = await supabase
+            .from("seating_assignments")
+            .select("table_number")
+            .eq("table_number", 26)
+          
+          // If table 26 has 8+ assignments (80%+ full), consider seating full
+          if (!allTable26Error && allTable26 && allTable26.length >= 8) {
+            console.log("[v0] Seating appears to be full: Table 26 has", allTable26.length, "assignments")
+            return NextResponse.json({
+              success: false,
+              error: "Seating full",
+              hasSeating: false,
+              seatingFull: true
+            }, { status: 404 })
+          }
+        }
+        
         // No seating assignment found, try alternative lookup
         if (email && guestName) {
           console.log("[v0] No seating found by email, trying name lookup:", guestName)
