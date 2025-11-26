@@ -429,11 +429,11 @@ export default function RSVPPage() {
                       <span className="font-semibold text-sm text-jewel-burgundy">Your Seating Assignment</span>
                     </div>
                     <div className="text-lg font-serif text-jewel-burgundy">
-                      <strong>Table {seatingAssignment.table_number}, Seat {seatingAssignment.seat_number}</strong>
+                      <strong>Table {seatingAssignment.table_number}</strong>
                     </div>
                     {seatingAssignment.plus_one_name && (
                       <div className="text-sm text-jewel-crimson mt-1">
-                        Plus One: {seatingAssignment.plus_one_name} (Seat {seatingAssignment.plus_one_seat})
+                        Plus One: {seatingAssignment.plus_one_name}
                       </div>
                     )}
                     {seatingAssignment.dietary_notes && (

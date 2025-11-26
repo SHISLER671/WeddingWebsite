@@ -7,9 +7,7 @@ interface SeatingAssignment {
   guest_name: string
   email: string | null
   table_number: number
-  seat_number: number
   plus_one_name: string | null
-  plus_one_seat: number | null
   dietary_notes: string | null
   special_notes: string | null
 }
@@ -72,14 +70,12 @@ export default function AdminPage() {
   }
 
   const exportToCSV = () => {
-    const csvHeader = 'guest_name,email,table_number,seat_number,plus_one_name,plus_one_seat,dietary_notes,special_notes'
+    const csvHeader = 'guest_name,email,table_number,plus_one_name,dietary_notes,special_notes'
     const csvRows = assignments.map(assignment => [
       assignment.guest_name,
       assignment.email || '',
       assignment.table_number,
-      assignment.seat_number,
       assignment.plus_one_name || '',
-      assignment.plus_one_seat || '',
       assignment.dietary_notes || '',
       assignment.special_notes || ''
     ].map(field => `"${field}"`).join(','))
@@ -97,26 +93,11 @@ export default function AdminPage() {
 
   const validateAssignments = () => {
     const issues = []
-    const tableSeats: { [key: string]: Set<number> } = {}
+    const tableCounts: { [key: number]: number } = {}
 
     assignments.forEach(assignment => {
-      const tableKey = `table_${assignment.table_number}`
-      if (!tableSeats[tableKey]) {
-        tableSeats[tableKey] = new Set()
-      }
-
-      if (tableSeats[tableKey].has(assignment.seat_number)) {
-        issues.push(`❌ Duplicate seat: Table ${assignment.table_number}, Seat ${assignment.seat_number} (${assignment.guest_name})`)
-      } else {
-        tableSeats[tableKey].add(assignment.seat_number)
-      }
-
-      if (assignment.plus_one_name && !assignment.plus_one_seat) {
-        issues.push(`⚠️ Plus-one name but no seat: ${assignment.guest_name}`)
-      }
-
-      if (assignment.plus_one_seat && !assignment.plus_one_name) {
-        issues.push(`⚠️ Plus-one seat but no name: ${assignment.guest_name}`)
+      if (assignment.table_number > 0) {
+        tableCounts[assignment.table_number] = (tableCounts[assignment.table_number] || 0) + 1
       }
     })
 
@@ -298,7 +279,6 @@ export default function AdminPage() {
                     <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Guest</th>
                     <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Email</th>
                     <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Table</th>
-                    <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Seat</th>
                     <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Plus One</th>
                     <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Dietary</th>
                     <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Actions</th>
@@ -346,40 +326,16 @@ export default function AdminPage() {
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
                           <input
-                            type="number"
-                            value={editForm.seat_number || ''}
-                            onChange={(e) => setEditForm({...editForm, seat_number: parseInt(e.target.value)})}
-                            className="w-20 px-2 py-1 border border-jewel-burgundy/30 rounded"
+                            type="text"
+                            value={editForm.plus_one_name || ''}
+                            onChange={(e) => setEditForm({...editForm, plus_one_name: e.target.value})}
+                            placeholder="Plus one name"
+                            className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded text-sm"
                           />
-                        ) : (
-                          <div className="font-semibold text-jewel-burgundy">Seat {assignment.seat_number}</div>
-                        )}
-                      </td>
-                      <td className="py-3 px-2">
-                        {editingId === assignment.id ? (
-                          <div className="space-y-1">
-                            <input
-                              type="text"
-                              value={editForm.plus_one_name || ''}
-                              onChange={(e) => setEditForm({...editForm, plus_one_name: e.target.value})}
-                              placeholder="Plus one name"
-                              className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded text-sm"
-                            />
-                            <input
-                              type="number"
-                              value={editForm.plus_one_seat || ''}
-                              onChange={(e) => setEditForm({...editForm, plus_one_seat: parseInt(e.target.value)})}
-                              placeholder="Seat number"
-                              className="w-20 px-2 py-1 border border-jewel-burgundy/30 rounded text-sm"
-                            />
-                          </div>
                         ) : (
                           <div className="text-sm">
                             {assignment.plus_one_name ? (
-                              <div>
-                                <div className="font-medium">{assignment.plus_one_name}</div>
-                                <div className="text-jewel-burgundy/70">Seat {assignment.plus_one_seat}</div>
-                              </div>
+                              <div className="font-medium">{assignment.plus_one_name}</div>
                             ) : (
                               <div className="text-jewel-burgundy/50">None</div>
                             )}

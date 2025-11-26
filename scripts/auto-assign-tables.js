@@ -9,7 +9,7 @@
  * 
  * Rules:
  * - 26 tables, 10 people per table = 260 total capacity
- * - Only table numbers assigned (seat_number = 0)
+ * - Only table numbers assigned (no seat numbers)
  * - Entourage gets priority seating
  * - RSVPs assigned in order of submission
  * 
@@ -256,7 +256,6 @@ async function autoAssignTables() {
           .from('seating_assignments')
           .update({
             table_number: currentTable,
-            seat_number: 0, // No individual seat numbers
             email: guest.email || null,
           })
           .eq('id', existing.id);
@@ -269,9 +268,7 @@ async function autoAssignTables() {
             guest_name: guest.guest_name,
             email: guest.email || null,
             table_number: currentTable,
-            seat_number: 0, // No individual seat numbers
             plus_one_name: null,
-            plus_one_seat: null,
           });
         upsertError = insertError;
       }
@@ -324,7 +321,6 @@ async function autoAssignTables() {
           .from('seating_assignments')
           .update({
             table_number: currentTable,
-            seat_number: 0, // No individual seat numbers
             email: guest.email || null,
           })
           .eq('id', existing.id);
@@ -337,9 +333,7 @@ async function autoAssignTables() {
             guest_name: guest.guest_name,
             email: guest.email || null,
             table_number: currentTable,
-            seat_number: 0, // No individual seat numbers
             plus_one_name: null,
-            plus_one_seat: null,
           });
         upsertError = insertError;
       }

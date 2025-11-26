@@ -49,9 +49,9 @@ async function searchGuest(searchTerm) {
     data.forEach(guest => {
       console.log(`👤 ${guest.guest_name}`)
       console.log(`   📧 Email: ${guest.email || 'Not provided'}`)
-      console.log(`   🪑 Table ${guest.table_number}, Seat ${guest.seat_number}`)
+      console.log(`   🪑 Table ${guest.table_number}`)
       if (guest.plus_one_name) {
-        console.log(`   👥 Plus One: ${guest.plus_one_name} (Seat ${guest.plus_one_seat})`)
+        console.log(`   👥 Plus One: ${guest.plus_one_name}`)
       }
       if (guest.dietary_notes) {
         console.log(`   🍽️  Dietary: ${guest.dietary_notes}`)
@@ -101,7 +101,7 @@ async function fuzzySearch(searchTerm) {
     matches.forEach(guest => {
       console.log(`👤 ${guest.guest_name}`)
       console.log(`   📧 Email: ${guest.email || 'Not provided'}`)
-      console.log(`   🪑 Table ${guest.table_number}, Seat ${guest.seat_number}`)
+      console.log(`   🪑 Table ${guest.table_number}`)
       console.log('')
     })
   } catch (error) {
@@ -116,7 +116,7 @@ async function validateAssignments() {
     const { data: guests, error } = await supabase
       .from('seating_assignments')
       .select('*')
-      .order('table_number, seat_number')
+      .order('table_number')
 
     if (error) {
       console.error('❌ Validation error:', error.message)
@@ -124,30 +124,12 @@ async function validateAssignments() {
     }
 
     const issues = []
-    const tableSeats = {}
+    const tableCounts = {}
 
     guests.forEach(guest => {
       const tableKey = `table_${guest.table_number}`
-      if (!tableSeats[tableKey]) {
-        tableSeats[tableKey] = new Set()
-      }
-
-      // Check for duplicate seats
-      if (tableSeats[tableKey].has(guest.seat_number)) {
-        issues.push(`❌ Duplicate seat: Table ${guest.table_number}, Seat ${guest.seat_number} (${guest.guest_name})`)
-      } else {
-        tableSeats[tableKey].add(guest.seat_number)
-      }
-
-      // Check for missing plus-one seat if plus-one name exists
-      if (guest.plus_one_name && !guest.plus_one_seat) {
-        issues.push(`⚠️  Plus-one name provided but no seat assigned: ${guest.guest_name}`)
-      }
-
-      // Check for plus-one seat without name
-      if (guest.plus_one_seat && !guest.plus_one_name) {
-        issues.push(`⚠️  Plus-one seat assigned but no name: ${guest.guest_name}`)
-      }
+      // Count guests per table
+      tableCounts[tableKey] = (tableCounts[tableKey] || 0) + 1
     })
 
     if (issues.length === 0) {
@@ -159,10 +141,10 @@ async function validateAssignments() {
 
     // Show table distribution
     console.log('\n📊 Table Distribution:')
-    Object.keys(tableSeats).forEach(table => {
+    Object.keys(tableCounts).forEach(table => {
       const tableNum = table.replace('table_', '')
-      const seatCount = tableSeats[table].size
-      console.log(`   Table ${tableNum}: ${seatCount} seats`)
+      const guestCount = tableCounts[table]
+      console.log(`   Table ${tableNum}: ${guestCount} guest(s)`)
     })
 
   } catch (error) {
@@ -177,7 +159,7 @@ async function exportAssignments() {
     const { data: guests, error } = await supabase
       .from('seating_assignments')
       .select('*')
-      .order('table_number, seat_number')
+      .order('table_number')
 
     if (error) {
       console.error('❌ Export error:', error.message)
@@ -185,14 +167,12 @@ async function exportAssignments() {
     }
 
     // Create CSV content
-    const csvHeader = 'guest_name,email,table_number,seat_number,plus_one_name,plus_one_seat,dietary_notes,special_notes'
+    const csvHeader = 'guest_name,email,table_number,plus_one_name,dietary_notes,special_notes'
     const csvRows = guests.map(guest => [
       guest.guest_name,
       guest.email || '',
       guest.table_number,
-      guest.seat_number,
       guest.plus_one_name || '',
-      guest.plus_one_seat || '',
       guest.dietary_notes || '',
       guest.special_notes || ''
     ].map(field => `"${field}"`).join(','))

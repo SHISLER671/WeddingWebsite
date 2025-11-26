@@ -445,6 +445,112 @@ async function syncRSVPNames() {
   }
 }
 
+async function syncSeatingAssignments() {
+  console.log('');
+  console.log('🔄 Syncing seating_assignments with invited_guests...');
+  console.log('');
+  
+  try {
+    // Get all invited guests
+    const { data: invitedGuests, error: invitedError } = await supabase
+      .from('invited_guests')
+      .select('guest_name, email')
+      .order('guest_name');
+    
+    if (invitedError) {
+      console.error('❌ Error fetching invited_guests:', invitedError.message);
+      return { created: 0, updated: 0, errorCount: 0 };
+    }
+    
+    if (!invitedGuests || invitedGuests.length === 0) {
+      console.log('   ℹ️  No invited guests found');
+      return { created: 0, updated: 0, errorCount: 0 };
+    }
+    
+    console.log(`   📋 Found ${invitedGuests.length} invited guests`);
+    
+    // Get all seating assignments
+    const { data: seatingAssignments, error: seatingError } = await supabase
+      .from('seating_assignments')
+      .select('id, guest_name, email, table_number');
+    
+    if (seatingError) {
+      console.error('❌ Error fetching seating_assignments:', seatingError.message);
+      return { created: 0, updated: 0, errorCount: 0 };
+    }
+    
+    // Create a map of existing seating assignments by guest_name (normalized)
+    const seatingMap = new Map();
+    (seatingAssignments || []).forEach(sa => {
+      const key = sa.guest_name?.trim().toLowerCase() || '';
+      seatingMap.set(key, sa);
+    });
+    
+    let created = 0;
+    let updated = 0;
+    let errorCount = 0;
+    
+    for (const guest of invitedGuests) {
+      const normalizedName = guest.guest_name?.trim().toLowerCase() || '';
+      const existing = seatingMap.get(normalizedName);
+      
+      if (!existing) {
+        // Create new seating assignment entry (no table assigned yet)
+        const { error: insertError } = await supabase
+          .from('seating_assignments')
+          .insert({
+            guest_name: guest.guest_name,
+            email: guest.email || null,
+            table_number: 0, // 0 means not assigned yet
+            plus_one_name: null,
+          });
+        
+        if (insertError) {
+          console.error(`   ⚠️  Failed to create entry for ${guest.guest_name}:`, insertError.message);
+          errorCount++;
+        } else {
+          created++;
+        }
+      } else {
+        // Check if name or email needs updating
+        const needsUpdate = 
+          existing.guest_name !== guest.guest_name ||
+          (existing.email || '') !== (guest.email || '');
+        
+        if (needsUpdate) {
+          const { error: updateError } = await supabase
+            .from('seating_assignments')
+            .update({
+              guest_name: guest.guest_name,
+              email: guest.email || null,
+            })
+            .eq('id', existing.id);
+          
+          if (updateError) {
+            console.error(`   ⚠️  Failed to update ${guest.guest_name}:`, updateError.message);
+            errorCount++;
+          } else {
+            updated++;
+          }
+        }
+      }
+    }
+    
+    console.log('');
+    console.log('📊 Seating Sync Summary:');
+    console.log(`   ✅ Created: ${created}`);
+    console.log(`   🔄 Updated: ${updated}`);
+    if (errorCount > 0) {
+      console.log(`   ❌ Errors: ${errorCount}`);
+    }
+    
+    return { created, updated, errorCount };
+  } catch (error) {
+    console.error('❌ Error syncing seating assignments:', error.message);
+    return { created: 0, updated: 0, errorCount: 1 };
+  }
+}
+
 async function main() {
   console.log('📋 Import Guest List to Supabase (Simple Method)');
   console.log('='.repeat(60));
@@ -473,6 +579,7 @@ async function main() {
   console.log('   1. Import/update guests in the invited_guests table');
   console.log('   2. Delete all guests NOT in this CSV (cleanup old entries)');
   console.log('   3. Sync RSVP guest names to match invited_guests (by name)');
+  console.log('   4. Sync seating_assignments with invited_guests');
   console.log('   Press Ctrl+C to cancel, or wait 3 seconds to continue...');
   console.log('');
   
@@ -487,6 +594,9 @@ async function main() {
   // Sync RSVP names
   const syncResult = await syncRSVPNames();
   
+  // Sync seating assignments
+  const seatingSyncResult = await syncSeatingAssignments();
+  
   console.log('');
   console.log('✅ Import, cleanup, and sync complete!');
   console.log('');
@@ -495,6 +605,8 @@ async function main() {
   console.log(`   🔄 Guests updated: ${importResult.skippedCount}`);
   console.log(`   🗑️  Old entries deleted: ${cleanupResult.deletedCount}`);
   console.log(`   🔗 RSVPs synced: ${syncResult.syncedCount}`);
+  console.log(`   🪑 Seating entries created: ${seatingSyncResult.created}`);
+  console.log(`   🔄 Seating entries updated: ${seatingSyncResult.updated}`);
   console.log('');
   console.log('🧪 Test the autocomplete:');
   console.log('   1. Go to your RSVP page');

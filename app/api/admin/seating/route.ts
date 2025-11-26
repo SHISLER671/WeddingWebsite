@@ -16,7 +16,6 @@ export async function GET() {
       .from("seating_assignments")
       .select("*")
       .order("table_number", { ascending: true })
-      .order("seat_number", { ascending: true })
 
     if (error) {
       console.error("[v0] Admin: Database error:", error)

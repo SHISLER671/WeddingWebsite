@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
             success: true,
             data: nameData,
             hasSeating: true,
-            message: `You're assigned to Table ${nameData.table_number}, Seat ${nameData.seat_number}`
+            message: `You're assigned to Table ${nameData.table_number}`
           })
         }
         
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: data,
       hasSeating: true,
-      message: `You're assigned to Table ${data.table_number}, Seat ${data.seat_number}`
+      message: `You're assigned to Table ${data.table_number}`
     })
   } catch (error) {
     console.error("[v0] Error looking up seating assignment:", error)
