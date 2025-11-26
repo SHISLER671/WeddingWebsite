@@ -22,11 +22,20 @@ export async function GET() {
       return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
     }
 
-    console.log("[v0] Admin: Successfully fetched", data.length, "assignments")
+    // Sort case-insensitively by guest_name
+    const sorted = data?.sort((a, b) => {
+      const nameA = (a.guest_name || '').toLowerCase().trim()
+      const nameB = (b.guest_name || '').toLowerCase().trim()
+      if (nameA < nameB) return -1
+      if (nameA > nameB) return 1
+      return 0
+    })
+
+    console.log("[v0] Admin: Successfully fetched", sorted?.length || 0, "assignments")
 
     return NextResponse.json({
       success: true,
-      data: data,
+      data: sorted || [],
     })
   } catch (error) {
     console.error("[v0] Admin: Error fetching seating assignments:", error)
