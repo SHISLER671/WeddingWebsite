@@ -190,4 +190,3 @@ async function syncSeatingAssignments() {
 
 // Run the sync
 syncSeatingAssignments();
-
