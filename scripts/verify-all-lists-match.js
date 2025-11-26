@@ -252,4 +252,3 @@ async function verifyAllLists() {
 }
 
 verifyAllLists();
-
