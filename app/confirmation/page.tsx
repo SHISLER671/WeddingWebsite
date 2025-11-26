@@ -76,7 +76,7 @@ export default function ConfirmationPage() {
       <div className="max-w-4xl mx-auto px-4 pb-16">
         {/* Seating Assignment Display */}
         {seatingStatus === "loading" && (
-          <div className="mb-8 bg-soft-blush/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+          <div className="mb-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-jewel-burgundy"></div>
               <span className="text-jewel-burgundy font-medium">Looking up your seating assignment...</span>
@@ -85,12 +85,12 @@ export default function ConfirmationPage() {
         )}
         
         {seatingStatus === "found" && seatingAssignment && (
-          <div className="mb-8 bg-soft-blush/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+          <div className="mb-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>
+              <div className="w-8 h-8 bg-jewel-sapphire/20 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-jewel-sapphire rounded-full"></div>
               </div>
-              <h2 className="text-xl font-serif text-jewel-burgundy">Your Seating Assignment</h2>
+              <h2 className="text-xl font-serif text-jewel-sapphire">Your Seating Assignment</h2>
             </div>
             <div className="text-2xl font-bold text-jewel-sapphire mb-2">
               Table {seatingAssignment.table_number}
@@ -109,7 +109,7 @@ export default function ConfirmationPage() {
         )}
 
         {seatingStatus === "seating-full" && (
-          <div className="mb-8 bg-soft-blush/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+          <div className="mb-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
                 <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>
@@ -126,7 +126,7 @@ export default function ConfirmationPage() {
         )}
 
         {seatingStatus === "not-found" && (
-          <div className="mb-8 bg-soft-blush/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+          <div className="mb-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
                 <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>
@@ -152,7 +152,7 @@ export default function ConfirmationPage() {
 
         <div className="grid gap-8">
           {/* Date & Time Card */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
                 <Calendar className="h-6 w-6 text-jewel-emerald" />
@@ -166,13 +166,13 @@ export default function ConfirmationPage() {
               </div>
               <div>
                 <h3 className="font-medium text-charcoal/80 mb-2 text-lg">Timeline</h3>
-                <p className="text-xl text-charcoal">TBD</p>
+                <p className="text-xl text-charcoal">Ceremony: 2pm • Reception: 6:30pm</p>
               </div>
             </div>
           </div>
 
           {/* Location Card */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
                 <MapPin className="h-6 w-6 text-green-700" />
@@ -183,12 +183,12 @@ export default function ConfirmationPage() {
               <div className="p-4 bg-soft-blush/50 rounded-xl">
                 <h3 className="font-medium text-charcoal mb-2 text-lg">Ceremony</h3>
                 <p className="text-xl text-charcoal">Dulce Nombre de Maria Cathedral-Basilica</p>
-                <p className="text-charcoal/70 text-lg">Hagåtña, Guam • TBD</p>
+                <p className="text-charcoal/70 text-lg">Hagåtña, Guam • 2pm</p>
               </div>
               <div className="p-4 rounded-xl">
                 <h3 className="font-medium text-charcoal mb-2 text-lg">Reception</h3>
                 <p className="text-xl text-charcoal">Hotel Nikko Guam, Tasi Ballroom</p>
-                <p className="text-charcoal/70 text-lg">Tumon, Guam • TBD</p>
+                <p className="text-charcoal/70 text-lg">Tumon, Guam • 6:30pm</p>
               </div>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function ConfirmationPage() {
           {/* Schedule Card removed as requested */}
 
           {/* Dress Code Card */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
                 <Gift className="h-6 w-6 text-green-700" />
@@ -213,7 +213,7 @@ export default function ConfirmationPage() {
 
         {/* Don't Miss Out - moved up to appear right after Dress Code */}
         <section className="max-w-4xl mx-auto mt-16 mb-8">
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 text-center">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 text-center">
             <h3 className="text-2xl font-serif text-jewel-burgundy mb-6">Don't Miss Out!</h3>
             <p className="text-lg text-charcoal/80 mb-6 leading-relaxed">
               Your RSVP is confirmed, but the fun doesn't stop here! Explore our wedding website to discover all the
@@ -261,7 +261,7 @@ export default function ConfirmationPage() {
 
         {/* Let's Get Connected comes after Don't Miss Out */}
         <section className="max-w-4xl mx-auto mt-6 mb-8">
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed text-lg">
@@ -292,7 +292,7 @@ export default function ConfirmationPage() {
         {/* About sections follow */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Ezekiel FAQ */}
-          <Card className="border-white/20 shadow-lg bg-white/40 backdrop-blur-sm">
+          <Card className="border-white/20 shadow-lg bg-white/95 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-jewel-crimson/10 to-jewel-fuchsia/10">
               <CardTitle className="flex items-center gap-2 text-jewel-crimson">
                 <MessageCircle className="w-5 h-5" />
@@ -332,7 +332,7 @@ export default function ConfirmationPage() {
           </Card>
 
           {/* AGW FAQ */}
-          <Card className="border-white/20 shadow-lg bg-white/40 backdrop-blur-sm">
+          <Card className="border-white/20 shadow-lg bg-white/95 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-jewel-emerald/10 to-jewel-sapphire/10">
               <CardTitle className="flex items-center gap-2 text-jewel-emerald">
                 <Wallet className="w-5 h-5" />
