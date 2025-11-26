@@ -85,7 +85,7 @@ export default function ConfirmationPage() {
         )}
         
         {seatingStatus === "found" && seatingAssignment && (
-          <div className="mb-8 bg-soft-blush/80 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+          <div className="mb-8 bg-soft-blush/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
                 <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>

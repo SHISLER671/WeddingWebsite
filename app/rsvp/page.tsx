@@ -35,7 +35,66 @@ export default function RSVPPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [lookupEmail, setLookupEmail] = useState("")
+  const [lookupName, setLookupName] = useState("")
+  const [lookupSuggestions, setLookupSuggestions] = useState<AutocompleteGuest[]>([])
+  const [showLookupSuggestions, setShowLookupSuggestions] = useState(false)
+  const [isLoadingLookupSuggestions, setIsLoadingLookupSuggestions] = useState(false)
+  const [selectedLookupIndex, setSelectedLookupIndex] = useState(-1)
+  const lookupInputRef = useRef<HTMLInputElement>(null)
+  const lookupRef = useRef<HTMLDivElement>(null)
+  const lookupDebounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   const [isLookingUp, setIsLookingUp] = useState(false)
+  
+  // Handle lookup keyboard navigation
+  const handleLookupKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showLookupSuggestions || lookupSuggestions.length === 0) {
+      if (e.key === "Enter") {
+        handleLookupWithGuest()
+      }
+      return
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault()
+        setSelectedLookupIndex((prev) =>
+          prev < lookupSuggestions.length - 1 ? prev + 1 : prev
+        )
+        break
+      case "ArrowUp":
+        e.preventDefault()
+        setSelectedLookupIndex((prev) => (prev > 0 ? prev - 1 : -1))
+        break
+      case "Enter":
+        e.preventDefault()
+        if (selectedLookupIndex >= 0 && selectedLookupIndex < lookupSuggestions.length) {
+          selectLookupSuggestion(lookupSuggestions[selectedLookupIndex])
+        } else {
+          handleLookupWithGuest()
+        }
+        break
+      case "Escape":
+        setShowLookupSuggestions(false)
+        break
+    }
+  }
+
+  // Handle lookup button click
+  const handleLookup = () => {
+    handleLookupWithGuest()
+  }
+
+  // Close lookup suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (lookupRef.current && !lookupRef.current.contains(event.target as Node)) {
+        setShowLookupSuggestions(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
   const [lookupStatus, setLookupStatus] = useState<"idle" | "success" | "error" | "not-found">("idle")
   const [lookupMessage, setLookupMessage] = useState("")
   const [foundRSVP, setFoundRSVP] = useState<RSVPRecord | null>(null)
@@ -53,19 +112,92 @@ export default function RSVPPage() {
   const inputRef = useRef<HTMLInputElement>(null)
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const handleLookup = async () => {
-    if (!lookupEmail) {
+  // Autocomplete search for lookup
+  const searchLookupGuests = async (query: string) => {
+    if (query.length < 2) {
+      setLookupSuggestions([])
+      setShowLookupSuggestions(false)
+      return
+    }
+
+    setIsLoadingLookupSuggestions(true)
+    try {
+      const response = await fetch(`/api/guests/autocomplete?q=${encodeURIComponent(query)}&limit=10`)
+      const result = await response.json()
+
+      if (result.success && result.results) {
+        setLookupSuggestions(result.results)
+        setShowLookupSuggestions(result.results.length > 0)
+        setSelectedLookupIndex(-1)
+      } else {
+        setLookupSuggestions([])
+        setShowLookupSuggestions(false)
+      }
+    } catch (error) {
+      console.error("Lookup autocomplete error:", error)
+      setLookupSuggestions([])
+      setShowLookupSuggestions(false)
+    } finally {
+      setIsLoadingLookupSuggestions(false)
+    }
+  }
+
+  // Debounced lookup search
+  const debouncedLookupSearch = (query: string) => {
+    if (lookupDebounceTimerRef.current) {
+      clearTimeout(lookupDebounceTimerRef.current)
+    }
+    lookupDebounceTimerRef.current = setTimeout(() => {
+      searchLookupGuests(query)
+    }, 300)
+  }
+
+  // Handle lookup name input change
+  const handleLookupNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setLookupName(value)
+    
+    if (value.length >= 2) {
+      debouncedLookupSearch(value)
+    } else {
+      setLookupSuggestions([])
+      setShowLookupSuggestions(false)
+    }
+  }
+
+  // Select lookup suggestion
+  const selectLookupSuggestion = (guest: AutocompleteGuest) => {
+    setLookupName(guest.guest_name)
+    setLookupEmail(guest.email || "")
+    setLookupSuggestions([])
+    setShowLookupSuggestions(false)
+    setSelectedLookupIndex(-1)
+    lookupInputRef.current?.blur()
+    // Auto-trigger lookup
+    handleLookupWithGuest(guest)
+  }
+
+  // Handle lookup with selected guest
+  const handleLookupWithGuest = async (guest?: AutocompleteGuest) => {
+    const emailToUse = guest?.email || lookupEmail
+    const nameToUse = guest?.guest_name || lookupName
+
+    if (!emailToUse && !nameToUse) {
       setLookupStatus("error")
-      setLookupMessage("Please enter your email address")
+      setLookupMessage("Please select your name from the dropdown or enter your email")
       return
     }
 
     setIsLookingUp(true)
     setLookupStatus("idle")
     setLookupMessage("")
+    setShowLookupSuggestions(false)
 
     try {
-      const result = await lookupRSVP({ email: lookupEmail })
+      const result = await lookupRSVP({ 
+        email: emailToUse || undefined,
+        name: nameToUse || undefined
+      })
 
       if (result.found && result.rsvp) {
         setLookupStatus("success")
@@ -94,10 +226,14 @@ export default function RSVPPage() {
         }
 
         // Look up seating assignment
-        await lookupSeatingAssignment(lookupEmail, result.rsvp.guest_name)
+        await lookupSeatingAssignment(result.rsvp.email, result.rsvp.guest_name)
       } else {
         setLookupStatus("not-found")
-        setLookupMessage("No RSVP found with this email. You can create a new RSVP below.")
+        if (result.message) {
+          setLookupMessage(result.message)
+        } else {
+          setLookupMessage("No RSVP found. You can create a new RSVP below.")
+        }
       }
     } catch (error) {
       console.error("Lookup error:", error)
@@ -375,22 +511,80 @@ export default function RSVPPage() {
             </div>
 
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                value={lookupEmail}
-                onChange={(e) => setLookupEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLookup()}
-                placeholder="your.email@example.com"
-                className="flex-1 px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
-              />
-              <button
-                onClick={handleLookup}
-                disabled={isLookingUp}
-                className="px-6 py-3 bg-jewel-burgundy hover:bg-jewel-crimson disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors shadow-lg"
-              >
-                {isLookingUp ? "Searching..." : "Look Up"}
-              </button>
+            <div ref={lookupRef} className="relative">
+              <label className="block text-sm font-semibold text-jewel-burgundy mb-2">
+                Search by Name or Email
+              </label>
+              <div className="relative">
+                <input
+                  ref={lookupInputRef}
+                  type="text"
+                  value={lookupName || lookupEmail}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    // Check if it looks like an email
+                    if (value.includes('@')) {
+                      setLookupEmail(value)
+                      setLookupName("")
+                      setLookupSuggestions([])
+                      setShowLookupSuggestions(false)
+                    } else {
+                      setLookupName(value)
+                      setLookupEmail("")
+                      // Trigger autocomplete search
+                      if (value.length >= 2) {
+                        debouncedLookupSearch(value)
+                      } else {
+                        setLookupSuggestions([])
+                        setShowLookupSuggestions(false)
+                      }
+                    }
+                  }}
+                  onKeyDown={handleLookupKeyDown}
+                  onFocus={() => {
+                    if ((lookupName.length >= 2 || lookupEmail.length >= 2) && lookupSuggestions.length > 0) {
+                      setShowLookupSuggestions(true)
+                    }
+                  }}
+                  placeholder="Start typing your name or email..."
+                  className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
+                  autoComplete="off"
+                />
+                {isLoadingLookupSuggestions && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-jewel-burgundy"></div>
+                  </div>
+                )}
+              </div>
+
+              {/* Autocomplete Suggestions Dropdown */}
+              {showLookupSuggestions && lookupSuggestions.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-jewel-burgundy/30 rounded-lg shadow-lg max-h-60 overflow-auto">
+                  {lookupSuggestions.map((guest, index) => (
+                    <button
+                      key={guest.id}
+                      type="button"
+                      onClick={() => selectLookupSuggestion(guest)}
+                      className={`w-full text-left px-4 py-3 hover:bg-jewel-burgundy/10 transition-colors ${
+                        index === selectedLookupIndex ? "bg-jewel-burgundy/20" : ""
+                      } ${
+                        index === 0 ? "rounded-t-lg" : ""
+                      } ${
+                        index === lookupSuggestions.length - 1 ? "rounded-b-lg" : ""
+                      }`}
+                    >
+                      <div className="font-medium text-charcoal">{guest.display_name}</div>
+                      {guest.email && (
+                        <div className="text-xs text-gray-500 mt-0.5">{guest.email}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {(!lookupName && !lookupEmail) && (
+                <p className="text-xs text-gray-500 mt-1">Type at least 2 characters to see suggestions</p>
+              )}
             </div>
 
             {lookupStatus !== "idle" && (
@@ -423,16 +617,18 @@ export default function RSVPPage() {
                 )}
                 
                 {seatingStatus === "found" && seatingAssignment && (
-                  <div className="bg-soft-blush/80 text-jewel-burgundy border border-jewel-burgundy/30 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 bg-jewel-burgundy rounded-full"></div>
-                      <span className="font-semibold text-sm text-jewel-burgundy">Your Seating Assignment</span>
+                  <div className="bg-soft-blush/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
+                        <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>
+                      </div>
+                      <h2 className="text-xl font-serif text-jewel-burgundy">Your Seating Assignment</h2>
                     </div>
-                    <div className="text-lg font-serif text-jewel-burgundy">
-                      <strong>Table {seatingAssignment.table_number}</strong>
+                    <div className="text-2xl font-bold text-jewel-sapphire mb-2">
+                      Table {seatingAssignment.table_number}
                     </div>
                     {seatingAssignment.plus_one_name && (
-                      <div className="text-sm text-jewel-crimson mt-1">
+                      <div className="text-jewel-sapphire">
                         Plus One: {seatingAssignment.plus_one_name}
                       </div>
                     )}
@@ -464,12 +660,12 @@ export default function RSVPPage() {
         )}
 
         {isEditMode && foundRSVP && (
-          <div className="max-w-2xl mx-auto mb-8 bg-jewel-emerald/10 backdrop-blur-sm rounded-lg shadow-lg p-6 border-2 border-jewel-emerald/30">
+          <div className="max-w-2xl mx-auto mb-8 bg-soft-blush/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-start gap-3 mb-4">
-              <CheckCircle className="w-6 h-6 text-jewel-emerald flex-shrink-0 mt-1" />
+              <CheckCircle className="w-6 h-6 text-jewel-sapphire flex-shrink-0 mt-1" />
               <div>
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2 font-serif">Your Current RSVP</h2>
-                <div className="space-y-2 text-gray-700">
+                <h2 className="text-2xl font-semibold text-jewel-sapphire mb-2 font-serif">Your Current RSVP</h2>
+                <div className="space-y-2 text-jewel-sapphire">
                   <p>
                     <strong>Name:</strong> {foundRSVP.guest_name}
                   </p>
@@ -493,7 +689,7 @@ export default function RSVPPage() {
                     </p>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-4">Update any details below and submit to save your changes.</p>
+                <p className="text-sm text-jewel-crimson/80 mt-4">Update any details below and submit to save your changes.</p>
               </div>
             </div>
           </div>

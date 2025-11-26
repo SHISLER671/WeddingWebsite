@@ -15,15 +15,30 @@ export async function GET() {
     const { data, error } = await supabase
       .from("seating_assignments")
       .select("*")
-      .order("table_number", { ascending: true })
 
     if (error) {
       console.error("[v0] Admin: Database error:", error)
       return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
     }
 
-    // Sort case-insensitively by guest_name
+    // Sort by table_number first (0/unassigned at end), then alphabetically by name
     const sorted = data?.sort((a, b) => {
+      // First sort by table_number (0 goes to end)
+      const tableA = a.table_number || 0
+      const tableB = b.table_number || 0
+      
+      // If both are 0 or both are > 0, compare normally
+      if ((tableA === 0 && tableB === 0) || (tableA > 0 && tableB > 0)) {
+        if (tableA !== tableB) {
+          return tableA - tableB
+        }
+      } else {
+        // One is 0, one is not - 0 goes to end
+        if (tableA === 0) return 1
+        if (tableB === 0) return -1
+      }
+      
+      // If same table, sort alphabetically by name
       const nameA = (a.guest_name || '').toLowerCase().trim()
       const nameB = (b.guest_name || '').toLowerCase().trim()
       if (nameA < nameB) return -1
