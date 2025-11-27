@@ -130,4 +130,3 @@ async function cleanupSpecialNotes() {
 
 // Run the cleanup
 cleanupSpecialNotes();
-
