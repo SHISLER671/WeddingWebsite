@@ -10,9 +10,10 @@ export async function GET() {
       },
     })
 
-    console.log("[v0] Admin: Fetching all seating assignments")
+    console.log("[v0] Admin: Fetching all seating assignments with RSVP counts")
 
-    const { data, error } = await supabase
+    // Fetch seating assignments
+    const { data: assignments, error } = await supabase
       .from("seating_assignments")
       .select("*")
 
@@ -21,8 +22,53 @@ export async function GET() {
       return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
     }
 
+    // Fetch all RSVPs to match by email or name
+    const { data: rsvps, error: rsvpError } = await supabase
+      .from("rsvps")
+      .select("email, guest_name, guest_count, attendance")
+
+    if (rsvpError) {
+      console.warn("[v0] Admin: Could not fetch RSVPs:", rsvpError.message)
+    }
+
+    // Create a map of RSVPs by email and name for quick lookup
+    const rsvpMap = new Map<string, any>()
+    rsvps?.forEach((rsvp: any) => {
+      if (rsvp.email) {
+        rsvpMap.set(rsvp.email.toLowerCase(), rsvp)
+      }
+      // Also index by normalized name
+      const normalizedName = rsvp.guest_name?.trim().toLowerCase()
+      if (normalizedName) {
+        rsvpMap.set(`name:${normalizedName}`, rsvp)
+      }
+    })
+
+    // Process assignments to include actual guest count from RSVP
+    const processed = assignments?.map((assignment: any) => {
+      // Try to find matching RSVP by email first, then by name
+      let matchingRsvp = null
+      if (assignment.email) {
+        matchingRsvp = rsvpMap.get(assignment.email.toLowerCase())
+      }
+      if (!matchingRsvp && assignment.guest_name) {
+        const normalizedName = assignment.guest_name.trim().toLowerCase()
+        matchingRsvp = rsvpMap.get(`name:${normalizedName}`)
+      }
+
+      // Get guest count from RSVP if available, otherwise default to 1
+      const actualGuestCount = matchingRsvp?.attendance === 'yes' 
+        ? (matchingRsvp.guest_count || 1) 
+        : 1 // Default to 1 if no RSVP found (they might not have RSVP'd yet)
+      
+      return {
+        ...assignment,
+        actual_guest_count: actualGuestCount,
+      }
+    }) || []
+
     // Sort by table_number first (0/unassigned at end), then alphabetically by name
-    const sorted = data?.sort((a, b) => {
+    const sorted = processed.sort((a, b) => {
       // First sort by table_number (0 goes to end)
       const tableA = a.table_number || 0
       const tableB = b.table_number || 0
@@ -46,11 +92,21 @@ export async function GET() {
       return 0
     })
 
+    // Calculate table capacities
+    const tableCapacities: { [key: number]: number } = {}
+    sorted.forEach((assignment: any) => {
+      const tableNum = assignment.table_number || 0
+      if (tableNum > 0) {
+        tableCapacities[tableNum] = (tableCapacities[tableNum] || 0) + (assignment.actual_guest_count || 1)
+      }
+    })
+
     console.log("[v0] Admin: Successfully fetched", sorted?.length || 0, "assignments")
 
     return NextResponse.json({
       success: true,
       data: sorted || [],
+      tableCapacities, // Include capacity info for frontend
     })
   } catch (error) {
     console.error("[v0] Admin: Error fetching seating assignments:", error)
@@ -73,10 +129,38 @@ export async function PUT(request: NextRequest) {
       },
     })
 
-    const body = await request.json()
+    let body
+    try {
+      body = await request.json()
+    } catch (parseError) {
+      console.error("[v0] Admin: JSON parse error:", parseError)
+      return NextResponse.json(
+        { success: false, error: "Invalid request body. Please check your input." },
+        { status: 400 },
+      )
+    }
+
     const { id, ...updateData } = body
 
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Missing required field: id" },
+        { status: 400 },
+      )
+    }
+
     console.log("[v0] Admin: Updating seating assignment:", { id, updateData })
+
+    // Ensure table_number is a number if provided
+    if (updateData.table_number !== undefined) {
+      updateData.table_number = parseInt(updateData.table_number, 10)
+      if (isNaN(updateData.table_number)) {
+        return NextResponse.json(
+          { success: false, error: "Invalid table_number. Must be a number." },
+          { status: 400 },
+        )
+      }
+    }
 
     const { data, error } = await supabase
       .from("seating_assignments")
@@ -87,7 +171,18 @@ export async function PUT(request: NextRequest) {
 
     if (error) {
       console.error("[v0] Admin: Update error:", error)
-      return NextResponse.json({ success: false, error: "Update error: " + error.message }, { status: 500 })
+      return NextResponse.json(
+        { success: false, error: "Database error: " + error.message },
+        { status: 500 },
+      )
+    }
+
+    if (!data) {
+      console.error("[v0] Admin: No data returned from update")
+      return NextResponse.json(
+        { success: false, error: "Assignment not found or update failed." },
+        { status: 404 },
+      )
     }
 
     console.log("[v0] Admin: Successfully updated assignment:", data)
@@ -99,10 +194,11 @@ export async function PUT(request: NextRequest) {
     })
   } catch (error) {
     console.error("[v0] Admin: Error updating seating assignment:", error)
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
     return NextResponse.json(
       {
         success: false,
-        error: "Internal server error. Please try again.",
+        error: `Internal server error: ${errorMessage}`,
       },
       { status: 500 },
     )
