@@ -152,7 +152,7 @@ export default function ConfirmationPage() {
 
         <div className="grid gap-8">
           {/* Date & Time Card */}
-          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border-t-4 border-jewel-burgundy p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-jewel-emerald/20 rounded-full flex items-center justify-center">
                 <Calendar className="h-6 w-6 text-jewel-emerald" />
@@ -172,7 +172,7 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Location Card */}
-          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border-t-4 border-jewel-burgundy p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
                 <MapPin className="h-6 w-6 text-green-700" />
@@ -196,7 +196,7 @@ export default function ConfirmationPage() {
           {/* Schedule Card removed as requested */}
 
           {/* Dress Code Card */}
-          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border-t-4 border-jewel-burgundy p-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center">
                 <Gift className="h-6 w-6 text-green-700" />
@@ -213,7 +213,7 @@ export default function ConfirmationPage() {
 
         {/* Don't Miss Out - moved up to appear right after Dress Code */}
         <section className="max-w-4xl mx-auto mt-16 mb-8">
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 text-center">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border-t-4 border-jewel-burgundy p-8 text-center">
             <h3 className="text-2xl font-serif text-jewel-burgundy mb-6">Don't Miss Out!</h3>
             <p className="text-lg text-charcoal/80 mb-6 leading-relaxed">
               Your RSVP is confirmed, but the fun doesn't stop here! Explore our wedding website to discover all the
@@ -261,7 +261,7 @@ export default function ConfirmationPage() {
 
         {/* Let's Get Connected comes after Don't Miss Out */}
         <section className="max-w-4xl mx-auto mt-6 mb-8">
-          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-jewel-fuchsia/20 p-8">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border-t-4 border-jewel-burgundy p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed text-lg">

@@ -80,7 +80,7 @@ export default function ContactPage() {
 
         <div className="max-w-2xl mx-auto">
           {/* Contact Form */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-8 border border-white/20">
+          <div className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-8 border-t-4 border-jewel-burgundy">
             <h2 className="text-2xl font-serif text-jewel-burgundy mb-6 text-center">Send us a Message</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Status Messages */}

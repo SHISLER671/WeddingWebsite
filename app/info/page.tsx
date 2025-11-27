@@ -49,7 +49,7 @@ export default function InfoPage() {
             </section>
 
             <div className="grid md:grid-cols-3 gap-8 mb-8">
-              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-t-4 border-jewel-burgundy">
+              <div className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-8 border-t-4 border-jewel-burgundy">
                 <div className="flex items-center justify-center mb-4">
                   <Calendar className="w-6 h-6 text-jewel-burgundy mr-3" />
                   <h4 className="text-3xl font-serif font-bold text-jewel-burgundy">When</h4>
@@ -72,7 +72,7 @@ export default function InfoPage() {
                 </div>
               </div>
 
-              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-t-4 border-jewel-burgundy">
+              <div className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-8 border-t-4 border-jewel-burgundy">
                 <div className="flex items-center justify-center mb-4">
                   <MapPin className="w-6 h-6 text-jewel-burgundy mr-3" />
                   <h4 className="text-3xl font-serif font-bold text-jewel-burgundy">Where</h4>
@@ -89,20 +89,20 @@ export default function InfoPage() {
                 </div>
               </div>
 
-              <div className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 border-t-4 border-jewel-sapphire">
+              <div className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-8 border-t-4 border-jewel-burgundy">
                 <div className="flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-jewel-sapphire mr-3" />
-                  <h4 className="text-3xl font-serif font-bold text-jewel-sapphire">Dress Code</h4>
+                  <Users className="w-6 h-6 text-jewel-burgundy mr-3" />
+                  <h4 className="text-3xl font-serif font-bold text-jewel-burgundy">Dress Code</h4>
                 </div>
                 <div className="space-y-3 text-charcoal font-sans text-center">
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-sapphire">Bridesmaids:</strong> <em>Red</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Bridesmaids:</strong> <em>Red</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-sapphire">Groomsmen:</strong> <em>Black</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Groomsmen:</strong> <em>Black</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-sapphire">Guests:</strong>{" "}
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Guests:</strong>{" "}
                     <em>Cocktail or Semi-Formal</em>
                   </p>
                   <p className="text-base mt-4 text-charcoal/80 italic">
@@ -112,7 +112,7 @@ export default function InfoPage() {
               </div>
             </div>
 
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
+            <section className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Quick Questions</h4>
               <div className="space-y-4">
                 <details className="group border-b border-jewel-burgundy/20 pb-4">
@@ -212,7 +212,7 @@ export default function InfoPage() {
               </div>
             </section>
 
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
+            <section className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">About Our Venues</h4>
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="text-center">
@@ -239,7 +239,7 @@ export default function InfoPage() {
             </section>
 
             {/* Wedding Entourage - Inclusive redesign */}
-            <section className="bg-white/40 backdrop-blur-lg rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
+            <section className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-8 mb-8 border-t-4 border-jewel-burgundy">
               <h4 className="text-4xl font-serif font-bold text-jewel-burgundy mb-6 text-center">Wedding Entourage</h4>
               
               <p className="text-xl text-gray-800 text-center mb-8 leading-relaxed">
@@ -340,7 +340,7 @@ export default function InfoPage() {
               </div>
             </section>
 
-            <Card className="mb-8 border-jewel-burgundy/30 shadow-lg bg-white/40 backdrop-blur-lg">
+            <Card className="mb-8 border-t-4 border-jewel-burgundy shadow-lg bg-white/70 backdrop-blur-md">
               <CardHeader className="bg-gradient-to-r from-jewel-burgundy/10 to-jewel-burgundy/10 border-b-2 border-jewel-burgundy/30">
                 <CardTitle className="flex items-center justify-center gap-3 text-jewel-burgundy text-3xl font-serif font-bold">
                   <MessageCircle className="w-8 h-8" />

@@ -489,7 +489,7 @@ export default function RSVPPage() {
         </div>
 
         {isEditMode && !foundRSVP && (
-          <div className="max-w-2xl mx-auto mb-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6 border border-white/20">
+          <div className="max-w-2xl mx-auto mb-8 bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-6 border-t-4 border-jewel-burgundy">
             <h2 className="text-2xl font-semibold text-jewel-burgundy mb-4 flex items-center gap-2 font-serif">
               <Search className="w-6 h-6 text-jewel-crimson" />
               Find Your RSVP
@@ -617,7 +617,7 @@ export default function RSVPPage() {
                 )}
                 
                 {seatingStatus === "found" && seatingAssignment && (
-                  <div className="bg-soft-blush/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+                  <div className="bg-soft-blush/95 backdrop-blur-sm rounded-2xl shadow-lg border-t-4 border-jewel-burgundy p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-8 h-8 bg-jewel-burgundy/20 rounded-full flex items-center justify-center">
                         <div className="w-3 h-3 bg-jewel-burgundy rounded-full"></div>
@@ -660,7 +660,7 @@ export default function RSVPPage() {
         )}
 
         {isEditMode && foundRSVP && (
-          <div className="max-w-2xl mx-auto mb-8 bg-soft-blush/95 backdrop-blur-sm rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
+          <div className="max-w-2xl mx-auto mb-8 bg-soft-blush/95 backdrop-blur-sm rounded-2xl shadow-lg border-t-4 border-jewel-burgundy p-6">
             <div className="flex items-start gap-3 mb-4">
               <CheckCircle className="w-6 h-6 text-jewel-sapphire flex-shrink-0 mt-1" />
               <div>
@@ -696,7 +696,7 @@ export default function RSVPPage() {
         )}
 
         {/* RSVP Form */}
-        <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-8 border border-white/20">
+        <div className="max-w-2xl mx-auto bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-8 border-t-4 border-jewel-burgundy">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Helpful Note */}
             <div className="bg-soft-blush/80 border border-jewel-sapphire/30 rounded-lg p-4 mb-6">

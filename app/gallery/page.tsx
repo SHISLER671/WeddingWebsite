@@ -557,7 +557,7 @@ export default function GalleryPage() {
 
               {/* Spotify Player - Always Visible */}
               <div className="max-w-4xl mx-auto mt-8">
-                <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-jewel-fuchsia/20">
+                <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-6 border-t-4 border-jewel-burgundy">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl">Music</span>
                     <h3 className="text-2xl font-serif font-bold text-jewel-fuchsia">The Soundtrack to Our Story</h3>

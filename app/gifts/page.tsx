@@ -44,7 +44,7 @@ export default function GiftsPage() {
         </div>
 
         {/* Handmade Art Appreciation - MOVED TO TOP */}
-        <Card className="border-jewel-gold/30 shadow-lg bg-white/40 backdrop-blur-lg mb-8">
+        <Card className="border-t-4 border-jewel-burgundy shadow-lg bg-white/70 backdrop-blur-md mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-jewel-gold">
               <Palmtree className="w-5 h-5" />
@@ -66,7 +66,7 @@ export default function GiftsPage() {
         </Card>
 
         {/* Traditional Cash Gifts */}
-        <Card className="border-jewel-crimson/20 shadow-lg bg-white/40 backdrop-blur-lg mb-8">
+        <Card className="border-t-4 border-jewel-burgundy shadow-lg bg-white/70 backdrop-blur-md mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-jewel-crimson">
               <Heart className="w-5 h-5" />
@@ -82,7 +82,7 @@ export default function GiftsPage() {
         </Card>
 
         {/* Crypto Gifts + Connect Wallet - COMBINED */}
-        <Card className="border-emerald-400/20 shadow-lg bg-white/40 backdrop-blur-lg mb-8">
+        <Card className="border-t-4 border-jewel-burgundy shadow-lg bg-white/70 backdrop-blur-md mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-emerald-700">
               <Wallet className="w-5 h-5" />
@@ -151,7 +151,7 @@ export default function GiftsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-rose-gold/30 shadow-lg bg-white/40 backdrop-blur-lg mb-8">
+        <Card className="border-t-4 border-jewel-burgundy shadow-lg bg-white/70 backdrop-blur-md mb-8">
           <CardHeader>
             <CardTitle className="text-gray-800">Frequently Asked Crypto Questions</CardTitle>
             <CardDescription>Everything you need to know about Abstract Global Wallet and crypto gifts</CardDescription>
