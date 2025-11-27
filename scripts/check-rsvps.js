@@ -79,4 +79,3 @@ async function checkRSVPs() {
 }
 
 checkRSVPs().catch(console.error);
-

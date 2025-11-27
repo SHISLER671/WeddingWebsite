@@ -39,4 +39,3 @@ SELECT DISTINCT special_notes
 FROM public.seating_assignments
 WHERE special_notes IS NOT NULL
 ORDER BY special_notes;
-
