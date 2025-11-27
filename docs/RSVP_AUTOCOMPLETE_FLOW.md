@@ -84,8 +84,8 @@ The RSVP form uses an autocomplete feature that requires guests to select their 
 ## Setup Instructions
 
 1. **Import guest list to Supabase**:
-   - Use `tmp/master-guest-list.csv` (223 guests) or `tmp/updated-guest-list.csv` (403 guests)
-   - Import into `invited_guests` table
+   - Use `MASTERGUESTLIST.csv`
+   - Import into `invited_guests` table using `scripts/sync-invited-guests-with-csv.js`
    - Ensure `guest_name` column is populated correctly
 
 2. **Verify autocomplete API**:

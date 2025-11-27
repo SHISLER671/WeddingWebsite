@@ -6,14 +6,12 @@
  * This script ensures seating_assignments table stays in sync with invited_guests:
  * - Creates entries for all guests in invited_guests (if missing)
  * - Updates guest names and emails if they've changed
- * - Optionally removes entries not in invited_guests (with --cleanup flag)
+ * - Removes entries not in invited_guests (always cleans up)
+ * - Removes entries with mock/test emails (e.g., @pending.wedding)
  * - Preserves existing table_number assignments
  * 
  * Usage:
- *   node scripts/sync-seating-with-invited-guests.js [--cleanup]
- * 
- * Options:
- *   --cleanup  Remove seating assignments for guests not in invited_guests
+ *   node scripts/sync-seating-with-invited-guests.js
  */
 
 const { createClient } = require('@supabase/supabase-js');
@@ -33,7 +31,17 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const shouldCleanup = process.argv.includes('--cleanup');
+// Helper function to check if email is a mock/test email
+function isMockEmail(email) {
+  if (!email) return false;
+  const mockDomains = ['pending.wedding', 'test.com', 'example.com', 'mock.com', 'fake.com'];
+  return mockDomains.some(domain => email.toLowerCase().includes(domain));
+}
+
+// Helper function to normalize name for comparison
+function normalizeName(name) {
+  return name?.trim().toLowerCase() || '';
+}
 
 async function syncSeatingAssignments() {
   try {
@@ -68,9 +76,13 @@ async function syncSeatingAssignments() {
 
     // Step 3: Create a map of existing seating assignments by guest_name (normalized)
     const seatingMap = new Map();
+    const seatingById = new Map(); // Also track by ID for cleanup
     seatingAssignments.forEach(sa => {
-      const key = sa.guest_name?.trim().toLowerCase() || '';
-      seatingMap.set(key, sa);
+      const key = normalizeName(sa.guest_name);
+      if (!seatingMap.has(key)) {
+        seatingMap.set(key, sa);
+      }
+      seatingById.set(sa.id, sa);
     });
 
     // Step 4: Sync invited guests to seating assignments
@@ -81,8 +93,13 @@ async function syncSeatingAssignments() {
 
     console.log('🔄 Syncing guests...\n');
 
+    // Create a set of invited guest names for quick lookup
+    const invitedNames = new Set(
+      invitedGuests.map(g => normalizeName(g.guest_name))
+    );
+
     for (const guest of invitedGuests) {
-      const normalizedName = guest.guest_name?.trim().toLowerCase() || '';
+      const normalizedName = normalizeName(guest.guest_name);
       const existing = seatingMap.get(normalizedName);
 
       if (!existing) {
@@ -104,17 +121,22 @@ async function syncSeatingAssignments() {
           console.log(`   ✅ Created: ${guest.guest_name}`);
         }
       } else {
-        // Check if name or email needs updating
+        // Check if name, email, or mock email needs updating
+        const hasMockEmail = isMockEmail(existing.email);
         const needsUpdate = 
           existing.guest_name !== guest.guest_name ||
-          (existing.email || '') !== (guest.email || '');
+          (existing.email || '') !== (guest.email || '') ||
+          hasMockEmail;
 
         if (needsUpdate) {
+          // If it has a mock email, replace with invited_guests email (or null)
+          const emailToUse = hasMockEmail ? (guest.email || null) : existing.email;
+          
           const { error: updateError } = await supabase
             .from('seating_assignments')
             .update({
               guest_name: guest.guest_name,
-              email: guest.email || null,
+              email: emailToUse,
             })
             .eq('id', existing.id);
 
@@ -123,7 +145,11 @@ async function syncSeatingAssignments() {
             errors.push({ guest: guest.guest_name, error: updateError.message });
           } else {
             updated++;
-            console.log(`   🔄 Updated: ${guest.guest_name}`);
+            if (hasMockEmail) {
+              console.log(`   🔄 Updated (removed mock email): ${guest.guest_name}`);
+            } else {
+              console.log(`   🔄 Updated: ${guest.guest_name}`);
+            }
           }
         } else {
           unchanged++;
@@ -131,30 +157,32 @@ async function syncSeatingAssignments() {
       }
     }
 
-    // Step 5: Cleanup entries not in invited_guests (if --cleanup flag)
+    // Step 5: Cleanup entries not in invited_guests (always cleanup)
     let removed = 0;
-    if (shouldCleanup) {
-      console.log('\n🧹 Cleaning up entries not in invited_guests...\n');
-      
-      const invitedNames = new Set(
-        invitedGuests.map(g => g.guest_name?.trim().toLowerCase() || '')
-      );
+    console.log('\n🧹 Cleaning up entries not in invited_guests and mock emails...\n');
+    
+    for (const assignment of seatingAssignments) {
+      const normalizedName = normalizeName(assignment.guest_name);
+      const shouldRemove = 
+        !invitedNames.has(normalizedName) || // Not in invited_guests
+        isMockEmail(assignment.email); // Has mock email
 
-      for (const assignment of seatingAssignments) {
-        const normalizedName = assignment.guest_name?.trim().toLowerCase() || '';
-        if (!invitedNames.has(normalizedName)) {
-          const { error: deleteError } = await supabase
-            .from('seating_assignments')
-            .delete()
-            .eq('id', assignment.id);
+      if (shouldRemove) {
+        const reason = !invitedNames.has(normalizedName) 
+          ? 'not in invited_guests' 
+          : 'has mock email';
+        
+        const { error: deleteError } = await supabase
+          .from('seating_assignments')
+          .delete()
+          .eq('id', assignment.id);
 
-          if (deleteError) {
-            console.error(`   ❌ Failed to remove ${assignment.guest_name}:`, deleteError.message);
-            errors.push({ guest: assignment.guest_name, error: deleteError.message });
-          } else {
-            removed++;
-            console.log(`   🗑️  Removed: ${assignment.guest_name}`);
-          }
+        if (deleteError) {
+          console.error(`   ❌ Failed to remove ${assignment.guest_name}:`, deleteError.message);
+          errors.push({ guest: assignment.guest_name, error: deleteError.message });
+        } else {
+          removed++;
+          console.log(`   🗑️  Removed: ${assignment.guest_name} (${reason})`);
         }
       }
     }
@@ -166,9 +194,7 @@ async function syncSeatingAssignments() {
     console.log(`   ✅ Created: ${created}`);
     console.log(`   🔄 Updated: ${updated}`);
     console.log(`   ✓ Unchanged: ${unchanged}`);
-    if (shouldCleanup) {
-      console.log(`   🗑️  Removed: ${removed}`);
-    }
+    console.log(`   🗑️  Removed: ${removed}`);
     if (errors.length > 0) {
       console.log(`   ❌ Errors: ${errors.length}`);
       errors.forEach(e => console.log(`      - ${e.guest}: ${e.error}`));

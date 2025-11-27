@@ -48,7 +48,7 @@ const WEBSITE_ENTOURAGE = [
   'William Libby' // CSV: "William & Dana Libby"
 ];
 
-// CSV entourage entries (from updated-guest-list-2026.csv lines 159-184)
+// CSV entourage entries (from MASTERGUESTLIST.csv)
 const CSV_ENTOURAGE = [
   'Shane Quintanilla',
   'Kevin & Kyra Leasiolagi',

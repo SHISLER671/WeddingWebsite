@@ -3,8 +3,8 @@
 ## Current Status ✅
 
 ### ✅ CSV File Ready
-- **File:** `tmp/master-guest-list.csv`
-- **Status:** Ready to import (223 guests)
+- **File:** `MASTERGUESTLIST.csv`
+- **Status:** Ready to import
 
 ### ✅ Import Script Ready
 - **File:** `scripts/import-guest-list-simple.js`
@@ -71,7 +71,7 @@ Once the database is set up correctly, run:
 
 \`\`\`bash
 cd "/Users/ipan/Desktop/working website/WeddingWebsite2026"
-node scripts/import-guest-list-simple.js tmp/master-guest-list.csv
+node scripts/import-guest-list-simple.js MASTERGUESTLIST.csv
 \`\`\`
 
 **What the script does:**
@@ -139,7 +139,8 @@ GRANT INSERT, UPDATE ON public.invited_guests TO anon;
 
 ## Files Reference
 
-- **CSV:** `tmp/master-guest-list.csv` (223 guests)
+- **CSV:** `MASTERGUESTLIST.csv`
 - **Import Script:** `scripts/import-guest-list-simple.js`
+- **Sync Script:** `scripts/sync-invited-guests-with-csv.js` (recommended - ensures exact match with CSV)
 - **Full Setup SQL:** `migrations/setup-rsvp-autocomplete.sql`
 - **Fix RLS SQL:** `migrations/fix-import-issue.sql`

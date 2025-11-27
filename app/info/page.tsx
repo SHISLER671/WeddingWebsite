@@ -60,7 +60,7 @@ export default function InfoPage() {
                     <em>Friday, February 13, 2026</em>
                   </p>
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-burgundy">Ceremony:</strong> <em>2pm</em>
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Sacrament of Holy Matrimony Mass:</strong> <em>2pm</em>
                   </p>
                   <p className="text-lg">
                     <strong className="text-xl font-semibold text-jewel-burgundy">Reception:</strong> <em>6:30pm</em>
@@ -79,7 +79,7 @@ export default function InfoPage() {
                 </div>
                 <div className="space-y-3 text-charcoal font-sans text-center">
                   <p className="text-lg">
-                    <strong className="text-xl font-semibold text-jewel-burgundy">Ceremony:</strong>{" "}
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Sacrament of Holy Matrimony Mass:</strong>{" "}
                     <em>Dulce Nombre de Maria Cathedral-Basilica, Hagatña</em>
                   </p>
                   <p className="text-lg">
@@ -141,7 +141,7 @@ export default function InfoPage() {
                       <strong className="text-xl text-jewel-burgundy">Date:</strong> <em>Friday, February 13, 2026</em>
                     </p>
                     <p className="text-lg">
-                      <strong className="text-xl text-jewel-burgundy">Ceremony:</strong>{" "}
+                      <strong className="text-xl text-jewel-burgundy">Sacrament of Holy Matrimony Mass:</strong>{" "}
                       <em>2pm at Dulce Nombre de Maria Cathedral-Basilica</em>
                     </p>
                     <p className="text-lg">
@@ -161,7 +161,7 @@ export default function InfoPage() {
                   </summary>
                   <div className="mt-3 text-charcoal">
                     <p className="text-lg">
-                      <strong className="text-xl text-jewel-burgundy">Ceremony:</strong>{" "}
+                      <strong className="text-xl text-jewel-burgundy">Sacrament of Holy Matrimony Mass:</strong>{" "}
                       <em>Dulce Nombre de Maria Cathedral-Basilica</em>{" "}
                       <em>(the beautiful historic cathedral in Hagåtña)</em>
                     </p>

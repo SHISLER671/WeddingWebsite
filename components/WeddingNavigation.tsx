@@ -160,7 +160,7 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
           ref={menuRef}
           className={`absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-jewel-burgundy/95 backdrop-blur-lg border-r-2 border-jewel-gold/50 transform transition-all duration-300 ${isMenuOpen ? 'translate-x-0 shadow-2xl shadow-jewel-burgundy/20' : '-translate-x-full'}`}
           style={{
-            background: 'linear-gradient(135deg, rgba(139, 69, 19, 0.95) 0%, rgba(101, 67, 33, 0.95) 100%)'
+            background: 'linear-gradient(135deg, hsla(280, 80%, 40%, 0.95) 0%, hsla(270, 70%, 45%, 0.95) 100%)'
           }}
         >
           <div className="p-6 pt-16">

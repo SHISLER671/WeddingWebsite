@@ -11,7 +11,7 @@
  * Usage:
  *   node scripts/verify-all-lists-match.js [csv-file]
  * 
- * Default: checks tmp/updated-guest-list-2026.csv
+ * Default: checks MASTERGUESTLIST.csv
  */
 
 const fs = require('fs');
@@ -88,7 +88,7 @@ async function verifyAllLists() {
     console.log('='.repeat(80));
     
     // Step 1: Parse CSV
-    const csvFile = process.argv[2] || path.join(__dirname, '..', 'tmp', 'updated-guest-list-2026.csv');
+    const csvFile = process.argv[2] || path.join(__dirname, '..', 'MASTERGUESTLIST.csv');
     
     if (!fs.existsSync(csvFile)) {
       console.error(`❌ Error: CSV file not found: ${csvFile}`);
@@ -238,7 +238,7 @@ async function verifyAllLists() {
       console.log('💡 Recommendation: Run sync script to fix mismatches:');
       console.log('   node scripts/sync-seating-with-invited-guests.js');
       if (csvOnly.length > 0 || invitedOnly.length > 0) {
-        console.log('   node scripts/import-guest-list-simple.js tmp/updated-guest-list-2026.csv');
+        console.log('   node scripts/import-guest-list-simple.js MASTERGUESTLIST.csv');
       }
     }
     

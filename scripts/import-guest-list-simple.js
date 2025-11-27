@@ -96,7 +96,7 @@ function parseCSV(csvPath) {
         guest_name: guestName.trim(),
         email: email || '', // Use empty string instead of null to avoid NOT NULL constraint issues
         allowed_party_size: allowedPartySize,
-        source: 'updated-guest-list-2026'
+        source: '@MASTERGUESTLIST.csv'
       });
     }
   }
@@ -572,7 +572,7 @@ async function main() {
   console.log('');
   
   // Get the source from the first guest (all should have the same source)
-  const currentSource = guests.length > 0 ? guests[0].source : 'updated-guest-list-2026';
+  const currentSource = guests.length > 0 ? guests[0].source : '@MASTERGUESTLIST.csv';
   
   // Confirm import
   console.log('⚠️  This will:');

@@ -166,7 +166,7 @@ export default function ConfirmationPage() {
               </div>
               <div>
                 <h3 className="font-medium text-charcoal/80 mb-2 text-lg">Timeline</h3>
-                <p className="text-xl text-charcoal">Ceremony: 2pm • Reception: 6:30pm</p>
+                <p className="text-xl text-charcoal">Sacrament of Holy Matrimony Mass: 2pm • Reception: 6:30pm</p>
               </div>
             </div>
           </div>
@@ -181,7 +181,7 @@ export default function ConfirmationPage() {
             </div>
             <div className="space-y-6">
               <div className="p-4 bg-soft-blush/50 rounded-xl">
-                <h3 className="font-medium text-charcoal mb-2 text-lg">Ceremony</h3>
+                <h3 className="font-medium text-charcoal mb-2 text-lg">Sacrament of Holy Matrimony Mass</h3>
                 <p className="text-xl text-charcoal">Dulce Nombre de Maria Cathedral-Basilica</p>
                 <p className="text-charcoal/70 text-lg">Hagåtña, Guam • 2pm</p>
               </div>
