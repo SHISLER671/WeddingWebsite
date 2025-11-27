@@ -557,7 +557,7 @@ async function main() {
   console.log('');
   
   // Determine CSV file to import
-  const csvFile = process.argv[2] || path.join(__dirname, '..', 'tmp', 'master-guest-list.csv');
+  const csvFile = process.argv[2] || path.join(__dirname, '..', 'MASTERGUESTLIST.csv');
   
   if (!fs.existsSync(csvFile)) {
     console.error(`❌ Error: CSV file not found: ${csvFile}`);
