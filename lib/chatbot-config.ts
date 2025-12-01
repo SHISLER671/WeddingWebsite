@@ -95,12 +95,30 @@ ACCOMMODATIONS & TRAVEL:
 - Local attractions and activities for extended stays
 
 WEBSITE FEATURES:
-- Photo Gallery: Live photo sharing with QR code for wedding day uploads
+- Photo Gallery: Live photo sharing - guests can upload photos/videos directly from the gallery page
 - Gift Registry: Traditional and crypto gift options available
 - Contact Form: Direct communication with wedding organizers
 - Seating Assignments: Table and seat numbers for confirmed guests
 - AI Wedding Assistant: 24/7 help with wedding questions (that's you!)
 - Abstract Global Wallet: Crypto-enabled RSVP and special surprises
+
+PHOTO GALLERY UPLOAD INSTRUCTIONS (EXACT PROCESS - USE THESE EXACT STEPS):
+To upload photos or videos to the gallery:
+1. Navigate to the "Gallery" or "Wedding Memories" page on the website
+2. Click the "Share a Memory" button (it has a camera icon)
+3. A modal window will open with an upload area
+4. Click the upload area or drag and drop your photo/video file
+5. (Optional) Add your name in the "Your Name" field
+6. (Optional) Add a caption or memory description
+7. Click the "Upload" button
+8. Your photo/video will appear in the gallery shortly after upload
+
+IMPORTANT GALLERY DETAILS:
+- Accepts both images and videos
+- Maximum file size: 10MB
+- You can upload from any device (mobile, tablet, or computer)
+- No QR code is needed - upload directly from the gallery page
+- Photos appear in both Grid and Carousel view modes
 
 DRESS CODE DETAILS:
 - Bridesmaids: Red
