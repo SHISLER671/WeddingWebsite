@@ -16,19 +16,22 @@ A sophisticated, full-featured wedding website built with Next.js 15 (App Router
 - **📝 RSVP System** - Secure guest registration with dietary restrictions and guest counts, with edit mode
 - **🪑 Seating Lookup** - Seating assignment lookup and Admin seating dashboard
 - **✅ Confirmation Page** - Personalized confirmation with follow-up actions (wallet connect, gallery, info)
-- **📸 Photo Gallery** - Upload and share wedding photos with captions and comments
+- **📸 Photo Gallery** - Upload and share wedding photos/videos directly from the gallery page (no QR code needed)
 - **ℹ️ Wedding Info** - Detailed event information, venue details, and FAQ
 - **📞 Contact** - Easy way for guests to reach out with questions
 
 ### 🤖 AI & Automation
-- **💬 AI Wedding Assistant** - "Ezekiel" chatbot powered by OpenRouter AI
-- **🎯 Smart Responses** - Answers questions about wedding details, directions, and logistics
+- **💬 AI Wedding Assistant** - "Ezekiel" chatbot powered by OpenRouter AI with automatic retry logic
+- **🎯 Smart Responses** - Answers questions about wedding details, directions, logistics, and RSVP status
 - **🔐 Secure Lookup** - Encrypted RSVP lookup system for guest privacy
+- **🛡️ Safety Features** - Prevents misinformation, rate limiting, and error handling with exponential backoff
+- **📚 Accurate Information** - Verified knowledge base with strict rules against fabricating wedding details
 
 ### 💎 Modern Tech Features
+- **🎁 Gift Options** - Handmade art/crafts, traditional cash gifts, and crypto gifts (no traditional registry)
 - **💰 Crypto Gifts** - Accept cryptocurrency gifts via Abstract Global Wallet
-- **🔗 Wallet Connection** - Guests can connect wallets for digital wedding surprises
-- **📱 Mobile-First** - Fully optimized for mobile and desktop experiences
+- **🔗 Wallet Connection** - Optional wallet connection for post-wedding digital surprises
+- **📱 Mobile-First** - Fully optimized for mobile and desktop experiences with touch-friendly UI
 - **⚡ Real-time Updates** - Live data synchronization with Supabase
 - **🛡️ Security** - Server-side authentication and encrypted data handling
 
@@ -106,6 +109,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 # OpenRouter AI
 OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=openai/gpt-4o-mini  # Optional: specify model (defaults to gpt-4o-mini)
+NEXT_PUBLIC_OPENROUTER_MODEL=openai/gpt-4o-mini  # Optional: public model name
 
 # Abstract Global Wallet (optional)
 NEXT_PUBLIC_AGW_PROJECT_ID=your_agw_project_id
@@ -137,9 +142,10 @@ Visit [http://localhost:3000](http://localhost:3000) to see the website.
 ## 📊 Database Setup
 
 The project uses Supabase with the following main tables:
+- `invited_guests` - Master guest list synchronized with MASTERGUESTLIST.csv
 - `rsvps` - Guest RSVP data with encrypted lookup codes
-- `gallery` - Wedding photo gallery with metadata
-- `gallery_comments` - Comments on gallery photos
+- `seating_assignments` - Table and seat assignments for confirmed guests
+- `gallery_items` - Wedding photo/video gallery with metadata and captions
 
 SQL setup scripts are available in the `scripts/` directory.
 
@@ -148,20 +154,36 @@ SQL setup scripts are available in the `scripts/` directory.
 The wedding chatbot "Ezekiel" is powered by OpenRouter and can:
 - Answer questions about the wedding (date, venue, dress code, etc.)
 - Provide directions and accommodation info
-- Explain crypto gift options
-- Help with RSVP-related questions
-- Offer seating information
+- Explain gift options (handmade art, cash, crypto - no traditional registry)
+- Help with RSVP-related questions and check RSVP status
+- Offer seating information for confirmed guests
+- Guide guests through photo gallery uploads (direct upload, no QR code)
+- Provide accurate, verified information with strict safety rules against misinformation
 
-Configuration is managed in `lib/chatbot-config.ts`.
+### Chatbot Features
+- **Automatic Retry Logic** - Handles rate limits with exponential backoff
+- **Error Handling** - Detailed logging and user-friendly error messages
+- **Rate Limiting** - Client-side and API-side limits to prevent abuse
+- **Safety Protocols** - Never fabricates information, always directs to couple when uncertain
+- **First-Time User Friendly** - Patient guidance for guests new to AI assistants
 
-## 💎 Crypto Integration
+Configuration is managed in `lib/chatbot-config.ts`. The chatbot appears globally on all pages except the home landing page.
 
+## 💎 Gift Options & Crypto Integration
+
+### Gift Options (No Traditional Registry)
+The couple offers three gift options:
+1. **Handmade Art & Crafts** - Paintings, drawings, pottery, jewelry, or any craft made with love
+2. **Traditional Cash Gifts** - Always appreciated to help build their new life together
+3. **Crypto Gifts** - Via Abstract Global Wallet for crypto-curious guests
+
+### Crypto Integration
 Guests can:
 - Send crypto gifts (ETH, USDC) via Abstract Global Wallet
-- Connect their wallets for post-wedding digital surprises
+- Optionally connect their wallets for post-wedding digital surprises
 - View wallet connection status in the profile menu
 
-The integration uses Abstract's AGW SDK and Wagmi for wallet management.
+The integration uses Abstract's AGW SDK (AbstractWalletProvider) for wallet management. Wallet connection is completely optional.
 
 ## 📝 Documentation
 
@@ -203,8 +225,10 @@ This is a private wedding website project. All rights reserved.
 ### Performance & Reliability
 - ✅ **Fixed Supabase Keep-Alive** - Automated weekly pings prevent 7-day inactivity pause
 - ✅ **Optimized Dependencies** - Cleaned up duplicate packages for faster builds
-- ✅ **Enhanced Error Handling** - Robust retry logic and better error reporting
+- ✅ **Enhanced Error Handling** - Robust retry logic with exponential backoff for chatbot API calls
 - ✅ **Mobile Optimization** - Touch gestures, smooth animations, and responsive design
+- ✅ **Chatbot Rate Limiting** - Client-side and API-side limits prevent abuse and manage costs
+- ✅ **Database Synchronization** - Scripts to sync invited_guests and seating_assignments tables
 
 ### Security & Privacy
 - 🔐 **Encrypted RSVP Lookup** - Secure guest data with 32-byte encryption
@@ -216,6 +240,8 @@ This is a private wedding website project. All rights reserved.
 - ✨ **Smooth Animations** - Elegant transitions and touch feedback
 - 📱 **Mobile-First** - Optimized for all devices and touch interactions
 - ♿ **Accessibility** - WCAG compliant for all guests
+- 🤖 **AI Chatbot** - Global availability on all pages (except home) with accurate, verified information
+- 📸 **Easy Photo Uploads** - Direct upload from gallery page, no QR code needed
 
 ## 🚀 Deployment Status
 
