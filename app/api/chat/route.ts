@@ -108,20 +108,35 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error("[v0] Chat API: Error processing request:", error)
+    console.error("[v0] Chat API: Error details:", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+    })
 
     let errorMessage = "Failed to process chat request"
     let statusCode = 500
 
     if (error instanceof Error) {
       errorMessage = error.message
+      const errorMsgLower = error.message.toLowerCase()
 
-      if (error.message.includes("rate limit") || error.message.includes("429")) {
+      if (errorMsgLower.includes("rate limit") || errorMsgLower.includes("429") || errorMsgLower.includes("too many requests")) {
         statusCode = 429
-      } else if (error.message.includes("API key") || error.message.includes("Unauthorized")) {
+        errorMessage = "Rate limit exceeded. Please wait a moment and try again."
+      } else if (errorMsgLower.includes("api key") || errorMsgLower.includes("unauthorized") || errorMsgLower.includes("401")) {
         statusCode = 401
+        errorMessage = "API authentication failed. Please check the API key configuration."
+      } else if (errorMsgLower.includes("402") || errorMsgLower.includes("payment") || errorMsgLower.includes("insufficient credits")) {
+        statusCode = 402
+        errorMessage = "Insufficient API credits. Please add credits to your OpenRouter account."
+      } else if (errorMsgLower.includes("timeout")) {
+        statusCode = 504
+        errorMessage = "Request timeout. The AI service is taking too long to respond."
       }
     }
 
+    console.error("[v0] Chat API: Returning error response:", { errorMessage, statusCode })
     return NextResponse.json({ error: errorMessage }, { status: statusCode })
   }
 }
