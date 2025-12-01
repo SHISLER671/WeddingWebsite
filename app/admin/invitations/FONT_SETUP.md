@@ -34,4 +34,3 @@ If fonts don't render correctly:
 - Ensure font files are in `public/fonts/`
 - Check that the font name matches exactly (case-sensitive)
 - For production, ensure fonts are installed on the server or use embedded fonts
-

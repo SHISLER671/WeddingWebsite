@@ -113,4 +113,3 @@ export async function generatePreview(
     .jpeg({ quality: 92 })
     .toBuffer();
 }
-
