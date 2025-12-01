@@ -137,7 +137,7 @@ interface ChatProviderProps {
 export function ChatProvider({ children }: ChatProviderProps) {
   const [state, dispatch] = useReducer(chatReducer, initialState)
   const lastMessageTimeRef = useRef<number>(0)
-  const MESSAGE_RATE_LIMIT_MS = 1000 // Minimum 1 second between messages
+  const MESSAGE_RATE_LIMIT_MS = 500 // Minimum 500ms between messages (reduced from 1000ms)
 
   // Generate a unique ID for messages
   const generateMessageId = () => `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -240,7 +240,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
             content: config.systemPrompt,
           },
           ...state.messages
-            .filter((msg) => !msg.isLoading && msg.role !== "system")
+            .filter((msg) => !msg.isLoading)
             .map((msg) => ({
               role: msg.role,
               content: msg.content,
@@ -257,21 +257,64 @@ export function ChatProvider({ children }: ChatProviderProps) {
           historyMessages: openRouterMessages.length - 2,
         })
 
-        // Send to server-side API route
+        // Send to server-side API route with retry logic for rate limits
         console.log("💬 [ChatContext] 🚀 Sending to /api/chat...")
-        const response = await fetch("/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: openRouterMessages,
-          }),
-        })
+        
+        let response: Response | null = null
+        let retries = 0
+        const maxRetries = 2
+        const retryDelay = 2000 // 2 seconds
+        
+        while (retries <= maxRetries) {
+          try {
+            response = await fetch("/api/chat", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                messages: openRouterMessages,
+              }),
+            })
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}))
-          throw new Error(errorData.error || `API request failed: ${response.status}`)
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}))
+              const errorMessage = errorData.error || `API request failed: ${response.status}`
+              
+              // If it's a rate limit error and we have retries left, wait and retry
+              if ((response.status === 429 || errorMessage.toLowerCase().includes("rate limit")) && retries < maxRetries) {
+                retries++
+                console.log(`💬 [ChatContext] ⏳ Rate limit hit, retrying in ${retryDelay * retries}ms (attempt ${retries}/${maxRetries})...`)
+                await new Promise(resolve => setTimeout(resolve, retryDelay * retries)) // Exponential backoff
+                continue
+              }
+              
+              console.error("💬 [ChatContext] ❌ API Error:", {
+                status: response.status,
+                statusText: response.statusText,
+                error: errorData,
+                errorMessage,
+                retries,
+              })
+              throw new Error(errorMessage)
+            }
+            
+            // Success - break out of retry loop
+            break
+          } catch (fetchError) {
+            // If it's a network error and we have retries left, retry
+            if (retries < maxRetries && (fetchError instanceof TypeError || (fetchError instanceof Error && fetchError.message.includes("fetch")))) {
+              retries++
+              console.log(`💬 [ChatContext] ⏳ Network error, retrying in ${retryDelay * retries}ms (attempt ${retries}/${maxRetries})...`)
+              await new Promise(resolve => setTimeout(resolve, retryDelay * retries))
+              continue
+            }
+            throw fetchError
+          }
+        }
+
+        if (!response) {
+          throw new Error("Failed to get response from API after retries")
         }
 
         const data = await response.json()
