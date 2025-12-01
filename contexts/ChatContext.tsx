@@ -271,14 +271,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
-          const errorMessage = errorData.error || `API request failed: ${response.status}`
-          console.error("💬 [ChatContext] ❌ API Error:", {
-            status: response.status,
-            statusText: response.statusText,
-            error: errorData,
-            errorMessage,
-          })
-          throw new Error(errorMessage)
+          throw new Error(errorData.error || `API request failed: ${response.status}`)
         }
 
         const data = await response.json()
@@ -303,29 +296,18 @@ export function ChatProvider({ children }: ChatProviderProps) {
       } catch (error) {
         console.error("💬 [ChatContext] ❌ Message processing failed:")
         console.error("💬 [ChatContext] Error:", error)
-        console.error("💬 [ChatContext] Error details:", {
-          message: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-        })
 
         let errorMessage = ERROR_MESSAGES.API_ERROR
 
         if (error instanceof Error) {
-          const errorMsg = error.message.toLowerCase()
-          
-          if (errorMsg.includes("network") || errorMsg.includes("fetch") || errorMsg.includes("failed to fetch")) {
+          if (error.message.includes("network") || error.message.includes("fetch")) {
             errorMessage = ERROR_MESSAGES.NETWORK_ERROR
-          } else if (errorMsg.includes("rate limit") || errorMsg.includes("429") || errorMsg.includes("too many requests")) {
+          } else if (error.message.includes("rate limit") || error.message.includes("429")) {
             errorMessage = ERROR_MESSAGES.RATE_LIMIT
-          } else if (errorMsg.includes("timeout")) {
+          } else if (error.message.includes("timeout")) {
             errorMessage = ERROR_MESSAGES.TIMEOUT
-          } else if (errorMsg.includes("api key") || errorMsg.includes("unauthorized") || errorMsg.includes("401")) {
+          } else if (error.message.includes("API key") || error.message.includes("Unauthorized")) {
             errorMessage = "API configuration error. Please check the service configuration."
-          } else if (errorMsg.includes("402") || errorMsg.includes("payment") || errorMsg.includes("insufficient credits")) {
-            errorMessage = "API credits exhausted. Please check your OpenRouter account balance."
-          } else {
-            // Show the actual error message for debugging, but make it user-friendly
-            errorMessage = `I'm having trouble responding: ${error.message}. Please try again in a moment.`
           }
         }
 
