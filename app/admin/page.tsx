@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Search, Download, CheckCircle, AlertTriangle, Edit, Plus, Trash2 } from "lucide-react"
+import { Search, Download, CheckCircle, AlertTriangle, Edit } from "lucide-react"
 
 interface SeatingAssignment {
   id: string
@@ -18,8 +18,6 @@ interface TableCapacity {
 }
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [password, setPassword] = useState("")
   const [assignments, setAssignments] = useState<SeatingAssignment[]>([])
   const [tableCapacities, setTableCapacities] = useState<TableCapacity>({})
   const [searchTerm, setSearchTerm] = useState("")
@@ -28,35 +26,10 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Partial<SeatingAssignment>>({})
 
-  // Simple password protection
-  const ADMIN_PASSWORD = "wedding2026" // Change this to your preferred password
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setMessage('')
-    
-    try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
-      
-      const result = await response.json()
-      
-      if (result.success) {
-        setIsAuthenticated(true)
-        loadAssignments()
-      } else {
-        setMessage("❌ Incorrect password")
-      }
-    } catch (error) {
-      setMessage("❌ Login failed. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  // Load assignments on mount
+  useEffect(() => {
+    loadAssignments()
+  }, [])
 
   const loadAssignments = async () => {
     setIsLoading(true)
@@ -504,48 +477,6 @@ export default function AdminPage() {
     setEditForm({})
   }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-jewel-burgundy to-jewel-crimson flex items-center justify-center">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-serif text-jewel-burgundy mb-2">Admin Dashboard</h1>
-            <p className="text-jewel-burgundy/70">Wedding Seating Management</p>
-          </div>
-          
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-jewel-burgundy mb-2">
-                Admin Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
-                placeholder="Enter admin password"
-                required
-              />
-            </div>
-            
-            <button
-              type="submit"
-              className="w-full bg-jewel-burgundy hover:bg-jewel-crimson text-white py-3 text-lg font-medium rounded-lg transition-colors duration-200"
-            >
-              Access Dashboard
-            </button>
-          </form>
-          
-          {message && (
-            <div className="mt-4 p-3 bg-jewel-crimson/10 text-jewel-crimson rounded-lg text-sm">
-              {message}
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-jewel-burgundy to-jewel-crimson p-4">
       <div className="max-w-7xl mx-auto">
@@ -556,12 +487,6 @@ export default function AdminPage() {
               <h1 className="text-3xl font-serif text-jewel-burgundy mb-2">Seating Admin Dashboard</h1>
               <p className="text-jewel-burgundy/70">Manage wedding seating assignments</p>
             </div>
-            <button
-              onClick={() => setIsAuthenticated(false)}
-              className="bg-jewel-crimson hover:bg-jewel-burgundy text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Logout
-            </button>
           </div>
         </div>
 

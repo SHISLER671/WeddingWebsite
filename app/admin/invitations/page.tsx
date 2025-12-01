@@ -1,8 +1,5 @@
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
 import { Suspense } from 'react';
-import { verifyToken } from '@/lib/auth';
-import { generateInvites, getPreview } from './actions';
+import { generateInvites } from './actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,23 +7,7 @@ import LivePreviewForm from './LivePreviewForm';
 
 export const dynamic = 'force-dynamic';
 
-// Auth check that verifies the token
-function checkAdminAuth() {
-  const cookieStore = cookies();
-  const adminToken = cookieStore.get('admin-token')?.value;
-  
-  if (!adminToken) {
-    redirect('/admin');
-  }
-  
-  const tokenData = verifyToken(adminToken);
-  if (!tokenData) {
-    redirect('/admin');
-  }
-}
-
 export default async function InvitationsPage() {
-  checkAdminAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-jewel-burgundy to-jewel-crimson py-12 px-4">

@@ -1,25 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generatePreview } from '@/lib/invite-generator';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
-
-function checkAdminAuth() {
-  const cookieStore = cookies();
-  const adminToken = cookieStore.get('admin-token')?.value;
-  
-  if (!adminToken) {
-    return false;
-  }
-  
-  const tokenData = verifyToken(adminToken);
-  return !!tokenData;
-}
 
 export async function POST(request: NextRequest) {
   try {
-    if (!checkAdminAuth()) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const formData = await request.formData();
     const templateFile = formData.get('template') as File;
