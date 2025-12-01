@@ -68,11 +68,14 @@ export class OpenRouterClient {
     console.log('🤖 [OpenRouter] Last message preview:', messages[messages.length - 1]?.content?.substring(0, 100) + '...');
 
     try {
+      // Safety: Cap max tokens to prevent excessive usage (default 1000, can be overridden)
+      const safeMaxTokens = Math.min(options?.maxTokens ?? 1000, 2000) // Never exceed 2000 tokens
+      
       const requestBody = {
         model: this.model,
         messages,
         temperature: options?.temperature ?? 0.7,
-        max_tokens: options?.maxTokens ?? 24000,
+        max_tokens: safeMaxTokens,
         stream: options?.stream ?? false,
       };
 

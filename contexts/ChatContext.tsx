@@ -3,7 +3,7 @@
 
 "use client"
 
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useReducer, useEffect, useRef, type ReactNode } from "react"
 import type { OpenRouterMessage } from "@/lib/openrouter"
 import { getChatbotConfig, ERROR_MESSAGES } from "@/lib/chatbot-config"
 import { handleRSVPStatusRequest } from "@/lib/rsvp-lookup"
@@ -136,6 +136,8 @@ interface ChatProviderProps {
 
 export function ChatProvider({ children }: ChatProviderProps) {
   const [state, dispatch] = useReducer(chatReducer, initialState)
+  const lastMessageTimeRef = useRef<number>(0)
+  const MESSAGE_RATE_LIMIT_MS = 1000 // Minimum 1 second between messages
 
   // Generate a unique ID for messages
   const generateMessageId = () => `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -148,6 +150,44 @@ export function ChatProvider({ children }: ChatProviderProps) {
 
     sendMessage: async (message: string) => {
       if (!message.trim()) return
+
+      // Safety check: Rate limiting - prevent rapid-fire requests
+      const now = Date.now()
+      const timeSinceLastMessage = now - lastMessageTimeRef.current
+      if (timeSinceLastMessage < MESSAGE_RATE_LIMIT_MS) {
+        const waitTime = Math.ceil((MESSAGE_RATE_LIMIT_MS - timeSinceLastMessage) / 1000)
+        dispatch({
+          type: "SEND_MESSAGE_ERROR",
+          payload: `Please wait ${waitTime} second${waitTime > 1 ? 's' : ''} before sending another message.`,
+        })
+        return
+      }
+      lastMessageTimeRef.current = now
+
+      // Safety check: Limit message length
+      const MAX_MESSAGE_LENGTH = 2000
+      if (message.length > MAX_MESSAGE_LENGTH) {
+        dispatch({
+          type: "SEND_MESSAGE_ERROR",
+          payload: `Message is too long. Please keep messages under ${MAX_MESSAGE_LENGTH} characters.`,
+        })
+        return
+      }
+
+      // Safety check: Limit conversation length
+      const MAX_CONVERSATION_MESSAGES = 50
+      if (state.messages.length >= MAX_CONVERSATION_MESSAGES) {
+        dispatch({
+          type: "SEND_MESSAGE_ERROR",
+          payload: "Conversation limit reached. Please clear the chat and start a new conversation.",
+        })
+        return
+      }
+
+      // Warning when approaching limit
+      if (state.messages.length >= MAX_CONVERSATION_MESSAGES - 5) {
+        console.warn(`[ChatContext] ⚠️ Approaching conversation limit: ${state.messages.length}/${MAX_CONVERSATION_MESSAGES}`)
+      }
 
       console.log("💬 [ChatContext] === New Message ===")
       console.log("💬 [ChatContext] Message:", message)
@@ -205,7 +245,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
               role: msg.role,
               content: msg.content,
             }))
-            .slice(-10), // Keep last 10 messages for context
+            .slice(-15), // Keep last 15 messages for context (increased from 10, but still limited)
           {
             role: "user",
             content: message,

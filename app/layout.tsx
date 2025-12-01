@@ -4,6 +4,7 @@ import type React from "react"
 import "./globals.css"
 import { Providers } from "./providers"
 import NavigationWrapper from "@/components/NavigationWrapper"
+import GlobalChatbot from "@/components/GlobalChatbot"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
         <Providers>
           {children}
           <NavigationWrapper />
+          <GlobalChatbot />
         </Providers>
       </body>
     </html>

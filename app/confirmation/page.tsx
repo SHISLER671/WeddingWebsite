@@ -1,7 +1,6 @@
 "use client"
 import Link from "next/link"
 import { Calendar, MapPin, Clock, Gift, Edit, Heart, Flower2, MessageCircle, Wallet, Camera } from "lucide-react"
-import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
 import { useChat } from "../../contexts/ChatContext"
 import { useAccount } from "wagmi"
 import { useLoginWithAbstract } from "@abstract-foundation/agw-react"
@@ -385,7 +384,6 @@ export default function ConfirmationPage() {
         </div>
       </section>
 
-      <WeddingChatbot />
     </div>
   )
 }

@@ -691,7 +691,7 @@ export default function RSVPPage() {
               {/* Children Policy Notice */}
               <div className="mt-4 bg-jewel-fuchsia/10 border border-jewel-fuchsia/30 rounded-lg p-4">
                 <p className="text-base md:text-sm text-charcoal leading-relaxed">
-                  For those with little ones: We are looking forward to having a night full of dancing, drinking, and celebration. We would love for you to enjoy the night child-free with us, so please arrange for a babysitter if you have younglings. We can't wait to have you there!
+                  For those with little ones: We are looking forward to having a night full of dancing, drinking, and celebration. We would love for you to enjoy the night child-free with us, so please arrange for a babysitter if possible. However, if you do plan to bring children, <strong>please include their ages in the "Special Message" section below</strong> - this is especially important if any children under 12 will be attending, as we need to know ages for proper meal planning. We can't wait to have you there!
                 </p>
               </div>
             </div>

@@ -127,7 +127,11 @@ export default function WeddingNavigation({ currentPage }: WeddingNavigationProp
       <button
         ref={buttonRef}
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="fixed top-4 left-4 z-50 bg-jewel-burgundy/90 backdrop-blur-sm text-warm-white p-3 rounded-full shadow-lg hover:bg-jewel-crimson transition-all duration-300 hover:scale-105 border-2 border-jewel-gold/30 hover:shadow-jewel-gold/20 hover:shadow-2xl"
+        className="fixed top-4 left-4 z-50 bg-jewel-burgundy/90 backdrop-blur-sm text-warm-white p-3 rounded-full shadow-lg hover:bg-jewel-crimson transition-all duration-300 hover:scale-105 border-2 border-jewel-gold/30 hover:shadow-jewel-gold/20 hover:shadow-2xl touch-manipulation w-12 h-12 sm:w-auto sm:h-auto"
+        style={{
+          // Ensure safe area on notched devices
+          top: 'max(1rem, env(safe-area-inset-top, 1rem))',
+        }}
         aria-label="Toggle navigation menu (Press 'Ctrl+M' or 'Cmd+M' to open, 'Escape' to close)"
         title="Navigation Menu (Ctrl+M or Cmd+M to open, Esc to close)"
       >

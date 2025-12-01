@@ -4,7 +4,6 @@ import { Calendar, MapPin, Users, ChevronDown, MessageCircle, Heart } from "luci
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useChat } from "../../contexts/ChatContext"
-import WeddingChatbot from "../../components/WeddingChatbot/WeddingChatbot"
 import { useEffect } from "react"
 
 export default function InfoPage() {
@@ -481,7 +480,6 @@ export default function InfoPage() {
             </p>
           </footer>
         </div>
-        <WeddingChatbot />
       </div>
     </div>
   )

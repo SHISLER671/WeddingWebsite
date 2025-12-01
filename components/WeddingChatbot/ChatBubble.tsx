@@ -85,8 +85,46 @@ export default function ChatBubble({ className = '' }: ChatBubbleProps) {
     backgroundColor: config.appearance.theme === 'dark' ? '#374151' : config.appearance.secondaryColor,
   };
 
+  // Compact button for top-left placement next to hamburger menu
+  // Hamburger is at left-4 (16px) with w-12 h-12 (48px) = ends at ~64px
+  // Chat button positioned at left-20 (80px) on desktop, left-[72px] (72px) on mobile
+  // Minimum 44x44px touch target for mobile accessibility
   return (
-    null
+    <button
+      onClick={handleClick}
+      className={`
+        fixed top-4 left-[72px] sm:left-20 z-[45]
+        w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-lg
+        flex items-center justify-center
+        transition-all duration-300 ease-in-out
+        hover:scale-110 active:scale-95
+        touch-manipulation
+        backdrop-blur-sm border-2
+        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+        ${state.isOpen 
+          ? 'bg-jewel-crimson/90 border-jewel-gold/50 text-warm-white shadow-xl' 
+          : 'bg-jewel-burgundy/90 border-jewel-gold/30 text-warm-white hover:bg-jewel-crimson/90 hover:border-jewel-gold/50 active:bg-jewel-crimson/90'
+        }
+        ${pulsingClasses}
+      `}
+      style={{
+        // Ensure safe area on notched devices
+        top: 'max(1rem, env(safe-area-inset-top, 1rem))',
+      }}
+      aria-label={state.isOpen ? 'Close wedding assistant chat' : 'Open wedding assistant chat'}
+      title={state.isOpen ? 'Close chat' : 'Ask Ezekiel, your wedding assistant'}
+    >
+      {state.isOpen ? (
+        <X className="w-5 h-5 sm:w-5 sm:h-5" />
+      ) : (
+        <MessageCircle className="w-5 h-5 sm:w-5 sm:h-5" />
+      )}
+      {state.unreadCount > 0 && !state.isOpen && (
+        <div className="absolute -top-0.5 -right-0.5 bg-jewel-gold text-jewel-burgundy font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-jewel-burgundy text-[11px] leading-none">
+          {state.unreadCount > 9 ? '9+' : state.unreadCount}
+        </div>
+      )}
+    </button>
   );
 }
 
