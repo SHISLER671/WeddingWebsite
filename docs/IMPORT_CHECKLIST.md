@@ -7,7 +7,7 @@
 - **Status:** Ready to import
 
 ### ✅ Import Script Ready
-- **File:** `scripts/import-guest-list-simple.js`
+- **File:** `scripts/sync-invited-guests-with-csv.js` (recommended)
 - **Status:** Configured and ready
 
 ### ⚠️ Database Setup Required
@@ -71,13 +71,16 @@ Once the database is set up correctly, run:
 
 \`\`\`bash
 cd "/Users/ipan/Desktop/working website/WeddingWebsite2026"
-node scripts/import-guest-list-simple.js MASTERGUESTLIST.csv
+node scripts/sync-invited-guests-with-csv.js
 \`\`\`
 
-**What the script does:**
-1. ✅ Imports/updates guests in the `invited_guests` table from your CSV
-2. ✅ Syncs `rsvps.guest_name` to match `invited_guests.guest_name` where emails match
-3. ✅ Preserves all existing RSVP data (attendance, guest_count, dietary_restrictions, etc.)
+**What the sync script does:**
+1. ✅ Reads all guests from `MASTERGUESTLIST.csv`
+2. ✅ Adds new guests to `invited_guests` table
+3. ✅ Updates existing guests if name, email, or party size changed
+4. ✅ Removes guests from database that are no longer in CSV
+5. ✅ Sets `source` field to `@MASTERGUESTLIST.csv`
+6. ✅ Ensures exact match between CSV and database
 
 **Expected output:**
 \`\`\`
@@ -105,7 +108,7 @@ node scripts/import-guest-list-simple.js MASTERGUESTLIST.csv
 
 ### If Import Shows "0 imported"
 - Check that you ran Step 1 (drop the sync function)
-- Verify RLS policies allow INSERT (check `migrations/fix-import-issue.sql`)
+- Verify RLS policies allow INSERT (run the policies from `migrations/setup-rsvp-autocomplete.sql`)
 - Check Supabase logs for errors
 
 ### If Autocomplete Doesn't Work
@@ -140,7 +143,5 @@ GRANT INSERT, UPDATE ON public.invited_guests TO anon;
 ## Files Reference
 
 - **CSV:** `MASTERGUESTLIST.csv`
-- **Import Script:** `scripts/import-guest-list-simple.js`
 - **Sync Script:** `scripts/sync-invited-guests-with-csv.js` (recommended - ensures exact match with CSV)
 - **Full Setup SQL:** `migrations/setup-rsvp-autocomplete.sql`
-- **Fix RLS SQL:** `migrations/fix-import-issue.sql`
