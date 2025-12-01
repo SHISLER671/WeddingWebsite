@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,8 +9,14 @@ import Image from 'next/image';
 import { getPreview } from './actions';
 
 export default function LivePreviewForm() {
+  const searchParams = useSearchParams();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Get guest name from URL query parameter, or use default
+  const guestNameFromUrl = searchParams.get('guest');
+  const defaultName = guestNameFromUrl ? decodeURIComponent(guestNameFromUrl) : 'Alexandra & Benjamin';
+  
   const [formData, setFormData] = useState({
     x: 600,
     y: 900,
@@ -18,8 +25,18 @@ export default function LivePreviewForm() {
     strokeColor: '#4a1c1c',
     strokeWidth: 4,
     font: 'GreatVibes-Regular',
-    previewName: 'Alexandra & Benjamin',
+    previewName: defaultName,
   });
+
+  // Update preview name when URL parameter changes
+  useEffect(() => {
+    if (guestNameFromUrl) {
+      setFormData(prev => ({
+        ...prev,
+        previewName: decodeURIComponent(guestNameFromUrl),
+      }));
+    }
+  }, [guestNameFromUrl]);
 
   async function updatePreview(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

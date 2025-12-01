@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
+import { Suspense } from 'react';
+import { verifyToken } from '@/lib/auth';
 import { generateInvites, getPreview } from './actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +10,17 @@ import LivePreviewForm from './LivePreviewForm';
 
 export const dynamic = 'force-dynamic';
 
-// Simple auth check matching existing admin page
+// Auth check that verifies the token
 function checkAdminAuth() {
   const cookieStore = cookies();
   const adminToken = cookieStore.get('admin-token')?.value;
   
   if (!adminToken) {
+    redirect('/admin');
+  }
+  
+  const tokenData = verifyToken(adminToken);
+  if (!tokenData) {
     redirect('/admin');
   }
 }
@@ -28,7 +35,9 @@ export default async function InvitationsPage() {
           Personalized Wedding Invitations
         </h1>
 
-        <LivePreviewForm />
+        <Suspense fallback={<div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8">Loading...</div>}>
+          <LivePreviewForm />
+        </Suspense>
 
         <div className="mt-12 bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8">
           <h2 className="text-2xl font-semibold mb-6 text-jewel-burgundy">Bulk Generate All Invitations</h2>

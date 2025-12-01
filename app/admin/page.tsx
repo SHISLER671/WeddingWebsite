@@ -31,13 +31,30 @@ export default function AdminPage() {
   // Simple password protection
   const ADMIN_PASSWORD = "wedding2026" // Change this to your preferred password
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true)
-      loadAssignments()
-    } else {
-      setMessage("❌ Incorrect password")
+    setIsLoading(true)
+    setMessage('')
+    
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        setIsAuthenticated(true)
+        loadAssignments()
+      } else {
+        setMessage("❌ Incorrect password")
+      }
+    } catch (error) {
+      setMessage("❌ Login failed. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -725,13 +742,24 @@ export default function AdminPage() {
                             </button>
                           </div>
                         ) : (
-                          <button
-                            onClick={() => startEdit(assignment)}
-                            className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
-                          >
-                            <Edit className="w-3 h-3" />
-                            Edit
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => startEdit(assignment)}
+                              className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
+                            >
+                              <Edit className="w-3 h-3" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => {
+                                const guestName = encodeURIComponent(assignment.guest_name);
+                                window.location.href = `/admin/invitations?guest=${guestName}`;
+                              }}
+                              className="bg-jewel-gold hover:bg-jewel-gold/90 text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
+                            >
+                              Create Invite
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>

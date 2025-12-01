@@ -3,17 +3,18 @@
 import { generatePersonalizedInvites, generatePreview } from '@/lib/invite-generator';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-
-// Use the same password as the admin page
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'wedding2026';
+import { verifyToken } from '@/lib/auth';
 
 function checkAdminAuth() {
   const cookieStore = cookies();
   const adminToken = cookieStore.get('admin-token')?.value;
   
-  // Simple check - if they have the admin token cookie, they're authenticated
-  // This matches the existing admin page pattern
   if (!adminToken) {
+    redirect('/admin');
+  }
+  
+  const tokenData = verifyToken(adminToken);
+  if (!tokenData) {
     redirect('/admin');
   }
 }
