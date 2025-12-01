@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
-import { getPreview } from './actions';
 
 export default function LivePreviewForm() {
   const searchParams = useSearchParams();
@@ -45,6 +44,14 @@ export default function LivePreviewForm() {
     const form = e.currentTarget;
     const formDataObj = new FormData(form);
     
+    // Check if template file is selected
+    const templateFile = formDataObj.get('template') as File;
+    if (!templateFile || templateFile.size === 0) {
+      alert('Please select a template image first');
+      setIsLoading(false);
+      return;
+    }
+    
     // Ensure all current form values are included
     formDataObj.set('x', formData.x.toString());
     formDataObj.set('y', formData.y.toString());
@@ -56,7 +63,10 @@ export default function LivePreviewForm() {
     formDataObj.set('previewName', formData.previewName);
     
     try {
-      const response = await getPreview(formDataObj);
+      const response = await fetch('/api/admin/invitations/preview', {
+        method: 'POST',
+        body: formDataObj,
+      });
       
       if (response.ok) {
         const blob = await response.blob();
@@ -80,10 +90,13 @@ export default function LivePreviewForm() {
           });
         }
       } else {
-        console.error('Preview generation failed');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Preview generation failed:', errorData);
+        alert(`Preview generation failed: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error generating preview:', error);
+      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
