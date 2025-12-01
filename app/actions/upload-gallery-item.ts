@@ -2,6 +2,10 @@
 
 import { createClient } from "@/lib/supabase/server"
 
+/**
+ * Server Action: Upload Gallery Item
+ * Handles file uploads to the gallery
+ */
 export async function uploadGalleryItem(formData: FormData) {
   try {
     const file = formData.get("file") as File
