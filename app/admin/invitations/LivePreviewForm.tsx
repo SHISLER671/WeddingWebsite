@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Image from 'next/image';
 
 export default function LivePreviewForm() {
   const searchParams = useSearchParams();
@@ -44,38 +43,54 @@ export default function LivePreviewForm() {
     const form = e.currentTarget;
     const formDataObj = new FormData(form);
     
-    // Check if template file is selected
-    const templateFile = formDataObj.get('template') as File;
+    // Get the file input element directly to ensure we have the file
+    const fileInput = form.querySelector('input[type="file"]') as HTMLInputElement;
+    const templateFile = fileInput?.files?.[0];
+    
     if (!templateFile || templateFile.size === 0) {
       alert('Please select a template image first');
       setIsLoading(false);
       return;
     }
     
-    // Ensure all current form values are included
-    formDataObj.set('x', formData.x.toString());
-    formDataObj.set('y', formData.y.toString());
-    formDataObj.set('fontSize', formData.fontSize.toString());
-    formDataObj.set('color', formData.color);
-    formDataObj.set('strokeColor', formData.strokeColor);
-    formDataObj.set('strokeWidth', formData.strokeWidth.toString());
-    formDataObj.set('font', formData.font);
-    formDataObj.set('previewName', formData.previewName);
+    // Create a fresh FormData with the file
+    const freshFormData = new FormData();
+    freshFormData.append('template', templateFile);
+    freshFormData.append('x', formData.x.toString());
+    freshFormData.append('y', formData.y.toString());
+    freshFormData.append('fontSize', formData.fontSize.toString());
+    freshFormData.append('color', formData.color);
+    freshFormData.append('strokeColor', formData.strokeColor);
+    freshFormData.append('strokeWidth', formData.strokeWidth.toString());
+    freshFormData.append('font', formData.font);
+    freshFormData.append('previewName', formData.previewName);
+    
+    console.log('Sending preview request:', {
+      fileName: templateFile.name,
+      fileSize: templateFile.size,
+      previewName: formData.previewName,
+      x: formData.x,
+      y: formData.y,
+    });
     
     try {
       const response = await fetch('/api/admin/invitations/preview', {
         method: 'POST',
-        body: formDataObj,
+        body: freshFormData,
       });
+      
+      console.log('Response status:', response.status, response.statusText);
       
       if (response.ok) {
         const blob = await response.blob();
+        console.log('Received blob, size:', blob.size);
         const url = URL.createObjectURL(blob);
         // Clean up old URL
         if (previewUrl) {
           URL.revokeObjectURL(previewUrl);
         }
         setPreviewUrl(url);
+        console.log('Preview URL created:', url);
         
         // Sync hidden fields in bulk form
         const bulkForm = document.getElementById('bulk-form') as HTMLFormElement;
@@ -83,16 +98,23 @@ export default function LivePreviewForm() {
           const fields = ['x', 'y', 'fontSize', 'color', 'strokeColor', 'strokeWidth', 'font'];
           fields.forEach((field) => {
             const input = bulkForm.querySelector(`#bulk-${field}`) as HTMLInputElement;
-            const value = formDataObj.get(field);
+            const value = freshFormData.get(field);
             if (input && value) {
               input.value = value.toString();
             }
           });
         }
       } else {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Preview generation failed:', errorData);
-        alert(`Preview generation failed: ${errorData.error || 'Unknown error'}`);
+        const errorText = await response.text();
+        console.error('Preview generation failed:', response.status, errorText);
+        let errorMessage = 'Unknown error';
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          errorMessage = errorText || errorMessage;
+        }
+        alert(`Preview generation failed: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error generating preview:', error);
@@ -224,11 +246,9 @@ export default function LivePreviewForm() {
 
         <div className="flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden min-h-[400px]">
           {previewUrl ? (
-            <Image 
+            <img 
               src={previewUrl} 
               alt="Live preview" 
-              width={800} 
-              height={1200} 
               className="max-w-full h-auto" 
             />
           ) : (
