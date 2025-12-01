@@ -36,6 +36,15 @@ const nextConfig = {
       ...config.resolve.alias,
       "@storybook/react": false, // Ignore Storybook in Thirdweb
     }
+    
+    // Exclude sharp from client-side bundle (server-only)
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        sharp: false,
+      }
+    }
+    
     config.plugins.push(
       new webpack.DefinePlugin({
         "process.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
