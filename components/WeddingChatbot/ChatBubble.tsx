@@ -89,6 +89,8 @@ export default function ChatBubble({ className = '' }: ChatBubbleProps) {
   // Hamburger is at left-4 (16px) with w-12 h-12 (48px) = ends at ~64px
   // Chat button positioned at left-20 (80px) on desktop, left-[72px] (72px) on mobile
   // Minimum 44x44px touch target for mobile accessibility
+  const pulsingClasses = isPulsing ? 'animate-pulse' : '';
+  
   return (
     <button
       onClick={handleClick}
