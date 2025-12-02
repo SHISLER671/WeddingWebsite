@@ -590,6 +590,7 @@ export default function RSVPPage() {
                           ref={inputRef}
                           type="text"
                           id="modal-guestName"
+                          name="guestName"
                           value={formData.guestName}
                           onChange={handleInputChange}
                           onKeyDown={handleKeyDown}
@@ -641,20 +642,19 @@ export default function RSVPPage() {
                         </p>
                       )}
 
-                      {selectedGuest && formData.guestName === selectedGuest.guest_name && (
-                        <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm text-green-700 flex items-center gap-2 font-medium">
-                            <CheckCircle className="w-4 h-4" />✓ Perfect! Your name has been selected. Click "Next" to
-                            continue.
-                          </p>
-                        </div>
-                      )}
-
                       {!selectedGuest && formData.guestName.length >= 2 && autocompleteSuggestions.length === 0 && (
                         <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
                           <p className="text-sm text-yellow-700">
                             No matches found. Please check your spelling or try a different variation of your name. If
                             you can't find your name, please contact us directly.
+                          </p>
+                        </div>
+                      )}
+                      {selectedGuest && formData.guestName === selectedGuest.guest_name && (
+                        <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                          <p className="text-sm text-green-700 flex items-center gap-2 font-medium">
+                            <CheckCircle className="w-4 h-4" />✓ Perfect! Your name has been selected. Click "Next" to
+                            continue.
                           </p>
                         </div>
                       )}
