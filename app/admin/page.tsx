@@ -1,6 +1,10 @@
 "use client"
 import { useState, useEffect } from "react"
 import { Search, Download, CheckCircle, AlertTriangle, Edit } from "lucide-react"
+import JSZip from "jszip"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface SeatingAssignment {
   id: string
@@ -21,10 +25,14 @@ export default function AdminPage() {
   const [assignments, setAssignments] = useState<SeatingAssignment[]>([])
   const [tableCapacities, setTableCapacities] = useState<TableCapacity>({})
   const [searchTerm, setSearchTerm] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Partial<SeatingAssignment>>({})
+
+  const [isBulkGenerating, setIsBulkGenerating] = useState(false)
+  const [bulkProgress, setBulkProgress] = useState("")
+  const [csvFile, setCsvFile] = useState<File | null>(null)
 
   // Load assignments on mount
   useEffect(() => {
@@ -32,11 +40,11 @@ export default function AdminPage() {
   }, [])
 
   const loadAssignments = async () => {
-    setIsLoading(true)
+    setLoading(true)
     try {
-      const response = await fetch('/api/admin/seating')
+      const response = await fetch("/api/admin/seating")
       const result = await response.json()
-      
+
       if (result.success) {
         setAssignments(result.data)
         if (result.tableCapacities) {
@@ -49,7 +57,7 @@ export default function AdminPage() {
     } catch (error) {
       setMessage(`❌ Error loading assignments: ${error}`)
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
@@ -59,32 +67,37 @@ export default function AdminPage() {
       return
     }
 
-    const filtered = assignments.filter(assignment =>
-      assignment.guest_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assignment.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assignment.plus_one_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = assignments.filter(
+      (assignment) =>
+        assignment.guest_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        assignment.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        assignment.plus_one_name?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     setAssignments(filtered)
     setMessage(`🔍 Found ${filtered.length} matching assignments`)
   }
 
   const exportToCSV = () => {
-    const csvHeader = 'guest_name,email,table_number,plus_one_name,dietary_notes,special_notes'
-    const csvRows = assignments.map(assignment => [
-      assignment.guest_name,
-      assignment.email || '',
-      assignment.table_number,
-      assignment.plus_one_name || '',
-      assignment.dietary_notes || '',
-      assignment.special_notes || ''
-    ].map(field => `"${field}"`).join(','))
+    const csvHeader = "guest_name,email,table_number,plus_one_name,dietary_notes,special_notes"
+    const csvRows = assignments.map((assignment) =>
+      [
+        assignment.guest_name,
+        assignment.email || "",
+        assignment.table_number,
+        assignment.plus_one_name || "",
+        assignment.dietary_notes || "",
+        assignment.special_notes || "",
+      ]
+        .map((field) => `"${field}"`)
+        .join(","),
+    )
 
-    const csvContent = [csvHeader, ...csvRows].join('\n')
-    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const csvContent = [csvHeader, ...csvRows].join("\n")
+    const blob = new Blob([csvContent], { type: "text/csv" })
     const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
+    const a = document.createElement("a")
     a.href = url
-    a.download = `seating-assignments-${new Date().toISOString().split('T')[0]}.csv`
+    a.download = `seating-assignments-${new Date().toISOString().split("T")[0]}.csv`
     a.click()
     window.URL.revokeObjectURL(url)
     setMessage(`📤 Exported ${assignments.length} assignments to CSV`)
@@ -96,7 +109,7 @@ export default function AdminPage() {
     const tableGuestCounts: { [key: number]: number } = {}
 
     // Calculate actual guest counts per table
-    assignments.forEach(assignment => {
+    assignments.forEach((assignment) => {
       if (assignment.table_number > 0) {
         const tableNum = assignment.table_number
         tableCounts[tableNum] = (tableCounts[tableNum] || 0) + 1
@@ -106,8 +119,8 @@ export default function AdminPage() {
     })
 
     // Check for capacity issues (assuming 8-10 people per table is ideal)
-    Object.keys(tableGuestCounts).forEach(tableNumStr => {
-      const tableNum = parseInt(tableNumStr, 10)
+    Object.keys(tableGuestCounts).forEach((tableNumStr) => {
+      const tableNum = Number.parseInt(tableNumStr, 10)
       const guestCount = tableGuestCounts[tableNum]
       if (guestCount > 10) {
         issues.push(`Table ${tableNum}: ${guestCount} people (over capacity - max 10 recommended)`)
@@ -117,16 +130,24 @@ export default function AdminPage() {
     })
 
     if (issues.length === 0) {
-      const capacityInfo = Object.keys(tableGuestCounts).map(tableNumStr => {
-        const tableNum = parseInt(tableNumStr, 10)
-        return `Table ${tableNum}: ${tableGuestCounts[tableNum]} people`
-      }).join('\n')
+      const capacityInfo = Object.keys(tableGuestCounts)
+        .map((tableNumStr) => {
+          const tableNum = Number.parseInt(tableNumStr, 10)
+          return `Table ${tableNum}: ${tableGuestCounts[tableNum]} people`
+        })
+        .join("\n")
       setMessage(`✅ All seating assignments are valid!\n\n📊 Table Capacities:\n${capacityInfo}`)
     } else {
-      setMessage(`⚠️ Found ${issues.length} capacity issues:\n${issues.join('\n')}\n\n📊 Current Table Capacities:\n${Object.keys(tableGuestCounts).map(tableNumStr => {
-        const tableNum = parseInt(tableNumStr, 10)
-        return `Table ${tableNum}: ${tableGuestCounts[tableNum]} people`
-      }).join('\n')}`)
+      setMessage(
+        `⚠️ Found ${issues.length} capacity issues:\n${issues.join("\n")}\n\n📊 Current Table Capacities:\n${Object.keys(
+          tableGuestCounts,
+        )
+          .map((tableNumStr) => {
+            const tableNum = Number.parseInt(tableNumStr, 10)
+            return `Table ${tableNum}: ${tableGuestCounts[tableNum]} people`
+          })
+          .join("\n")}`,
+      )
     }
   }
 
@@ -136,22 +157,26 @@ export default function AdminPage() {
   }
 
   const isEntourage = (assignment: SeatingAssignment): boolean => {
-    return assignment.special_notes?.toUpperCase().includes('ENTOURAGE') || false
+    return assignment.special_notes?.toUpperCase().includes("ENTOURAGE") || false
   }
 
   const getEntourageAtTable = (assignments: SeatingAssignment[], tableNumber: number): SeatingAssignment[] => {
     // IMPORTANT: Only get entourage at THIS specific table, not all entourage across all tables
     // Entourage is spread across multiple tables (40+ people total), so we only move the group
     // that's currently at the same table as the guest being moved
-    return assignments.filter(a => 
-      a.table_number === tableNumber && 
-      isEntourage(a) &&
-      tableNumber > 0 // Only assigned tables (not unassigned)
+    return assignments.filter(
+      (a) => a.table_number === tableNumber && isEntourage(a) && tableNumber > 0, // Only assigned tables (not unassigned)
     )
   }
 
-  const calculateRebalance = (currentAssignments: SeatingAssignment[], movedGuestId: string, newTable: number, oldTable: number, guestCount: number) => {
-    const movedGuest = currentAssignments.find(a => a.id === movedGuestId)
+  const calculateRebalance = (
+    currentAssignments: SeatingAssignment[],
+    movedGuestId: string,
+    newTable: number,
+    oldTable: number,
+    guestCount: number,
+  ) => {
+    const movedGuest = currentAssignments.find((a) => a.id === movedGuestId)
     const isMovingEntourage = movedGuest ? isEntourage(movedGuest) : false
 
     // If moving entourage, find all entourage at the OLD TABLE ONLY and move them together
@@ -165,20 +190,26 @@ export default function AdminPage() {
     }
 
     // Create a working copy with all moves applied
-    const workingAssignments = currentAssignments.map(a => {
-      const shouldMove = assignmentsToMove.some(m => m.id === a.id)
+    const workingAssignments = currentAssignments.map((a) => {
+      const shouldMove = assignmentsToMove.some((m) => m.id === a.id)
       return shouldMove ? { ...a, table_number: newTable } : a
     })
 
     // Calculate current capacities after the move
     const capacities: { [table: number]: number } = {}
-    workingAssignments.forEach(a => {
+    workingAssignments.forEach((a) => {
       if (a.table_number > 0) {
         capacities[a.table_number] = (capacities[a.table_number] || 0) + (a.actual_guest_count || 1)
       }
     })
 
-    const rebalanceMoves: Array<{assignmentId: string, guestName: string, fromTable: number, toTable: number, guestCount: number}> = []
+    const rebalanceMoves: Array<{
+      assignmentId: string
+      guestName: string
+      fromTable: number
+      toTable: number
+      guestCount: number
+    }> = []
     const processed = new Set<string>()
 
     // Keep rebalancing until stable or max iterations
@@ -193,8 +224,8 @@ export default function AdminPage() {
       const overCapacityTables: number[] = []
       const underCapacityTables: number[] = []
 
-      Object.keys(capacities).forEach(tableStr => {
-        const table = parseInt(tableStr, 10)
+      Object.keys(capacities).forEach((tableStr) => {
+        const table = Number.parseInt(tableStr, 10)
         const capacity = capacities[table]
         if (capacity > 10) overCapacityTables.push(table)
         if (capacity < 6 && capacity > 0) underCapacityTables.push(table)
@@ -212,10 +243,8 @@ export default function AdminPage() {
         // Find smallest NON-ENTOURAGE party at over-capacity table (not already moved)
         // Never split entourage - they stay together
         const candidates = workingAssignments
-          .filter(a => 
-            a.table_number === overTable && 
-            !processed.has(a.id) &&
-            !isEntourage(a) // Never move entourage individually
+          .filter(
+            (a) => a.table_number === overTable && !processed.has(a.id) && !isEntourage(a), // Never move entourage individually
           )
           .sort((a, b) => (a.actual_guest_count || 1) - (b.actual_guest_count || 1))
 
@@ -234,7 +263,7 @@ export default function AdminPage() {
               guestName: candidate.guest_name,
               fromTable: overTable,
               toTable: underTable,
-              guestCount: candidateCount
+              guestCount: candidateCount,
             })
 
             // Update working state
@@ -252,10 +281,8 @@ export default function AdminPage() {
       if (!madeChange && overCapacityTables.length > 0) {
         for (const overTable of overCapacityTables) {
           const candidates = workingAssignments
-            .filter(a => 
-              a.table_number === overTable && 
-              !processed.has(a.id) &&
-              !isEntourage(a) // Never move entourage individually
+            .filter(
+              (a) => a.table_number === overTable && !processed.has(a.id) && !isEntourage(a), // Never move entourage individually
             )
             .sort((a, b) => (a.actual_guest_count || 1) - (b.actual_guest_count || 1))
 
@@ -266,8 +293,8 @@ export default function AdminPage() {
 
           // Find any table with space (including creating new table if needed)
           const availableTables = Object.keys(capacities)
-            .map(t => parseInt(t, 10))
-            .filter(t => capacities[t] + candidateCount <= 10 && t !== overTable)
+            .map((t) => Number.parseInt(t, 10))
+            .filter((t) => capacities[t] + candidateCount <= 10 && t !== overTable)
             .sort((a, b) => capacities[a] - capacities[b]) // Prefer tables with more space
 
           if (availableTables.length > 0) {
@@ -277,7 +304,7 @@ export default function AdminPage() {
               guestName: candidate.guest_name,
               fromTable: overTable,
               toTable: targetTable,
-              guestCount: candidateCount
+              guestCount: candidateCount,
             })
 
             candidate.table_number = targetTable
@@ -298,12 +325,12 @@ export default function AdminPage() {
 
   const saveEdit = async () => {
     if (!editingId) {
-      setMessage('❌ Error: No assignment selected for editing')
+      setMessage("❌ Error: No assignment selected for editing")
       return
     }
 
     // Check capacity impact if table number is being changed
-    const currentAssignment = assignments.find(a => a.id === editingId)
+    const currentAssignment = assignments.find((a) => a.id === editingId)
     if (currentAssignment && editForm.table_number && editForm.table_number !== currentAssignment.table_number) {
       const guestCount = currentAssignment.actual_guest_count || 1
       const oldTable = currentAssignment.table_number
@@ -319,7 +346,7 @@ export default function AdminPage() {
         // Entourage is spread across multiple tables, so we only move the group at this table
         entourageToMove = getEntourageAtTable(assignments, oldTable)
         totalEntourageCount = entourageToMove.reduce((sum, a) => sum + (a.actual_guest_count || 1), 0)
-        
+
         if (entourageToMove.length === 0) {
           // Shouldn't happen, but safety check
           entourageToMove = [currentAssignment]
@@ -335,12 +362,12 @@ export default function AdminPage() {
       const rebalanceMoves = calculateRebalance(assignments, editingId, newTable, oldTable, guestCount)
 
       // Show preview and ask for confirmation
-      let message = ''
+      let message = ""
       if (isMovingEntourage && entourageToMove.length > 1) {
         message = `Moving ENTOURAGE group (${entourageToMove.length} members, ${totalEntourageCount} total people) from Table ${oldTable} to Table ${newTable}:\n`
-        message += `  Members: ${entourageToMove.map(a => a.guest_name).join(', ')}\n\n`
+        message += `  Members: ${entourageToMove.map((a) => a.guest_name).join(", ")}\n\n`
       } else {
-        message = `Moving ${currentAssignment.guest_name} (${guestCount} ${guestCount === 1 ? 'person' : 'people'}) from Table ${oldTable} to Table ${newTable}:\n\n`
+        message = `Moving ${currentAssignment.guest_name} (${guestCount} ${guestCount === 1 ? "person" : "people"}) from Table ${oldTable} to Table ${newTable}:\n\n`
       }
       message += `After move:\n`
       message += `  Table ${oldTable}: ${oldTableCapacity} people\n`
@@ -349,7 +376,7 @@ export default function AdminPage() {
       if (rebalanceMoves.length > 0) {
         message += `Auto-rebalance will make ${rebalanceMoves.length} additional move(s):\n`
         rebalanceMoves.forEach((move, idx) => {
-          message += `  ${idx + 1}. Move ${move.guestName} (${move.guestCount} ${move.guestCount === 1 ? 'person' : 'people'}) from Table ${move.fromTable} to Table ${move.toTable}\n`
+          message += `  ${idx + 1}. Move ${move.guestName} (${move.guestCount} ${move.guestCount === 1 ? "person" : "people"}) from Table ${move.fromTable} to Table ${move.toTable}\n`
         })
         message += `\nApply all changes?`
       } else if (newTableCapacity > 10 || oldTableCapacity < 6) {
@@ -362,31 +389,31 @@ export default function AdminPage() {
       if (!proceed) return
 
       // Apply the main move(s) and all rebalance moves
-      const allMoves: Array<{id: string, table_number: number}> = []
-      
+      const allMoves: Array<{ id: string; table_number: number }> = []
+
       // If moving entourage, move all entourage members together
       if (isMovingEntourage && entourageToMove.length > 0) {
-        entourageToMove.forEach(entourageMember => {
+        entourageToMove.forEach((entourageMember) => {
           allMoves.push({ id: entourageMember.id, table_number: newTable })
         })
       } else {
         allMoves.push({ id: editingId, table_number: newTable })
       }
-      
-      // Add rebalance moves (these will never include entourage)
-      allMoves.push(...rebalanceMoves.map(move => ({ id: move.assignmentId, table_number: move.toTable })))
 
-      setIsLoading(true)
-      setMessage('')
-      
+      // Add rebalance moves (these will never include entourage)
+      allMoves.push(...rebalanceMoves.map((move) => ({ id: move.assignmentId, table_number: move.toTable })))
+
+      setLoading(true)
+      setMessage("")
+
       try {
         // Apply all moves in parallel
-        const updatePromises = allMoves.map(move =>
-          fetch('/api/admin/seating', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(move)
-          })
+        const updatePromises = allMoves.map((move) =>
+          fetch("/api/admin/seating", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(move),
+          }),
         )
 
         const results = await Promise.all(updatePromises)
@@ -401,7 +428,7 @@ export default function AdminPage() {
         }
 
         if (errors.length > 0) {
-          setMessage(`❌ Some updates failed:\n${errors.join('\n')}`)
+          setMessage(`❌ Some updates failed:\n${errors.join("\n")}`)
         } else {
           setMessage(`✅ Successfully moved ${allMoves.length} assignment(s)!`)
           setEditingId(null)
@@ -412,21 +439,21 @@ export default function AdminPage() {
         const errorMessage = error instanceof Error ? error.message : String(error)
         setMessage(`❌ Error updating assignments: ${errorMessage}`)
       } finally {
-        setIsLoading(false)
+        setLoading(false)
       }
       return
     }
 
-    setIsLoading(true)
-    setMessage('')
-    
+    setLoading(true)
+    setMessage("")
+
     try {
-      const response = await fetch('/api/admin/seating', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: editingId, ...editForm })
+      const response = await fetch("/api/admin/seating", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editingId, ...editForm }),
       })
-      
+
       // Check if response is ok and has content
       if (!response.ok) {
         const errorText = await response.text()
@@ -444,7 +471,7 @@ export default function AdminPage() {
       // Parse JSON response
       const text = await response.text()
       if (!text) {
-        setMessage('❌ Error: Empty response from server')
+        setMessage("❌ Error: Empty response from server")
         return
       }
 
@@ -457,18 +484,18 @@ export default function AdminPage() {
       }
 
       if (result.success) {
-        setMessage('✅ Assignment updated successfully')
+        setMessage("✅ Assignment updated successfully")
         setEditingId(null)
         setEditForm({})
         loadAssignments()
       } else {
-        setMessage(`❌ Error: ${result.error || 'Unknown error'}`)
+        setMessage(`❌ Error: ${result.error || "Unknown error"}`)
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
       setMessage(`❌ Error updating assignment: ${errorMessage}`)
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
@@ -477,110 +504,306 @@ export default function AdminPage() {
     setEditForm({})
   }
 
+  const calculateFontSize = (name: string, imageWidth: number): number => {
+    const baseSize = 120
+    const maxWidth = imageWidth * 0.85
+    const charCount = name.length
+    const estimatedWidth = charCount * (baseSize * 0.6)
+
+    if (estimatedWidth <= maxWidth) {
+      return baseSize
+    }
+
+    const scaleFactor = maxWidth / estimatedWidth
+    return Math.floor(baseSize * scaleFactor)
+  }
+
+  const generateInvitationCanvas = (guestName: string, templateImage: HTMLImageElement): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      if (!ctx) throw new Error("Canvas context not available")
+
+      canvas.width = templateImage.width
+      canvas.height = templateImage.height
+      ctx.drawImage(templateImage, 0, 0)
+
+      const textY = templateImage.height * 0.12
+      const textX = templateImage.width / 2
+      const fontSize = calculateFontSize(guestName, templateImage.width)
+
+      ctx.font = `${fontSize}px serif`
+      ctx.fillStyle = "#722F37"
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
+      ctx.shadowColor = "rgba(0, 0, 0, 0.3)"
+      ctx.shadowBlur = 10
+      ctx.shadowOffsetX = 2
+      ctx.shadowOffsetY = 2
+
+      ctx.fillText(guestName, textX, textY)
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob)
+        },
+        "image/jpeg",
+        0.95,
+      )
+    })
+  }
+
+  const handleBulkGenerate = async () => {
+    setIsBulkGenerating(true)
+    setBulkProgress("Loading guest list...")
+
+    try {
+      let csvText: string
+
+      if (csvFile) {
+        // Use uploaded CSV file
+        csvText = await csvFile.text()
+      } else {
+        // Try to fetch default MASTERGUESTLIST.csv from public folder
+        const response = await fetch("/MASTERGUESTLIST.csv")
+        if (!response.ok) {
+          throw new Error("Please upload a CSV file with guest names")
+        }
+        csvText = await response.text()
+      }
+
+      const lines = csvText.split("\n").filter((line) => line.trim())
+
+      if (lines.length < 2) {
+        throw new Error("CSV file is empty or invalid")
+      }
+
+      // Parse headers with proper trimming and quote removal
+      const headers = lines[0].split(",").map((h) => h.trim().replace(/^["']|["']$/g, ""))
+
+      console.log("[v0] CSV headers found:", headers)
+
+      const nameIndex = headers.findIndex(
+        (h) => h === "Full Name" || h === "FullName" || h.toLowerCase() === "full name",
+      )
+
+      if (nameIndex === -1) {
+        throw new Error(`CSV must have a "Full Name" or "FullName" column. Found columns: ${headers.join(", ")}`)
+      }
+
+      const guestNames = lines
+        .slice(1)
+        .map((line) => {
+          const cols = line.split(",")
+          return cols[nameIndex]?.trim().replace(/^["']|["']$/g, "")
+        })
+        .filter(Boolean)
+
+      if (guestNames.length === 0) {
+        throw new Error("No guest names found in CSV")
+      }
+
+      setBulkProgress(`Found ${guestNames.length} guests. Loading template...`)
+
+      const img = new Image()
+      img.crossOrigin = "anonymous"
+      img.src = "/invitetemplate.jpg"
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve
+        img.onerror = () => reject(new Error("Failed to load invitation template"))
+      })
+
+      setBulkProgress("Generating invitations...")
+
+      const zip = new JSZip()
+
+      for (let i = 0; i < guestNames.length; i++) {
+        const name = guestNames[i]
+        setBulkProgress(`Generating ${i + 1}/${guestNames.length}: ${name}`)
+
+        const blob = await generateInvitationCanvas(name, img)
+        const filename = `invitation-${name.replace(/[^a-zA-Z0-9\- ]/g, "_")}.jpg`
+        zip.file(filename, blob)
+
+        // Small delay every 10 invitations to prevent blocking UI
+        if (i % 10 === 0) {
+          await new Promise((resolve) => setTimeout(resolve, 10))
+        }
+      }
+
+      setBulkProgress("Creating ZIP file...")
+      const zipBlob = await zip.generateAsync({ type: "blob" })
+
+      const url = URL.createObjectURL(zipBlob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = "personalized-wedding-invitations.zip"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+
+      setBulkProgress(`✅ Successfully generated ${guestNames.length} invitations!`)
+      setTimeout(() => {
+        setBulkProgress("")
+        setCsvFile(null) // Reset file input
+      }, 3000)
+    } catch (error) {
+      console.error("[v0] Bulk generation error:", error)
+      setBulkProgress(`❌ Error: ${error instanceof Error ? error.message : "Unknown error"}`)
+      setTimeout(() => setBulkProgress(""), 5000)
+    } finally {
+      setIsBulkGenerating(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-jewel-burgundy to-jewel-crimson p-4">
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto max-w-6xl space-y-6">
         {/* Header */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-serif text-jewel-burgundy mb-2">Seating Admin Dashboard</h1>
-              <p className="text-jewel-burgundy/70">Manage wedding seating assignments</p>
-            </div>
-          </div>
+        <div className="text-center">
+          <h1 className="mb-2 font-serif text-4xl font-bold text-jewel-burgundy">Admin Dashboard</h1>
+          <p className="text-jewel-crimson">Manage seating assignments for Pia & Ryan&apos;s Wedding</p>
         </div>
 
-        {/* Controls */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6 mb-6">
-          <div className="grid md:grid-cols-4 gap-4 mb-4">
-            <div className="md:col-span-2">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search guests by name, email, or plus-one..."
-                  className="flex-1 px-4 py-3 border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson"
-                />
-                <button
-                  onClick={searchAssignments}
-                  className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
-                >
-                  <Search className="w-4 h-4" />
-                  Search
-                </button>
-              </div>
+        {/* Bulk Invitation Generation */}
+        <Card className="border-2 border-gold/20 bg-white/95 p-6 shadow-xl backdrop-blur">
+          <h2 className="mb-4 font-serif text-2xl font-bold text-jewel-burgundy">Bulk Invitation Generation</h2>
+          <p className="mb-4 text-sm text-gray-600">
+            Generate personalized invitations for all guests. Upload a CSV file with a "Full Name" column, or use the
+            default master guest list.
+          </p>
+
+          <div className="mb-4 space-y-3">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Guest List CSV (Optional)</label>
+              <Input
+                type="file"
+                accept=".csv"
+                onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
+                disabled={isBulkGenerating}
+                className="border-jewel-burgundy/30"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {csvFile ? `Selected: ${csvFile.name}` : "Leave empty to use default MASTERGUESTLIST.csv"}
+              </p>
             </div>
-            
-            <button
+
+            <Button
+              onClick={handleBulkGenerate}
+              disabled={isBulkGenerating}
+              className="w-full bg-gradient-to-r from-jewel-burgundy to-jewel-crimson text-white hover:from-jewel-crimson hover:to-jewel-burgundy disabled:opacity-50"
+            >
+              {isBulkGenerating ? "Generating..." : "Generate All Invitations"}
+            </Button>
+
+            {bulkProgress && (
+              <div className="rounded-lg bg-gradient-to-r from-fuchsia-50 to-purple-50 p-4 text-center">
+                <p className="font-medium text-jewel-burgundy">{bulkProgress}</p>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Seating Assignments */}
+        <Card className="border-2 border-gold/20 bg-white/95 p-6 shadow-xl backdrop-blur">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-serif text-jewel-burgundy mb-2">
+                Seating Assignments ({assignments.length})
+              </h2>
+              <p className="text-jewel-burgundy/70">Manage guest seating here</p>
+            </div>
+          </div>
+
+          <div className="mb-6 flex gap-4">
+            <div className="flex-1">
+              <Input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search guests by name, email, or plus-one..."
+                className="border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson"
+              />
+            </div>
+            <Button
+              onClick={searchAssignments}
+              className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Search className="w-4 h-4" />
+              Search
+            </Button>
+          </div>
+
+          <div className="mb-6 flex gap-4">
+            <Button
               onClick={loadAssignments}
-              className="bg-jewel-emerald hover:bg-jewel-emerald/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2"
+              className="bg-jewel-emerald hover:bg-jewel-emerald/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center"
             >
               <CheckCircle className="w-4 h-4" />
-              Refresh
-            </button>
-            
-            <button
+              Reload
+            </Button>
+
+            <Button
               onClick={exportToCSV}
-              className="bg-jewel-gold hover:bg-jewel-gold/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2"
+              disabled={assignments.length === 0}
+              className="bg-jewel-sapphire hover:bg-jewel-sapphire/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center disabled:opacity-50"
             >
               <Download className="w-4 h-4" />
               Export CSV
-            </button>
+            </Button>
           </div>
-          
-          <div className="flex gap-4">
-            <button
+
+          <div className="mb-6 flex gap-4">
+            <Button
               onClick={validateAssignments}
-              className="bg-jewel-sapphire hover:bg-jewel-sapphire/90 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              disabled={assignments.length === 0}
+              className="flex-1 bg-jewel-violet hover:bg-jewel-violet/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center disabled:opacity-50"
             >
               <AlertTriangle className="w-4 h-4" />
-              Validate Assignments
-            </button>
+              Validate Seating
+            </Button>
           </div>
-        </div>
 
-        {/* Message */}
-        {message && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-4 mb-6">
-            <pre className="text-sm whitespace-pre-wrap">{message}</pre>
-          </div>
-        )}
-
-        {/* Assignments Table */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6">
-          <h2 className="text-2xl font-serif text-jewel-burgundy mb-4">
-            Seating Assignments ({assignments.length})
-          </h2>
-          
-          {isLoading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-jewel-burgundy mx-auto"></div>
-              <p className="text-jewel-burgundy/70 mt-2">Loading assignments...</p>
+          {/* Message */}
+          {message && (
+            <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-4 mb-6">
+              <pre className="text-sm whitespace-pre-wrap">{message}</pre>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-jewel-burgundy/20">
-                    <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Guest</th>
-                    <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Email</th>
-                    <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Guest Count</th>
-                    <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Table</th>
-                    <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Plus One</th>
-                    <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Dietary</th>
-                    <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Actions</th>
+          )}
+
+          {/* Assignments Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-jewel-burgundy/20">
+                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Guest</th>
+                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Email</th>
+                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Guest Count</th>
+                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Table</th>
+                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Plus One</th>
+                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Dietary</th>
+                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-jewel-burgundy mx-auto"></div>
+                      <p className="text-jewel-burgundy/70 mt-2">Loading assignments...</p>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {assignments.map((assignment) => (
+                ) : (
+                  assignments.map((assignment) => (
                     <tr key={assignment.id} className="border-b border-jewel-burgundy/10 hover:bg-jewel-burgundy/5">
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
-                          <input
+                          <Input
                             type="text"
-                            value={editForm.guest_name || ''}
-                            onChange={(e) => setEditForm({...editForm, guest_name: e.target.value})}
+                            value={editForm.guest_name || ""}
+                            onChange={(e) => setEditForm({ ...editForm, guest_name: e.target.value })}
                             className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded"
                           />
                         ) : (
@@ -589,27 +812,30 @@ export default function AdminPage() {
                       </td>
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
-                          <input
+                          <Input
                             type="email"
-                            value={editForm.email || ''}
-                            onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                            value={editForm.email || ""}
+                            onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                             className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded"
                           />
                         ) : (
-                          <div className="text-sm text-jewel-burgundy/70">{assignment.email || 'Not provided'}</div>
+                          <div className="text-sm text-jewel-burgundy/70">{assignment.email || "Not provided"}</div>
                         )}
                       </td>
                       <td className="py-3 px-2">
                         <div className="text-sm font-medium text-jewel-sapphire">
-                          {assignment.actual_guest_count || 1} {assignment.actual_guest_count === 1 ? 'person' : 'people'}
+                          {assignment.actual_guest_count || 1}{" "}
+                          {assignment.actual_guest_count === 1 ? "person" : "people"}
                         </div>
                       </td>
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
-                          <input
+                          <Input
                             type="number"
-                            value={editForm.table_number || ''}
-                            onChange={(e) => setEditForm({...editForm, table_number: parseInt(e.target.value)})}
+                            value={editForm.table_number || ""}
+                            onChange={(e) =>
+                              setEditForm({ ...editForm, table_number: Number.parseInt(e.target.value) })
+                            }
                             className="w-20 px-2 py-1 border border-jewel-burgundy/30 rounded"
                           />
                         ) : (
@@ -618,10 +844,10 @@ export default function AdminPage() {
                       </td>
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
-                          <input
+                          <Input
                             type="text"
-                            value={editForm.plus_one_name || ''}
-                            onChange={(e) => setEditForm({...editForm, plus_one_name: e.target.value})}
+                            value={editForm.plus_one_name || ""}
+                            onChange={(e) => setEditForm({ ...editForm, plus_one_name: e.target.value })}
                             placeholder="Plus one name"
                             className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded text-sm"
                           />
@@ -637,63 +863,61 @@ export default function AdminPage() {
                       </td>
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
-                          <input
+                          <Input
                             type="text"
-                            value={editForm.dietary_notes || ''}
-                            onChange={(e) => setEditForm({...editForm, dietary_notes: e.target.value})}
+                            value={editForm.dietary_notes || ""}
+                            onChange={(e) => setEditForm({ ...editForm, dietary_notes: e.target.value })}
                             placeholder="Dietary notes"
                             className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded text-sm"
                           />
                         ) : (
-                          <div className="text-sm text-jewel-burgundy/70">
-                            {assignment.dietary_notes || 'None'}
-                          </div>
+                          <div className="text-sm text-jewel-burgundy/70">{assignment.dietary_notes || "None"}</div>
                         )}
                       </td>
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
                           <div className="flex gap-2">
-                            <button
+                            <Button
                               onClick={saveEdit}
                               className="bg-jewel-emerald hover:bg-jewel-emerald/90 text-white px-3 py-1 rounded text-sm transition-colors"
                             >
                               Save
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={cancelEdit}
                               className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition-colors"
                             >
                               Cancel
-                            </button>
+                            </Button>
                           </div>
                         ) : (
                           <div className="flex gap-2">
-                            <button
+                            <Button
                               onClick={() => startEdit(assignment)}
                               className="bg-jewel-burgundy hover:bg-jewel-crimson text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
                             >
                               <Edit className="w-3 h-3" />
                               Edit
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => {
-                                const guestName = encodeURIComponent(assignment.guest_name);
-                                window.location.href = `/admin/invitations?guest=${guestName}`;
+                                const guestName = encodeURIComponent(assignment.guest_name)
+                                window.location.href = `/admin/invitations?guest=${guestName}`
                               }}
                               className="bg-jewel-gold hover:bg-jewel-gold/90 text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
                             >
                               Create Invite
-                            </button>
+                            </Button>
                           </div>
                         )}
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       </div>
     </div>
   )
