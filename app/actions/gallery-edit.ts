@@ -89,4 +89,3 @@ export async function deleteGalleryItem(itemId: string, uploaderName: string) {
     return { success: false, error: errorMessage }
   }
 }
-
