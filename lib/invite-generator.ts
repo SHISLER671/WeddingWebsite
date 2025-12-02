@@ -1,4 +1,4 @@
-// Dynamic imports for Vercel compatibility
+import sharp from 'sharp';
 import Papa from 'papaparse';
 import JSZip from 'jszip';
 
@@ -37,9 +37,6 @@ export async function generatePersonalizedInvites(
   const csvText = await csvFile.text();
   const { data: guests } = Papa.parse<Guest>(csvText, { header: true, skipEmptyLines: true });
 
-  // Dynamic import for Vercel compatibility
-  const sharp = (await import('sharp')).default;
-  
   const templateBuffer = Buffer.from(await templateFile.arrayBuffer());
   const baseImage = sharp(templateBuffer);
   const metadata = await baseImage.metadata();
@@ -90,9 +87,6 @@ export async function generatePreview(
 ) {
   const { x, y, fontSize, color, strokeColor, strokeWidth, font } = options;
 
-  // Dynamic import for Vercel compatibility
-  const sharp = (await import('sharp')).default;
-  
   const templateBuffer = Buffer.from(await templateFile.arrayBuffer());
   const baseImage = sharp(templateBuffer);
   const metadata = await baseImage.metadata();

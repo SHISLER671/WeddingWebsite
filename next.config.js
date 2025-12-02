@@ -42,6 +42,17 @@ const nextConfig = {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         sharp: false,
+        fs: false,
+      }
+    }
+    
+    // For server-side, externalize sharp to use installed version with native bindings
+    if (isServer) {
+      config.externals = config.externals || [];
+      if (Array.isArray(config.externals)) {
+        config.externals.push('sharp');
+      } else {
+        config.externals = [config.externals, 'sharp'];
       }
     }
     
