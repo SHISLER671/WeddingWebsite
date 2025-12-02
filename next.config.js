@@ -46,15 +46,8 @@ const nextConfig = {
       }
     }
     
-    // For server-side, externalize sharp to use installed version with native bindings
-    if (isServer) {
-      config.externals = config.externals || [];
-      if (Array.isArray(config.externals)) {
-        config.externals.push('sharp');
-      } else {
-        config.externals = [config.externals, 'sharp'];
-      }
-    }
+    // Don't externalize sharp - let it bundle normally for server-side
+    // Sharp works on Vercel when properly installed in node_modules
     
     config.plugins.push(
       new webpack.DefinePlugin({
