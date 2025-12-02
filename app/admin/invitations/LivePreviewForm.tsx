@@ -18,19 +18,6 @@ export default function LivePreviewForm() {
   // All settings are preset - only name is editable
   const [previewName, setPreviewName] = useState(defaultName);
 
-  // Update preview name when URL parameter changes and auto-load preview
-  useEffect(() => {
-    const currentName = guestNameFromUrl ? decodeURIComponent(guestNameFromUrl) : defaultName;
-    
-    if (guestNameFromUrl) {
-      setPreviewName(currentName);
-    }
-    
-    // Auto-load preview on mount or when guest name changes
-    loadPreview(currentName);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guestNameFromUrl]);
-
   // Load preview function
   const loadPreview = async (name: string) => {
     setIsLoading(true);
@@ -64,6 +51,19 @@ export default function LivePreviewForm() {
       setIsLoading(false);
     }
   };
+
+  // Update preview name when URL parameter changes and auto-load preview
+  useEffect(() => {
+    const currentName = guestNameFromUrl ? decodeURIComponent(guestNameFromUrl) : defaultName;
+    
+    if (guestNameFromUrl) {
+      setPreviewName(currentName);
+    }
+    
+    // Auto-load preview on mount or when guest name changes
+    loadPreview(currentName);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guestNameFromUrl]);
 
   async function updatePreview(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
