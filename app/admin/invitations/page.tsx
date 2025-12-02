@@ -39,12 +39,7 @@ export default async function InvitationsPage() {
               </p>
             </div>
 
-            {/* Hidden fields — synced from live preview (auto-positioning enabled) */}
-            <input type="hidden" name="fontSize" id="bulk-fontSize" value="80" />
-            <input type="hidden" name="color" id="bulk-color" value="#D4AF37" />
-            <input type="hidden" name="strokeColor" id="bulk-strokeColor" value="#4a1c1c" />
-            <input type="hidden" name="strokeWidth" id="bulk-strokeWidth" value="4" />
-            <input type="hidden" name="font" id="bulk-font" value="PlayfairDisplay-Regular" />
+            {/* All settings are preset - no hidden fields needed */}
 
             <Button type="submit" size="lg" className="w-full bg-jewel-burgundy hover:bg-jewel-crimson">
               Generate & Download ZIP

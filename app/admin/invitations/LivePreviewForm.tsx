@@ -15,86 +15,27 @@ export default function LivePreviewForm() {
   const guestNameFromUrl = searchParams.get('guest');
   const defaultName = guestNameFromUrl ? decodeURIComponent(guestNameFromUrl) : 'Alexandra & Benjamin';
   
-  const [formData, setFormData] = useState({
-    fontSize: 80,
-    color: '#D4AF37',
-    strokeColor: '#4a1c1c',
-    strokeWidth: 4,
-    font: 'GreatVibes-Regular',
-    previewName: defaultName,
-  });
+  // All settings are preset - only name is editable
+  const [previewName, setPreviewName] = useState(defaultName);
 
   // Update preview name when URL parameter changes and auto-load preview
   useEffect(() => {
     const currentName = guestNameFromUrl ? decodeURIComponent(guestNameFromUrl) : defaultName;
     
     if (guestNameFromUrl) {
-      setFormData(prev => ({
-        ...prev,
-        previewName: currentName,
-      }));
+      setPreviewName(currentName);
     }
     
     // Auto-load preview on mount or when guest name changes
-    const loadPreview = async () => {
-      setIsLoading(true);
-      const freshFormData = new FormData();
-      freshFormData.append('fontSize', '80');
-      freshFormData.append('color', '#D4AF37');
-      freshFormData.append('strokeColor', '#4a1c1c');
-      freshFormData.append('strokeWidth', '4');
-      freshFormData.append('font', 'GreatVibes-Regular');
-      freshFormData.append('previewName', currentName);
-      freshFormData.append('autoPosition', 'true');
-      
-      try {
-        const response = await fetch('/api/admin/invitations/preview', {
-          method: 'POST',
-          body: freshFormData,
-        });
-        
-        if (response.ok) {
-          const blob = await response.blob();
-          const url = URL.createObjectURL(blob);
-          setPreviewUrl(prev => {
-            if (prev) {
-              URL.revokeObjectURL(prev);
-            }
-            return url;
-          });
-        }
-      } catch (error) {
-        console.error('Error auto-loading preview:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadPreview();
+    loadPreview(currentName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guestNameFromUrl]);
 
-  async function updatePreview(e?: React.FormEvent<HTMLFormElement>) {
-    if (e) {
-      e.preventDefault();
-    }
+  // Load preview function
+  const loadPreview = async (name: string) => {
     setIsLoading(true);
-    
-    // Create FormData with current settings (no template file needed, auto-positioning)
     const freshFormData = new FormData();
-    freshFormData.append('fontSize', formData.fontSize.toString());
-    freshFormData.append('color', formData.color);
-    freshFormData.append('strokeColor', formData.strokeColor);
-    freshFormData.append('strokeWidth', formData.strokeWidth.toString());
-    freshFormData.append('font', formData.font);
-    freshFormData.append('previewName', formData.previewName);
-    freshFormData.append('autoPosition', 'true');
-    
-    console.log('Sending preview request:', {
-      previewName: formData.previewName,
-      fontSize: formData.fontSize,
-      autoPosition: true,
-    });
+    freshFormData.append('previewName', name);
     
     try {
       const response = await fetch('/api/admin/invitations/preview', {
@@ -102,136 +43,63 @@ export default function LivePreviewForm() {
         body: freshFormData,
       });
       
-      console.log('Response status:', response.status, response.statusText);
-      
       if (response.ok) {
         const blob = await response.blob();
-        console.log('Received blob, size:', blob.size);
         const url = URL.createObjectURL(blob);
-        // Clean up old URL
-        if (previewUrl) {
-          URL.revokeObjectURL(previewUrl);
-        }
-        setPreviewUrl(url);
-        console.log('Preview URL created:', url);
-        
-        // Sync hidden fields in bulk form
-        const bulkForm = document.getElementById('bulk-form') as HTMLFormElement;
-        if (bulkForm) {
-          const fields = ['fontSize', 'color', 'strokeColor', 'strokeWidth', 'font'];
-          fields.forEach((field) => {
-            const input = bulkForm.querySelector(`#bulk-${field}`) as HTMLInputElement;
-            const value = freshFormData.get(field);
-            if (input && value) {
-              input.value = value.toString();
-            }
-          });
-        }
+        setPreviewUrl(prev => {
+          if (prev) {
+            URL.revokeObjectURL(prev);
+          }
+          return url;
+        });
       } else {
         const errorText = await response.text();
-        console.error('Preview generation failed:', response.status, errorText);
-        let errorMessage = 'Unknown error';
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.error || errorMessage;
-        } catch {
-          errorMessage = errorText || errorMessage;
-        }
-        alert(`Preview generation failed: ${errorMessage}`);
+        console.error('Preview failed:', errorText);
+        alert(`Preview failed: ${errorText}`);
       }
     } catch (error) {
-      console.error('Error generating preview:', error);
+      console.error('Error loading preview:', error);
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  async function updatePreview(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    await loadPreview(previewName);
   }
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8 mb-8">
-      <h2 className="text-2xl font-semibold mb-6 text-jewel-burgundy">Live Preview – Tweak Until Perfect</h2>
+      <h2 className="text-2xl font-semibold mb-6 text-jewel-burgundy">Live Preview</h2>
       <form onSubmit={updatePreview} className="grid lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <div className="p-4 bg-jewel-gold/10 rounded-lg border border-jewel-gold/20">
-            <p className="text-sm text-jewel-burgundy">
+            <p className="text-sm text-jewel-burgundy mb-2">
               <strong>Template:</strong> Using <code>invitetemplate.jpg</code> from public folder
             </p>
+            <p className="text-sm text-jewel-burgundy">
+              <strong>Settings:</strong> All styling and positioning are automatic and preset
+            </p>
           </div>
+          
           <div>
-            <Label htmlFor="previewName">Preview Name</Label>
+            <Label htmlFor="previewName">Guest Name</Label>
             <Input 
               name="previewName" 
               id="previewName" 
-              value={formData.previewName}
-              onChange={(e) => setFormData({ ...formData, previewName: e.target.value })}
-              placeholder="Test name" 
+              value={previewName}
+              onChange={(e) => setPreviewName(e.target.value)}
+              placeholder="Enter guest name" 
+              className="text-lg"
             />
-          </div>
-
-          <div className="p-3 bg-jewel-gold/10 rounded-lg border border-jewel-gold/20">
-            <p className="text-sm text-jewel-burgundy">
-              <strong>Positioning:</strong> Automatically calculated for optimal placement in the top blank space
+            <p className="text-sm text-gray-600 mt-2">
+              Enter the guest name to preview on the invitation
             </p>
           </div>
-            <div>
-              <Label htmlFor="fontSize">Font Size</Label>
-              <Input 
-                name="fontSize" 
-                id="fontSize" 
-                type="number" 
-                value={formData.fontSize}
-                onChange={(e) => setFormData({ ...formData, fontSize: Number(e.target.value) })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="font">Font</Label>
-              <Input 
-                name="font" 
-                id="font" 
-                value={formData.font}
-                onChange={(e) => setFormData({ ...formData, font: e.target.value })}
-                placeholder="GreatVibes-Regular" 
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="color">Text Color</Label>
-              <Input 
-                name="color" 
-                id="color" 
-                type="color"
-                value={formData.color}
-                onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                className="w-full h-10" 
-              />
-            </div>
-            <div>
-              <Label htmlFor="strokeColor">Outline Color</Label>
-              <Input 
-                name="strokeColor" 
-                id="strokeColor" 
-                type="color"
-                value={formData.strokeColor}
-                onChange={(e) => setFormData({ ...formData, strokeColor: e.target.value })}
-                className="w-full h-10"
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="strokeWidth">Outline Width</Label>
-            <Input 
-              name="strokeWidth" 
-              id="strokeWidth" 
-              type="number" 
-              value={formData.strokeWidth}
-              onChange={(e) => setFormData({ ...formData, strokeWidth: Number(e.target.value) })}
-            />
-          </div>
-
-          <Button type="submit" disabled={isLoading} className="w-full bg-jewel-burgundy hover:bg-jewel-crimson">
+          <Button type="submit" disabled={isLoading} className="w-full bg-jewel-burgundy hover:bg-jewel-crimson text-lg py-6">
             {isLoading ? 'Generating Preview...' : 'Update Preview'}
           </Button>
         </div>
@@ -244,7 +112,7 @@ export default function LivePreviewForm() {
               className="max-w-full h-auto" 
             />
           ) : (
-            <p className="text-gray-500">Click Update Preview to generate preview</p>
+            <p className="text-gray-500">Enter a name and click Update Preview</p>
           )}
         </div>
       </form>

@@ -13,7 +13,7 @@ function escapeSvg(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-// Calculate optimal text position for guest name in the top blank space
+// Calculate optimal text position for guest name at the very top
 function calculateOptimalPosition(
   imgWidth: number,
   imgHeight: number,
@@ -23,18 +23,15 @@ function calculateOptimalPosition(
   // Center horizontally
   const x = imgWidth / 2;
   
-  // Position in the top 20-25% of the image (blank space area)
-  // Adjust based on font size to ensure good spacing
-  const topAreaStart = imgHeight * 0.15; // Start at 15% from top
-  const topAreaEnd = imgHeight * 0.30;   // End at 30% from top
-  const topAreaCenter = (topAreaStart + topAreaEnd) / 2;
+  // Position at the very top of the image (top 10-15% area)
+  // This is the blank space above the invitation text
+  const topArea = imgHeight * 0.12; // 12% from top
   
-  // Adjust for longer names (they need more vertical space)
-  const nameLength = name.length;
-  const lengthAdjustment = Math.min(nameLength * 2, 50); // Max 50px adjustment
+  // Adjust slightly for font size (larger fonts need more space from top)
+  const fontAdjustment = fontSize * 0.3;
   
-  // Final Y position - slightly above center of top area
-  const y = topAreaCenter - (lengthAdjustment / 2);
+  // Final Y position - at the top blank space
+  const y = topArea + fontAdjustment;
   
   return { x, y };
 }
@@ -69,7 +66,7 @@ export async function generatePersonalizedInvites(
     color = '#D4AF37',
     strokeColor = '#4a1c1c',
     strokeWidth = 4,
-    font = 'PlayfairDisplay-Regular',
+    font = 'serif', // Use system serif to avoid font loading issues
     useMasterList = false,
   } = options;
   
@@ -109,12 +106,30 @@ export async function generatePersonalizedInvites(
     const finalX = useCustomPosition ? (options.x ?? position.x) : position.x;
     const finalY = useCustomPosition ? (options.y ?? position.y) : position.y;
 
+    // Use system fonts that Sharp can render properly (avoid custom fonts that cause squares)
+    // Fallback to serif if custom font not available
+    const safeFont = font.includes('GreatVibes') || font.includes('Playfair') 
+      ? 'serif' // Use system serif to avoid font loading issues
+      : font;
+    
     const textSvg = `
-      <svg width="${imgWidth}" height="${imgHeight}">
-        <style>
-          .title { font-family: "${font}, serif"; font-size: ${fontSize}px; fill: ${color}; text-anchor: middle; }
-          .stroke { -webkit-text-stroke: ${strokeWidth}px ${strokeColor}; paint-order: stroke fill; }
-        </style>
+      <svg width="${imgWidth}" height="${imgHeight}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <style>
+            .title { 
+              font-family: "${safeFont}, serif, Times, Georgia"; 
+              font-size: ${fontSize}px; 
+              fill: ${color}; 
+              text-anchor: middle; 
+              font-weight: normal;
+            }
+            .stroke { 
+              stroke: ${strokeColor}; 
+              stroke-width: ${strokeWidth}px; 
+              paint-order: stroke fill; 
+            }
+          </style>
+        </defs>
         <text x="${finalX}" y="${finalY}" class="title stroke">${escapeSvg(name)}</text>
       </svg>`;
 
@@ -145,7 +160,14 @@ export async function generatePreview(
     autoPosition?: boolean;
   }
 ) {
-  const { fontSize, color, strokeColor, strokeWidth, font, autoPosition = true } = options;
+  const { 
+    fontSize = 80, 
+    color = '#D4AF37', 
+    strokeColor = '#4a1c1c', 
+    strokeWidth = 4, 
+    font = 'serif', 
+    autoPosition = true 
+  } = options;
 
   const templateBuffer = await loadTemplate();
   const baseImage = sharp(templateBuffer);
@@ -166,12 +188,29 @@ export async function generatePreview(
     finalY = options.y ?? imgHeight * 0.2;
   }
 
+  // Use system fonts that Sharp can render properly
+  const safeFont = font.includes('GreatVibes') || font.includes('Playfair') 
+    ? 'serif' // Use system serif to avoid font loading issues
+    : font;
+  
   const textSvg = `
-    <svg width="${imgWidth}" height="${imgHeight}">
-      <style>
-        .title { font-family: "${font}, serif"; font-size: ${fontSize}px; fill: ${color}; text-anchor: middle; }
-        .stroke { -webkit-text-stroke: ${strokeWidth}px ${strokeColor}; paint-order: stroke fill; }
-      </style>
+    <svg width="${imgWidth}" height="${imgHeight}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <style>
+          .title { 
+            font-family: "${safeFont}, serif, Times, Georgia"; 
+            font-size: ${fontSize}px; 
+            fill: ${color}; 
+            text-anchor: middle; 
+            font-weight: normal;
+          }
+          .stroke { 
+            stroke: ${strokeColor}; 
+            stroke-width: ${strokeWidth}px; 
+            paint-order: stroke fill; 
+          }
+        </style>
+      </defs>
       <text x="${finalX}" y="${finalY}" class="title stroke">${escapeSvg(name)}</text>
     </svg>`;
 

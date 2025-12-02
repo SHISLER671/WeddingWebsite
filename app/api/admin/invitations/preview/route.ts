@@ -9,15 +9,14 @@ export async function POST(request: NextRequest) {
 
     console.log('Preview name:', previewName);
 
+    // All settings are preset - only name is needed
     const options = {
-      x: formData.get('x') ? Number(formData.get('x')) : undefined,
-      y: formData.get('y') ? Number(formData.get('y')) : undefined,
-      fontSize: Number(formData.get('fontSize') || 80),
-      color: (formData.get('color') as string) || '#D4AF37',
-      strokeColor: (formData.get('strokeColor') as string) || '#4a1c1c',
-      strokeWidth: Number(formData.get('strokeWidth') || 4),
-      font: (formData.get('font') as string) || 'PlayfairDisplay-Regular',
-      autoPosition: formData.get('autoPosition') === 'true',
+      fontSize: 80,
+      color: '#D4AF37',
+      strokeColor: '#4a1c1c',
+      strokeWidth: 4,
+      font: 'serif', // Use system serif to avoid font loading issues
+      autoPosition: true,
     };
 
     console.log('Generating preview with options:', options);

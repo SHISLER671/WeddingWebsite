@@ -8,13 +8,13 @@ export async function generateInvites(formData: FormData) {
     // Use master list if no CSV file is uploaded
     const useMasterList = !csvFile || csvFile.size === 0;
 
+    // All settings are preset - same as preview
     const options = {
-      // Auto-positioning enabled - x and y will be calculated per guest
-      fontSize: Number(formData.get('fontSize') || 80),
-      color: (formData.get('color') as string) || '#D4AF37',
-      strokeColor: (formData.get('strokeColor') as string) || '#4a1c1c',
-      strokeWidth: Number(formData.get('strokeWidth') || 4),
-      font: (formData.get('font') as string) || 'PlayfairDisplay-Regular',
+      fontSize: 80,
+      color: '#D4AF37',
+      strokeColor: '#4a1c1c',
+      strokeWidth: 4,
+      font: 'serif', // Use system serif to avoid font loading issues
       useMasterList: useMasterList,
     };
 
