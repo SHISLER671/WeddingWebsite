@@ -16,8 +16,6 @@ export default function LivePreviewForm() {
   const defaultName = guestNameFromUrl ? decodeURIComponent(guestNameFromUrl) : 'Alexandra & Benjamin';
   
   const [formData, setFormData] = useState({
-    x: 600,
-    y: 900,
     fontSize: 80,
     color: '#D4AF37',
     strokeColor: '#4a1c1c',
@@ -41,14 +39,13 @@ export default function LivePreviewForm() {
     const loadPreview = async () => {
       setIsLoading(true);
       const freshFormData = new FormData();
-      freshFormData.append('x', '600');
-      freshFormData.append('y', '900');
       freshFormData.append('fontSize', '80');
       freshFormData.append('color', '#D4AF37');
       freshFormData.append('strokeColor', '#4a1c1c');
       freshFormData.append('strokeWidth', '4');
       freshFormData.append('font', 'GreatVibes-Regular');
       freshFormData.append('previewName', currentName);
+      freshFormData.append('autoPosition', 'true');
       
       try {
         const response = await fetch('/api/admin/invitations/preview', {
@@ -83,21 +80,20 @@ export default function LivePreviewForm() {
     }
     setIsLoading(true);
     
-    // Create FormData with current settings (no template file needed)
+    // Create FormData with current settings (no template file needed, auto-positioning)
     const freshFormData = new FormData();
-    freshFormData.append('x', formData.x.toString());
-    freshFormData.append('y', formData.y.toString());
     freshFormData.append('fontSize', formData.fontSize.toString());
     freshFormData.append('color', formData.color);
     freshFormData.append('strokeColor', formData.strokeColor);
     freshFormData.append('strokeWidth', formData.strokeWidth.toString());
     freshFormData.append('font', formData.font);
     freshFormData.append('previewName', formData.previewName);
+    freshFormData.append('autoPosition', 'true');
     
     console.log('Sending preview request:', {
       previewName: formData.previewName,
-      x: formData.x,
-      y: formData.y,
+      fontSize: formData.fontSize,
+      autoPosition: true,
     });
     
     try {
@@ -122,7 +118,7 @@ export default function LivePreviewForm() {
         // Sync hidden fields in bulk form
         const bulkForm = document.getElementById('bulk-form') as HTMLFormElement;
         if (bulkForm) {
-          const fields = ['x', 'y', 'fontSize', 'color', 'strokeColor', 'strokeWidth', 'font'];
+          const fields = ['fontSize', 'color', 'strokeColor', 'strokeWidth', 'font'];
           fields.forEach((field) => {
             const input = bulkForm.querySelector(`#bulk-${field}`) as HTMLInputElement;
             const value = freshFormData.get(field);
@@ -172,27 +168,11 @@ export default function LivePreviewForm() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="x">X Position</Label>
-              <Input 
-                name="x" 
-                id="x" 
-                type="number" 
-                value={formData.x}
-                onChange={(e) => setFormData({ ...formData, x: Number(e.target.value) })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="y">Y Position</Label>
-              <Input 
-                name="y" 
-                id="y" 
-                type="number" 
-                value={formData.y}
-                onChange={(e) => setFormData({ ...formData, y: Number(e.target.value) })}
-              />
-            </div>
+          <div className="p-3 bg-jewel-gold/10 rounded-lg border border-jewel-gold/20">
+            <p className="text-sm text-jewel-burgundy">
+              <strong>Positioning:</strong> Automatically calculated for optimal placement in the top blank space
+            </p>
+          </div>
             <div>
               <Label htmlFor="fontSize">Font Size</Label>
               <Input 

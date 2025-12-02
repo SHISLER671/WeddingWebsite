@@ -39,9 +39,7 @@ export default async function InvitationsPage() {
               </p>
             </div>
 
-            {/* Hidden fields — synced from live preview */}
-            <input type="hidden" name="x" id="bulk-x" value="600" />
-            <input type="hidden" name="y" id="bulk-y" value="900" />
+            {/* Hidden fields — synced from live preview (auto-positioning enabled) */}
             <input type="hidden" name="fontSize" id="bulk-fontSize" value="80" />
             <input type="hidden" name="color" id="bulk-color" value="#D4AF37" />
             <input type="hidden" name="strokeColor" id="bulk-strokeColor" value="#4a1c1c" />

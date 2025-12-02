@@ -9,8 +9,7 @@ export async function generateInvites(formData: FormData) {
     const useMasterList = !csvFile || csvFile.size === 0;
 
     const options = {
-      x: Number(formData.get('x') || 600),
-      y: Number(formData.get('y') || 900),
+      // Auto-positioning enabled - x and y will be calculated per guest
       fontSize: Number(formData.get('fontSize') || 80),
       color: (formData.get('color') as string) || '#D4AF37',
       strokeColor: (formData.get('strokeColor') as string) || '#4a1c1c',
