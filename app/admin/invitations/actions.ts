@@ -11,7 +11,7 @@ export async function generateInvites(formData: FormData) {
     // All settings are preset - same as preview
     const options = {
       fontSize: 80,
-      color: '#722F37', // Burgundy to match invitation text color
+      color: '#7B4B7A', // Medium purple/plum to match invitation text color
       strokeColor: '#4a1c1c',
       strokeWidth: 4,
       font: 'serif', // Use system serif to avoid font loading issues
