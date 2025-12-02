@@ -1,8 +1,7 @@
 "use client"
 import Link from "next/link"
-import { Calendar, MapPin, Clock, Gift, Edit, Heart, Flower2, MessageCircle, Wallet, Camera } from "lucide-react"
+import { Calendar, MapPin, Gift, Edit, Heart, Flower2, MessageCircle, Wallet, Camera } from "lucide-react"
 import { useChat } from "../../contexts/ChatContext"
-import { useAccount } from "wagmi"
 import { useLoginWithAbstract } from "@abstract-foundation/agw-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,7 +13,9 @@ export default function ConfirmationPage() {
   const email = searchParams.get("email")
   const guestName = searchParams.get("name")
   const [seatingAssignment, setSeatingAssignment] = useState<any>(null)
-  const [seatingStatus, setSeatingStatus] = useState<"idle" | "loading" | "found" | "not-found" | "seating-full">("idle")
+  const [seatingStatus, setSeatingStatus] = useState<"idle" | "loading" | "found" | "not-found" | "seating-full">(
+    "idle",
+  )
 
   useEffect(() => {
     if (email || guestName) {
@@ -33,10 +34,10 @@ export default function ConfirmationPage() {
         if (email) url += "&"
         url += `name=${encodeURIComponent(name)}`
       }
-      
+
       const response = await fetch(url)
       const result = await response.json()
-      
+
       if (result.success && result.hasSeating) {
         setSeatingAssignment(result.data)
         setSeatingStatus("found")
@@ -82,7 +83,7 @@ export default function ConfirmationPage() {
             </div>
           </div>
         )}
-        
+
         {seatingStatus === "found" && seatingAssignment && (
           <div className="mb-8 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-jewel-burgundy/30 p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -91,13 +92,9 @@ export default function ConfirmationPage() {
               </div>
               <h2 className="text-xl font-serif text-jewel-sapphire">Your Seating Assignment</h2>
             </div>
-            <div className="text-2xl font-bold text-jewel-sapphire mb-2">
-              Table {seatingAssignment.table_number}
-            </div>
+            <div className="text-2xl font-bold text-jewel-sapphire mb-2">Table {seatingAssignment.table_number}</div>
             {seatingAssignment.plus_one_name && (
-              <div className="text-jewel-sapphire">
-                Plus One: {seatingAssignment.plus_one_name}
-              </div>
+              <div className="text-jewel-sapphire">Plus One: {seatingAssignment.plus_one_name}</div>
             )}
             {seatingAssignment.dietary_notes && (
               <div className="text-sm text-jewel-burgundy/80 mt-2">
@@ -119,7 +116,8 @@ export default function ConfirmationPage() {
               Please check with the wedding party regarding your seating
             </div>
             <div className="text-base text-jewel-burgundy/80 mt-3">
-              We're so excited you'll be joining us! Please reach out to us directly so we can ensure you have a wonderful spot for our celebration.
+              We're so excited you'll be joining us! Please reach out to us directly so we can ensure you have a
+              wonderful spot for our celebration.
             </div>
           </div>
         )}
@@ -136,7 +134,8 @@ export default function ConfirmationPage() {
               We're still finalizing seating arrangements for your table.
             </div>
             <div className="text-base md:text-sm text-jewel-crimson mb-4">
-              Please contact us directly to confirm your seating - we want to make sure you have the perfect spot for our special day!
+              Please contact us directly to confirm your seating - we want to make sure you have the perfect spot for
+              our special day!
             </div>
             <div className="bg-white/40 rounded-lg p-4">
               <div className="text-sm text-jewel-burgundy mb-2">
@@ -221,7 +220,10 @@ export default function ConfirmationPage() {
 
             <div className="grid md:grid-cols-3 gap-6 mb-2">
               {/* Gallery Feature */}
-              <Link href="/gallery" className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-sapphire text-jewel-sapphire hover:bg-jewel-sapphire hover:text-warm-white">
+              <Link
+                href="/gallery"
+                className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-sapphire text-jewel-sapphire hover:bg-jewel-sapphire hover:text-warm-white"
+              >
                 <Camera className="w-8 h-8 text-jewel-sapphire mx-auto mb-3" />
                 <h4 className="font-semibold text-charcoal mb-2">Live Photo Gallery</h4>
                 <p className="text-base md:text-sm text-charcoal/70 mb-3">
@@ -233,22 +235,34 @@ export default function ConfirmationPage() {
               </Link>
 
               {/* Registry Feature */}
-              <Link href="/gifts" className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-emerald text-jewel-emerald hover:bg-jewel-emerald hover:text-warm-white">
+              <Link
+                href="/gifts"
+                className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-emerald text-jewel-emerald hover:bg-jewel-emerald hover:text-warm-white"
+              >
                 <Gift className="w-8 h-8 text-jewel-emerald mx-auto mb-3" />
                 <h4 className="font-semibold text-charcoal mb-2">Gift Registry</h4>
-                <p className="text-base md:text-sm text-charcoal/70 mb-3">Browse our curated registry and find the perfect gift.</p>
-                <p className="text-xs text-jewel-emerald font-medium">Crypto gifts and traditional options available.</p>
+                <p className="text-base md:text-sm text-charcoal/70 mb-3">
+                  Browse our curated registry and find the perfect gift.
+                </p>
+                <p className="text-xs text-jewel-emerald font-medium">
+                  Crypto gifts and traditional options available.
+                </p>
               </Link>
 
               {/* Wedding Details Feature */}
-              <Link href="/info" className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-gold text-jewel-gold hover:bg-jewel-gold hover:text-jewel-burgundy">
+              <Link
+                href="/info"
+                className="rounded-xl p-6 transition-all duration-300 hover:shadow-xl cursor-pointer border-2 border-jewel-gold text-jewel-gold hover:bg-jewel-gold hover:text-jewel-burgundy"
+              >
                 <div className="w-8 h-8 text-jewel-gold mx-auto mb-3 flex items-center justify-center">
                   <div className="w-6 h-6 bg-jewel-gold rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">i</span>
                   </div>
                 </div>
                 <h4 className="font-semibold text-charcoal mb-2">Wedding Details</h4>
-                <p className="text-base md:text-sm text-charcoal/70 mb-3">Everything you need to know about our special day.</p>
+                <p className="text-base md:text-sm text-charcoal/70 mb-3">
+                  Everything you need to know about our special day.
+                </p>
                 <p className="text-xs text-jewel-gold font-medium">Schedule, venues, and all the important info.</p>
               </Link>
             </div>
@@ -265,8 +279,9 @@ export default function ConfirmationPage() {
               <h3 className="text-2xl font-serif text-jewel-burgundy mb-4">Let's Get Connected!</h3>
               <p className="text-charcoal/80 leading-relaxed text-lg">
                 Thanks for RSVPing! Now the extra fun part - chat with Ezekiel (our AI wedding assistant) anytime you
-                have questions, and if you're feeling adventurous, connect your AbstractGlobalWallet ( What's this? See below ) and click the 'Edit
-                RSVP' button to save your wallet info for a special surprise from us after the wedding! 🎁
+                have questions, and if you're feeling adventurous, connect your AbstractGlobalWallet ( What's this? See
+                below ) and click the 'Edit RSVP' button to save your wallet info for a special surprise from us after
+                the wedding! 🎁
               </p>
             </div>
 
@@ -353,9 +368,9 @@ export default function ConfirmationPage() {
                 <AccordionItem value="easy">
                   <AccordionTrigger className="text-left text-sm">Is it easy to set up?</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700">
-                    Super easy! Click the button above and Abstract Global Wallet will automatically create a wallet
-                    for you if you don't have one. No forms, no verification, no complicated setup. It literally takes
-                    less than a minute - easier than most apps!
+                    Super easy! Click the button above and Abstract Global Wallet will automatically create a wallet for
+                    you if you don't have one. No forms, no verification, no complicated setup. It literally takes less
+                    than a minute - easier than most apps!
                   </AccordionContent>
                 </AccordionItem>
 
@@ -383,7 +398,6 @@ export default function ConfirmationPage() {
           </Link>
         </div>
       </section>
-
     </div>
   )
 }
@@ -410,20 +424,42 @@ function ChatbotButton() {
 
 // AGW Wallet Button Component
 function AGWWalletButton() {
-  const { address, status, isConnected } = useAccount()
   const { login, logout } = useLoginWithAbstract()
+  const [walletState, setWalletState] = useState<{
+    address: string | null
+    isConnected: boolean
+    status: "idle" | "connecting" | "connected" | "disconnected"
+  }>({
+    address: null,
+    isConnected: false,
+    status: "idle",
+  })
 
   const handleConnect = async () => {
     try {
-      await login()
+      setWalletState((prev) => ({ ...prev, status: "connecting" }))
+      const result = await login()
+      if (result?.address) {
+        setWalletState({
+          address: result.address,
+          isConnected: true,
+          status: "connected",
+        })
+      }
     } catch (error) {
       console.error("Failed to connect wallet:", error)
+      setWalletState((prev) => ({ ...prev, status: "idle" }))
     }
   }
 
   const handleDisconnect = async () => {
     try {
       await logout()
+      setWalletState({
+        address: null,
+        isConnected: false,
+        status: "disconnected",
+      })
     } catch (error) {
       console.error("Failed to disconnect wallet:", error)
     }
@@ -436,21 +472,25 @@ function AGWWalletButton() {
   return (
     <div className="flex flex-col items-center gap-3 min-w-[200px]">
       <button
-        onClick={isConnected ? handleDisconnect : handleConnect}
-        disabled={status === "connecting"}
+        onClick={walletState.isConnected ? handleDisconnect : handleConnect}
+        disabled={walletState.status === "connecting"}
         className="flex flex-col items-center gap-3 p-6 bg-jewel-emerald hover:bg-jewel-emerald/90 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"
       >
         <Flower2 className="w-8 h-8 text-white" />
         <span className="font-semibold text-lg text-white">
-          {status === "connecting" ? "Connecting..." : isConnected ? "Disconnect" : "Connect Wallet"}
+          {walletState.status === "connecting"
+            ? "Connecting..."
+            : walletState.isConnected
+              ? "Disconnect"
+              : "Connect Wallet"}
         </span>
         <span className="text-sm opacity-90 text-center text-white">Abstract Global Wallet</span>
       </button>
 
-      {isConnected && address && (
+      {walletState.isConnected && walletState.address && (
         <div className="bg-warm-white/80 backdrop-blur-sm rounded-lg p-3 shadow-sm w-full">
           <div className="text-xs text-charcoal/60 mb-1">Connected:</div>
-          <div className="text-sm font-mono text-charcoal break-all">{formatAddress(address)}</div>
+          <div className="text-sm font-mono text-charcoal break-all">{formatAddress(walletState.address)}</div>
         </div>
       )}
     </div>

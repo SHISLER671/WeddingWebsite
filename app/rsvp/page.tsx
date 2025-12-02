@@ -540,9 +540,9 @@ export default function RSVPPage() {
         {/* Step-by-Step Modal for New RSVPs */}
         {showStepModal && !isEditMode && (
           <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full my-4 max-h-[90vh] overflow-hidden">
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full my-4 max-h-[90vh] flex flex-col">
               {/* Progress Bar */}
-              <div className="bg-jewel-burgundy/10 px-6 py-4 border-b border-jewel-burgundy/20">
+              <div className="bg-jewel-burgundy/10 px-6 py-4 border-b border-jewel-burgundy/20 flex-shrink-0">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-jewel-burgundy">
                     Step {currentStep} of {totalSteps}
@@ -564,26 +564,27 @@ export default function RSVPPage() {
               </div>
 
               {/* Step Content */}
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <div className="p-6 overflow-y-auto flex-1 min-h-0">
                 {/* Step 1: Name Selection */}
                 {currentStep === 1 && (
                   <div className="space-y-4">
                     <div>
                       <h2 className="text-2xl font-serif font-semibold text-charcoal mb-2">Find Your Name</h2>
+                      <p className="text-charcoal/70 mb-4">
+                        Type your name as it appears on your invitation, then <strong>click on your name</strong> from
+                        the list that appears.
+                      </p>
                       <div className="bg-jewel-sapphire/10 border border-jewel-sapphire/30 rounded-lg p-3 mb-4">
                         <p className="text-sm text-jewel-burgundy font-medium">
                           ⚠️ Important: You <strong>must select your name from the dropdown list</strong> below. Simply
                           typing your name won't work - please click on your name when it appears!
                         </p>
                       </div>
-                      <p className="text-charcoal/70 mb-4">
-                        Type your name as it appears on your invitation, then <strong>click on your name</strong> from
-                        the list that appears.
-                      </p>
                     </div>
-                    <div ref={autocompleteRef} className="relative">
-                      <label htmlFor="modal-guestName" className="block text-sm font-semibold text-charcoal mb-2">
-                        Full Name *
+
+                    <div className="space-y-2 pb-64">
+                      <label htmlFor="modal-guestName" className="block text-sm font-medium text-charcoal">
+                        Full Name <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -593,15 +594,26 @@ export default function RSVPPage() {
                           name="guestName"
                           value={formData.guestName}
                           onChange={handleInputChange}
-                          onKeyDown={handleKeyDown}
-                          onFocus={() => {
-                            if (formData.guestName.length >= 2 && autocompleteSuggestions.length > 0) {
-                              setShowSuggestions(true)
+                          onKeyDown={(e) => {
+                            if (e.key === "ArrowDown") {
+                              e.preventDefault()
+                              setSelectedSuggestionIndex((prev) =>
+                                Math.min(prev + 1, autocompleteSuggestions.length - 1),
+                              )
+                            } else if (e.key === "ArrowUp") {
+                              e.preventDefault()
+                              setSelectedSuggestionIndex((prev) => Math.max(prev - 1, 0))
+                            } else if (e.key === "Enter" && selectedSuggestionIndex >= 0) {
+                              e.preventDefault()
+                              selectSuggestion(autocompleteSuggestions[selectedSuggestionIndex])
+                            } else if (e.key === "Escape") {
+                              setShowSuggestions(false)
                             }
                           }}
-                          className="w-full px-4 py-3 border-2 border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors"
                           placeholder="Start typing your name..."
+                          className="w-full px-4 py-3 border-2 border-jewel-burgundy/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-jewel-burgundy/50 focus:border-jewel-burgundy"
                           autoComplete="off"
+                          required
                         />
                         {isLoadingSuggestions && (
                           <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -761,6 +773,17 @@ export default function RSVPPage() {
                         placeholder="Please let us know about any dietary restrictions, allergies, or special meal preferences..."
                       />
                     </div>
+                    <div className="bg-jewel-burgundy/10 border border-jewel-burgundy/30 rounded-lg p-4">
+                      <p className="text-sm text-charcoal leading-relaxed">
+                        Your presence means the world to us! Bringing a plus-one? Add their name in the special message
+                        box below. For those with little ones: We are looking forward to having a night full of dancing,
+                        drinking, and celebration. We would love for you to enjoy the night child-free with us, so
+                        please arrange for a babysitter if possible. However, if you do plan to bring children, please
+                        include their ages in the &quot;Special Message&quot; section below - this is especially
+                        important if any children under 12 will be attending, as we need to know ages for proper meal
+                        planning. We can&apos;t wait to have you there!
+                      </p>
+                    </div>
                     <div>
                       <label htmlFor="modal-message" className="block text-sm font-semibold text-charcoal mb-2">
                         Special Message (Optional)
@@ -774,12 +797,6 @@ export default function RSVPPage() {
                         className="w-full px-4 py-3 border-2 border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson transition-colors resize-none"
                         placeholder="Share a message, memory, or well wishes..."
                       />
-                    </div>
-                    <div className="bg-jewel-fuchsia/10 border border-jewel-fuchsia/30 rounded-lg p-3">
-                      <p className="text-xs text-charcoal leading-relaxed">
-                        <strong>Note about children:</strong> We'd love for you to enjoy the night child-free, but if
-                        you plan to bring children, please include their ages in the message above.
-                      </p>
                     </div>
                   </div>
                 )}
@@ -828,7 +845,7 @@ export default function RSVPPage() {
               </div>
 
               {/* Navigation Buttons */}
-              <div className="px-6 py-4 border-t border-jewel-burgundy/20 bg-jewel-burgundy/5 flex items-center justify-between gap-4">
+              <div className="px-6 py-4 border-t border-jewel-burgundy/20 bg-jewel-burgundy/5 flex items-center justify-between gap-4 flex-shrink-0">
                 <button
                   type="button"
                   onClick={prevStep}
