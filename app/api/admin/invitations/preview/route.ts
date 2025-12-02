@@ -5,16 +5,9 @@ export async function POST(request: NextRequest) {
   try {
     console.log('Preview API route called');
     const formData = await request.formData();
-    const templateFile = formData.get('template') as File;
     const previewName = (formData.get('previewName') as string) || 'Mr. & Mrs. Smith';
 
-    console.log('Template file:', templateFile ? { name: templateFile.name, size: templateFile.size } : 'missing');
     console.log('Preview name:', previewName);
-
-    if (!templateFile || templateFile.size === 0) {
-      console.error('Template file missing or empty');
-      return NextResponse.json({ error: 'Template file required' }, { status: 400 });
-    }
 
     const options = {
       x: Number(formData.get('x') || 600),
@@ -27,7 +20,7 @@ export async function POST(request: NextRequest) {
     };
 
     console.log('Generating preview with options:', options);
-    const previewBuffer = await generatePreview(templateFile, previewName, options);
+    const previewBuffer = await generatePreview(previewName, options);
     console.log('Preview generated, buffer size:', previewBuffer.length);
 
     return new NextResponse(previewBuffer, {

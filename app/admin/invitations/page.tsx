@@ -23,15 +23,20 @@ export default async function InvitationsPage() {
         <div className="mt-12 bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8">
           <h2 className="text-2xl font-semibold mb-6 text-jewel-burgundy">Bulk Generate All Invitations</h2>
           <form action={generateInvites} className="space-y-6" id="bulk-form">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="csv">Guest List CSV</Label>
-                <Input name="csv" id="csv" type="file" accept=".csv" required />
-              </div>
-              <div>
-                <Label htmlFor="template-bulk">Template Image</Label>
-                <Input name="template" id="template-bulk" type="file" accept="image/*" required />
-              </div>
+            <div className="p-4 bg-jewel-gold/10 rounded-lg border border-jewel-gold/20 mb-4">
+              <p className="text-sm text-jewel-burgundy mb-2">
+                <strong>Template:</strong> Using <code>invitetemplate.jpg</code> from public folder
+              </p>
+              <p className="text-sm text-jewel-burgundy">
+                <strong>Guest List:</strong> Using <code>MASTERGUESTLIST.csv</code> (default) or upload custom CSV below
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="csv">Custom Guest List CSV (Optional)</Label>
+              <Input name="csv" id="csv" type="file" accept=".csv" />
+              <p className="text-sm text-gray-600 mt-2">
+                Leave empty to use MASTERGUESTLIST.csv, or upload a custom CSV file
+              </p>
             </div>
 
             {/* Hidden fields — synced from live preview */}

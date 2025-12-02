@@ -4,11 +4,9 @@ import { generatePersonalizedInvites } from '@/lib/invite-generator';
 
 export async function generateInvites(formData: FormData) {
   try {
-    const csvFile = formData.get('csv') as File;
-    const templateFile = formData.get('template') as File;
-    if (!csvFile || !templateFile) {
-      throw new Error('Missing files');
-    }
+    const csvFile = formData.get('csv') as File | null;
+    // Use master list if no CSV file is uploaded
+    const useMasterList = !csvFile || csvFile.size === 0;
 
     const options = {
       x: Number(formData.get('x') || 600),
@@ -18,10 +16,11 @@ export async function generateInvites(formData: FormData) {
       strokeColor: (formData.get('strokeColor') as string) || '#4a1c1c',
       strokeWidth: Number(formData.get('strokeWidth') || 4),
       font: (formData.get('font') as string) || 'PlayfairDisplay-Regular',
+      useMasterList: useMasterList,
     };
 
-    console.log('Generating invites with options:', options);
-    const zipBuffer = await generatePersonalizedInvites(csvFile, templateFile, options);
+    console.log('Generating invites with options:', { ...options, csvFile: csvFile ? csvFile.name : 'using master list' });
+    const zipBuffer = await generatePersonalizedInvites(csvFile, options);
     console.log('Generated ZIP buffer, size:', zipBuffer.length);
 
     return new Response(zipBuffer, {

@@ -1,6 +1,8 @@
 import sharp from 'sharp';
 import Papa from 'papaparse';
 import JSZip from 'jszip';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 
 interface Guest {
   FullName: string;
@@ -11,9 +13,20 @@ function escapeSvg(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// Load template from public folder
+async function loadTemplate(): Promise<Buffer> {
+  const templatePath = join(process.cwd(), 'public', 'invitetemplate.jpg');
+  return await readFile(templatePath);
+}
+
+// Load master guest list from public folder
+async function loadMasterGuestList(): Promise<string> {
+  const csvPath = join(process.cwd(), 'MASTERGUESTLIST.csv');
+  return await readFile(csvPath, 'utf-8');
+}
+
 export async function generatePersonalizedInvites(
-  csvFile: File,
-  templateFile: File,
+  csvFile: File | null,
   options: {
     x?: number;
     y?: number;
@@ -22,6 +35,7 @@ export async function generatePersonalizedInvites(
     strokeColor?: string;
     strokeWidth?: number;
     font?: string;
+    useMasterList?: boolean;
   } = {}
 ) {
   const {
@@ -32,12 +46,26 @@ export async function generatePersonalizedInvites(
     strokeColor = '#4a1c1c',
     strokeWidth = 4,
     font = 'PlayfairDisplay-Regular',
+    useMasterList = false,
   } = options;
 
-  const csvText = await csvFile.text();
+  // Use master list if requested, otherwise use uploaded file
+  let csvText: string;
+  if (useMasterList || !csvFile) {
+    csvText = await loadMasterGuestList();
+  } else {
+    csvText = await csvFile.text();
+  }
+  
   const { data: guests } = Papa.parse<Guest>(csvText, { header: true, skipEmptyLines: true });
+  
+  // Handle "Full Name" column (with space) as well as "FullName"
+  const normalizedGuests = guests.map(guest => ({
+    ...guest,
+    FullName: guest.FullName || guest['Full Name'] || '',
+  }));
 
-  const templateBuffer = Buffer.from(await templateFile.arrayBuffer());
+  const templateBuffer = await loadTemplate();
   const baseImage = sharp(templateBuffer);
   const metadata = await baseImage.metadata();
   const imgWidth = metadata.width || 1200;
@@ -45,7 +73,7 @@ export async function generatePersonalizedInvites(
 
   const zip = new JSZip();
 
-  for (const guest of guests) {
+  for (const guest of normalizedGuests) {
     const name = guest.FullName?.trim();
     if (!name) continue;
 
@@ -73,7 +101,6 @@ export async function generatePersonalizedInvites(
 
 // Single preview function
 export async function generatePreview(
-  templateFile: File,
   name: string,
   options: {
     x: number;
@@ -87,7 +114,7 @@ export async function generatePreview(
 ) {
   const { x, y, fontSize, color, strokeColor, strokeWidth, font } = options;
 
-  const templateBuffer = Buffer.from(await templateFile.arrayBuffer());
+  const templateBuffer = await loadTemplate();
   const baseImage = sharp(templateBuffer);
   const metadata = await baseImage.metadata();
   const imgWidth = metadata.width || 1200;

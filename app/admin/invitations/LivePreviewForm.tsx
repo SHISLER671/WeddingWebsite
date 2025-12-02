@@ -26,36 +26,65 @@ export default function LivePreviewForm() {
     previewName: defaultName,
   });
 
-  // Update preview name when URL parameter changes
+  // Update preview name when URL parameter changes and auto-load preview
   useEffect(() => {
+    const currentName = guestNameFromUrl ? decodeURIComponent(guestNameFromUrl) : defaultName;
+    
     if (guestNameFromUrl) {
       setFormData(prev => ({
         ...prev,
-        previewName: decodeURIComponent(guestNameFromUrl),
+        previewName: currentName,
       }));
     }
+    
+    // Auto-load preview on mount or when guest name changes
+    const loadPreview = async () => {
+      setIsLoading(true);
+      const freshFormData = new FormData();
+      freshFormData.append('x', '600');
+      freshFormData.append('y', '900');
+      freshFormData.append('fontSize', '80');
+      freshFormData.append('color', '#D4AF37');
+      freshFormData.append('strokeColor', '#4a1c1c');
+      freshFormData.append('strokeWidth', '4');
+      freshFormData.append('font', 'GreatVibes-Regular');
+      freshFormData.append('previewName', currentName);
+      
+      try {
+        const response = await fetch('/api/admin/invitations/preview', {
+          method: 'POST',
+          body: freshFormData,
+        });
+        
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          setPreviewUrl(prev => {
+            if (prev) {
+              URL.revokeObjectURL(prev);
+            }
+            return url;
+          });
+        }
+      } catch (error) {
+        console.error('Error auto-loading preview:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadPreview();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guestNameFromUrl]);
 
-  async function updatePreview(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setIsLoading(true);
-
-    const form = e.currentTarget;
-    const formDataObj = new FormData(form);
-    
-    // Get the file input element directly to ensure we have the file
-    const fileInput = form.querySelector('input[type="file"]') as HTMLInputElement;
-    const templateFile = fileInput?.files?.[0];
-    
-    if (!templateFile || templateFile.size === 0) {
-      alert('Please select a template image first');
-      setIsLoading(false);
-      return;
+  async function updatePreview(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault();
     }
+    setIsLoading(true);
     
-    // Create a fresh FormData with the file
+    // Create FormData with current settings (no template file needed)
     const freshFormData = new FormData();
-    freshFormData.append('template', templateFile);
     freshFormData.append('x', formData.x.toString());
     freshFormData.append('y', formData.y.toString());
     freshFormData.append('fontSize', formData.fontSize.toString());
@@ -66,8 +95,6 @@ export default function LivePreviewForm() {
     freshFormData.append('previewName', formData.previewName);
     
     console.log('Sending preview request:', {
-      fileName: templateFile.name,
-      fileSize: templateFile.size,
       previewName: formData.previewName,
       x: formData.x,
       y: formData.y,
@@ -129,25 +156,10 @@ export default function LivePreviewForm() {
       <h2 className="text-2xl font-semibold mb-6 text-jewel-burgundy">Live Preview – Tweak Until Perfect</h2>
       <form onSubmit={updatePreview} className="grid lg:grid-cols-2 gap-8">
         <div className="space-y-6">
-          <div>
-            <Label htmlFor="template-preview">Template</Label>
-            <Input 
-              name="template" 
-              id="template-preview" 
-              type="file" 
-              accept="image/*" 
-              required 
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  // Update form data and trigger preview
-                  const form = e.target.form;
-                  if (form) {
-                    form.requestSubmit();
-                  }
-                }
-              }} 
-            />
+          <div className="p-4 bg-jewel-gold/10 rounded-lg border border-jewel-gold/20">
+            <p className="text-sm text-jewel-burgundy">
+              <strong>Template:</strong> Using <code>invitetemplate.jpg</code> from public folder
+            </p>
           </div>
           <div>
             <Label htmlFor="previewName">Preview Name</Label>
@@ -252,7 +264,7 @@ export default function LivePreviewForm() {
               className="max-w-full h-auto" 
             />
           ) : (
-            <p className="text-gray-500">Upload a template and click Update Preview</p>
+            <p className="text-gray-500">Click Update Preview to generate preview</p>
           )}
         </div>
       </form>
