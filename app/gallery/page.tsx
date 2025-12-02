@@ -16,9 +16,12 @@ import {
   ChevronRight,
   Grid3x3,
   Maximize2,
+  Edit,
+  Trash2,
 } from "lucide-react"
 import { getGalleryItems, type GalleryItem } from "@/lib/utils/gallery"
 import { uploadGalleryItem } from "@/app/actions/upload-gallery-item"
+import { updateGalleryItemCaption, deleteGalleryItem } from "@/app/actions/gallery-edit"
 import Link from "next/link"
 import { SpinningRoseLoader } from "@/components/spinning-rose-loader"
 import useEmblaCarousel from "embla-carousel-react"
@@ -41,6 +44,14 @@ export default function GalleryPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("carousel")
   const [selectedIndex, setSelectedIndex] = useState(0)
 
+  // Edit/Delete state
+  const [currentUser, setCurrentUser] = useState<string>("")
+  const [editingItem, setEditingItem] = useState<GalleryItem | null>(null)
+  const [editCaption, setEditCaption] = useState("")
+  const [deletingItem, setDeletingItem] = useState<GalleryItem | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+
   // Embla Carousel
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -52,6 +63,11 @@ export default function GalleryPage() {
   })
 
   useEffect(() => {
+    // Load current user from localStorage
+    const storedName = localStorage.getItem("gallery_uploader_name")
+    if (storedName) {
+      setCurrentUser(storedName)
+    }
     loadGalleryItems()
   }, [])
 
@@ -145,6 +161,11 @@ export default function GalleryPage() {
       const result = await uploadGalleryItem(formData)
 
       if (result.success) {
+        // Store uploader name in localStorage for future edits/deletes
+        if (uploadName) {
+          localStorage.setItem("gallery_uploader_name", uploadName)
+          setCurrentUser(uploadName)
+        }
         setUploadStatus("success")
         setUploadMessage("Upload successful! Your photo/video will appear in the gallery shortly.")
         setSelectedFile(null)
@@ -177,6 +198,65 @@ export default function GalleryPage() {
         target: { files: [file] },
       } as React.ChangeEvent<HTMLInputElement>
       handleFileSelect(event)
+    }
+  }
+
+  const isOwnPost = (item: GalleryItem) => {
+    if (!currentUser) return false
+    return item.uploader_name.toLowerCase() === currentUser.toLowerCase()
+  }
+
+  const handleEditClick = (item: GalleryItem, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setEditingItem(item)
+    setEditCaption(item.caption || "")
+  }
+
+  const handleDeleteClick = (item: GalleryItem, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setDeletingItem(item)
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editingItem || !currentUser) return
+
+    try {
+      setIsEditing(true)
+      const result = await updateGalleryItemCaption(editingItem.id, editCaption, currentUser)
+
+      if (result.success) {
+        await loadGalleryItems()
+        setEditingItem(null)
+        setEditCaption("")
+      } else {
+        alert(result.error || "Failed to update caption")
+      }
+    } catch (error) {
+      console.error("Edit error:", error)
+      alert("Failed to update caption. Please try again.")
+    } finally {
+      setIsEditing(false)
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deletingItem || !currentUser) return
+
+    try {
+      setIsDeleting(true)
+      const result = await deleteGalleryItem(deletingItem.id, currentUser)
+
+      if (result.success) {
+        await loadGalleryItems()
+        setDeletingItem(null)
+      } else {
+        alert(result.error || "Failed to delete post")
+      }
+    } catch (error) {
+      console.error("Delete error:", error)
+      alert("Failed to delete post. Please try again.")
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -238,8 +318,11 @@ export default function GalleryPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-8">
               <h1 className="text-4xl md:text-6xl font-serif font-semibold text-charcoal mb-4 tracking-wide">Wedding Memories</h1>
-              <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-8">
+              <p className="text-xl md:text-2xl text-charcoal/80 font-light mb-4">
                 Share your favorite moments from our special day
+              </p>
+              <p className="text-sm md:text-base text-charcoal/70 mb-8 italic">
+                ✨ You can edit or delete any posts you've shared
               </p>
 
               {/* View Toggle & Upload Buttons */}
@@ -283,6 +366,116 @@ export default function GalleryPage() {
             </div>
           </div>
         </div>
+
+        {/* Edit Modal */}
+        {editingItem && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
+            <div className="relative rounded-2xl shadow-2xl max-w-md w-full my-4 max-h-[90vh] overflow-hidden">
+              <div className="absolute inset-0 z-0">
+                <Image src="/underleaf.jpg" alt="Floral background" fill className="object-cover" priority />
+                <div className="absolute inset-0 bg-warm-white/85 backdrop-blur-md" />
+              </div>
+
+              <div className="relative z-10 p-4 sm:p-6 overflow-y-auto max-h-[90vh]">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-semibold text-charcoal">Edit Caption</h3>
+                  <button
+                    onClick={() => {
+                      setEditingItem(null)
+                      setEditCaption("")
+                    }}
+                    className="p-2 hover:bg-white/50 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-charcoal mb-2">
+                    Caption
+                  </label>
+                  <textarea
+                    value={editCaption}
+                    onChange={(e) => setEditCaption(e.target.value)}
+                    placeholder="Share a memory..."
+                    rows={3}
+                    maxLength={200}
+                    className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 resize-none text-base bg-white/80 backdrop-blur-sm"
+                  />
+                  <span className="text-xs text-charcoal/40 float-right mt-1">{editCaption.length}/200</span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => {
+                      setEditingItem(null)
+                      setEditCaption("")
+                    }}
+                    className="flex-1 px-4 py-3 border border-rose-gold text-rose-gold rounded-lg hover:bg-rose-gold/10 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveEdit}
+                    disabled={isEditing}
+                    className="flex-1 px-4 py-3 bg-jewel-sapphire text-white rounded-lg hover:bg-jewel-emerald disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isEditing ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deletingItem && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
+            <div className="relative rounded-2xl shadow-2xl max-w-md w-full my-4 max-h-[90vh] overflow-hidden">
+              <div className="absolute inset-0 z-0">
+                <Image src="/underleaf.jpg" alt="Floral background" fill className="object-cover" priority />
+                <div className="absolute inset-0 bg-warm-white/85 backdrop-blur-md" />
+              </div>
+
+              <div className="relative z-10 p-4 sm:p-6 overflow-y-auto max-h-[90vh]">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-semibold text-charcoal">Delete Post</h3>
+                  <button
+                    onClick={() => setDeletingItem(null)}
+                    className="p-2 hover:bg-white/50 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="mb-6">
+                  <p className="text-charcoal mb-4">
+                    Are you sure you want to delete this post? This action cannot be undone.
+                  </p>
+                  {deletingItem.caption && (
+                    <p className="text-sm text-charcoal/70 italic mb-2">"{deletingItem.caption}"</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => setDeletingItem(null)}
+                    className="flex-1 px-4 py-3 border border-rose-gold text-rose-gold rounded-lg hover:bg-rose-gold/10 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmDelete}
+                    disabled={isDeleting}
+                    className="flex-1 px-4 py-3 bg-jewel-crimson text-white rounded-lg hover:bg-jewel-burgundy disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isDeleting ? "Deleting..." : "Delete Post"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Upload Form Modal */}
         {showUploadForm && (
@@ -350,6 +543,9 @@ export default function GalleryPage() {
                     placeholder="Enter your name"
                     className="w-full px-3 py-2 border border-rose-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-gold/50 text-base bg-white/80 backdrop-blur-sm"
                   />
+                  <p className="text-xs text-charcoal/60 mt-1">
+                    💡 Tip: Use the same name to edit or delete your posts later
+                  </p>
                 </div>
 
                 {/* Caption Input */}
@@ -457,10 +653,28 @@ export default function GalleryPage() {
                             {/* Caption Area */}
                             <div className="p-6 bg-gradient-to-b from-warm-white to-soft-blush/30">
                               {item.uploader_name && (
-                                <div className="mb-3">
+                                <div className="mb-3 flex items-center justify-between">
                                   <p className="text-lg font-semibold text-charcoal flex items-center gap-2">
                                     {item.uploader_name}
                                   </p>
+                                  {isOwnPost(item) && (
+                                    <div className="flex gap-2">
+                                      <button
+                                        onClick={(e) => handleEditClick(item, e)}
+                                        className="p-2 hover:bg-rose-gold/20 rounded-lg transition-colors text-charcoal/70 hover:text-charcoal"
+                                        aria-label="Edit post"
+                                      >
+                                        <Edit className="w-4 h-4" />
+                                      </button>
+                                      <button
+                                        onClick={(e) => handleDeleteClick(item, e)}
+                                        className="p-2 hover:bg-jewel-crimson/20 rounded-lg transition-colors text-charcoal/70 hover:text-jewel-crimson"
+                                        aria-label="Delete post"
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                               {item.caption && (
@@ -540,9 +754,29 @@ export default function GalleryPage() {
 
                         <div className="p-3 sm:p-4 bg-gradient-to-b from-warm-white to-soft-blush/30">
                           {item.uploader_name && (
-                            <p className="text-sm font-semibold text-charcoal mb-1">
-                              {item.uploader_name}
-                            </p>
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-sm font-semibold text-charcoal">
+                                {item.uploader_name}
+                              </p>
+                              {isOwnPost(item) && (
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={(e) => handleEditClick(item, e)}
+                                    className="p-1.5 hover:bg-rose-gold/20 rounded transition-colors text-charcoal/70 hover:text-charcoal"
+                                    aria-label="Edit post"
+                                  >
+                                    <Edit className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => handleDeleteClick(item, e)}
+                                    className="p-1.5 hover:bg-jewel-crimson/20 rounded transition-colors text-charcoal/70 hover:text-jewel-crimson"
+                                    aria-label="Delete post"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           )}
                           {item.caption && (
                             <p className="text-sm text-charcoal/80 line-clamp-2 italic mb-2">"{item.caption}"</p>
