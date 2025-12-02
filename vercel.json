@@ -1,9 +1,9 @@
 {
   "functions": {
-    "app/api/admin/invitations/preview/route.ts": {
+    "app/api/**/*.ts": {
       "runtime": "nodejs20.x"
     },
-    "app/admin/invitations/actions.ts": {
+    "app/**/actions.ts": {
       "runtime": "nodejs20.x"
     }
   }
