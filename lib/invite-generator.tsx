@@ -122,7 +122,7 @@ export async function generatePersonalizedInvites(
     fontSize = 80,
     color = "#8114b8", // Darker richer purple (jewel-purple) for guest names
     strokeColor = "#5d0e85", // Darker purple stroke for depth
-    strokeWidth = 3,
+    strokeWidth = 4,
     font = "serif", // Use system serif to avoid font loading issues
     useMasterList = false,
   } = options
@@ -211,7 +211,7 @@ export async function generatePreview(
       fontSize = 80,
       color = "#8114b8", // Darker richer purple (jewel-purple) for guest names
       strokeColor = "#5d0e85", // Darker purple stroke for depth
-      strokeWidth = 3,
+      strokeWidth = 4,
       font = "serif",
       autoPosition = true,
     } = options
