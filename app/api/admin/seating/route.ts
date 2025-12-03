@@ -19,6 +19,34 @@ export async function GET() {
       .from("seating_assignments")
       .select("*")
 
+    // Debug: Check if Jared Quichocho is in the raw assignments
+    if (assignments) {
+      const jaredQuichocho = assignments.find((a: any) => {
+        const name = a.guest_name?.toLowerCase().trim() || ""
+        return name.includes("jared") && name.includes("quichocho")
+      })
+      if (jaredQuichocho) {
+        console.log("[v0] Admin: Found Jared Quichocho in raw assignments:", {
+          id: jaredQuichocho.id,
+          guest_name: jaredQuichocho.guest_name,
+          table_number: jaredQuichocho.table_number,
+          email: jaredQuichocho.email
+        })
+      } else {
+        console.warn("[v0] Admin: Jared Quichocho NOT found in raw assignments. Total assignments:", assignments.length)
+        // Log all guests with "jared" in name for debugging
+        const jaredGuests = assignments.filter((a: any) => 
+          a.guest_name?.toLowerCase().includes("jared")
+        )
+        if (jaredGuests.length > 0) {
+          console.log("[v0] Admin: Found guests with 'Jared' in name:", jaredGuests.map((g: any) => ({
+            name: g.guest_name,
+            table: g.table_number
+          })))
+        }
+      }
+    }
+
     if (error) {
       console.error("[v0] Admin: Database error:", error)
       return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
@@ -138,6 +166,36 @@ export async function GET() {
     })
 
     console.log("[v0] Admin: Successfully fetched", sorted?.length || 0, "assignments")
+
+    // Debug: Check if Jared Quichocho is in the final sorted list
+    if (sorted) {
+      const jaredQuichochoFinal = sorted.find((a: any) => {
+        const name = a.guest_name?.toLowerCase().trim() || ""
+        return name.includes("jared") && name.includes("quichocho")
+      })
+      if (jaredQuichochoFinal) {
+        console.log("[v0] Admin: Jared Quichocho in final sorted list:", {
+          id: jaredQuichochoFinal.id,
+          guest_name: jaredQuichochoFinal.guest_name,
+          table_number: jaredQuichochoFinal.table_number,
+          actual_guest_count: jaredQuichochoFinal.actual_guest_count,
+          position: sorted.indexOf(jaredQuichochoFinal)
+        })
+      } else {
+        console.warn("[v0] Admin: Jared Quichocho NOT in final sorted list. Total sorted:", sorted.length)
+        // Log all guests with "jared" in name for debugging
+        const jaredGuests = sorted.filter((a: any) => 
+          a.guest_name?.toLowerCase().includes("jared")
+        )
+        if (jaredGuests.length > 0) {
+          console.log("[v0] Admin: Found guests with 'Jared' in final sorted list:", jaredGuests.map((g: any) => ({
+            name: g.guest_name,
+            table: g.table_number,
+            position: sorted.indexOf(g)
+          })))
+        }
+      }
+    }
 
     return NextResponse.json({
       success: true,

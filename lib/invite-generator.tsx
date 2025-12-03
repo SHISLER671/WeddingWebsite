@@ -120,8 +120,8 @@ export async function generatePersonalizedInvites(
 ) {
   const {
     fontSize = 80,
-    color = "#8114b8", // Darker richer purple (jewel-purple) for guest names
-    strokeColor = "#5d0e85", // Darker purple stroke for depth
+    color = "#722F37", // Burgundy color matching bulk generation
+    strokeColor = "#5a1f2a", // Darker burgundy stroke for depth
     strokeWidth = 4,
     font = "serif", // Use system serif to avoid font loading issues
     useMasterList = false,
@@ -209,8 +209,8 @@ export async function generatePreview(
 
     const {
       fontSize = 80,
-      color = "#8114b8", // Darker richer purple (jewel-purple) for guest names
-      strokeColor = "#5d0e85", // Darker purple stroke for depth
+      color = "#722F37", // Burgundy color matching bulk generation
+      strokeColor = "#5a1f2a", // Darker burgundy stroke for depth
       strokeWidth = 4,
       font = "serif",
       autoPosition = true,
