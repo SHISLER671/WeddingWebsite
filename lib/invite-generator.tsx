@@ -56,8 +56,9 @@ async function loadMasterGuestList(): Promise<string> {
   return await readFile(csvPath, "utf-8")
 }
 
-// Using reliable system fonts that work on Vercel
-// No custom font loading needed - using italic serif fonts for elegant styling
+// NOTE: Custom font embedding doesn't work with Sharp's SVG renderer on Vercel
+// Sharp uses librsvg which doesn't support @font-face with data URIs
+// We use elegant system serif fonts (Georgia, Times New Roman) instead
 
 // Create text overlay using SVG (works with Sharp on Vercel)
 async function createTextOverlay(
@@ -73,18 +74,17 @@ async function createTextOverlay(
 ): Promise<Buffer> {
   const escapedText = escapeSvg(text)
 
-  // Use reliable system fonts with italic styling for elegant look
-  // These fonts are guaranteed to work on Vercel without file dependencies
+  // Use elegant serif fonts available on most systems
+  // NOTE: Sharp's SVG renderer (librsvg) does NOT support font-style="italic"
+  // Georgia and Times New Roman are professional and elegant
   const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <text
         x="${x}"
         y="${y}"
-        font-family="Georgia, 'Times New Roman', serif"
+        font-family="Georgia, 'Times New Roman', Times, serif"
         font-size="${fontSize}"
-        font-style="italic"
-        font-weight="500"
-        letter-spacing="0.05em"
+        font-weight="normal"
         fill="${color}"
         stroke="${strokeColor}"
         stroke-width="${strokeWidth}"
