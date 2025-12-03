@@ -61,6 +61,8 @@ async function loadMasterGuestList(): Promise<string> {
 // We use elegant system serif fonts (Georgia, Times New Roman) instead
 
 // Create text overlay using SVG (works with Sharp on Vercel)
+// NOTE: Sharp's SVG renderer (librsvg) does NOT support @font-face with data URIs
+// We use elegant system serif fonts that will render properly
 async function createTextOverlay(
   text: string,
   width: number,
@@ -82,7 +84,7 @@ async function createTextOverlay(
       <text
         x="${x}"
         y="${y}"
-        font-family="Georgia, 'Times New Roman', Times, serif"
+        font-family="serif"
         font-size="${fontSize}"
         font-weight="normal"
         fill="${color}"
