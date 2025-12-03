@@ -114,13 +114,11 @@ export async function generatePersonalizedInvites(
     const finalX = useCustomPosition ? (options.x ?? position.x) : position.x
     const finalY = useCustomPosition ? (options.y ?? position.y) : position.y
 
-    // Use system fonts that Sharp can render properly (avoid custom fonts that cause squares)
-    // For italic, use Times Italic or Georgia Italic which Sharp can render
+    // Use Tan Pearl font to match bride/groom names on invitation
+    // Fallback to Times Italic if Tan Pearl not available
     const safeFont =
-      font.includes("GreatVibes") || font.includes("Playfair")
-        ? "Times Italic" // Use Times Italic for elegant italicized style
-        : font === "serif"
-        ? "Times Italic" // Use Times Italic for serif default
+      font.includes("GreatVibes") || font.includes("Playfair") || font === "serif"
+        ? "Tan Pearl" // Use Tan Pearl to match invitation font style
         : font
 
     const textSvg = `
@@ -128,12 +126,11 @@ export async function generatePersonalizedInvites(
         <defs>
           <style>
             .title { 
-              font-family: "${safeFont}, Times Italic, Georgia Italic, serif"; 
+              font-family: "${safeFont}, Tan Pearl, Times Italic, Georgia Italic, serif"; 
               font-size: ${fontSize}px; 
               fill: ${color}; 
               text-anchor: middle; 
               font-weight: normal;
-              font-style: italic;
             }
             .stroke { 
               stroke: ${strokeColor}; 
@@ -210,13 +207,11 @@ export async function generatePreview(
       console.log("[v0] Manual position at:", finalX, finalY)
     }
 
-    // Use system fonts that Sharp can render properly
-    // For italic, use Times Italic or Georgia Italic which Sharp can render
+    // Use Tan Pearl font to match bride/groom names on invitation
+    // Fallback to Times Italic if Tan Pearl not available
     const safeFont = 
-      font.includes("GreatVibes") || font.includes("Playfair")
-        ? "Times Italic" // Use Times Italic for elegant italicized style
-        : font === "serif"
-        ? "Times Italic" // Use Times Italic for serif default
+      font.includes("GreatVibes") || font.includes("Playfair") || font === "serif"
+        ? "Tan Pearl" // Use Tan Pearl to match invitation font style
         : font
 
     console.log("[v0] Creating SVG overlay")
@@ -225,12 +220,11 @@ export async function generatePreview(
         <defs>
           <style>
             .title { 
-              font-family: "${safeFont}, Times Italic, Georgia Italic, serif"; 
+              font-family: "${safeFont}, Tan Pearl, Times Italic, Georgia Italic, serif"; 
               font-size: ${fontSize}px; 
               fill: ${color}; 
               text-anchor: middle; 
               font-weight: normal;
-              font-style: italic;
             }
             .stroke { 
               stroke: ${strokeColor}; 
