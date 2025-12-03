@@ -131,6 +131,7 @@ export async function generatePersonalizedInvites(
               fill: ${color}; 
               text-anchor: middle; 
               font-weight: normal;
+              font-style: italic;
             }
             .stroke { 
               stroke: ${strokeColor}; 
@@ -221,6 +222,7 @@ export async function generatePreview(
               fill: ${color}; 
               text-anchor: middle; 
               font-weight: normal;
+              font-style: italic;
             }
             .stroke { 
               stroke: ${strokeColor}; 
