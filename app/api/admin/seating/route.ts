@@ -176,7 +176,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const { id, ...updateData } = body
+    const { id, actual_guest_count, ...updateData } = body
 
     if (!id) {
       return NextResponse.json(
@@ -186,6 +186,9 @@ export async function PUT(request: NextRequest) {
     }
 
     console.log("[v0] Admin: Updating seating assignment:", { id, updateData })
+
+    // actual_guest_count is computed on the fly, not stored in seating_assignments
+    // Remove it if it was accidentally included
 
     // Ensure table_number is a number if provided
     if (updateData.table_number !== undefined) {
