@@ -848,11 +848,16 @@ export default function AdminPage() {
                           <Input
                             type="number"
                             min="1"
-                            value={editForm.actual_guest_count !== undefined ? editForm.actual_guest_count : (assignment.actual_guest_count || 1)}
-                            onChange={(e) =>
-                              setEditForm({ ...editForm, actual_guest_count: Number.parseInt(e.target.value) || 1 })
-                            }
-                            className="w-24 px-2 py-1 border border-jewel-burgundy/30 rounded"
+                            step="1"
+                            value={editForm.actual_guest_count ?? assignment.actual_guest_count ?? 1}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value, 10)
+                              if (!isNaN(val) && val >= 1) {
+                                setEditForm({ ...editForm, actual_guest_count: val })
+                              }
+                            }}
+                            className="w-24 px-2 py-1 border-2 border-jewel-burgundy/50 rounded focus:ring-2 focus:ring-jewel-crimson"
+                            placeholder="Count"
                           />
                         ) : (
                           <div className="text-sm font-medium text-jewel-sapphire">
