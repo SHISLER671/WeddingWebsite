@@ -76,7 +76,7 @@ export default function LivePreviewForm() {
       const fontSize = calculateFontSize(name, img.width)
 
       ctx.font = `${fontSize}px serif`
-      ctx.fillStyle = "#9333EA" // Vibrant purple for guest names
+      ctx.fillStyle = "#8114b8" // Darker richer purple (jewel-purple) for guest names
       ctx.textAlign = "center"
       ctx.textBaseline = "middle"
 
