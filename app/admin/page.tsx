@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"
 import { Search, Download, CheckCircle, AlertTriangle, Edit } from "lucide-react"
 import JSZip from "jszip"
+import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -680,8 +681,21 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-jewel-burgundy to-jewel-crimson p-4">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="min-h-screen relative p-4">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image 
+          src="/underleaf.jpg" 
+          alt="Background" 
+          fill 
+          className="object-cover object-center" 
+          priority
+        />
+      </div>
+      {/* Overlay for readability */}
+      <div className="absolute inset-0 z-10 bg-jewel-burgundy/40"></div>
+      
+      <div className="relative z-20 mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <div className="text-center">
           <h1 className="mb-2 font-serif text-4xl font-bold text-jewel-burgundy">Admin Dashboard</h1>
