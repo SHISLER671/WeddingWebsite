@@ -11,6 +11,7 @@
   "dependencies": {
     "@abstract-foundation/agw-react": "latest",
     "@hookform/resolvers": "^3.9.1",
+    "@napi-rs/canvas": "^0.1.60",
     "@privy-io/cross-app-connect": "latest",
     "@privy-io/react-auth": "latest",
     "@radix-ui/react-accordion": "latest",
@@ -46,7 +47,6 @@
     "@vercel/analytics": "1.3.1",
     "autoprefixer": "^10.4.20",
     "buffer": "latest",
-    "@napi-rs/canvas": "^0.1.60",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
