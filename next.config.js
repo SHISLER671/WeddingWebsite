@@ -37,11 +37,12 @@ const nextConfig = {
       "@storybook/react": false, // Ignore Storybook in Thirdweb
     }
     
-    // Exclude sharp from client-side bundle (server-only)
+    // Exclude sharp and canvas from client-side bundle (server-only)
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         sharp: false,
+        canvas: false,
         fs: false,
       }
     }

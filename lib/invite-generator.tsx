@@ -3,6 +3,7 @@ import Papa from "papaparse"
 import JSZip from "jszip"
 import { readFile } from "fs/promises"
 import { join } from "path"
+import { createCanvas, registerFont } from "canvas"
 
 interface Guest {
   FullName: string
@@ -56,8 +57,11 @@ async function loadMasterGuestList(): Promise<string> {
   return await readFile(csvPath, "utf-8")
 }
 
-// Load Tan Pearl font and convert to base64 for embedding in SVG
-async function loadTanPearlFont(): Promise<{ dataUrl: string; format: string } | null> {
+// Register Tan Pearl font with canvas
+let fontRegistered = false
+async function registerTanPearlFont(): Promise<boolean> {
+  if (fontRegistered) return true
+
   try {
     // Try different possible font file names and locations
     const possiblePaths = [
@@ -71,11 +75,10 @@ async function loadTanPearlFont(): Promise<{ dataUrl: string; format: string } |
 
     for (const fontPath of possiblePaths) {
       try {
-        const fontBuffer = await readFile(fontPath)
-        const base64Font = fontBuffer.toString("base64")
-        const fontFormat = fontPath.endsWith(".otf") ? "opentype" : "truetype"
-        const dataUrl = `data:font/${fontFormat};charset=utf-8;base64,${base64Font}`
-        return { dataUrl, format: fontFormat }
+        registerFont(fontPath, { family: "Tan Pearl" })
+        console.log("[v0] Successfully registered Tan Pearl font from:", fontPath)
+        fontRegistered = true
+        return true
       } catch (error) {
         // Try next path
         continue
@@ -83,11 +86,43 @@ async function loadTanPearlFont(): Promise<{ dataUrl: string; format: string } |
     }
 
     console.warn("[v0] Tan Pearl font file not found, will use fallback fonts")
-    return null
+    return false
   } catch (error) {
-    console.warn("[v0] Error loading Tan Pearl font:", error)
-    return null
+    console.warn("[v0] Error registering Tan Pearl font:", error)
+    return false
   }
+}
+
+// Create text overlay using canvas
+async function createTextOverlay(
+  text: string,
+  width: number,
+  height: number,
+  x: number,
+  y: number,
+  fontSize: number,
+  color: string,
+  strokeColor: string,
+  strokeWidth: number,
+): Promise<Buffer> {
+  const canvas = createCanvas(width, height)
+  const ctx = canvas.getContext("2d")
+
+  // Set up text rendering
+  ctx.textAlign = "center"
+  ctx.textBaseline = "top"
+  ctx.font = `${fontSize}px "Tan Pearl", "Times New Roman", serif`
+  ctx.fillStyle = color
+  ctx.strokeStyle = strokeColor
+  ctx.lineWidth = strokeWidth
+  ctx.lineJoin = "round"
+  ctx.lineCap = "round"
+
+  // Draw text with stroke (outline) first, then fill
+  ctx.strokeText(text, x, y)
+  ctx.fillText(text, x, y)
+
+  return canvas.toBuffer("image/png")
 }
 
 export async function generatePersonalizedInvites(
@@ -137,8 +172,8 @@ export async function generatePersonalizedInvites(
   const imgWidth = metadata.width || 1200
   const imgHeight = metadata.height || 1600
 
-  // Load Tan Pearl font for embedding
-  const tanPearlFont = await loadTanPearlFont()
+  // Register Tan Pearl font with canvas
+  await registerTanPearlFont()
 
   const zip = new JSZip()
 
@@ -151,46 +186,22 @@ export async function generatePersonalizedInvites(
     const finalX = useCustomPosition ? (options.x ?? position.x) : position.x
     const finalY = useCustomPosition ? (options.y ?? position.y) : position.y
 
-    // Use Tan Pearl font to match bride/groom names on invitation
-    // Fallback to Times Italic if Tan Pearl not available
-    const safeFont =
-      font.includes("GreatVibes") || font.includes("Playfair") || font === "serif"
-        ? "Tan Pearl" // Use Tan Pearl to match invitation font style
-        : font
-
-    // Build font-face CSS if font file is available
-    const fontFaceCss = tanPearlFont
-      ? `@font-face {
-              font-family: 'Tan Pearl';
-              src: url('${tanPearlFont.dataUrl}') format('${tanPearlFont.format}');
-            }`
-      : ""
-
-    const textSvg = `
-      <svg width="${imgWidth}" height="${imgHeight}" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <style>
-            ${fontFaceCss}
-            .title { 
-              font-family: "${safeFont}, 'Tan Pearl', Times Italic, Georgia Italic, serif"; 
-              font-size: ${fontSize}px; 
-              fill: ${color}; 
-              text-anchor: middle; 
-              font-weight: normal;
-            }
-            .stroke { 
-              stroke: ${strokeColor}; 
-              stroke-width: ${strokeWidth}px; 
-              paint-order: stroke fill; 
-            }
-          </style>
-        </defs>
-        <text x="${finalX}" y="${finalY}" class="title stroke">${escapeSvg(name)}</text>
-      </svg>`
+    // Create text overlay using canvas
+    const textOverlay = await createTextOverlay(
+      name,
+      imgWidth,
+      imgHeight,
+      finalX,
+      finalY,
+      fontSize,
+      color,
+      strokeColor,
+      strokeWidth,
+    )
 
     const output = await baseImage
       .clone()
-      .composite([{ input: Buffer.from(textSvg), top: 0, left: 0 }])
+      .composite([{ input: textOverlay, top: 0, left: 0 }])
       .jpeg({ quality: 95 })
       .toBuffer()
 
@@ -238,8 +249,8 @@ export async function generatePreview(
     const imgHeight = metadata.height || 1600
     console.log("[v0] Image dimensions:", imgWidth, "x", imgHeight)
 
-    // Load Tan Pearl font for embedding
-    const tanPearlFont = await loadTanPearlFont()
+    // Register Tan Pearl font with canvas
+    await registerTanPearlFont()
 
     // Calculate optimal position if auto-positioning is enabled
     let finalX: number
@@ -256,47 +267,22 @@ export async function generatePreview(
       console.log("[v0] Manual position at:", finalX, finalY)
     }
 
-    // Use Tan Pearl font to match bride/groom names on invitation
-    // Fallback to Times Italic if Tan Pearl not available
-    const safeFont = 
-      font.includes("GreatVibes") || font.includes("Playfair") || font === "serif"
-        ? "Tan Pearl" // Use Tan Pearl to match invitation font style
-        : font
-
-    // Build font-face CSS if font file is available
-    const fontFaceCss = tanPearlFont
-      ? `@font-face {
-              font-family: 'Tan Pearl';
-              src: url('${tanPearlFont.dataUrl}') format('${tanPearlFont.format}');
-            }`
-      : ""
-
-    console.log("[v0] Creating SVG overlay")
-    const textSvg = `
-      <svg width="${imgWidth}" height="${imgHeight}" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <style>
-            ${fontFaceCss}
-            .title { 
-              font-family: "${safeFont}, 'Tan Pearl', Times Italic, Georgia Italic, serif"; 
-              font-size: ${fontSize}px; 
-              fill: ${color}; 
-              text-anchor: middle; 
-              font-weight: normal;
-            }
-            .stroke { 
-              stroke: ${strokeColor}; 
-              stroke-width: ${strokeWidth}px; 
-              paint-order: stroke fill; 
-            }
-          </style>
-        </defs>
-        <text x="${finalX}" y="${finalY}" class="title stroke">${escapeSvg(name)}</text>
-      </svg>`
+    console.log("[v0] Creating canvas text overlay")
+    const textOverlay = await createTextOverlay(
+      name,
+      imgWidth,
+      imgHeight,
+      finalX,
+      finalY,
+      fontSize,
+      color,
+      strokeColor,
+      strokeWidth,
+    )
 
     console.log("[v0] Compositing image with text overlay")
     const result = await baseImage
-      .composite([{ input: Buffer.from(textSvg), top: 0, left: 0 }])
+      .composite([{ input: textOverlay, top: 0, left: 0 }])
       .jpeg({ quality: 92 })
       .toBuffer()
 
