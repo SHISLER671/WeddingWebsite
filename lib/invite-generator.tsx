@@ -3,7 +3,6 @@ import Papa from "papaparse"
 import JSZip from "jszip"
 import { readFile } from "fs/promises"
 import { join } from "path"
-import { Canvas, registerFont } from "@napi-rs/canvas"
 
 interface Guest {
   FullName: string
@@ -11,7 +10,7 @@ interface Guest {
 }
 
 function escapeSvg(text: string): string {
-  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
 }
 
 // Calculate optimal text position for guest name at the very top
@@ -57,44 +56,47 @@ async function loadMasterGuestList(): Promise<string> {
   return await readFile(csvPath, "utf-8")
 }
 
-// Register Tan Pearl font with @napi-rs/canvas
-let fontRegistered = false
-async function registerTanPearlFont(): Promise<boolean> {
-  if (fontRegistered) return true
+// Load and encode Tan Pearl font as base64
+let fontDataUrl: string | null = null
+let fontFormat: string | null = null
+
+async function loadTanPearlFont(): Promise<{ dataUrl: string; format: string } | null> {
+  if (fontDataUrl) {
+    return { dataUrl: fontDataUrl, format: fontFormat || "opentype" }
+  }
 
   try {
-    
-    // Try different possible font file names and locations
     const possiblePaths = [
-      join(process.cwd(), "public", "fonts", "TanPearl.ttf"),
-      join(process.cwd(), "public", "fonts", "TanPearl.otf"),
-      join(process.cwd(), "public", "fonts", "tan-pearl.ttf"),
-      join(process.cwd(), "public", "fonts", "tan-pearl.otf"),
-      join(process.cwd(), "public", "fonts", "Tan Pearl.ttf"),
-      join(process.cwd(), "public", "fonts", "Tan Pearl.otf"),
+      { path: join(process.cwd(), "public", "fonts", "tan-pearl.otf"), format: "opentype" },
+      { path: join(process.cwd(), "public", "fonts", "TanPearl.otf"), format: "opentype" },
+      { path: join(process.cwd(), "public", "fonts", "Tan Pearl.otf"), format: "opentype" },
+      { path: join(process.cwd(), "public", "fonts", "tan-pearl.ttf"), format: "truetype" },
+      { path: join(process.cwd(), "public", "fonts", "TanPearl.ttf"), format: "truetype" },
+      { path: join(process.cwd(), "public", "fonts", "Tan Pearl.ttf"), format: "truetype" },
     ]
 
-    for (const fontPath of possiblePaths) {
+    for (const { path, format } of possiblePaths) {
       try {
-        registerFont(fontPath, { family: "Tan Pearl" })
-        console.log("[v0] Successfully registered Tan Pearl font from:", fontPath)
-        fontRegistered = true
-        return true
+        const fontBuffer = await readFile(path)
+        const base64 = fontBuffer.toString("base64")
+        fontDataUrl = `data:font/${format};base64,${base64}`
+        fontFormat = format
+        console.log("[v0] Successfully loaded Tan Pearl font from:", path)
+        return { dataUrl: fontDataUrl, format }
       } catch (error) {
-        // Try next path
         continue
       }
     }
 
     console.warn("[v0] Tan Pearl font file not found, will use fallback fonts")
-    return false
+    return null
   } catch (error) {
-    console.warn("[v0] Error registering Tan Pearl font:", error)
-    return false
+    console.warn("[v0] Error loading Tan Pearl font:", error)
+    return null
   }
 }
 
-// Create text overlay using @napi-rs/canvas
+// Create text overlay using SVG (works with Sharp on Vercel)
 async function createTextOverlay(
   text: string,
   width: number,
@@ -106,25 +108,47 @@ async function createTextOverlay(
   strokeColor: string,
   strokeWidth: number,
 ): Promise<Buffer> {
-  const canvas = new Canvas(width, height)
-  const ctx = canvas.getContext("2d")
+  const fontInfo = await loadTanPearlFont()
+  const escapedText = escapeSvg(text)
 
-  // Ensure transparent background for overlay
-  ctx.clearRect(0, 0, width, height)
+  // Build SVG with embedded font if available
+  const fontFace = fontInfo
+    ? `<defs>
+        <style>
+          @font-face {
+            font-family: "Tan Pearl";
+            src: url("${fontInfo.dataUrl}") format("${fontInfo.format}");
+            font-weight: normal;
+            font-style: normal;
+          }
+        </style>
+      </defs>`
+    : ""
 
-  ctx.textAlign = "center"
-  ctx.textBaseline = "top"
-  ctx.font = `${fontSize}px "Tan Pearl", "Times New Roman", serif`
-  ctx.fillStyle = color
-  ctx.strokeStyle = strokeColor
-  ctx.lineWidth = strokeWidth
-  ctx.lineJoin = "round"
-  ctx.lineCap = "round"
+  const svg = `
+    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+      ${fontFace}
+      <text
+        x="${x}"
+        y="${y}"
+        font-family="${fontInfo ? '"Tan Pearl", ' : ""}"Times New Roman", serif"
+        font-size="${fontSize}"
+        fill="${color}"
+        stroke="${strokeColor}"
+        stroke-width="${strokeWidth}"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        text-anchor="middle"
+        dominant-baseline="hanging"
+      >${escapedText}</text>
+    </svg>
+  `.trim()
 
-  ctx.strokeText(text, x, y)
-  ctx.fillText(text, x, y)
-
-  return canvas.toBuffer("image/png")
+  // Convert SVG to PNG buffer using Sharp
+  return await sharp(Buffer.from(svg))
+    .resize(width, height)
+    .png()
+    .toBuffer()
 }
 
 export async function generatePersonalizedInvites(
@@ -174,9 +198,6 @@ export async function generatePersonalizedInvites(
   const imgWidth = metadata.width || 1200
   const imgHeight = metadata.height || 1600
 
-  // Register Tan Pearl font with canvas
-  await registerTanPearlFont()
-
   const zip = new JSZip()
 
   for (const guest of normalizedGuests) {
@@ -188,7 +209,7 @@ export async function generatePersonalizedInvites(
     const finalX = useCustomPosition ? (options.x ?? position.x) : position.x
     const finalY = useCustomPosition ? (options.y ?? position.y) : position.y
 
-    // Create text overlay using canvas
+    // Create text overlay using SVG
     const textOverlay = await createTextOverlay(
       name,
       imgWidth,
@@ -249,8 +270,6 @@ export async function generatePreview(
     const imgHeight = metadata.height || 1600
 
     console.log("[v0] Image dimensions:", imgWidth, "x", imgHeight)
-
-    await registerTanPearlFont() // Register font once
 
     let finalX: number
     let finalY: number

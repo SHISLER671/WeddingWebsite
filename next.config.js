@@ -37,30 +37,12 @@ const nextConfig = {
       "@storybook/react": false, // Ignore Storybook in Thirdweb
     }
     
-    // Exclude sharp and @napi-rs/canvas from client-side bundle (server-only)
+    // Exclude sharp from client-side bundle (server-only)
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         sharp: false,
-        "@napi-rs/canvas": false,
         fs: false,
-      }
-    }
-    
-    // For server-side, mark @napi-rs/canvas as external to avoid bundling issues
-    if (isServer) {
-      config.externals = config.externals || []
-      if (typeof config.externals === 'function') {
-        const originalExternals = config.externals
-        config.externals = [
-          originalExternals,
-          ({ request }, callback) => {
-            if (request === '@napi-rs/canvas') {
-              return callback(null, 'commonjs ' + request)
-            }
-            callback()
-          }
-        ]
       }
     }
     
