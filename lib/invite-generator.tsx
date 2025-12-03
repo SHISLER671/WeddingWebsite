@@ -115,10 +115,12 @@ export async function generatePersonalizedInvites(
     const finalY = useCustomPosition ? (options.y ?? position.y) : position.y
 
     // Use system fonts that Sharp can render properly (avoid custom fonts that cause squares)
-    // Fallback to serif if custom font not available
+    // For italic, use Times Italic or Georgia Italic which Sharp can render
     const safeFont =
       font.includes("GreatVibes") || font.includes("Playfair")
-        ? "serif" // Use system serif to avoid font loading issues
+        ? "Times Italic" // Use Times Italic for elegant italicized style
+        : font === "serif"
+        ? "Times Italic" // Use Times Italic for serif default
         : font
 
     const textSvg = `
@@ -126,7 +128,7 @@ export async function generatePersonalizedInvites(
         <defs>
           <style>
             .title { 
-              font-family: "${safeFont}, serif, Times, Georgia"; 
+              font-family: "${safeFont}, Times Italic, Georgia Italic, serif"; 
               font-size: ${fontSize}px; 
               fill: ${color}; 
               text-anchor: middle; 
@@ -209,7 +211,13 @@ export async function generatePreview(
     }
 
     // Use system fonts that Sharp can render properly
-    const safeFont = font.includes("GreatVibes") || font.includes("Playfair") ? "serif" : font
+    // For italic, use Times Italic or Georgia Italic which Sharp can render
+    const safeFont = 
+      font.includes("GreatVibes") || font.includes("Playfair")
+        ? "Times Italic" // Use Times Italic for elegant italicized style
+        : font === "serif"
+        ? "Times Italic" // Use Times Italic for serif default
+        : font
 
     console.log("[v0] Creating SVG overlay")
     const textSvg = `
@@ -217,7 +225,7 @@ export async function generatePreview(
         <defs>
           <style>
             .title { 
-              font-family: "${safeFont}, serif, Times, Georgia"; 
+              font-family: "${safeFont}, Times Italic, Georgia Italic, serif"; 
               font-size: ${fontSize}px; 
               fill: ${color}; 
               text-anchor: middle; 
