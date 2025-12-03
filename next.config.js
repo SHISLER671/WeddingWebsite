@@ -47,13 +47,22 @@ const nextConfig = {
       }
     }
     
-    // Exclude scripts directory from compilation (they're standalone Node.js scripts)
-    config.module.rules.push({
-      test: /scripts\/.*\.(js|ts|tsx)$/,
-      use: {
-        loader: 'null-loader',
-      },
-    })
+    // For server-side, mark @napi-rs/canvas as external to avoid bundling issues
+    if (isServer) {
+      config.externals = config.externals || []
+      if (typeof config.externals === 'function') {
+        const originalExternals = config.externals
+        config.externals = [
+          originalExternals,
+          ({ request }, callback) => {
+            if (request === '@napi-rs/canvas') {
+              return callback(null, 'commonjs ' + request)
+            }
+            callback()
+          }
+        ]
+      }
+    }
     
     // Don't externalize sharp - let it bundle normally for server-side
     // Sharp works on Vercel when properly installed in node_modules

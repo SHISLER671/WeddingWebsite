@@ -63,6 +63,7 @@ async function registerTanPearlFont(): Promise<boolean> {
   if (fontRegistered) return true
 
   try {
+    
     // Try different possible font file names and locations
     const possiblePaths = [
       join(process.cwd(), "public", "fonts", "TanPearl.ttf"),
