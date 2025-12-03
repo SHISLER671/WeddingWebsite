@@ -20,4 +20,3 @@ To use the "Tan Pearl" font for invitation guest names, please add the font file
 
 ## Note:
 If the font file is not found, the system will fall back to Times Italic or other serif fonts.
-
