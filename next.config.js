@@ -47,6 +47,14 @@ const nextConfig = {
       }
     }
     
+    // Exclude scripts directory from compilation (they're standalone Node.js scripts)
+    config.module.rules.push({
+      test: /scripts\/.*\.(js|ts|tsx)$/,
+      use: {
+        loader: 'null-loader',
+      },
+    })
+    
     // Don't externalize sharp - let it bundle normally for server-side
     // Sharp works on Vercel when properly installed in node_modules
     

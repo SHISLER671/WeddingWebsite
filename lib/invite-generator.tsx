@@ -3,7 +3,7 @@ import Papa from "papaparse"
 import JSZip from "jszip"
 import { readFile } from "fs/promises"
 import { join } from "path"
-import { Canvas, loadImage, registerFont } from "@napi-rs/canvas"
+import { Canvas, registerFont } from "@napi-rs/canvas"
 
 interface Guest {
   FullName: string
