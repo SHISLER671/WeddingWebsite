@@ -84,7 +84,7 @@ async function createTextOverlay(
       <text
         x="${x}"
         y="${y}"
-        font-family="serif"
+        font-family="Georgia, 'Times New Roman', Times, serif"
         font-size="${fontSize}"
         font-weight="normal"
         fill="${color}"
