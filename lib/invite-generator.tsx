@@ -3,7 +3,7 @@ import Papa from "papaparse"
 import JSZip from "jszip"
 import { readFile } from "fs/promises"
 import { join } from "path"
-import { createCanvas, registerFont } from "canvas"
+import { Canvas, loadImage, registerFont } from "@napi-rs/canvas"
 
 interface Guest {
   FullName: string
@@ -57,7 +57,7 @@ async function loadMasterGuestList(): Promise<string> {
   return await readFile(csvPath, "utf-8")
 }
 
-// Register Tan Pearl font with canvas
+// Register Tan Pearl font with @napi-rs/canvas
 let fontRegistered = false
 async function registerTanPearlFont(): Promise<boolean> {
   if (fontRegistered) return true
@@ -93,7 +93,7 @@ async function registerTanPearlFont(): Promise<boolean> {
   }
 }
 
-// Create text overlay using canvas
+// Create text overlay using @napi-rs/canvas
 async function createTextOverlay(
   text: string,
   width: number,
@@ -105,7 +105,7 @@ async function createTextOverlay(
   strokeColor: string,
   strokeWidth: number,
 ): Promise<Buffer> {
-  const canvas = createCanvas(width, height)
+  const canvas = new Canvas(width, height)
   const ctx = canvas.getContext("2d")
 
   // Set up text rendering
