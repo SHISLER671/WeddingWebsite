@@ -31,6 +31,15 @@ export async function GET() {
       console.warn("[v0] Admin: Could not fetch RSVPs:", rsvpError.message)
     }
 
+    // Fetch invited_guests to get allowed_party_size as fallback
+    const { data: invitedGuests, error: invitedGuestsError } = await supabase
+      .from("invited_guests")
+      .select("guest_name, email, allowed_party_size")
+
+    if (invitedGuestsError) {
+      console.warn("[v0] Admin: Could not fetch invited_guests:", invitedGuestsError.message)
+    }
+
     // Create a map of RSVPs by email and name for quick lookup
     const rsvpMap = new Map<string, any>()
     rsvps?.forEach((rsvp: any) => {
@@ -44,7 +53,19 @@ export async function GET() {
       }
     })
 
-    // Process assignments to include actual guest count from RSVP
+    // Create a map of invited_guests by email and name for allowed_party_size lookup
+    const invitedGuestsMap = new Map<string, any>()
+    invitedGuests?.forEach((guest: any) => {
+      if (guest.email) {
+        invitedGuestsMap.set(guest.email.toLowerCase(), guest)
+      }
+      const normalizedName = guest.guest_name?.trim().toLowerCase()
+      if (normalizedName) {
+        invitedGuestsMap.set(`name:${normalizedName}`, guest)
+      }
+    })
+
+    // Process assignments to include actual guest count from RSVP or invited_guests
     const processed = assignments?.map((assignment: any) => {
       // Try to find matching RSVP by email first, then by name
       let matchingRsvp = null
@@ -56,10 +77,23 @@ export async function GET() {
         matchingRsvp = rsvpMap.get(`name:${normalizedName}`)
       }
 
-      // Get guest count from RSVP if available, otherwise default to 1
-      const actualGuestCount = matchingRsvp?.attendance === 'yes' 
-        ? (matchingRsvp.guest_count || 1) 
-        : 1 // Default to 1 if no RSVP found (they might not have RSVP'd yet)
+      // Try to find matching invited_guest for allowed_party_size
+      let matchingInvitedGuest = null
+      if (assignment.email) {
+        matchingInvitedGuest = invitedGuestsMap.get(assignment.email.toLowerCase())
+      }
+      if (!matchingInvitedGuest && assignment.guest_name) {
+        const normalizedName = assignment.guest_name.trim().toLowerCase()
+        matchingInvitedGuest = invitedGuestsMap.get(`name:${normalizedName}`)
+      }
+
+      // Get guest count: prefer RSVP guest_count if RSVP'd yes, otherwise use allowed_party_size, otherwise default to 1
+      let actualGuestCount = 1
+      if (matchingRsvp?.attendance === 'yes') {
+        actualGuestCount = matchingRsvp.guest_count || 1
+      } else if (matchingInvitedGuest?.allowed_party_size) {
+        actualGuestCount = matchingInvitedGuest.allowed_party_size
+      }
       
       return {
         ...assignment,

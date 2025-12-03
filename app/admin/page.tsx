@@ -448,6 +448,27 @@ export default function AdminPage() {
     setMessage("")
 
     try {
+      // Update guest count if it was changed
+      if (currentAssignment && editForm.actual_guest_count !== undefined && 
+          editForm.actual_guest_count !== currentAssignment.actual_guest_count) {
+        const guestCountResponse = await fetch("/api/admin/guest-count", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            guest_name: currentAssignment.guest_name,
+            email: currentAssignment.email,
+            guest_count: editForm.actual_guest_count,
+          }),
+        })
+
+        if (!guestCountResponse.ok) {
+          const errorText = await guestCountResponse.text()
+          setMessage(`❌ Error updating guest count: ${errorText}`)
+          setLoading(false)
+          return
+        }
+      }
+
       const response = await fetch("/api/admin/seating", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -823,10 +844,22 @@ export default function AdminPage() {
                         )}
                       </td>
                       <td className="py-3 px-2">
-                        <div className="text-sm font-medium text-jewel-sapphire">
-                          {assignment.actual_guest_count || 1}{" "}
-                          {assignment.actual_guest_count === 1 ? "person" : "people"}
-                        </div>
+                        {editingId === assignment.id ? (
+                          <Input
+                            type="number"
+                            min="1"
+                            value={editForm.actual_guest_count !== undefined ? editForm.actual_guest_count : (assignment.actual_guest_count || 1)}
+                            onChange={(e) =>
+                              setEditForm({ ...editForm, actual_guest_count: Number.parseInt(e.target.value) || 1 })
+                            }
+                            className="w-24 px-2 py-1 border border-jewel-burgundy/30 rounded"
+                          />
+                        ) : (
+                          <div className="text-sm font-medium text-jewel-sapphire">
+                            {assignment.actual_guest_count || 1}{" "}
+                            {assignment.actual_guest_count === 1 ? "person" : "people"}
+                          </div>
+                        )}
                       </td>
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
