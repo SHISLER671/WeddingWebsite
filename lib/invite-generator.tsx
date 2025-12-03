@@ -56,6 +56,40 @@ async function loadMasterGuestList(): Promise<string> {
   return await readFile(csvPath, "utf-8")
 }
 
+// Load Tan Pearl font and convert to base64 for embedding in SVG
+async function loadTanPearlFont(): Promise<{ dataUrl: string; format: string } | null> {
+  try {
+    // Try different possible font file names and locations
+    const possiblePaths = [
+      join(process.cwd(), "public", "fonts", "TanPearl.ttf"),
+      join(process.cwd(), "public", "fonts", "TanPearl.otf"),
+      join(process.cwd(), "public", "fonts", "tan-pearl.ttf"),
+      join(process.cwd(), "public", "fonts", "tan-pearl.otf"),
+      join(process.cwd(), "public", "fonts", "Tan Pearl.ttf"),
+      join(process.cwd(), "public", "fonts", "Tan Pearl.otf"),
+    ]
+
+    for (const fontPath of possiblePaths) {
+      try {
+        const fontBuffer = await readFile(fontPath)
+        const base64Font = fontBuffer.toString("base64")
+        const fontFormat = fontPath.endsWith(".otf") ? "opentype" : "truetype"
+        const dataUrl = `data:font/${fontFormat};charset=utf-8;base64,${base64Font}`
+        return { dataUrl, format: fontFormat }
+      } catch (error) {
+        // Try next path
+        continue
+      }
+    }
+
+    console.warn("[v0] Tan Pearl font file not found, will use fallback fonts")
+    return null
+  } catch (error) {
+    console.warn("[v0] Error loading Tan Pearl font:", error)
+    return null
+  }
+}
+
 export async function generatePersonalizedInvites(
   csvFile: File | null,
   options: {
@@ -103,6 +137,9 @@ export async function generatePersonalizedInvites(
   const imgWidth = metadata.width || 1200
   const imgHeight = metadata.height || 1600
 
+  // Load Tan Pearl font for embedding
+  const tanPearlFont = await loadTanPearlFont()
+
   const zip = new JSZip()
 
   for (const guest of normalizedGuests) {
@@ -121,12 +158,21 @@ export async function generatePersonalizedInvites(
         ? "Tan Pearl" // Use Tan Pearl to match invitation font style
         : font
 
+    // Build font-face CSS if font file is available
+    const fontFaceCss = tanPearlFont
+      ? `@font-face {
+              font-family: 'Tan Pearl';
+              src: url('${tanPearlFont.dataUrl}') format('${tanPearlFont.format}');
+            }`
+      : ""
+
     const textSvg = `
       <svg width="${imgWidth}" height="${imgHeight}" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <style>
+            ${fontFaceCss}
             .title { 
-              font-family: "${safeFont}, Tan Pearl, Times Italic, Georgia Italic, serif"; 
+              font-family: "${safeFont}, 'Tan Pearl', Times Italic, Georgia Italic, serif"; 
               font-size: ${fontSize}px; 
               fill: ${color}; 
               text-anchor: middle; 
@@ -192,6 +238,9 @@ export async function generatePreview(
     const imgHeight = metadata.height || 1600
     console.log("[v0] Image dimensions:", imgWidth, "x", imgHeight)
 
+    // Load Tan Pearl font for embedding
+    const tanPearlFont = await loadTanPearlFont()
+
     // Calculate optimal position if auto-positioning is enabled
     let finalX: number
     let finalY: number
@@ -214,13 +263,22 @@ export async function generatePreview(
         ? "Tan Pearl" // Use Tan Pearl to match invitation font style
         : font
 
+    // Build font-face CSS if font file is available
+    const fontFaceCss = tanPearlFont
+      ? `@font-face {
+              font-family: 'Tan Pearl';
+              src: url('${tanPearlFont.dataUrl}') format('${tanPearlFont.format}');
+            }`
+      : ""
+
     console.log("[v0] Creating SVG overlay")
     const textSvg = `
       <svg width="${imgWidth}" height="${imgHeight}" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <style>
+            ${fontFaceCss}
             .title { 
-              font-family: "${safeFont}, Tan Pearl, Times Italic, Georgia Italic, serif"; 
+              font-family: "${safeFont}, 'Tan Pearl', Times Italic, Georgia Italic, serif"; 
               font-size: ${fontSize}px; 
               fill: ${color}; 
               text-anchor: middle; 
