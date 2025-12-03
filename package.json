@@ -11,7 +11,7 @@
   "dependencies": {
     "@abstract-foundation/agw-react": "latest",
     "@hookform/resolvers": "^3.9.1",
-    "@napi-rs/canvas": "^0.1.60",
+    "@napi-rs/canvas": "latest",
     "@privy-io/cross-app-connect": "latest",
     "@privy-io/react-auth": "latest",
     "@radix-ui/react-accordion": "latest",
