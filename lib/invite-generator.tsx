@@ -131,8 +131,10 @@ async function createTextOverlay(
       <text
         x="${x}"
         y="${y}"
-        font-family="${fontInfo ? '"Tan Pearl", ' : ""}"Times New Roman", serif"
+        font-family="${fontInfo ? '"Tan Pearl", ' : ""}"Playfair Display", "Times New Roman", serif"
         font-size="${fontSize}"
+        font-weight="500"
+        letter-spacing="0.05em"
         fill="${color}"
         stroke="${strokeColor}"
         stroke-width="${strokeWidth}"
@@ -166,9 +168,9 @@ export async function generatePersonalizedInvites(
 ) {
   const {
     fontSize = 80,
-    color = "#7B4B7A", // Medium purple/plum to match invitation text color
-    strokeColor = "#4a1c1c",
-    strokeWidth = 4,
+    color = "#9333EA", // Vibrant purple for guest names
+    strokeColor = "#6B21A8", // Darker purple stroke for depth
+    strokeWidth = 3,
     font = "serif", // Use system serif to avoid font loading issues
     useMasterList = false,
   } = options
@@ -255,9 +257,9 @@ export async function generatePreview(
 
     const {
       fontSize = 80,
-      color = "#7B4B7A", // Medium purple/plum to match invitation text color
-      strokeColor = "#4a1c1c",
-      strokeWidth = 4,
+      color = "#9333EA", // Vibrant purple for guest names
+      strokeColor = "#6B21A8", // Darker purple stroke for depth
+      strokeWidth = 3,
       font = "serif",
       autoPosition = true,
     } = options
