@@ -56,47 +56,13 @@ async function loadMasterGuestList(): Promise<string> {
   return await readFile(csvPath, "utf-8")
 }
 
-// Load and encode Tan Pearl font as base64
-let fontDataUrl: string | null = null
-let fontFormat: string | null = null
-
-async function loadTanPearlFont(): Promise<{ dataUrl: string; format: string } | null> {
-  if (fontDataUrl) {
-    return { dataUrl: fontDataUrl, format: fontFormat || "opentype" }
-  }
-
-  try {
-    const possiblePaths = [
-      { path: join(process.cwd(), "public", "fonts", "tan-pearl.otf"), format: "opentype" },
-      { path: join(process.cwd(), "public", "fonts", "TanPearl.otf"), format: "opentype" },
-      { path: join(process.cwd(), "public", "fonts", "Tan Pearl.otf"), format: "opentype" },
-      { path: join(process.cwd(), "public", "fonts", "tan-pearl.ttf"), format: "truetype" },
-      { path: join(process.cwd(), "public", "fonts", "TanPearl.ttf"), format: "truetype" },
-      { path: join(process.cwd(), "public", "fonts", "Tan Pearl.ttf"), format: "truetype" },
-    ]
-
-    for (const { path, format } of possiblePaths) {
-      try {
-        const fontBuffer = await readFile(path)
-        const base64 = fontBuffer.toString("base64")
-        fontDataUrl = `data:font/${format};base64,${base64}`
-        fontFormat = format
-        console.log("[v0] Successfully loaded Tan Pearl font from:", path)
-        return { dataUrl: fontDataUrl, format }
-      } catch (error) {
-        continue
-      }
-    }
-
-    console.warn("[v0] Tan Pearl font file not found, will use fallback fonts")
-    return null
-  } catch (error) {
-    console.warn("[v0] Error loading Tan Pearl font:", error)
-    return null
-  }
-}
+// NOTE: Custom font embedding doesn't work with Sharp's SVG renderer on Vercel
+// Sharp uses librsvg which doesn't support @font-face with data URIs
+// We use elegant system serif fonts (Georgia, Times New Roman) instead
 
 // Create text overlay using SVG (works with Sharp on Vercel)
+// NOTE: Sharp's SVG renderer (librsvg) does NOT support @font-face with data URIs
+// We use elegant system serif fonts that will render properly
 async function createTextOverlay(
   text: string,
   width: number,
@@ -108,31 +74,18 @@ async function createTextOverlay(
   strokeColor: string,
   strokeWidth: number,
 ): Promise<Buffer> {
-  const fontInfo = await loadTanPearlFont()
   const escapedText = escapeSvg(text)
 
-  // Build SVG with embedded font if available
-  const fontFace = fontInfo
-    ? `<defs>
-        <style>
-          @font-face {
-            font-family: "Tan Pearl";
-            src: url("${fontInfo.dataUrl}") format("${fontInfo.format}");
-            font-weight: normal;
-            font-style: normal;
-          }
-        </style>
-      </defs>`
-    : ""
-
+  // Use elegant serif fonts available on most systems
+  // Georgia and Times New Roman are professional and elegant
   const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      ${fontFace}
       <text
         x="${x}"
         y="${y}"
-        font-family="${fontInfo ? '"Tan Pearl", ' : ""}"Times New Roman", serif"
+        font-family="Georgia, 'Times New Roman', Times, serif"
         font-size="${fontSize}"
+        font-weight="normal"
         fill="${color}"
         stroke="${strokeColor}"
         stroke-width="${strokeWidth}"
