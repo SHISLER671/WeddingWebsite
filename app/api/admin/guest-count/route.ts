@@ -18,26 +18,18 @@ export async function PUT(request: NextRequest) {
     const { guest_name, email, guest_count } = body
 
     if (!guest_name) {
-      return NextResponse.json(
-        { success: false, error: "Missing required field: guest_name" },
-        { status: 400 },
-      )
+      return NextResponse.json({ success: false, error: "Missing required field: guest_name" }, { status: 400 })
     }
 
     if (!guest_count || guest_count < 1) {
-      return NextResponse.json(
-        { success: false, error: "Guest count must be at least 1" },
-        { status: 400 },
-      )
+      return NextResponse.json({ success: false, error: "Guest count must be at least 1" }, { status: 400 })
     }
 
     console.log("[v0] Admin: Updating guest count:", { guest_name, email, guest_count })
 
     // Update invited_guests table (allowed_party_size)
     const invitedGuestsUpdate: any = { allowed_party_size: guest_count }
-    const invitedGuestsQuery = supabase
-      .from("invited_guests")
-      .update(invitedGuestsUpdate)
+    const invitedGuestsQuery = supabase.from("invited_guests").update(invitedGuestsUpdate)
 
     if (email) {
       invitedGuestsQuery.eq("email", email)
@@ -57,10 +49,7 @@ export async function PUT(request: NextRequest) {
 
     // Update rsvps table (guest_count) if RSVP exists
     if (email) {
-      const { error: rsvpError } = await supabase
-        .from("rsvps")
-        .update({ guest_count })
-        .eq("email", email)
+      const { error: rsvpError } = await supabase.from("rsvps").update({ guest_count }).eq("email", email)
 
       if (rsvpError) {
         console.warn("[v0] Admin: Could not update RSVP (may not exist):", rsvpError.message)
@@ -73,13 +62,10 @@ export async function PUT(request: NextRequest) {
         .select("email")
         .ilike("guest_name", guest_name)
         .limit(1)
-        .single()
+        .maybeSingle()
 
       if (rsvpData?.email) {
-        const { error: rsvpError } = await supabase
-          .from("rsvps")
-          .update({ guest_count })
-          .eq("email", rsvpData.email)
+        const { error: rsvpError } = await supabase.from("rsvps").update({ guest_count }).eq("email", rsvpData.email)
 
         if (rsvpError) {
           console.warn("[v0] Admin: Could not update RSVP:", rsvpError.message)
