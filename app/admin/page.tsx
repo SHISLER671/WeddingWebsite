@@ -43,7 +43,12 @@ export default function AdminPage() {
   const loadAssignments = async () => {
     setLoading(true)
     try {
-      const response = await fetch("/api/admin/seating")
+      const response = await fetch(`/api/admin/seating?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      })
       const result = await response.json()
 
       if (result.success) {
