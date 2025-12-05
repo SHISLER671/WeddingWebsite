@@ -43,15 +43,26 @@ export default function AdminPage() {
   const loadAssignments = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/admin/seating?t=${Date.now()}`, {
-        cache: 'no-store',
+      const timestamp = Date.now()
+      const randomId = Math.random().toString(36).substring(7)
+      const response = await fetch(`/api/admin/seating?t=${timestamp}&r=${randomId}`, {
+        cache: "no-store",
+        next: { revalidate: 0 },
         headers: {
-          'Cache-Control': 'no-cache',
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       })
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+
       const result = await response.json()
 
       if (result.success) {
+        console.log("[v0] Admin page: Received", result.data.length, "assignments")
         setAssignments(result.data)
         if (result.tableCapacities) {
           setTableCapacities(result.tableCapacities)
@@ -61,6 +72,7 @@ export default function AdminPage() {
         setMessage(`❌ Error: ${result.error}`)
       }
     } catch (error) {
+      console.error("[v0] Admin page: Load error:", error)
       setMessage(`❌ Error loading assignments: ${error}`)
     } finally {
       setLoading(false)
@@ -455,8 +467,11 @@ export default function AdminPage() {
 
     try {
       // Update guest count if it was changed
-      if (currentAssignment && editForm.actual_guest_count !== undefined && 
-          editForm.actual_guest_count !== currentAssignment.actual_guest_count) {
+      if (
+        currentAssignment &&
+        editForm.actual_guest_count !== undefined &&
+        editForm.actual_guest_count !== currentAssignment.actual_guest_count
+      ) {
         const guestCountResponse = await fetch("/api/admin/guest-count", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -689,17 +704,11 @@ export default function AdminPage() {
     <div className="min-h-screen relative p-4">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <Image 
-          src="/redroses.jpg" 
-          alt="Background" 
-          fill 
-          className="object-cover object-center" 
-          priority
-        />
+        <Image src="/redroses.jpg" alt="Background" fill className="object-cover object-center" priority />
       </div>
       {/* Overlay for readability */}
       <div className="absolute inset-0 z-10 bg-jewel-burgundy/40"></div>
-      
+
       <div className="relative z-20 mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <div className="text-center">
@@ -870,7 +879,7 @@ export default function AdminPage() {
                             step="1"
                             value={editForm.actual_guest_count ?? assignment.actual_guest_count ?? 1}
                             onChange={(e) => {
-                              const val = parseInt(e.target.value, 10)
+                              const val = Number.parseInt(e.target.value, 10)
                               if (!isNaN(val) && val >= 1) {
                                 setEditForm({ ...editForm, actual_guest_count: val })
                               }
