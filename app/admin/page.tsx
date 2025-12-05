@@ -685,7 +685,7 @@ export default function AdminPage() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image 
-          src="/underleaf.jpg" 
+          src="/redroses.jpg" 
           alt="Background" 
           fill 
           className="object-cover object-center" 
