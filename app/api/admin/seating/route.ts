@@ -197,11 +197,20 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      data: sorted || [],
-      tableCapacities, // Include capacity info for frontend
-    })
+    return NextResponse.json(
+      {
+        success: true,
+        data: sorted || [],
+        tableCapacities, // Include capacity info for frontend
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      }
+    )
   } catch (error) {
     console.error("[v0] Admin: Error fetching seating assignments:", error)
     return NextResponse.json(
