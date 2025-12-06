@@ -40,18 +40,39 @@ export default function AdminPage() {
     loadAssignments()
   }, [])
 
-  const loadAssignments = async () => {
+  const loadAssignments = async (forceRefresh = false) => {
     setLoading(true)
     try {
+      // Generate a unique cache-busting parameter that changes on each call
       const timestamp = Date.now()
       const randomId = Math.random().toString(36).substring(7)
-      const response = await fetch(`/api/admin/seating?t=${timestamp}&r=${randomId}`, {
+      const sessionId = typeof window !== 'undefined' 
+        ? (window.sessionStorage.getItem('admin_session_id') || Math.random().toString(36).substring(7))
+        : Math.random().toString(36).substring(7)
+      
+      if (typeof window !== 'undefined' && !window.sessionStorage.getItem('admin_session_id')) {
+        window.sessionStorage.setItem('admin_session_id', sessionId)
+      }
+      
+      // Force a new session ID on explicit refresh
+      if (forceRefresh && typeof window !== 'undefined') {
+        const newSessionId = Math.random().toString(36).substring(7)
+        window.sessionStorage.setItem('admin_session_id', newSessionId)
+      }
+      
+      const finalSessionId = typeof window !== 'undefined' 
+        ? window.sessionStorage.getItem('admin_session_id')
+        : sessionId
+      
+      const response = await fetch(`/api/admin/seating?t=${timestamp}&r=${randomId}&s=${finalSessionId}&v=${forceRefresh ? '1' : '0'}`, {
+        method: 'GET',
         cache: "no-store",
-        next: { revalidate: 0 },
+        credentials: 'same-origin',
         headers: {
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          Pragma: "no-cache",
-          Expires: "0",
+          "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+          "Pragma": "no-cache",
+          "Expires": "0",
+          "X-Requested-With": "XMLHttpRequest",
         },
       })
 
@@ -62,7 +83,11 @@ export default function AdminPage() {
       const result = await response.json()
 
       if (result.success) {
-        console.log("[v0] Admin page: Received", result.data.length, "assignments")
+        console.log("[v0] Admin page: Received", result.data.length, "assignments", forceRefresh ? "(FORCE REFRESH)" : "")
+        // Verify we got the updated names
+        const hasUncleRudy = result.data.some((a: SeatingAssignment) => a.guest_name === "Uncle Rudy Roberto")
+        const hasAubree = result.data.some((a: SeatingAssignment) => a.guest_name === "Aubree Chaco")
+        console.log("[v0] Name verification:", { hasUncleRudy, hasAubree })
         setAssignments(result.data)
         if (result.tableCapacities) {
           setTableCapacities(result.tableCapacities)
@@ -787,7 +812,7 @@ export default function AdminPage() {
 
           <div className="mb-6 flex gap-4">
             <Button
-              onClick={loadAssignments}
+              onClick={() => loadAssignments(true)}
               className="bg-jewel-emerald hover:bg-jewel-emerald/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center"
             >
               <CheckCircle className="w-4 h-4" />
