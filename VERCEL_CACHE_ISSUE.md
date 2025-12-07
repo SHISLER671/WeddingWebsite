@@ -16,13 +16,13 @@ The Admin page at `/admin` is showing stale data from the `/api/admin/seating` e
 - ✅ Added `export const revalidate = 0`
 - ✅ Added `export const fetchCache = 'force-no-store'`
 - ✅ Added cache-busting headers in response:
-  ```typescript
+  \`\`\`typescript
   headers: {
     'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
     'Pragma': 'no-cache',
     'Expires': '0',
   }
-  ```
+  \`\`\`
 
 ### 2. Client-Side Fetch
 - ✅ Added timestamp query parameter: `?t=${Date.now()}`
@@ -59,4 +59,3 @@ Admin page shows old cached data despite:
 ## Files Changed
 - `app/api/admin/seating/route.ts` - Added cache prevention
 - `app/admin/page.tsx` - Added cache-busting to fetch
-
