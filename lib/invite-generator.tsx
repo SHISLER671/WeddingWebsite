@@ -78,13 +78,13 @@ async function createTextOverlay(
 
   // Use elegant serif fonts available on most systems
   // NOTE: Sharp's SVG renderer (librsvg) does NOT support font-style="italic"
-  // Georgia and Times New Roman are professional and elegant
+  // Using more decorative serif fonts for a fancier appearance
   const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <text
         x="${x}"
         y="${y}"
-        font-family="Georgia, 'Times New Roman', Times, serif"
+        font-family="Didot, 'Bodoni MT', Garamond, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', Times, serif"
         font-size="${fontSize}"
         font-weight="normal"
         fill="${color}"
