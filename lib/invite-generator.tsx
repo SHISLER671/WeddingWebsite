@@ -120,7 +120,7 @@ export async function generatePersonalizedInvites(
 ) {
   const {
     fontSize = 80,
-    color = "#722F37", // Burgundy color matching bulk generation
+    color = "#7B4B7A", // Purple color to match invitation text
     strokeColor = "#5a1f2a", // Darker burgundy stroke for depth
     strokeWidth = 4,
     font = "serif", // Use system serif to avoid font loading issues
@@ -209,7 +209,7 @@ export async function generatePreview(
 
     const {
       fontSize = 80,
-      color = "#722F37", // Burgundy color matching bulk generation
+      color = "#7B4B7A", // Purple color to match invitation text
       strokeColor = "#5a1f2a", // Darker burgundy stroke for depth
       strokeWidth = 4,
       font = "serif",

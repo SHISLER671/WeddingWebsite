@@ -76,7 +76,7 @@ export default function LivePreviewForm() {
       const fontSize = calculateFontSize(name, img.width)
 
       ctx.font = `${fontSize}px serif`
-      ctx.fillStyle = "#722F37" // Burgundy color matching bulk generation
+      ctx.fillStyle = "#7B4B7A" // Purple color to match invitation text
       ctx.textAlign = "center"
       ctx.textBaseline = "middle"
 
