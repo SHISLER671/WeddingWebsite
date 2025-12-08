@@ -31,8 +31,15 @@ const supabase = createClient(
 );
 
 // Helper function to normalize name for comparison
+// Removes common suffixes like "& Guest", " & Guest", etc.
 function normalizeName(name) {
-  return name?.trim().toLowerCase() || '';
+  if (!name) return '';
+  let normalized = name.trim().toLowerCase();
+  // Remove common suffixes
+  normalized = normalized.replace(/\s*&\s*guest\s*$/i, '');
+  normalized = normalized.replace(/\s*and\s*guest\s*$/i, '');
+  normalized = normalized.replace(/\s*\+\s*guest\s*$/i, '');
+  return normalized;
 }
 
 async function updateInvitedGuestsEmails() {
@@ -69,14 +76,22 @@ async function updateInvitedGuestsEmails() {
 
     console.log(`📋 Found ${invitedGuests?.length || 0} invited guest(s)`);
 
-    // Step 3: Create a map of RSVPs by normalized name
-    const rsvpMap = new Map();
+    // Step 3: Create a map of RSVPs by normalized name and email
+    const rsvpMapByName = new Map();
+    const rsvpMapByEmail = new Map();
     rsvps.forEach((rsvp) => {
       const nameKey = normalizeName(rsvp.guest_name);
       if (nameKey) {
         // If multiple RSVPs with same name, use the first one
-        if (!rsvpMap.has(nameKey)) {
-          rsvpMap.set(nameKey, rsvp);
+        if (!rsvpMapByName.has(nameKey)) {
+          rsvpMapByName.set(nameKey, rsvp);
+        }
+      }
+      // Also index by email for direct matching
+      if (rsvp.email) {
+        const emailKey = rsvp.email.toLowerCase().trim();
+        if (!rsvpMapByEmail.has(emailKey)) {
+          rsvpMapByEmail.set(emailKey, rsvp);
         }
       }
     });
@@ -88,12 +103,22 @@ async function updateInvitedGuestsEmails() {
 
     for (const guest of invitedGuests || []) {
       try {
-        const nameKey = normalizeName(guest.guest_name);
-        const matchingRsvp = nameKey ? rsvpMap.get(nameKey) : null;
+        // Try to find matching RSVP by email first (most reliable)
+        let matchingRsvp = null;
+        if (guest.email) {
+          const emailKey = guest.email.toLowerCase().trim();
+          matchingRsvp = rsvpMapByEmail.get(emailKey);
+        }
+        
+        // If no match by email, try by normalized name
+        if (!matchingRsvp) {
+          const nameKey = normalizeName(guest.guest_name);
+          matchingRsvp = nameKey ? rsvpMapByName.get(nameKey) : null;
+        }
 
         if (matchingRsvp && matchingRsvp.email) {
           // Only update if invited_guest doesn't have an email or has a different email
-          if (!guest.email || guest.email !== matchingRsvp.email) {
+          if (!guest.email || guest.email.toLowerCase().trim() !== matchingRsvp.email.toLowerCase().trim()) {
             const { error: updateError } = await supabase
               .from('invited_guests')
               .update({ email: matchingRsvp.email })
