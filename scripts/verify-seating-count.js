@@ -69,4 +69,3 @@ async function verifyCounts() {
 }
 
 verifyCounts().catch(console.error);
-

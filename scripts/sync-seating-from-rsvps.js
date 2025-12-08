@@ -214,4 +214,3 @@ syncSeatingFromRSVPs()
     console.error('\n❌ Fatal error:', error);
     process.exit(1);
   });
-
