@@ -112,7 +112,7 @@ async function updateInvitedGuestsEmails() {
         
         // If no match by email, try by normalized name
         if (!matchingRsvp) {
-          const nameKey = normalizeName(guest.guest_name);
+        const nameKey = normalizeName(guest.guest_name);
           matchingRsvp = nameKey ? rsvpMapByName.get(nameKey) : null;
         }
 
