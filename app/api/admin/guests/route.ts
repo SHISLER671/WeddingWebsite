@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
  * 
  * This replaces reading from seating_assignments for the admin display
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
       auth: {
@@ -18,18 +18,26 @@ export async function GET() {
       },
     })
 
-    console.log("[v1] Admin: Fetching guests from invited_guests table (synced from MASTERGUESTLIST.csv)")
+    // Get cache-busting parameters from query string
+    const { searchParams } = new URL(request.url)
+    const timestamp = searchParams.get('t')
+    const forceRefresh = searchParams.get('v') === '1'
+
+    console.log("[v1] Admin: Fetching guests from invited_guests table (synced from MASTERGUESTLIST.csv)", { timestamp, forceRefresh })
 
     // Fetch all invited guests (this is synced from MASTERGUESTLIST.csv)
-    const { data: invitedGuests, error } = await supabase
+    // Use a fresh query each time to avoid any caching
+    const { data: invitedGuests, error, count } = await supabase
       .from("invited_guests")
-      .select("*")
+      .select("*", { count: 'exact' })
       .order("guest_name")
 
     if (error) {
       console.error("[v1] Admin: Database error:", error)
       return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
     }
+
+    console.log("[v1] Admin: Fetched", invitedGuests?.length || 0, "guests from invited_guests table (count:", count || 'N/A', ")")
 
     // Fetch seating assignments to get table numbers and other seating info
     const { data: seatingAssignments, error: seatingError } = await supabase
@@ -132,7 +140,7 @@ export async function GET() {
       }
     })
 
-    console.log("[v1] Admin: Successfully fetched", sorted?.length || 0, "guests from invited_guests")
+    console.log("[v1] Admin: Successfully fetched", sorted?.length || 0, "guests from invited_guests (database count:", count || invitedGuests?.length || 0, ")")
 
     return NextResponse.json(
       {
