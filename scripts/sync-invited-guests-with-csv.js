@@ -58,36 +58,47 @@ function parseCSV(csvPath) {
     }
     values.push(current.trim());
     
-    // Format: Number,Full Name,Notes,Headcount,RSVP Status
-    if (values.length >= 2) {
-      const guestName = values[1]?.replace(/^"|"$/g, '') || '';
-      const notes = values[2]?.replace(/^"|"$/g, '') || '';
-      const headcount = values[3]?.replace(/^"|"$/g, '') || '';
-      
-      // Extract email from notes if present
-      let email = null;
-      if (notes && notes.includes('@')) {
-        email = notes.trim();
-      }
-      
-      // Parse headcount
-      let allowedPartySize = 1;
-      if (headcount) {
-        const headcountNum = parseInt(headcount, 10);
-        if (!isNaN(headcountNum) && headcountNum > 0) {
-          allowedPartySize = headcountNum;
+      // Format: Number,Full Name,Notes,Headcount,RSVP Status,KIDENTOURAGE
+      if (values.length >= 2) {
+        const guestName = values[1]?.replace(/^"|"$/g, '') || '';
+        const notes = values[2]?.replace(/^"|"$/g, '') || '';
+        const headcount = values[3]?.replace(/^"|"$/g, '') || '';
+        const kidEntourage = values[5]?.replace(/^"|"$/g, '') || ''; // KIDENTOURAGE column
+        
+        // Extract email from notes if present
+        let email = null;
+        if (notes && notes.includes('@')) {
+          email = notes.trim();
+        }
+        
+        // Parse headcount
+        let allowedPartySize = 1;
+        if (headcount) {
+          const headcountNum = parseInt(headcount, 10);
+          if (!isNaN(headcountNum) && headcountNum > 0) {
+            allowedPartySize = headcountNum;
+          }
+        }
+        
+        // Build source string with Notes and KIDENTOURAGE info
+        let sourceParts = ['@MASTERGUESTLIST.csv'];
+        if (notes) {
+          sourceParts.push(notes);
+        }
+        if (kidEntourage && kidEntourage.toUpperCase() === 'YES') {
+          sourceParts.push('KIDENTOURAGE');
+        }
+        const source = sourceParts.join(' | ');
+        
+        if (guestName) {
+          guests.push({
+          guest_name: guestName.trim(),
+          email: email || '',
+          allowed_party_size: allowedPartySize,
+          source: source
+          });
         }
       }
-      
-      if (guestName) {
-        guests.push({
-        guest_name: guestName.trim(),
-        email: email || '',
-        allowed_party_size: allowedPartySize,
-        source: '@MASTERGUESTLIST.csv'
-        });
-      }
-    }
   }
   
   return guests;

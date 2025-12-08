@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 
 /**
- * Auto-Assign Tables for Wedding Seating
+ * Auto-Assign Tables for Wedding Seating (Improved)
  * 
- * Assigns tables automatically:
- * 1. All ENTOURAGE guests first (starting from table 1)
- * 2. Then RSVPs with attendance="yes" in order of submission (created_at)
+ * Assigns tables automatically with these priorities:
+ * 1. All ENTOURAGE and KIDENTOURAGE guests first (regardless of RSVP)
+ * 2. Then RSVPs with attendance="yes" in order of submission
  * 
  * Rules:
  * - 26 tables, 10 people per table = 260 total capacity
- * - Only table numbers assigned (no seat numbers)
- * - Entourage gets priority seating
+ * - Max 10 people per table
+ * - Keep families and couples together (don't split)
+ * - Entourage/KIDENTOURAGE get priority seating
  * - RSVPs assigned in order of submission
  * 
  * Usage:
- *   node scripts/auto-assign-tables.js
+ *   node scripts/auto-assign-tables-improved.js
  */
 
 const { createClient } = require('@supabase/supabase-js');
@@ -34,82 +35,47 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// List of entourage guest names (from your CSV entries 159-184)
-const ENTOURAGE_GUESTS = [
-  'Shane Quintanilla',
-  'Kevin & Kyra Leasiolagi',
-  'James Whippy',
-  'Teke & Julieann Kaminaga',
-  'Ray Paul Jardon',
-  'Carter & Cristine Young',
-  'Jesse & Annaiea Newby',
-  'Jose Santos',
-  'Vincent Camacho& Jelsea Ngowakl',
-  'Carl Nangauta',
-  'Jassen Guerrero',
-  'Amos & spouse',
-  'William & Dana Libby',
-  'Devin & Moana Quitugua',
-  'Brandon Cepeda',
-  'Derrick & Reynne Wahl',
-  'Neil Pang',
-  'James Losongco',
-  'Jonathan Pablo',
-  'Gavin Gamido',
-  'Camella Ramirez',
-  'Christiana Ramirez',
-  'Tammy Ramirez',
-  'Nisha Chargualaf',
-  'Elizabeth Valencia',
-  'Audrey Benavente'
-];
-
 function normalizeName(name) {
   return name.toLowerCase().trim().replace(/\s+/g, ' ');
 }
 
-function isEntourageGuest(guestName, source) {
-  // Check if source indicates entourage (if Notes column was stored)
-  if (source && source.includes('ENTOURAGE')) {
+function isEntourageOrKidEntourage(guestName, source) {
+  // Check if source/notes contains ENTOURAGE
+  if (source && typeof source === 'string' && source.toUpperCase().includes('ENTOURAGE')) {
     return true;
   }
   
-  // Check against entourage list
-  const normalized = normalizeName(guestName);
-  return ENTOURAGE_GUESTS.some(entourage => {
-    const normalizedEntourage = normalizeName(entourage);
-    // Exact match or partial match (handles variations)
-    if (normalized === normalizedEntourage) return true;
-    
-    // Check if first name matches (for cases like "Kevin Leasiolagi" matching "Kevin & Kyra Leasiolagi")
-    const guestFirst = normalized.split(' ')[0];
-    const entourageFirst = normalizedEntourage.split(' ')[0];
-    if (guestFirst && entourageFirst && guestFirst === entourageFirst) {
-      // Check if last name also matches
-      const guestLast = normalized.split(' ').pop();
-      const entourageLast = normalizedEntourage.split(' ').pop();
-      if (guestLast && entourageLast && guestLast === entourageLast) {
-        return true;
-      }
-    }
-    
-    return false;
-  });
+  // Check if source/notes contains KIDENTOURAGE
+  if (source && typeof source === 'string' && source.toUpperCase().includes('KIDENTOURAGE')) {
+    return true;
+  }
+  
+  return false;
+}
+
+function isFamilyOrCouple(guestName) {
+  // Check for indicators of families or couples
+  const name = guestName.toLowerCase();
+  return name.includes('&') || 
+         name.includes('and family') || 
+         name.includes('and') ||
+         name.includes('family');
 }
 
 async function autoAssignTables() {
-  console.log('🪑 Auto-Assigning Tables');
+  console.log('🪑 Auto-Assigning Tables (Improved)');
   console.log('='.repeat(60));
   console.log('');
   console.log('📋 Rules:');
-  console.log('   - 26 tables, 10 people per table');
-  console.log('   - Entourage guests seated first');
+  console.log('   - 26 tables, 10 people per table (max)');
+  console.log('   - ENTOURAGE/KIDENTOURAGE guests seated first (with or without RSVP)');
   console.log('   - Then RSVPs in order of submission');
+  console.log('   - Keep families and couples together');
   console.log('   - Only table numbers assigned (no seat numbers)');
   console.log('');
 
   try {
-    // Step 1: Get all invited guests (check if source contains ENTOURAGE or check by name)
+    // Step 1: Get all invited guests with source/notes
     const { data: invitedGuests, error: invitedError } = await supabase
       .from('invited_guests')
       .select('id, guest_name, email, allowed_party_size, source')
@@ -137,15 +103,13 @@ async function autoAssignTables() {
     console.log(`✅ Found ${rsvps.length} RSVPs with attendance="yes"`);
     console.log('');
 
-    // Step 3: Separate entourage and regular guests
-    // Entourage gets tables regardless of RSVP status (reserve seating for all entourage)
-    // Regular guests only get tables if they RSVP'd "yes"
-    const entourageGuests = [];
-    const regularGuests = [];
+    // Step 3: Categorize guests
+    const entourageGuests = []; // ENTOURAGE/KIDENTOURAGE (get tables regardless of RSVP)
+    const regularGuests = []; // Regular guests who RSVP'd "yes"
 
-    // First, add all entourage guests (they all get tables)
+    // First, identify all ENTOURAGE/KIDENTOURAGE guests
     for (const guest of invitedGuests) {
-      if (isEntourageGuest(guest.guest_name, guest.source)) {
+      if (isEntourageOrKidEntourage(guest.guest_name, guest.source)) {
         entourageGuests.push({
           ...guest,
           type: 'entourage',
@@ -154,12 +118,13 @@ async function autoAssignTables() {
       }
     }
 
-    // Step 4: Match RSVPs to invited guests and categorize
-    // Only include regular guests who RSVP'd "yes" (rsvps already filtered to attendance="yes")
+    // Step 4: Match RSVPs to invited guests
+    // Update entourage guests with RSVP data if they RSVP'd
     for (const rsvp of rsvps) {
+      const normalizedRSVP = normalizeName(rsvp.guest_name);
+      
       // Find matching invited guest
       const matchingGuest = invitedGuests.find(ig => {
-        const normalizedRSVP = normalizeName(rsvp.guest_name);
         const normalizedGuest = normalizeName(ig.guest_name);
         return normalizedRSVP === normalizedGuest || 
                normalizedGuest.includes(normalizedRSVP) ||
@@ -167,7 +132,7 @@ async function autoAssignTables() {
       });
 
       if (matchingGuest) {
-        if (isEntourageGuest(matchingGuest.guest_name, matchingGuest.source)) {
+        if (isEntourageOrKidEntourage(matchingGuest.guest_name, matchingGuest.source)) {
           // Update entourage guest with RSVP data (for accurate guest count)
           const entourageIndex = entourageGuests.findIndex(e => 
             normalizeName(e.guest_name) === normalizeName(matchingGuest.guest_name)
@@ -176,7 +141,7 @@ async function autoAssignTables() {
             entourageGuests[entourageIndex].rsvpData = rsvp;
           }
         } else {
-          // Regular guest with RSVP "yes" - add to regular guests list
+          // Regular guest with RSVP "yes"
           regularGuests.push({
             ...matchingGuest,
             type: 'regular',
@@ -184,30 +149,33 @@ async function autoAssignTables() {
           });
         }
       } else {
-        // RSVP doesn't match invited guest - add as regular guest (only if RSVP'd yes)
+        // RSVP doesn't match invited guest - add as regular guest
         regularGuests.push({
           id: null,
           guest_name: rsvp.guest_name,
           email: rsvp.email,
           allowed_party_size: rsvp.guest_count || 1,
+          source: null,
           type: 'regular',
           rsvpData: rsvp
         });
       }
     }
 
-    console.log(`👥 Entourage guests: ${entourageGuests.length}`);
+    console.log(`👥 Entourage/KIDENTOURAGE guests: ${entourageGuests.length}`);
     console.log(`👥 Regular guests with RSVP: ${regularGuests.length}`);
     console.log('');
 
     // Step 5: Calculate total people
-    const entouragePeople = entourageGuests.reduce((sum, g) => sum + (g.rsvpData?.guest_count || g.allowed_party_size || 1), 0);
-    const regularPeople = regularGuests.reduce((sum, g) => sum + (g.rsvpData?.guest_count || g.allowed_party_size || 1), 0);
+    const entouragePeople = entourageGuests.reduce((sum, g) => 
+      sum + (g.rsvpData?.guest_count || g.allowed_party_size || 1), 0);
+    const regularPeople = regularGuests.reduce((sum, g) => 
+      sum + (g.rsvpData?.guest_count || g.allowed_party_size || 1), 0);
     const totalPeople = entouragePeople + regularPeople;
     const totalCapacity = 26 * 10; // 260
 
     console.log(`📊 People count:`);
-    console.log(`   Entourage: ${entouragePeople} people`);
+    console.log(`   Entourage/KIDENTOURAGE: ${entouragePeople} people`);
     console.log(`   Regular guests: ${regularPeople} people`);
     console.log(`   Total: ${totalPeople} people`);
     console.log(`   Capacity: ${totalCapacity} people`);
@@ -219,18 +187,60 @@ async function autoAssignTables() {
       console.log('');
     }
 
-    // Step 6: Assign tables
+    // Step 6: Assign tables (max 10 per table, keep families/couples together)
     let currentTable = 1;
     let currentTableCount = 0;
     let assignedCount = 0;
     let errorCount = 0;
 
-    // First: Assign all entourage guests
-    console.log('👥 Assigning entourage guests...');
+    // Helper function to assign a guest to a table
+    async function assignGuestToTable(guest, tableNumber, peopleCount) {
+      // Check if seating assignment exists
+      const { data: existing, error: checkError } = await supabase
+        .from('seating_assignments')
+        .select('id')
+        .or(`guest_name.eq.${guest.guest_name},email.eq.${guest.email || ''}`)
+        .maybeSingle();
+
+      let upsertError = null;
+      if (existing) {
+        // Update existing
+        const { error: updateError } = await supabase
+          .from('seating_assignments')
+          .update({
+            table_number: tableNumber,
+            email: guest.email || null,
+            guest_name: guest.guest_name,
+          })
+          .eq('id', existing.id);
+        upsertError = updateError;
+      } else {
+        // Insert new
+        const { error: insertError } = await supabase
+          .from('seating_assignments')
+          .insert({
+            guest_name: guest.guest_name,
+            email: guest.email || null,
+            table_number: tableNumber,
+            plus_one_name: null,
+          });
+        upsertError = insertError;
+      }
+
+      if (upsertError) {
+        console.error(`   ⚠️  Failed to assign ${guest.guest_name}:`, upsertError.message);
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    // First: Assign all ENTOURAGE/KIDENTOURAGE guests
+    console.log('👥 Assigning ENTOURAGE/KIDENTOURAGE guests...');
     for (const guest of entourageGuests) {
       const peopleCount = guest.rsvpData?.guest_count || guest.allowed_party_size || 1;
       
-      // Check if we need a new table
+      // Check if we need a new table (max 10 per table)
       if (currentTableCount + peopleCount > 10) {
         currentTable++;
         currentTableCount = 0;
@@ -242,50 +252,20 @@ async function autoAssignTables() {
         continue;
       }
 
-      // Check if seating assignment exists, then update or insert
-      const { data: existing, error: checkError } = await supabase
-        .from('seating_assignments')
-        .select('id')
-        .eq('guest_name', guest.guest_name)
-        .maybeSingle();
-
-      let upsertError = null;
-      if (existing) {
-        // Update existing
-        const { error: updateError } = await supabase
-          .from('seating_assignments')
-          .update({
-            table_number: currentTable,
-            email: guest.email || null,
-          })
-          .eq('id', existing.id);
-        upsertError = updateError;
-      } else {
-        // Insert new
-        const { error: insertError } = await supabase
-          .from('seating_assignments')
-          .insert({
-            guest_name: guest.guest_name,
-            email: guest.email || null,
-            table_number: currentTable,
-            plus_one_name: null,
-          });
-        upsertError = insertError;
-      }
-
-      if (upsertError) {
-        console.error(`   ⚠️  Failed to assign ${guest.guest_name}:`, upsertError.message);
-        errorCount++;
-      } else {
+      const success = await assignGuestToTable(guest, currentTable, peopleCount);
+      if (success) {
         assignedCount++;
         currentTableCount += peopleCount;
-        console.log(`   ✅ Table ${currentTable}: ${guest.guest_name} (${peopleCount} ${peopleCount === 1 ? 'person' : 'people'})`);
+        const rsvpInfo = guest.rsvpData ? ` (RSVP'd: ${guest.rsvpData.guest_count} people)` : ' (no RSVP yet)';
+        console.log(`   ✅ Table ${currentTable}: ${guest.guest_name} (${peopleCount} ${peopleCount === 1 ? 'person' : 'people'})${rsvpInfo}`);
         
-        // Move to next table if current table is full
+        // Move to next table if current table is full (10 people)
         if (currentTableCount >= 10) {
           currentTable++;
           currentTableCount = 0;
         }
+      } else {
+        errorCount++;
       }
     }
 
@@ -295,7 +275,8 @@ async function autoAssignTables() {
     for (const guest of regularGuests) {
       const peopleCount = guest.rsvpData?.guest_count || guest.allowed_party_size || 1;
       
-      // Check if we need a new table
+      // Check if we need a new table (max 10 per table)
+      // Keep families/couples together - if this guest won't fit, start new table
       if (currentTableCount + peopleCount > 10) {
         currentTable++;
         currentTableCount = 0;
@@ -307,51 +288,21 @@ async function autoAssignTables() {
         continue;
       }
 
-      // Check if seating assignment exists, then update or insert
-      const { data: existing, error: checkError } = await supabase
-        .from('seating_assignments')
-        .select('id')
-        .eq('guest_name', guest.guest_name)
-        .maybeSingle();
-
-      let upsertError = null;
-      if (existing) {
-        // Update existing
-        const { error: updateError } = await supabase
-          .from('seating_assignments')
-          .update({
-            table_number: currentTable,
-            email: guest.email || null,
-          })
-          .eq('id', existing.id);
-        upsertError = updateError;
-      } else {
-        // Insert new
-        const { error: insertError } = await supabase
-          .from('seating_assignments')
-          .insert({
-            guest_name: guest.guest_name,
-            email: guest.email || null,
-            table_number: currentTable,
-            plus_one_name: null,
-          });
-        upsertError = insertError;
-      }
-
-      if (upsertError) {
-        console.error(`   ⚠️  Failed to assign ${guest.guest_name}:`, upsertError.message);
-        errorCount++;
-      } else {
+      const success = await assignGuestToTable(guest, currentTable, peopleCount);
+      if (success) {
         assignedCount++;
         currentTableCount += peopleCount;
         const rsvpDate = guest.rsvpData?.created_at ? new Date(guest.rsvpData.created_at).toLocaleDateString() : 'N/A';
-        console.log(`   ✅ Table ${currentTable}: ${guest.guest_name} (${peopleCount} ${peopleCount === 1 ? 'person' : 'people'}, RSVP: ${rsvpDate})`);
+        const familyNote = isFamilyOrCouple(guest.guest_name) ? ' [family/couple]' : '';
+        console.log(`   ✅ Table ${currentTable}: ${guest.guest_name} (${peopleCount} ${peopleCount === 1 ? 'person' : 'people'}, RSVP: ${rsvpDate})${familyNote}`);
         
-        // Move to next table if current table is full
+        // Move to next table if current table is full (10 people)
         if (currentTableCount >= 10) {
           currentTable++;
           currentTableCount = 0;
         }
+      } else {
+        errorCount++;
       }
     }
 
@@ -359,16 +310,47 @@ async function autoAssignTables() {
     console.log('📊 Assignment Summary:');
     console.log(`   ✅ Assigned: ${assignedCount} guests`);
     console.log(`   ❌ Errors: ${errorCount}`);
-    console.log(`   🪑 Tables used: ${currentTable - (currentTableCount > 0 ? 0 : 1)} of 26`);
+    const tablesUsed = currentTable - (currentTableCount > 0 ? 0 : 1);
+    console.log(`   🪑 Tables used: ${tablesUsed} of 26`);
     console.log(`   👥 Total people assigned: ${entouragePeople + regularPeople}`);
+    console.log('');
+
+    // Step 7: Check for RSVP'd guests without tables
+    console.log('🔍 Checking for RSVP\'d guests without tables...');
+    const { data: allAssignments, error: assignError } = await supabase
+      .from('seating_assignments')
+      .select('guest_name, email, table_number');
+
+    if (!assignError && allAssignments) {
+      const unassignedRSVPs = rsvps.filter(rsvp => {
+        const hasAssignment = allAssignments.some(a => 
+          (a.email && a.email.toLowerCase() === rsvp.email.toLowerCase()) ||
+          normalizeName(a.guest_name) === normalizeName(rsvp.guest_name)
+        );
+        return !hasAssignment || allAssignments.find(a => 
+          (a.email && a.email.toLowerCase() === rsvp.email.toLowerCase()) ||
+          normalizeName(a.guest_name) === normalizeName(rsvp.guest_name)
+        )?.table_number === 0;
+      });
+
+      if (unassignedRSVPs.length > 0) {
+        console.log(`   ⚠️  Found ${unassignedRSVPs.length} RSVP'd guests without tables:`);
+        unassignedRSVPs.forEach(rsvp => {
+          console.log(`      - ${rsvp.guest_name} (${rsvp.email})`);
+        });
+      } else {
+        console.log('   ✅ All RSVP\'d guests have tables assigned!');
+      }
+    }
 
   } catch (error) {
     console.error('❌ Error:', error.message);
+    console.error(error.stack);
   }
 }
 
 async function main() {
-  console.log('⚠️  This will assign tables to all entourage and RSVP guests');
+  console.log('⚠️  This will assign tables to all ENTOURAGE/KIDENTOURAGE and RSVP guests');
   console.log('   Press Ctrl+C to cancel, or wait 3 seconds to continue...');
   console.log('');
   
@@ -381,3 +363,4 @@ async function main() {
 }
 
 main().catch(console.error);
+

@@ -64,7 +64,8 @@ export default function AdminPage() {
         ? window.sessionStorage.getItem('admin_session_id')
         : sessionId
       
-      const response = await fetch(`/api/admin/seating?t=${timestamp}&r=${randomId}&s=${finalSessionId}&v=${forceRefresh ? '1' : '0'}`, {
+      // Use new endpoint that reads from invited_guests (synced from MASTERGUESTLIST.csv)
+      const response = await fetch(`/api/admin/guests?t=${timestamp}&r=${randomId}&s=${finalSessionId}&v=${forceRefresh ? '1' : '0'}`, {
         method: 'GET',
         cache: "no-store",
         credentials: 'same-origin',
@@ -83,16 +84,12 @@ export default function AdminPage() {
       const result = await response.json()
 
       if (result.success) {
-        console.log("[v0] Admin page: Received", result.data.length, "assignments", forceRefresh ? "(FORCE REFRESH)" : "")
-        // Verify we got the updated names
-        const hasUncleRudy = result.data.some((a: SeatingAssignment) => a.guest_name === "Uncle Rudy Roberto")
-        const hasAubree = result.data.some((a: SeatingAssignment) => a.guest_name === "Aubree Chaco")
-        console.log("[v0] Name verification:", { hasUncleRudy, hasAubree })
+        console.log("[v1] Admin page: Received", result.data.length, "guests from invited_guests", forceRefresh ? "(FORCE REFRESH)" : "")
         setAssignments(result.data)
         if (result.tableCapacities) {
           setTableCapacities(result.tableCapacities)
         }
-        setMessage(`✅ Loaded ${result.data.length} seating assignments`)
+        setMessage(`✅ Loaded ${result.data.length} guests from MASTERGUESTLIST`)
       } else {
         setMessage(`❌ Error: ${result.error}`)
       }
@@ -440,17 +437,35 @@ export default function AdminPage() {
           allMoves.push({ id: entourageMember.id, table_number: newTable })
         })
       } else {
-        allMoves.push({ id: editingId, table_number: newTable })
+        // Get guest data for the move
+        const guestToMove = assignments.find((a) => a.id === editingId)
+        if (guestToMove) {
+          allMoves.push({
+            email: guestToMove.email,
+            guest_name: guestToMove.guest_name,
+            table_number: newTable,
+          })
+        }
       }
 
       // Add rebalance moves (these will never include entourage)
-      allMoves.push(...rebalanceMoves.map((move) => ({ id: move.assignmentId, table_number: move.toTable })))
+      rebalanceMoves.forEach((move) => {
+        const guest = assignments.find((a) => a.id === move.assignmentId)
+        if (guest) {
+          allMoves.push({
+            email: guest.email,
+            guest_name: guest.guest_name,
+            table_number: move.toTable,
+          })
+        }
+      })
 
       setLoading(true)
       setMessage("")
 
       try {
         // Apply all moves in parallel
+        // allMoves now contains email/guest_name/table_number objects
         const updatePromises = allMoves.map((move) =>
           fetch("/api/admin/seating", {
             method: "PUT",
@@ -466,7 +481,7 @@ export default function AdminPage() {
           const response = results[i]
           if (!response.ok) {
             const errorText = await response.text()
-            errors.push(`Failed to update ${allMoves[i].id}: ${errorText}`)
+            errors.push(`Failed to update ${allMoves[i].guest_name || allMoves[i].email}: ${errorText}`)
           }
         }
 
@@ -515,10 +530,16 @@ export default function AdminPage() {
         }
       }
 
+      // Get guest data to send email/name for lookup
+      const guest = assignments.find((a) => a.id === editingId)
       const response = await fetch("/api/admin/seating", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: editingId, ...editForm }),
+        body: JSON.stringify({
+          email: guest?.email,
+          guest_name: guest?.guest_name,
+          ...editForm,
+        }),
       })
 
       // Check if response is ok and has content

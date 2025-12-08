@@ -3,6 +3,11 @@ import { createClient } from "@supabase/supabase-js"
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * Legacy endpoint - kept for backward compatibility
+ * New admin page should use /api/admin/guests for GET
+ * This endpoint is still used for PUT (updating seating assignments)
+ */
 export async function GET() {
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -18,34 +23,6 @@ export async function GET() {
     const { data: assignments, error } = await supabase
       .from("seating_assignments")
       .select("*")
-
-    // Debug: Check if Jared Quichocho is in the raw assignments
-    if (assignments) {
-      const jaredQuichocho = assignments.find((a: any) => {
-        const name = a.guest_name?.toLowerCase().trim() || ""
-        return name.includes("jared") && name.includes("quichocho")
-      })
-      if (jaredQuichocho) {
-        console.log("[v0] Admin: Found Jared Quichocho in raw assignments:", {
-          id: jaredQuichocho.id,
-          guest_name: jaredQuichocho.guest_name,
-          table_number: jaredQuichocho.table_number,
-          email: jaredQuichocho.email
-        })
-      } else {
-        console.warn("[v0] Admin: Jared Quichocho NOT found in raw assignments. Total assignments:", assignments.length)
-        // Log all guests with "jared" in name for debugging
-        const jaredGuests = assignments.filter((a: any) => 
-          a.guest_name?.toLowerCase().includes("jared")
-        )
-        if (jaredGuests.length > 0) {
-          console.log("[v0] Admin: Found guests with 'Jared' in name:", jaredGuests.map((g: any) => ({
-            name: g.guest_name,
-            table: g.table_number
-          })))
-        }
-      }
-    }
 
     if (error) {
       console.error("[v0] Admin: Database error:", error)
@@ -167,36 +144,6 @@ export async function GET() {
 
     console.log("[v0] Admin: Successfully fetched", sorted?.length || 0, "assignments")
 
-    // Debug: Check if Jared Quichocho is in the final sorted list
-    if (sorted) {
-      const jaredQuichochoFinal = sorted.find((a: any) => {
-        const name = a.guest_name?.toLowerCase().trim() || ""
-        return name.includes("jared") && name.includes("quichocho")
-      })
-      if (jaredQuichochoFinal) {
-        console.log("[v0] Admin: Jared Quichocho in final sorted list:", {
-          id: jaredQuichochoFinal.id,
-          guest_name: jaredQuichochoFinal.guest_name,
-          table_number: jaredQuichochoFinal.table_number,
-          actual_guest_count: jaredQuichochoFinal.actual_guest_count,
-          position: sorted.indexOf(jaredQuichochoFinal)
-        })
-      } else {
-        console.warn("[v0] Admin: Jared Quichocho NOT in final sorted list. Total sorted:", sorted.length)
-        // Log all guests with "jared" in name for debugging
-        const jaredGuests = sorted.filter((a: any) => 
-          a.guest_name?.toLowerCase().includes("jared")
-        )
-        if (jaredGuests.length > 0) {
-          console.log("[v0] Admin: Found guests with 'Jared' in final sorted list:", jaredGuests.map((g: any) => ({
-            name: g.guest_name,
-            table: g.table_number,
-            position: sorted.indexOf(g)
-          })))
-        }
-      }
-    }
-
     return NextResponse.json(
       {
         success: true,
@@ -223,6 +170,13 @@ export async function GET() {
   }
 }
 
+/**
+ * Update seating assignment
+ * Can be called with either:
+ * - id: seating_assignments.id (legacy)
+ * - email: guest email (new preferred method)
+ * - guest_name: guest name (fallback)
+ */
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -243,16 +197,26 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const { id, actual_guest_count, ...updateData } = body
+    const { id, email, guest_name, actual_guest_count, ...updateData } = body
 
-    if (!id) {
+    // Support both ID-based (legacy) and email/name-based (new) updates
+    let query = supabase.from("seating_assignments")
+    
+    if (id) {
+      // Legacy: update by ID
+      query = query.eq("id", id)
+    } else if (email) {
+      // New: update by email
+      query = query.eq("email", email)
+    } else if (guest_name) {
+      // Fallback: update by name
+      query = query.ilike("guest_name", guest_name)
+    } else {
       return NextResponse.json(
-        { success: false, error: "Missing required field: id" },
+        { success: false, error: "Missing required field: id, email, or guest_name" },
         { status: 400 },
       )
     }
-
-    console.log("[v0] Admin: Updating seating assignment:", { id, updateData })
 
     // actual_guest_count is computed on the fly, not stored in seating_assignments
     // Remove it if it was accidentally included
@@ -268,10 +232,63 @@ export async function PUT(request: NextRequest) {
       }
     }
 
+    // If updating by email or name, we might get multiple results
+    // For email, it should be unique, but handle it gracefully
+    const { data: existing, error: findError } = await query.select().maybeSingle()
+
+    if (findError) {
+      console.error("[v0] Admin: Find error:", findError)
+      return NextResponse.json(
+        { success: false, error: "Database error: " + findError.message },
+        { status: 500 },
+      )
+    }
+
+    if (!existing) {
+      // If no existing record, create one (for email/name-based updates)
+      if (email || guest_name) {
+        const insertData = {
+          guest_name: guest_name || updateData.guest_name || '',
+          email: email || updateData.email || null,
+          table_number: updateData.table_number || 0,
+          plus_one_name: updateData.plus_one_name || null,
+          dietary_notes: updateData.dietary_notes || null,
+          special_notes: updateData.special_notes || null,
+        }
+
+        const { data: newData, error: insertError } = await supabase
+          .from("seating_assignments")
+          .insert(insertData)
+          .select()
+          .single()
+
+        if (insertError) {
+          console.error("[v0] Admin: Insert error:", insertError)
+          return NextResponse.json(
+            { success: false, error: "Database error: " + insertError.message },
+            { status: 500 },
+          )
+        }
+
+        console.log("[v0] Admin: Successfully created new assignment:", newData)
+        return NextResponse.json({
+          success: true,
+          data: newData,
+          message: "Assignment created successfully",
+        })
+      } else {
+        return NextResponse.json(
+          { success: false, error: "Assignment not found and cannot create without email or guest_name." },
+          { status: 404 },
+        )
+      }
+    }
+
+    // Update existing record
     const { data, error } = await supabase
       .from("seating_assignments")
       .update(updateData)
-      .eq("id", id)
+      .eq("id", existing.id)
       .select()
       .single()
 
