@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { Search, Download, CheckCircle, AlertTriangle, Edit } from "lucide-react"
 import JSZip from "jszip"
-import Image from "next/image"
+import NextImage from "next/image"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -620,8 +620,8 @@ export default function AdminPage() {
       const textX = templateImage.width / 2
       const fontSize = calculateFontSize(guestName, templateImage.width)
 
-      ctx.font = `${fontSize}px serif`
-      ctx.fillStyle = "#722F37"
+      ctx.font = `${fontSize}px "Didot", "Bodoni MT", "Garamond", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", Times, serif`
+      ctx.fillStyle = "#7B4B7A" // Purple color to match invitation text
       ctx.textAlign = "center"
       ctx.textBaseline = "middle"
       ctx.shadowColor = "rgba(0, 0, 0, 0.3)"
@@ -693,7 +693,7 @@ export default function AdminPage() {
 
       setBulkProgress(`Found ${guestNames.length} guests. Loading template...`)
 
-      const img = new Image()
+      const img = new window.Image()
       img.crossOrigin = "anonymous"
       img.src = "/invitetemplate.jpg"
 
@@ -750,7 +750,7 @@ export default function AdminPage() {
     <div className="min-h-screen relative p-4">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <Image src="/redroses.jpg" alt="Background" fill className="object-cover object-center" priority />
+        <NextImage src="/redroses.jpg" alt="Background" fill className="object-cover object-center" priority />
       </div>
       {/* Overlay for readability */}
       <div className="absolute inset-0 z-10 bg-jewel-burgundy/40"></div>
