@@ -79,4 +79,3 @@ else:
     print("\n✅ All names in ATTENDEESGroom.csv are in MASTERGUESTLIST.csv")
 
 print("\n" + "=" * 60)
-
