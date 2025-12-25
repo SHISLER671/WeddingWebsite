@@ -185,7 +185,7 @@ export default function InfoPage() {
                   </summary>
                   <div className="mt-3 text-charcoal">
                     <p className="text-lg">
-                      Please let us know by <strong className="text-xl text-jewel-burgundy">January 1, 2026</strong>.
+                      Please let us know by <strong className="text-xl text-jewel-burgundy">January 10, 2026</strong>.
                       You can RSVP right here on the website - <em>super easy, super quick!</em>
                     </p>
                   </div>
