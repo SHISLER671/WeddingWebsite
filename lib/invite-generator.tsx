@@ -39,7 +39,7 @@ function calculateOptimalPosition(
 // Load template from public folder
 async function loadTemplate(): Promise<Buffer> {
   try {
-    const templatePath = join(process.cwd(), "public", "invitetemplate.jpg")
+    const templatePath = join(process.cwd(), "public", "tenthtemplate.jpg")
     console.log("[v0] Loading template from:", templatePath)
     const buffer = await readFile(templatePath)
     console.log("[v0] Template loaded successfully, size:", buffer.length)

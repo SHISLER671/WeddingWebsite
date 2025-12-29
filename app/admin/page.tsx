@@ -695,7 +695,7 @@ export default function AdminPage() {
 
       const img = new window.Image()
       img.crossOrigin = "anonymous"
-      img.src = "/invitetemplate.jpg"
+      img.src = "/tenthtemplate.jpg"
 
       await new Promise((resolve, reject) => {
         img.onload = resolve
