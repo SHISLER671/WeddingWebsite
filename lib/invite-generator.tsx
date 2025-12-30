@@ -103,62 +103,58 @@ function calculateDynamicFontSize(
   imgWidth: number,
   imgHeight: number,
   isTwoLines: boolean,
+  line1?: string,
+  line2?: string,
 ): { fontSize: number; shouldSplit: boolean } {
   const charCount = name.length
-  const splitThreshold = 26 // Split at 26+ characters for earlier intervention
+  const splitThreshold = 26
 
   const safeZoneHeight = imgHeight * (SAFE_ZONE_END_PERCENT - SAFE_ZONE_START_PERCENT)
 
-  // If already determined to be two lines, use two-line sizing
-  if (isTwoLines) {
-    // For two lines, use character count to determine font size
-    // Longer names need smaller fonts to fit width
-    const longestLineLength = Math.max(
-      ...name
-        .split(/\s+(?:&|and)\s+/i)
-        .map((part) => part.length)
-        .concat([charCount / 2]),
-    )
+  if (isTwoLines && line1 && line2) {
+    // Use actual split line lengths, not estimates
+    const longestLineLength = Math.max(line1.length, line2.length)
 
-    // Scale font based on longest line length and available width
-    const baseSize = imgWidth * 0.065 // Base: ~6.5% of canvas width
-    const scaleFactor = Math.max(0.6, 1 - (longestLineLength - 15) / 50) // Scale down for longer lines
-    const lineSpacing = 1.25 // Multiplier for line spacing
-    const descenderBuffer = 0.2 // Buffer for descenders
-    const totalHeightMultiplier = 1 + lineSpacing + descenderBuffer // ~2.45x fontSize
+    // Scale font based on longest actual line length
+    // Approximate: 1 character ≈ 0.6em in serif fonts
+    const charWidthEstimate = 0.6
+    const maxAvailableWidth = imgWidth * 0.95 // Use 95% of canvas width for safety
+
+    // Calculate maximum font size that fits width
+    const maxFontSizeForWidth = maxAvailableWidth / (longestLineLength * charWidthEstimate)
+
+    // Calculate maximum font size that fits height
+    const lineSpacing = 1.2
+    const descenderBuffer = 0.2
+    const totalHeightMultiplier = 1 + lineSpacing + descenderBuffer
     const maxFontSizeForHeight = safeZoneHeight / totalHeightMultiplier
 
-    const fontSize = Math.min(Math.floor(baseSize * scaleFactor), Math.floor(maxFontSizeForHeight))
+    // Use the smaller of the two constraints
+    const fontSize = Math.min(maxFontSizeForWidth, maxFontSizeForHeight)
 
     console.log(
-      `[v0] Two-line font calc: safeZoneHeight=${safeZoneHeight.toFixed(1)}, ` +
-        `maxFontForHeight=${maxFontSizeForHeight.toFixed(1)}, final=${fontSize}`,
+      `[v0] Two-line font calc: line1=${line1.length}ch, line2=${line2.length}ch, ` +
+        `maxForWidth=${maxFontSizeForWidth.toFixed(1)}, maxForHeight=${maxFontSizeForHeight.toFixed(1)}, ` +
+        `final=${fontSize.toFixed(1)}`,
     )
-    return { fontSize: Math.max(40, Math.min(65, fontSize)), shouldSplit: true }
+
+    return { fontSize: Math.max(35, Math.min(70, Math.floor(fontSize))), shouldSplit: true }
   }
 
-  // Single-line sizing based on character count and canvas width
-  // Very short names (1-10 chars): larger but not too large
-  if (charCount <= 10) {
-    const fontSize = Math.min(imgWidth * 0.07, safeZoneHeight / (1 + 0.2))
-    return { fontSize: Math.floor(fontSize), shouldSplit: false }
+  if (!isTwoLines && charCount < splitThreshold) {
+    const charWidthEstimate = 0.6
+    const maxAvailableWidth = imgWidth * 0.95
+    const maxFontSizeForWidth = maxAvailableWidth / (charCount * charWidthEstimate)
+    const maxFontSizeForHeight = safeZoneHeight / 1.2
+
+    const fontSize = Math.min(maxFontSizeForWidth, maxFontSizeForHeight)
+
+    return { fontSize: Math.max(50, Math.min(85, Math.floor(fontSize))), shouldSplit: false }
   }
 
-  // Medium names (11-25 chars): scale down progressively
-  if (charCount < splitThreshold) {
-    const baseSize = imgWidth * 0.08 // Base: 8% of canvas width
-    const scaleFactor = 1 - ((charCount - 10) / 20) * 0.35 // Reduce by up to 35%
-    const fontSize = Math.min(Math.floor(baseSize * scaleFactor), safeZoneHeight / (1 + 0.2))
-    return { fontSize: Math.max(50, fontSize), shouldSplit: false }
-  }
-
-  // Long names (26+ chars): MUST split into two lines
+  // Long names: MUST split
   console.log(`[v0] Name "${name}" has ${charCount} chars, MUST split (threshold: ${splitThreshold})`)
-  // Recalculate for two-line mode
-  const baseSize = imgWidth * 0.065
-  const longestLineLength = charCount / 2 // Estimate
-  const scaleFactor = Math.max(0.6, 1 - (longestLineLength - 15) / 50)
-  return { fontSize: Math.max(40, Math.min(65, Math.floor(baseSize * scaleFactor))), shouldSplit: true }
+  return { fontSize: 55, shouldSplit: true }
 }
 
 function calculateBoundaryAwarePosition(
@@ -366,11 +362,18 @@ export async function generatePersonalizedInvites(
     const name = guest.FullName?.trim()
     if (!name) continue
 
-    // First, determine if we need to split
     const mustSplit = name.length >= 26
     let nameSplit = mustSplit ? splitNameIntoLines(name, 26) : { line1: name, line2: "", isTwoLines: false }
 
-    const fontInfo = calculateDynamicFontSize(name, imgWidth, imgHeight, nameSplit.isTwoLines)
+    // Pass actual line lengths to font calculation
+    const fontInfo = calculateDynamicFontSize(
+      name,
+      imgWidth,
+      imgHeight,
+      nameSplit.isTwoLines,
+      nameSplit.line1,
+      nameSplit.line2,
+    )
     const optimalFontSize = fontInfo.fontSize
 
     // If sizing determined we should split but haven't yet, do it now
@@ -451,11 +454,18 @@ export async function generatePreview(
 
     console.log("[v0] Image dimensions:", imgWidth, "x", imgHeight)
 
-    // First, determine if we need to split
     const mustSplit = name.length >= 26
     let nameSplit = mustSplit ? splitNameIntoLines(name, 26) : { line1: name, line2: "", isTwoLines: false }
 
-    const fontInfo = calculateDynamicFontSize(name, imgWidth, imgHeight, nameSplit.isTwoLines)
+    // Pass actual line lengths to font calculation
+    const fontInfo = calculateDynamicFontSize(
+      name,
+      imgWidth,
+      imgHeight,
+      nameSplit.isTwoLines,
+      nameSplit.line1,
+      nameSplit.line2,
+    )
     const finalFontSize = fontInfo.fontSize
 
     // If sizing determined we should split but haven't yet, do it now
