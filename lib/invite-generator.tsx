@@ -93,21 +93,21 @@ function splitNameIntoLines(name: string, maxChars: number = 30): { line1: strin
 // Returns font size and whether name should be split into two lines
 function calculateOptimalFontSize(name: string, imgWidth: number, baseFontSize: number = 80): { fontSize: number; shouldSplit: boolean } {
   const charCount = name.length
-  const maxCharsForSingleLine = 30 // If longer than this, consider splitting
+  const maxCharsForSingleLine = 30 // If 30+ characters, split into two lines
   
   // For very short names (1-10 chars), use smaller font to prevent encroachment
   if (charCount <= 10) {
     return { fontSize: Math.max(50, baseFontSize * 0.65), shouldSplit: false } // 50-52px for short names
   }
   
-  // For medium names (11-25 chars), use moderate scaling
-  if (charCount <= 25) {
-    const scaleFactor = 1 - ((charCount - 10) / 15) * 0.2 // Scale down 0-20% based on length
+  // For medium names (11-29 chars), use moderate scaling
+  if (charCount < maxCharsForSingleLine) {
+    const scaleFactor = 1 - ((charCount - 10) / 19) * 0.2 // Scale down 0-20% based on length (11-29 range)
     return { fontSize: Math.floor(baseFontSize * scaleFactor), shouldSplit: false }
   }
   
-  // For long names (26+ chars), check if we should split into two lines
-  if (charCount > maxCharsForSingleLine) {
+  // For names 30+ characters, always try to split into two lines
+  if (charCount >= maxCharsForSingleLine) {
     // If splitting, we can use a larger font size since each line will be shorter
     const splitResult = splitNameIntoLines(name, maxCharsForSingleLine)
     if (splitResult.isTwoLines) {
@@ -117,7 +117,7 @@ function calculateOptimalFontSize(name: string, imgWidth: number, baseFontSize: 
     }
   }
   
-  // For medium-long names that don't need splitting, scale down moderately
+  // Fallback: For names that couldn't be split, scale down moderately
   const maxWidth = imgWidth * 0.75 // 75% of image width max
   const estimatedWidth = charCount * (baseFontSize * 0.55) // Average char width estimate
   
@@ -141,20 +141,20 @@ function calculateOptimalPosition(
   // Center horizontally
   const x = imgWidth / 2
 
-  // Position in the top blank area, but with better spacing
-  // Use a more conservative top position (8-10% from top) to avoid encroaching on template text
-  const topArea = imgHeight * 0.08 // 8% from top - gives more clearance
+  // Position in the top blank area, raised higher to avoid descenders (y, p, g) overlapping template text
+  // Use a higher position (5-6% from top) to give more clearance for descenders
+  const topArea = imgHeight * 0.05 // 5% from top - raised from 8% to avoid overlap
   
   // Adjust for font size - larger fonts need more space from top edge
-  // But also account for the fact that text baseline is at y position
-  let fontAdjustment = fontSize * 0.25 // Reduced from 0.3 for better spacing
+  // Account for descenders in lowercase letters (y, p, g, q, j)
+  let fontAdjustment = fontSize * 0.2 // Reduced adjustment to keep text higher
   
   // For two-line text, adjust position slightly higher to center both lines better
   if (isTwoLines) {
-    fontAdjustment = fontSize * 0.2 // Less adjustment since we have two lines
+    fontAdjustment = fontSize * 0.15 // Even less adjustment for two lines
   }
 
-  // Final Y position - well-positioned in the top area with clearance
+  // Final Y position - well-positioned higher in the top area with clearance for descenders
   const y = topArea + fontAdjustment
 
   return { x, y }
