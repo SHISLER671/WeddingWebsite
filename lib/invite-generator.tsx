@@ -94,67 +94,55 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
   return result
 }
 
-// Define safe zone: guest names must end BEFORE "Please Join Us" text
-const SAFE_ZONE_END_PERCENT = 0.15 // Names MUST end by 15% from top
-const SAFE_ZONE_START_PERCENT = 0.03 // Start at 3% from top
+const SAFE_ZONE_TOP = 0.04 // 4% from top - where text starts
+const SAFE_ZONE_BOTTOM = 0.16 // 16% from top - text MUST end before this
+const SPLIT_THRESHOLD = 30 // Split names 30+ characters
 
 function calculateDynamicFontSize(
   name: string,
   imgWidth: number,
   imgHeight: number,
-  isTwoLines: boolean,
-  line1?: string,
-  line2?: string,
-): { fontSize: number; shouldSplit: boolean } {
-  const charCount = name.length
-  const splitThreshold = 26
+  line1: string,
+  line2: string,
+): { fontSize: number } {
+  const isTwoLines = line2.length > 0
 
-  const safeZoneHeight = imgHeight * (SAFE_ZONE_END_PERCENT - SAFE_ZONE_START_PERCENT)
+  // Calculate available height in the safe zone
+  const safeZoneHeight = imgHeight * (SAFE_ZONE_BOTTOM - SAFE_ZONE_TOP)
 
-  if (isTwoLines && line1 && line2) {
-    // Use actual split line lengths, not estimates
-    const longestLineLength = Math.max(line1.length, line2.length)
+  let maxFontSize: number
 
-    // Scale font based on longest actual line length
-    // Approximate: 1 character ≈ 0.6em in serif fonts
-    const charWidthEstimate = 0.6
-    const maxAvailableWidth = imgWidth * 0.95 // Use 95% of canvas width for safety
+  if (isTwoLines) {
+    // Two lines: need font + lineSpacing + font
+    // lineSpacing = 1.3 * font, so total = font * 2.3
+    maxFontSize = safeZoneHeight / 2.3
 
-    // Calculate maximum font size that fits width
-    const maxFontSizeForWidth = maxAvailableWidth / (longestLineLength * charWidthEstimate)
+    // Also check width constraint - longest line must fit
+    const longestLine = line1.length > line2.length ? line1.length : line2.length
+    const widthBasedSize = (imgWidth * 0.92) / (longestLine * 0.55) // 0.55em per char for serif
 
-    // Calculate maximum font size that fits height
-    const lineSpacing = 1.2
-    const descenderBuffer = 0.2
-    const totalHeightMultiplier = 1 + lineSpacing + descenderBuffer
-    const maxFontSizeForHeight = safeZoneHeight / totalHeightMultiplier
-
-    // Use the smaller of the two constraints
-    const fontSize = Math.min(maxFontSizeForWidth, maxFontSizeForHeight)
+    maxFontSize = Math.min(maxFontSize, widthBasedSize)
 
     console.log(
-      `[v0] Two-line font calc: line1=${line1.length}ch, line2=${line2.length}ch, ` +
-        `maxForWidth=${maxFontSizeForWidth.toFixed(1)}, maxForHeight=${maxFontSizeForHeight.toFixed(1)}, ` +
-        `final=${fontSize.toFixed(1)}`,
+      `[v0] Two-line sizing: height-based=${(safeZoneHeight / 2.3).toFixed(1)}, width-based=${widthBasedSize.toFixed(1)}, final=${maxFontSize.toFixed(1)}`,
     )
+  } else {
+    // Single line: just needs font height
+    maxFontSize = safeZoneHeight / 1.15 // 1.15 accounts for descenders
 
-    return { fontSize: Math.max(35, Math.min(70, Math.floor(fontSize))), shouldSplit: true }
+    // Check width constraint
+    const widthBasedSize = (imgWidth * 0.92) / (name.length * 0.55)
+    maxFontSize = Math.min(maxFontSize, widthBasedSize)
+
+    console.log(
+      `[v0] Single-line sizing: height-based=${(safeZoneHeight / 1.15).toFixed(1)}, width-based=${widthBasedSize.toFixed(1)}, final=${maxFontSize.toFixed(1)}`,
+    )
   }
 
-  if (!isTwoLines && charCount < splitThreshold) {
-    const charWidthEstimate = 0.6
-    const maxAvailableWidth = imgWidth * 0.95
-    const maxFontSizeForWidth = maxAvailableWidth / (charCount * charWidthEstimate)
-    const maxFontSizeForHeight = safeZoneHeight / 1.2
+  // Clamp to reasonable range
+  const fontSize = Math.floor(Math.max(30, Math.min(85, maxFontSize)))
 
-    const fontSize = Math.min(maxFontSizeForWidth, maxFontSizeForHeight)
-
-    return { fontSize: Math.max(50, Math.min(85, Math.floor(fontSize))), shouldSplit: false }
-  }
-
-  // Long names: MUST split
-  console.log(`[v0] Name "${name}" has ${charCount} chars, MUST split (threshold: ${splitThreshold})`)
-  return { fontSize: 55, shouldSplit: true }
+  return { fontSize }
 }
 
 function calculateBoundaryAwarePosition(
@@ -165,52 +153,25 @@ function calculateBoundaryAwarePosition(
 ): { x: number; y: number } {
   const x = imgWidth / 2
 
-  // Calculate safe zone boundaries
-  const safeZoneStart = imgHeight * SAFE_ZONE_START_PERCENT
-  const safeZoneEnd = imgHeight * SAFE_ZONE_END_PERCENT
+  const safeZoneTop = imgHeight * SAFE_ZONE_TOP
+  const safeZoneBottom = imgHeight * SAFE_ZONE_BOTTOM
+  const safeZoneHeight = safeZoneBottom - safeZoneTop
 
-  // Calculate total text height needed
-  let totalTextHeight: number
+  // Calculate actual text height
+  let textHeight: number
   if (isTwoLines) {
-    // Two lines: first line + line spacing + second line + descender buffer
-    const lineSpacing = fontSize * 1.2
-    totalTextHeight = fontSize + lineSpacing + fontSize * 0.15 // Added descender buffer to second line
+    // font + (1.3 * font) = 2.3 * font
+    textHeight = fontSize * 2.3
   } else {
-    // Single line: font size + descender buffer
-    totalTextHeight = fontSize * 1.15
+    textHeight = fontSize * 1.15
   }
 
-  // Position text so it's centered in safe zone AND guaranteed to end before boundary
-  const availableHeight = safeZoneEnd - safeZoneStart
-
-  // If text is too tall for safe zone, something is very wrong
-  if (totalTextHeight > availableHeight) {
-    console.error(
-      `[v0] TEXT TOO TALL: ${totalTextHeight.toFixed(1)}px exceeds safe zone ${availableHeight.toFixed(1)}px`,
-    )
-    // Force it to fit by starting at the very top
-    const y = safeZoneStart
-    console.log(`[v0] EMERGENCY positioning at ${y.toFixed(1)}px`)
-    return { x, y }
-  }
-
-  // Center vertically within safe zone
-  const y = safeZoneStart + (availableHeight - totalTextHeight) / 2
-
-  // Verify the bottom won't exceed boundary
-  const textBottomY = y + totalTextHeight
-  const clearance = safeZoneEnd - textBottomY
+  // Center vertically in safe zone
+  const y = safeZoneTop + (safeZoneHeight - textHeight) / 2
 
   console.log(
-    `[v0] Position: y=${y.toFixed(1)}px, textHeight=${totalTextHeight.toFixed(1)}px, ` +
-      `bottom=${textBottomY.toFixed(1)}px, safeEnd=${safeZoneEnd.toFixed(1)}px, clearance=${clearance.toFixed(1)}px`,
+    `[v0] Position: y=${y.toFixed(1)}, textHeight=${textHeight.toFixed(1)}, safeTop=${safeZoneTop.toFixed(1)}, safeBottom=${safeZoneBottom.toFixed(1)}`,
   )
-
-  if (clearance < 0) {
-    console.error(`[v0] BOUNDARY VIOLATION: ${Math.abs(clearance).toFixed(1)}px overflow!`)
-    // Force correction
-    return { x, y: y + clearance - 10 }
-  }
 
   return { x, y }
 }
@@ -235,7 +196,6 @@ async function loadMasterGuestList(): Promise<string> {
   return await readFile(csvPath, "utf-8")
 }
 
-// Create text overlay using SVG (works with Sharp on Vercel)
 async function createTextOverlay(
   text: string,
   width: number,
@@ -250,7 +210,7 @@ async function createTextOverlay(
   line1?: string,
   line2?: string,
 ): Promise<Buffer> {
-  const lineHeight = fontSize * 1.2 // Reduced from 1.25 to 1.2
+  const lineHeight = fontSize * 1.3 // Consistent with calculations
   let svg: string
 
   console.log(`[v0] createTextOverlay: fontSize=${fontSize}, lineHeight=${lineHeight}, isTwoLines=${isTwoLines}`)
@@ -362,32 +322,25 @@ export async function generatePersonalizedInvites(
     const name = guest.FullName?.trim()
     if (!name) continue
 
-    const mustSplit = name.length >= 26
-    let nameSplit = mustSplit ? splitNameIntoLines(name, 26) : { line1: name, line2: "", isTwoLines: false }
+    const nameSplit =
+      name.length >= SPLIT_THRESHOLD
+        ? splitNameIntoLines(name, SPLIT_THRESHOLD)
+        : { line1: name, line2: "", isTwoLines: false }
 
-    // Pass actual line lengths to font calculation
-    const fontInfo = calculateDynamicFontSize(
+    const { fontSize: optimalFontSize } = calculateDynamicFontSize(
       name,
       imgWidth,
       imgHeight,
-      nameSplit.isTwoLines,
       nameSplit.line1,
       nameSplit.line2,
     )
-    const optimalFontSize = fontInfo.fontSize
 
-    // If sizing determined we should split but haven't yet, do it now
-    if (fontInfo.shouldSplit && !nameSplit.isTwoLines) {
-      nameSplit = splitNameIntoLines(name, 26)
-    }
-
-    // Calculate boundary-aware position
     const position = calculateBoundaryAwarePosition(imgWidth, imgHeight, optimalFontSize, nameSplit.isTwoLines)
     const finalX = position.x
     const finalY = position.y
 
     console.log(
-      `[v0] Bulk: "${name}" (${name.length} chars) - Font: ${optimalFontSize}px, TwoLines: ${nameSplit.isTwoLines}, Pos: (${finalX}, ${finalY})`,
+      `[v0] Bulk: "${name}" (${name.length} chars) - Font: ${optimalFontSize}px, TwoLines: ${nameSplit.isTwoLines}, Pos: (${finalX.toFixed(1)}, ${finalY.toFixed(1)})`,
     )
 
     const actuallyTwoLines = nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2
@@ -407,14 +360,8 @@ export async function generatePersonalizedInvites(
       nameSplit.line2,
     )
 
-    const output = await baseImage
-      .clone()
-      .composite([{ input: textOverlay, top: 0, left: 0 }])
-      .jpeg({ quality: 95 })
-      .toBuffer()
-
     const safeName = name.replace(/[^a-zA-Z0-9\- ]/g, "_").slice(0, 50)
-    zip.file(`${safeName}.jpg`, new Uint8Array(output))
+    zip.file(`${safeName}.jpg`, new Uint8Array(await textOverlay))
   }
 
   return await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" })
@@ -454,32 +401,25 @@ export async function generatePreview(
 
     console.log("[v0] Image dimensions:", imgWidth, "x", imgHeight)
 
-    const mustSplit = name.length >= 26
-    let nameSplit = mustSplit ? splitNameIntoLines(name, 26) : { line1: name, line2: "", isTwoLines: false }
+    const nameSplit =
+      name.length >= SPLIT_THRESHOLD
+        ? splitNameIntoLines(name, SPLIT_THRESHOLD)
+        : { line1: name, line2: "", isTwoLines: false }
 
-    // Pass actual line lengths to font calculation
-    const fontInfo = calculateDynamicFontSize(
+    const { fontSize: finalFontSize } = calculateDynamicFontSize(
       name,
       imgWidth,
       imgHeight,
-      nameSplit.isTwoLines,
       nameSplit.line1,
       nameSplit.line2,
     )
-    const finalFontSize = fontInfo.fontSize
 
-    // If sizing determined we should split but haven't yet, do it now
-    if (fontInfo.shouldSplit && !nameSplit.isTwoLines) {
-      nameSplit = splitNameIntoLines(name, 26)
-    }
-
-    // Calculate boundary-aware position
     const position = calculateBoundaryAwarePosition(imgWidth, imgHeight, finalFontSize, nameSplit.isTwoLines)
     const finalX = position.x
     const finalY = position.y
 
     console.log(
-      `[v0] Preview: "${name}" (${name.length} chars) - Font: ${finalFontSize}px, TwoLines: ${nameSplit.isTwoLines}, Pos: (${finalX}, ${finalY})`,
+      `[v0] Preview: "${name}" (${name.length} chars) - Font: ${finalFontSize}px, TwoLines: ${nameSplit.isTwoLines}, Pos: (${finalX.toFixed(1)}, ${finalY.toFixed(1)})`,
     )
 
     const actuallyTwoLines = nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2
