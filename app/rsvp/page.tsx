@@ -776,12 +776,8 @@ export default function RSVPPage() {
                     <div className="bg-jewel-burgundy/10 border border-jewel-burgundy/30 rounded-lg p-4">
                       <p className="text-sm text-charcoal leading-relaxed">
                         Your presence means the world to us! Bringing a plus-one? Add their name in the special message
-                        box below. For those with little ones: We are looking forward to having a night full of dancing,
-                        drinking, and celebration. We would love for you to enjoy the night child-free with us, so
-                        please arrange for a babysitter if possible. However, if you do plan to bring children, please
-                        include their ages in the &quot;Special Message&quot; section below - this is especially
-                        important if any children under 12 will be attending, as we need to know ages for proper meal
-                        planning. We can&apos;t wait to have you there!
+                        box below. We are looking forward to having a night full of dancing, drinking, and celebration.
+                        This is an adults-only event, so please arrange for childcare if needed. We can&apos;t wait to have you there!
                       </p>
                     </div>
                     <div>
@@ -1084,15 +1080,11 @@ export default function RSVPPage() {
                   <option value="5">5+ Guests</option>
                 </select>
 
-                {/* Children Policy Notice */}
+                {/* Adults-Only Policy Notice */}
                 <div className="mt-4 bg-jewel-fuchsia/10 border border-jewel-fuchsia/30 rounded-lg p-4">
                   <p className="text-base md:text-sm text-charcoal leading-relaxed">
-                    For those with little ones: We are looking forward to having a night full of dancing, drinking, and
-                    celebration. We would love for you to enjoy the night child-free with us, so please arrange for a
-                    babysitter if possible. However, if you do plan to bring children,{" "}
-                    <strong>please include their ages in the "Special Message" section below</strong> - this is
-                    especially important if any children under 12 will be attending, as we need to know ages for proper
-                    meal planning. We can't wait to have you there!
+                    We are looking forward to having a night full of dancing, drinking, and celebration. This is an
+                    adults-only event, so please arrange for childcare if needed. We can't wait to have you there!
                   </p>
                 </div>
               </div>
