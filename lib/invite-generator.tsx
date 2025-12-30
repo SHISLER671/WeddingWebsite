@@ -95,16 +95,19 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
 }
 
 // Define safe zone: guest names must end BEFORE "Please Join Us" text
-const SAFE_ZONE_END_PERCENT = 0.14 // Names MUST end by 14% from top (stricter enforcement)
+const SAFE_ZONE_END_PERCENT = 0.13 // Names MUST end by 13% from top (absolute maximum)
 const SAFE_ZONE_START_PERCENT = 0.02 // Start at 2% from top
 
 function calculateDynamicFontSize(
   name: string,
   imgWidth: number,
+  imgHeight: number,
   isTwoLines: boolean,
 ): { fontSize: number; shouldSplit: boolean } {
   const charCount = name.length
   const splitThreshold = 26 // Split at 26+ characters for earlier intervention
+
+  const safeZoneHeight = imgHeight * (SAFE_ZONE_END_PERCENT - SAFE_ZONE_START_PERCENT)
 
   // If already determined to be two lines, use two-line sizing
   if (isTwoLines) {
@@ -120,18 +123,24 @@ function calculateDynamicFontSize(
     // Scale font based on longest line length and available width
     const baseSize = imgWidth * 0.065 // Base: ~6.5% of canvas width
     const scaleFactor = Math.max(0.6, 1 - (longestLineLength - 15) / 50) // Scale down for longer lines
-    const fontSize = Math.floor(baseSize * scaleFactor)
+    const lineSpacing = 1.25 // Multiplier for line spacing
+    const descenderBuffer = 0.2 // Buffer for descenders
+    const totalHeightMultiplier = 1 + lineSpacing + descenderBuffer // ~2.45x fontSize
+    const maxFontSizeForHeight = safeZoneHeight / totalHeightMultiplier
+
+    const fontSize = Math.min(Math.floor(baseSize * scaleFactor), Math.floor(maxFontSizeForHeight))
 
     console.log(
-      `[v0] Two-line font calc: longestLine=${longestLineLength}, baseSize=${baseSize}, scaleFactor=${scaleFactor}, final=${fontSize}`,
+      `[v0] Two-line font calc: safeZoneHeight=${safeZoneHeight.toFixed(1)}, ` +
+        `maxFontForHeight=${maxFontSizeForHeight.toFixed(1)}, final=${fontSize}`,
     )
-    return { fontSize: Math.max(45, Math.min(65, fontSize)), shouldSplit: true }
+    return { fontSize: Math.max(40, Math.min(65, fontSize)), shouldSplit: true }
   }
 
   // Single-line sizing based on character count and canvas width
   // Very short names (1-10 chars): larger but not too large
   if (charCount <= 10) {
-    const fontSize = imgWidth * 0.07 // ~7% of canvas width
+    const fontSize = Math.min(imgWidth * 0.07, safeZoneHeight / (1 + 0.2))
     return { fontSize: Math.floor(fontSize), shouldSplit: false }
   }
 
@@ -139,7 +148,7 @@ function calculateDynamicFontSize(
   if (charCount < splitThreshold) {
     const baseSize = imgWidth * 0.08 // Base: 8% of canvas width
     const scaleFactor = 1 - ((charCount - 10) / 20) * 0.35 // Reduce by up to 35%
-    const fontSize = Math.floor(baseSize * scaleFactor)
+    const fontSize = Math.min(Math.floor(baseSize * scaleFactor), safeZoneHeight / (1 + 0.2))
     return { fontSize: Math.max(50, fontSize), shouldSplit: false }
   }
 
@@ -149,7 +158,7 @@ function calculateDynamicFontSize(
   const baseSize = imgWidth * 0.065
   const longestLineLength = charCount / 2 // Estimate
   const scaleFactor = Math.max(0.6, 1 - (longestLineLength - 15) / 50)
-  return { fontSize: Math.max(45, Math.min(65, Math.floor(baseSize * scaleFactor))), shouldSplit: true }
+  return { fontSize: Math.max(40, Math.min(65, Math.floor(baseSize * scaleFactor))), shouldSplit: true }
 }
 
 function calculateBoundaryAwarePosition(
@@ -178,16 +187,8 @@ function calculateBoundaryAwarePosition(
     textHeight = fontSize + descenderBuffer
   }
 
-  if (textHeight > availableHeight) {
-    console.error(
-      `[v0] CRITICAL: Text height ${textHeight.toFixed(1)}px EXCEEDS safe zone ${availableHeight.toFixed(1)}px!`,
-    )
-    // Calculate how much we need to shrink
-    const requiredScale = availableHeight / textHeight
-    console.error(`[v0] Text would need ${(requiredScale * 100).toFixed(1)}% scaling to fit. This should not happen!`)
-  }
-
-  const y = safeZoneStart + fontSize * 0.1 // Small padding from top
+  const verticalCenter = safeZoneStart + (availableHeight - textHeight) / 2
+  const y = Math.max(safeZoneStart, verticalCenter)
 
   const textEndY = y + textHeight
   const safeZoneEndPx = imgHeight * SAFE_ZONE_END_PERCENT
@@ -196,6 +197,10 @@ function calculateBoundaryAwarePosition(
     console.error(
       `[v0] BOUNDARY VIOLATION: Text extends to ${textEndY.toFixed(1)}px, exceeding safe zone at ${safeZoneEndPx.toFixed(1)}px by ${(textEndY - safeZoneEndPx).toFixed(1)}px`,
     )
+    const correction = textEndY - safeZoneEndPx
+    const correctedY = y - correction - 5 // Extra 5px safety margin
+    console.error(`[v0] FORCING Y correction from ${y.toFixed(1)} to ${correctedY.toFixed(1)}`)
+    return { x, y: correctedY }
   }
 
   console.log(
@@ -358,8 +363,7 @@ export async function generatePersonalizedInvites(
     const mustSplit = name.length >= 26
     let nameSplit = mustSplit ? splitNameIntoLines(name, 26) : { line1: name, line2: "", isTwoLines: false }
 
-    // Calculate font size based on split decision
-    const fontInfo = calculateDynamicFontSize(name, imgWidth, nameSplit.isTwoLines)
+    const fontInfo = calculateDynamicFontSize(name, imgWidth, imgHeight, nameSplit.isTwoLines)
     const optimalFontSize = fontInfo.fontSize
 
     // If sizing determined we should split but haven't yet, do it now
@@ -444,8 +448,7 @@ export async function generatePreview(
     const mustSplit = name.length >= 26
     let nameSplit = mustSplit ? splitNameIntoLines(name, 26) : { line1: name, line2: "", isTwoLines: false }
 
-    // Calculate font size based on split decision
-    const fontInfo = calculateDynamicFontSize(name, imgWidth, nameSplit.isTwoLines)
+    const fontInfo = calculateDynamicFontSize(name, imgWidth, imgHeight, nameSplit.isTwoLines)
     const finalFontSize = fontInfo.fontSize
 
     // If sizing determined we should split but haven't yet, do it now
