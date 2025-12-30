@@ -39,8 +39,12 @@ function splitNameIntoLines(name: string, maxChars: number = 30): { line1: strin
       const line1 = name.substring(0, splitIndex).trim()
       const line2 = name.substring(splitIndex).trim()
       
-      // Check if both lines are reasonable length
-      if (line1.length <= maxChars + 5 && line2.length <= maxChars + 5 && line1.length > 0 && line2.length > 0) {
+      // Check if both lines are reasonable length (more lenient for very long names)
+      // Allow lines up to maxChars + 15 for very long names, or if both lines are at least reasonable
+      const maxAllowed = maxChars + 15 // More lenient for long names
+      if (line1.length > 0 && line2.length > 0 && 
+          (line1.length <= maxAllowed && line2.length <= maxAllowed) ||
+          (line1.length <= maxChars * 1.5 && line2.length <= maxChars * 1.5)) {
         return { line1, line2, isTwoLines: true }
       }
     }
@@ -110,10 +114,24 @@ function calculateOptimalFontSize(name: string, imgWidth: number, baseFontSize: 
   if (charCount >= maxCharsForSingleLine) {
     // If splitting, we can use a larger font size since each line will be shorter
     const splitResult = splitNameIntoLines(name, maxCharsForSingleLine)
+    console.log(`[v0] Split attempt for "${name}" (${charCount} chars):`, splitResult)
     if (splitResult.isTwoLines) {
       // Use a good readable size for two-line names (around 60-65px)
       const twoLineFontSize = Math.max(55, baseFontSize * 0.75)
       return { fontSize: twoLineFontSize, shouldSplit: true }
+    } else {
+      // Force split even if natural break points didn't work - use word splitting
+      console.log(`[v0] Natural split failed, forcing word-based split`)
+      const words = name.split(/\s+/)
+      if (words.length >= 2) {
+        const midPoint = Math.ceil(words.length / 2)
+        const line1 = words.slice(0, midPoint).join(' ')
+        const line2 = words.slice(midPoint).join(' ')
+        if (line1.length > 0 && line2.length > 0) {
+          const twoLineFontSize = Math.max(55, baseFontSize * 0.75)
+          return { fontSize: twoLineFontSize, shouldSplit: true }
+        }
+      }
     }
   }
   
@@ -320,9 +338,23 @@ export async function generatePersonalizedInvites(
     const shouldSplit = fontInfo.shouldSplit
     
     // Split name if needed
-    const nameSplit = shouldSplit ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
+    let nameSplit = shouldSplit ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
     
-    console.log(`[v0] Bulk: "${name}" (${name.length} chars) - Base: ${fontSize}px, Optimal: ${optimalFontSize}px, TwoLines: ${shouldSplit}`)
+    // If shouldSplit is true but split failed, force a word-based split
+    if (shouldSplit && !nameSplit.isTwoLines && name.length >= 30) {
+      console.log(`[v0] Bulk: Split failed, forcing word-based split for "${name}"`)
+      const words = name.split(/\s+/)
+      if (words.length >= 2) {
+        const midPoint = Math.ceil(words.length / 2)
+        nameSplit = {
+          line1: words.slice(0, midPoint).join(' '),
+          line2: words.slice(midPoint).join(' '),
+          isTwoLines: true
+        }
+      }
+    }
+    
+    console.log(`[v0] Bulk: "${name}" (${name.length} chars) - Base: ${fontSize}px, Optimal: ${optimalFontSize}px, TwoLines: ${shouldSplit}, SplitResult:`, nameSplit)
     
     // Calculate optimal position for this guest's name (auto-positioning by default)
     const position = calculateOptimalPosition(imgWidth, imgHeight, optimalFontSize, name, shouldSplit)
@@ -405,9 +437,23 @@ export async function generatePreview(
     shouldSplit = fontInfo.shouldSplit
     
     // Split name if needed
-    const nameSplit = shouldSplit ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
+    let nameSplit = shouldSplit ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
     
-    console.log(`[v0] Preview: "${name}" (${name.length} chars) - Base: ${fontSize}px, Optimal: ${finalFontSize}px, TwoLines: ${shouldSplit}`)
+    // If shouldSplit is true but split failed, force a word-based split
+    if (shouldSplit && !nameSplit.isTwoLines && name.length >= 30) {
+      console.log(`[v0] Split failed, forcing word-based split for "${name}"`)
+      const words = name.split(/\s+/)
+      if (words.length >= 2) {
+        const midPoint = Math.ceil(words.length / 2)
+        nameSplit = {
+          line1: words.slice(0, midPoint).join(' '),
+          line2: words.slice(midPoint).join(' '),
+          isTwoLines: true
+        }
+      }
+    }
+    
+    console.log(`[v0] Preview: "${name}" (${name.length} chars) - Base: ${fontSize}px, Optimal: ${finalFontSize}px, TwoLines: ${shouldSplit}, SplitResult:`, nameSplit)
 
     if (autoPosition && (options.x === undefined || options.y === undefined)) {
       const position = calculateOptimalPosition(imgWidth, imgHeight, finalFontSize, name, shouldSplit)
