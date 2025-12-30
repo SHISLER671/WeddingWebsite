@@ -36,46 +36,43 @@ export default function LivePreviewForm() {
   }, [])
 
   const calculateFontSize = (name: string, imageWidth: number): number => {
-    const baseSize = 120
+    const SAFE_ZONE_HEIGHT = imageWidth * 0.13 // 13% of canvas height for safe zone
     const charCount = name.length
 
     // Split long names at 28+ characters
     if (charCount >= 28) {
-      // Use two-line size (proportionally smaller for canvas)
-      return Math.max(90, Math.floor(baseSize * 0.75))
+      // Two-line sizing: ensure total height fits in safe zone
+      const maxTwoLineFontSize = SAFE_ZONE_HEIGHT / 2.6 // Account for 2 lines + spacing
+      const widthBasedSize = (imageWidth * 0.9) / (Math.max(name.length / 2, 15) * 0.6)
+      return Math.floor(Math.min(maxTwoLineFontSize, widthBasedSize, 70))
     }
 
-    // For short names, use moderate size
-    if (charCount <= 10) {
-      return Math.max(80, Math.floor(baseSize * 0.7))
-    }
+    // Single-line sizing: ensure it fits width and height
+    const maxSingleLineFontSize = SAFE_ZONE_HEIGHT / 1.5
+    const widthBasedSize = (imageWidth * 0.9) / (charCount * 0.6)
 
-    // Medium names scale proportionally
-    const maxWidth = imageWidth * 0.85
-    const estimatedWidth = charCount * (baseSize * 0.6)
-
-    if (estimatedWidth <= maxWidth) {
-      return baseSize
-    }
-
-    const scaleFactor = maxWidth / estimatedWidth
-    return Math.max(70, Math.floor(baseSize * scaleFactor))
+    return Math.floor(Math.min(maxSingleLineFontSize, widthBasedSize, 90))
   }
 
   const splitName = (name: string): { line1: string; line2: string; shouldSplit: boolean } => {
-    if (name.length < 28) {
+    if (name.length < 26) {
       return { line1: name, line2: "", shouldSplit: false }
     }
 
-    // Try natural break points
-    const breakPoints = [/ & /, / and /i, /, /]
-    for (const pattern of breakPoints) {
-      const match = name.match(pattern)
+    // Try natural break points BEFORE conjunctions
+    const patterns = [
+      { regex: / & /, splitBefore: true },
+      { regex: / and /i, splitBefore: true },
+      { regex: /, /, splitBefore: false },
+    ]
+
+    for (const { regex, splitBefore } of patterns) {
+      const match = name.match(regex)
       if (match && match.index !== undefined) {
-        const splitIndex = match.index + match[0].length
+        const splitIndex = splitBefore ? match.index : match.index + match[0].length
         const line1 = name.substring(0, splitIndex).trim()
         const line2 = name.substring(splitIndex).trim()
-        if (line1.length > 0 && line2.length > 0) {
+        if (line1.length > 5 && line2.length > 5) {
           return { line1, line2, shouldSplit: true }
         }
       }
@@ -116,8 +113,49 @@ export default function LivePreviewForm() {
       const fontSize = calculateFontSize(name, img.width)
       const nameSplit = splitName(name)
 
-      // Position at 3% from top (was 12%)
-      const baseY = img.height * 0.03 + fontSize * 0.5
+      const SAFE_ZONE_START = img.height * 0.03 // 3% from top
+      const SAFE_ZONE_END = img.height * 0.14 // 14% from top (was 13%)
+      const SAFE_ZONE_HEIGHT = SAFE_ZONE_END - SAFE_ZONE_START
+
+      console.log("[v0] === INVITATION RENDERING ===")
+      console.log("[v0] Canvas dimensions:", img.width, "x", img.height)
+      console.log("[v0] Guest name:", name)
+      console.log("[v0] Name length:", name.length)
+      console.log("[v0] Split into two lines:", nameSplit.shouldSplit)
+      if (nameSplit.shouldSplit) {
+        console.log("[v0] Line 1:", nameSplit.line1, "length:", nameSplit.line1.length)
+        console.log("[v0] Line 2:", nameSplit.line2, "length:", nameSplit.line2.length)
+      }
+      console.log("[v0] Font size:", fontSize)
+      console.log("[v0] Safe zone:", SAFE_ZONE_START, "to", SAFE_ZONE_END, "height:", SAFE_ZONE_HEIGHT)
+
+      let baseY: number
+
+      if (nameSplit.shouldSplit) {
+        // Two lines: calculate total height and center in safe zone
+        const lineHeight = fontSize * 1.15
+        const totalHeight = fontSize + lineHeight
+        baseY = SAFE_ZONE_START + (SAFE_ZONE_HEIGHT - totalHeight) / 2
+
+        console.log("[v0] Two-line mode - Line height:", lineHeight, "Total height:", totalHeight)
+        console.log("[v0] Base Y position:", baseY)
+        console.log("[v0] Line 1 Y:", baseY)
+        console.log("[v0] Line 2 Y:", baseY + lineHeight)
+        console.log("[v0] Bottom of text:", baseY + lineHeight + fontSize)
+      } else {
+        // Single line: center in safe zone
+        baseY = SAFE_ZONE_START + (SAFE_ZONE_HEIGHT - fontSize) / 2
+
+        console.log("[v0] Single-line mode")
+        console.log("[v0] Base Y position:", baseY)
+        console.log("[v0] Bottom of text:", baseY + fontSize)
+      }
+
+      console.log("[v0] Safe zone end:", SAFE_ZONE_END)
+      console.log(
+        "[v0] Text fits in safe zone:",
+        nameSplit.shouldSplit ? baseY + fontSize * 2.15 < SAFE_ZONE_END : baseY + fontSize < SAFE_ZONE_END,
+      )
 
       // Use elegant serif font stack
       ctx.font = `${fontSize}px "Didot", "Bodoni MT", "Garamond", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", Times, serif`
@@ -132,7 +170,7 @@ export default function LivePreviewForm() {
 
       if (nameSplit.shouldSplit) {
         // Render two lines with proper spacing
-        const lineHeight = fontSize * 1.3
+        const lineHeight = fontSize * 1.15
         ctx.fillText(nameSplit.line1, textX, baseY)
         ctx.fillText(nameSplit.line2, textX, baseY + lineHeight)
       } else {
