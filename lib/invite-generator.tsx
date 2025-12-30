@@ -94,64 +94,96 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
   return result
 }
 
-function calculateOptimalFontSize(
+// Define safe zone: guest names must end BEFORE "Please Join Us" text
+const SAFE_ZONE_END_PERCENT = 0.16 // Names must end by 16% from top (conservative)
+const SAFE_ZONE_START_PERCENT = 0.03 // Start 3% from top for margin
+
+function calculateDynamicFontSize(
   name: string,
   imgWidth: number,
-  baseFontSize = 80,
+  isTwoLines: boolean,
 ): { fontSize: number; shouldSplit: boolean } {
   const charCount = name.length
-  const splitThreshold = 28 // Split at 28+ characters (was 30)
+  const splitThreshold = 26 // Split at 26+ characters for earlier intervention
 
-  // For very short names (1-10 chars), use moderate font size
+  // If already determined to be two lines, use two-line sizing
+  if (isTwoLines) {
+    // For two lines, use character count to determine font size
+    // Longer names need smaller fonts to fit width
+    const longestLineLength = Math.max(
+      ...name
+        .split(/\s+(?:&|and)\s+/i)
+        .map((part) => part.length)
+        .concat([charCount / 2]),
+    )
+
+    // Scale font based on longest line length and available width
+    const baseSize = imgWidth * 0.065 // Base: ~6.5% of canvas width
+    const scaleFactor = Math.max(0.6, 1 - (longestLineLength - 15) / 50) // Scale down for longer lines
+    const fontSize = Math.floor(baseSize * scaleFactor)
+
+    console.log(
+      `[v0] Two-line font calc: longestLine=${longestLineLength}, baseSize=${baseSize}, scaleFactor=${scaleFactor}, final=${fontSize}`,
+    )
+    return { fontSize: Math.max(45, Math.min(65, fontSize)), shouldSplit: true }
+  }
+
+  // Single-line sizing based on character count and canvas width
+  // Very short names (1-10 chars): larger but not too large
   if (charCount <= 10) {
-    return { fontSize: Math.max(55, baseFontSize * 0.7), shouldSplit: false }
+    const fontSize = imgWidth * 0.07 // ~7% of canvas width
+    return { fontSize: Math.floor(fontSize), shouldSplit: false }
   }
 
-  // For medium names (11-27 chars), use moderate scaling
+  // Medium names (11-25 chars): scale down progressively
   if (charCount < splitThreshold) {
-    const scaleFactor = 1 - ((charCount - 10) / (splitThreshold - 10)) * 0.25
-    return { fontSize: Math.floor(baseFontSize * scaleFactor), shouldSplit: false }
+    const baseSize = imgWidth * 0.08 // Base: 8% of canvas width
+    const scaleFactor = 1 - ((charCount - 10) / 20) * 0.35 // Reduce by up to 35%
+    const fontSize = Math.floor(baseSize * scaleFactor)
+    return { fontSize: Math.max(50, fontSize), shouldSplit: false }
   }
 
-  // For names 28+ characters, ALWAYS split into two lines with readable font
-  console.log(`[v0] Name "${name}" has ${charCount} chars, will split (threshold: ${splitThreshold})`)
-  // Use 58-62px for two-line names for better readability
-  const twoLineFontSize = Math.max(58, Math.min(62, baseFontSize * 0.75))
-  return { fontSize: twoLineFontSize, shouldSplit: true }
+  // Long names (26+ chars): MUST split into two lines
+  console.log(`[v0] Name "${name}" has ${charCount} chars, MUST split (threshold: ${splitThreshold})`)
+  // Recalculate for two-line mode
+  const baseSize = imgWidth * 0.065
+  const longestLineLength = charCount / 2 // Estimate
+  const scaleFactor = Math.max(0.6, 1 - (longestLineLength - 15) / 50)
+  return { fontSize: Math.max(45, Math.min(65, Math.floor(baseSize * scaleFactor))), shouldSplit: true }
 }
 
-function calculateOptimalPosition(
+function calculateBoundaryAwarePosition(
   imgWidth: number,
   imgHeight: number,
   fontSize: number,
-  name: string,
-  isTwoLines = false,
+  isTwoLines: boolean,
 ): { x: number; y: number } {
-  // Center horizontally
+  // Horizontal: always center
   const x = imgWidth / 2
 
-  const topMargin = imgHeight * 0.02
+  // Vertical: calculate based on safe zone boundaries
+  const safeZoneStart = imgHeight * SAFE_ZONE_START_PERCENT
+  const safeZoneEnd = imgHeight * SAFE_ZONE_END_PERCENT
+  const availableHeight = safeZoneEnd - safeZoneStart
 
-  // Add spacing based on font size with careful adjustment
-  let fontAdjustment: number
-
+  let textHeight: number
   if (isTwoLines) {
-    // Two-line text needs minimal adjustment since we're starting higher
-    fontAdjustment = fontSize * 0.4
+    // Two lines: height = 2 * fontSize + line spacing (30% of fontSize)
+    const lineSpacing = fontSize * 0.3
+    textHeight = fontSize * 2 + lineSpacing
   } else {
-    // Single-line text adjustment based on size
-    if (fontSize <= 55) {
-      fontAdjustment = fontSize * 0.3
-    } else {
-      fontAdjustment = fontSize * 0.35
-    }
+    // Single line: just the font size (with small buffer for descenders)
+    textHeight = fontSize * 1.1
   }
 
-  // Final Y position - positioned very high with maximum clearance
-  const y = topMargin + fontAdjustment
+  // Center text vertically within safe zone
+  const verticalCenter = safeZoneStart + (availableHeight - textHeight) / 2
+  // Y position is where text STARTS (top edge)
+  const y = verticalCenter
 
   console.log(
-    `[v0] Position calc: fontSize=${fontSize}, isTwoLines=${isTwoLines}, topMargin=${topMargin}, fontAdj=${fontAdjustment}, finalY=${y}`,
+    `[v0] Boundary-aware position: safeStart=${safeZoneStart}, safeEnd=${safeZoneEnd}, ` +
+      `availHeight=${availableHeight}, textHeight=${textHeight}, y=${y}`,
   )
 
   return { x, y }
@@ -177,13 +209,7 @@ async function loadMasterGuestList(): Promise<string> {
   return await readFile(csvPath, "utf-8")
 }
 
-// NOTE: Custom font embedding doesn't work with Sharp's SVG renderer on Vercel
-// Sharp uses librsvg which doesn't support @font-face with data URIs
-// We use elegant system serif fonts (Georgia, Times New Roman) instead
-
 // Create text overlay using SVG (works with Sharp on Vercel)
-// NOTE: Sharp's SVG renderer (librsvg) does NOT support @font-face with data URIs
-// We use elegant system serif fonts that will render properly
 async function createTextOverlay(
   text: string,
   width: number,
@@ -198,7 +224,6 @@ async function createTextOverlay(
   line1?: string,
   line2?: string,
 ): Promise<Buffer> {
-  // Adjust line spacing for better readability (was 1.2, now 1.3)
   const lineHeight = fontSize * 1.3
   let svg: string
 
@@ -281,8 +306,7 @@ export async function generatePersonalizedInvites(
     useMasterList = false,
   } = options
 
-  // Auto-positioning is enabled by default (x and y are calculated per guest)
-  const useCustomPosition = options.x !== undefined && options.y !== undefined
+  const useCustomPosition = false
 
   // Use master list if requested, otherwise use uploaded file
   let csvText: string
@@ -312,49 +336,27 @@ export async function generatePersonalizedInvites(
     const name = guest.FullName?.trim()
     if (!name) continue
 
-    // Calculate optimal font size and check if name should be split into two lines
-    const fontInfo = calculateOptimalFontSize(name, imgWidth, fontSize)
-    let optimalFontSize = fontInfo.fontSize
+    // First, determine if we need to split
+    const mustSplit = name.length >= 26
+    let nameSplit = mustSplit ? splitNameIntoLines(name, 26) : { line1: name, line2: "", isTwoLines: false }
 
-    const mustSplit = name.length >= 28
-    const shouldSplit = fontInfo.shouldSplit || mustSplit
+    // Calculate font size based on split decision
+    const fontInfo = calculateDynamicFontSize(name, imgWidth, nameSplit.isTwoLines)
+    const optimalFontSize = fontInfo.fontSize
 
-    // Split name if needed
-    let nameSplit =
-      shouldSplit || mustSplit ? splitNameIntoLines(name, 28) : { line1: name, line2: "", isTwoLines: false }
-
-    // If split failed but needed, force word-based split
-    if ((shouldSplit || mustSplit) && !nameSplit.isTwoLines) {
-      console.log(`[v0] Bulk: Split failed, forcing word-based split for "${name}" (${name.length} chars)`)
-      const words = name.split(/\s+/)
-      if (words.length >= 2) {
-        const midPoint = Math.ceil(words.length / 2)
-        nameSplit = {
-          line1: words.slice(0, midPoint).join(" "),
-          line2: words.slice(midPoint).join(" "),
-          isTwoLines: true,
-        }
-        optimalFontSize = Math.max(58, fontSize * 0.75)
-      } else {
-        const midPoint = Math.floor(name.length / 2)
-        nameSplit = {
-          line1: name.substring(0, midPoint),
-          line2: name.substring(midPoint),
-          isTwoLines: true,
-        }
-        optimalFontSize = Math.max(58, fontSize * 0.75)
-      }
+    // If sizing determined we should split but haven't yet, do it now
+    if (fontInfo.shouldSplit && !nameSplit.isTwoLines) {
+      nameSplit = splitNameIntoLines(name, 26)
     }
 
-    console.log(
-      `[v0] Bulk: "${name}" (${name.length} chars) - Optimal: ${optimalFontSize}px, TwoLines: ${shouldSplit}, SplitResult:`,
-      nameSplit,
-    )
+    // Calculate boundary-aware position
+    const position = calculateBoundaryAwarePosition(imgWidth, imgHeight, optimalFontSize, nameSplit.isTwoLines)
+    const finalX = position.x
+    const finalY = position.y
 
-    // Calculate optimal position
-    const position = calculateOptimalPosition(imgWidth, imgHeight, optimalFontSize, name, shouldSplit)
-    const finalX = useCustomPosition ? (options.x ?? position.x) : position.x
-    const finalY = useCustomPosition ? (options.y ?? position.y) : position.y
+    console.log(
+      `[v0] Bulk: "${name}" (${name.length} chars) - Font: ${optimalFontSize}px, TwoLines: ${nameSplit.isTwoLines}, Pos: (${finalX}, ${finalY})`,
+    )
 
     const actuallyTwoLines = nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2
 
@@ -405,15 +407,14 @@ export async function generatePreview(
 
     const {
       fontSize = 80,
-      color = "#7B4B7A", // Purple color to match invitation text
-      strokeColor = "#5a1f2a", // Darker burgundy stroke for depth
+      color = "#7B4B7A",
+      strokeColor = "#5a1f2a",
       strokeWidth = 4,
       font = "serif",
       autoPosition = true,
     } = options
 
     const templateBuffer = await loadTemplate()
-    console.log("[v0] Creating sharp instance")
     const baseImage = sharp(templateBuffer)
     const metadata = await baseImage.metadata()
     const imgWidth = metadata.width || 1200
@@ -421,73 +422,29 @@ export async function generatePreview(
 
     console.log("[v0] Image dimensions:", imgWidth, "x", imgHeight)
 
-    let finalX: number
-    let finalY: number
-    let finalFontSize: number
-    let shouldSplit: boolean
+    // First, determine if we need to split
+    const mustSplit = name.length >= 26
+    let nameSplit = mustSplit ? splitNameIntoLines(name, 26) : { line1: name, line2: "", isTwoLines: false }
 
-    // Calculate optimal font size and check if name should be split
-    const fontInfo = calculateOptimalFontSize(name, imgWidth, fontSize)
-    finalFontSize = fontInfo.fontSize
+    // Calculate font size based on split decision
+    const fontInfo = calculateDynamicFontSize(name, imgWidth, nameSplit.isTwoLines)
+    const finalFontSize = fontInfo.fontSize
 
-    const mustSplit = name.length >= 28
-    shouldSplit = fontInfo.shouldSplit || mustSplit
-
-    // Split name if needed
-    let nameSplit =
-      shouldSplit || mustSplit ? splitNameIntoLines(name, 28) : { line1: name, line2: "", isTwoLines: false }
-
-    // If split failed but needed, force word-based split
-    if ((shouldSplit || mustSplit) && !nameSplit.isTwoLines) {
-      console.log(`[v0] Preview: Split failed, forcing word-based split for "${name}" (${name.length} chars)`)
-      const words = name.split(/\s+/)
-      if (words.length >= 2) {
-        const midPoint = Math.ceil(words.length / 2)
-        nameSplit = {
-          line1: words.slice(0, midPoint).join(" "),
-          line2: words.slice(midPoint).join(" "),
-          isTwoLines: true,
-        }
-        finalFontSize = Math.max(58, fontSize * 0.75)
-      } else {
-        const midPoint = Math.floor(name.length / 2)
-        nameSplit = {
-          line1: name.substring(0, midPoint),
-          line2: name.substring(midPoint),
-          isTwoLines: true,
-        }
-        finalFontSize = Math.max(58, fontSize * 0.75)
-      }
+    // If sizing determined we should split but haven't yet, do it now
+    if (fontInfo.shouldSplit && !nameSplit.isTwoLines) {
+      nameSplit = splitNameIntoLines(name, 26)
     }
 
-    console.log(
-      `[v0] Preview: "${name}" (${name.length} chars) - Optimal: ${finalFontSize}px, TwoLines: ${shouldSplit}, SplitResult:`,
-      nameSplit,
-    )
-
-    if (autoPosition && (options.x === undefined || options.y === undefined)) {
-      const position = calculateOptimalPosition(imgWidth, imgHeight, finalFontSize, name, shouldSplit)
-      finalX = position.x
-      finalY = position.y
-    } else {
-      finalX = options.x ?? imgWidth / 2
-      finalY = options.y ?? imgHeight * 0.2
-    }
-
-    console.log("[v0] Text position:", finalX, finalY, "Font size:", finalFontSize, "Two lines:", shouldSplit)
-
-    const actuallyTwoLines =
-      (name.length >= 28 && nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2) ||
-      (nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2)
+    // Calculate boundary-aware position
+    const position = calculateBoundaryAwarePosition(imgWidth, imgHeight, finalFontSize, nameSplit.isTwoLines)
+    const finalX = position.x
+    const finalY = position.y
 
     console.log(
-      "[v0] Actually rendering two lines?",
-      actuallyTwoLines,
-      "Line1:",
-      nameSplit.line1,
-      "Line2:",
-      nameSplit.line2,
+      `[v0] Preview: "${name}" (${name.length} chars) - Font: ${finalFontSize}px, TwoLines: ${nameSplit.isTwoLines}, Pos: (${finalX}, ${finalY})`,
     )
+
+    const actuallyTwoLines = nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2
 
     const textOverlayBuffer = await createTextOverlay(
       name,
