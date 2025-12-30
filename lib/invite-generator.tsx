@@ -95,8 +95,8 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
 }
 
 // Define safe zone: guest names must end BEFORE "Please Join Us" text
-const SAFE_ZONE_END_PERCENT = 0.16 // Names must end by 16% from top (conservative)
-const SAFE_ZONE_START_PERCENT = 0.03 // Start 3% from top for margin
+const SAFE_ZONE_END_PERCENT = 0.15 // Names MUST end by 15% from top (was 16%)
+const SAFE_ZONE_START_PERCENT = 0.025 // Start at 2.5% from top (was 3%)
 
 function calculateDynamicFontSize(
   name: string,
@@ -168,22 +168,44 @@ function calculateBoundaryAwarePosition(
 
   let textHeight: number
   if (isTwoLines) {
-    // Two lines: height = 2 * fontSize + line spacing (30% of fontSize)
-    const lineSpacing = fontSize * 0.3
-    textHeight = fontSize * 2 + lineSpacing
+    // Two lines: height = 2 * fontSize + line spacing + descender buffer
+    const lineSpacing = fontSize * 0.25 // Tighter spacing (was 0.3)
+    const descenderBuffer = fontSize * 0.15 // Account for g, y, p descenders
+    textHeight = fontSize * 2 + lineSpacing + descenderBuffer
   } else {
-    // Single line: just the font size (with small buffer for descenders)
-    textHeight = fontSize * 1.1
+    // Single line: font size + descender buffer
+    const descenderBuffer = fontSize * 0.15
+    textHeight = fontSize + descenderBuffer
+  }
+
+  if (textHeight > availableHeight) {
+    console.warn(
+      `[v0] WARNING: Text height ${textHeight}px exceeds safe zone ${availableHeight}px! May overlap template.`,
+    )
+    // Force text to fit by starting at safe zone start
+    const y = safeZoneStart
+    console.log(`[v0] FORCED position: y=${y} (safe zone enforced)`)
+    return { x, y }
   }
 
   // Center text vertically within safe zone
   const verticalCenter = safeZoneStart + (availableHeight - textHeight) / 2
-  // Y position is where text STARTS (top edge)
   const y = verticalCenter
 
+  const textEndY = y + textHeight
+  if (textEndY > imgHeight * SAFE_ZONE_END_PERCENT) {
+    console.error(
+      `[v0] ERROR: Text will extend to ${textEndY}px, exceeding safe zone end at ${imgHeight * SAFE_ZONE_END_PERCENT}px`,
+    )
+    // Force text higher
+    const correctedY = safeZoneStart
+    console.log(`[v0] CORRECTED position from ${y} to ${correctedY}`)
+    return { x, y: correctedY }
+  }
+
   console.log(
-    `[v0] Boundary-aware position: safeStart=${safeZoneStart}, safeEnd=${safeZoneEnd}, ` +
-      `availHeight=${availableHeight}, textHeight=${textHeight}, y=${y}`,
+    `[v0] Boundary-aware position: safeStart=${safeZoneStart.toFixed(1)}, safeEnd=${safeZoneEnd.toFixed(1)}, ` +
+      `availHeight=${availableHeight.toFixed(1)}, textHeight=${textHeight.toFixed(1)}, y=${y.toFixed(1)}, textEndY=${textEndY.toFixed(1)}`,
   )
 
   return { x, y }
@@ -224,7 +246,7 @@ async function createTextOverlay(
   line1?: string,
   line2?: string,
 ): Promise<Buffer> {
-  const lineHeight = fontSize * 1.3
+  const lineHeight = fontSize * 1.25 // Tighter (was 1.3)
   let svg: string
 
   console.log(`[v0] createTextOverlay: isTwoLines=${isTwoLines}, line1="${line1}", line2="${line2}"`)
