@@ -16,9 +16,12 @@ function escapeSvg(text: string): string {
 // Split long names into two lines intelligently
 function splitNameIntoLines(name: string, maxChars: number = 30): { line1: string; line2: string; isTwoLines: boolean } {
   // If name is short enough, don't split
-  if (name.length <= maxChars) {
+  if (name.length < maxChars) {
     return { line1: name, line2: "", isTwoLines: false }
   }
+  
+  // For names >= maxChars, ALWAYS split (even if exactly maxChars)
+  // This ensures 30+ character names always get split
 
   // Try to split at natural break points
   const breakPoints = [
@@ -43,8 +46,8 @@ function splitNameIntoLines(name: string, maxChars: number = 30): { line1: strin
       // Allow lines up to maxChars + 15 for very long names, or if both lines are at least reasonable
       const maxAllowed = maxChars + 15 // More lenient for long names
       if (line1.length > 0 && line2.length > 0 && 
-          (line1.length <= maxAllowed && line2.length <= maxAllowed) ||
-          (line1.length <= maxChars * 1.5 && line2.length <= maxChars * 1.5)) {
+          ((line1.length <= maxAllowed && line2.length <= maxAllowed) ||
+           (line1.length <= maxChars * 1.5 && line2.length <= maxChars * 1.5))) {
         return { line1, line2, isTwoLines: true }
       }
     }
@@ -71,24 +74,38 @@ function splitNameIntoLines(name: string, maxChars: number = 30): { line1: strin
     }
   }
 
-  // Fallback: split at character midpoint
+  // Fallback: split at character midpoint - ALWAYS succeeds for names >= maxChars
   const midPoint = Math.floor(name.length / 2)
   // Try to find a space near the midpoint
   let splitIndex = midPoint
-  for (let i = 0; i < 10; i++) {
-    if (name[midPoint + i] === " ") {
+  let foundSpace = false
+  for (let i = 0; i < 15; i++) {
+    if (midPoint + i < name.length && name[midPoint + i] === " ") {
       splitIndex = midPoint + i
+      foundSpace = true
       break
     }
-    if (name[midPoint - i] === " ") {
+    if (midPoint - i >= 0 && name[midPoint - i] === " ") {
       splitIndex = midPoint - i
+      foundSpace = true
       break
     }
   }
   
+  // If no space found, split at midpoint anyway (will work for most cases)
+  const line1 = name.substring(0, splitIndex).trim()
+  const line2 = name.substring(splitIndex).trim()
+  
+  // Always return split result for names >= maxChars
+  if (line1.length > 0 && line2.length > 0) {
+    return { line1, line2, isTwoLines: true }
+  }
+  
+  // Last resort: split exactly in half
+  const exactMid = Math.floor(name.length / 2)
   return {
-    line1: name.substring(0, splitIndex).trim(),
-    line2: name.substring(splitIndex).trim(),
+    line1: name.substring(0, exactMid).trim(),
+    line2: name.substring(exactMid).trim(),
     isTwoLines: true
   }
 }
@@ -361,6 +378,9 @@ export async function generatePersonalizedInvites(
     const finalX = useCustomPosition ? (options.x ?? position.x) : position.x
     const finalY = useCustomPosition ? (options.y ?? position.y) : position.y
 
+    // Use the actual split result, not just shouldSplit flag
+    const actuallyTwoLines = nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2
+    
     // Create text overlay using SVG with optimal font size
     const textOverlay = await createTextOverlay(
       name,
@@ -372,7 +392,7 @@ export async function generatePersonalizedInvites(
       color,
       strokeColor,
       strokeWidth,
-      shouldSplit,
+      actuallyTwoLines,
       nameSplit.line1,
       nameSplit.line2,
     )
@@ -465,7 +485,11 @@ export async function generatePreview(
     }
 
     console.log("[v0] Text position:", finalX, finalY, "Font size:", finalFontSize, "Two lines:", shouldSplit)
+    console.log("[v0] Name split result:", nameSplit)
 
+    // Use the actual split result, not just shouldSplit flag
+    const actuallyTwoLines = nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2
+    
     const textOverlayBuffer = await createTextOverlay(
       name,
       imgWidth,
@@ -476,7 +500,7 @@ export async function generatePreview(
       color,
       strokeColor,
       strokeWidth,
-      shouldSplit,
+      actuallyTwoLines,
       nameSplit.line1,
       nameSplit.line2,
     )
