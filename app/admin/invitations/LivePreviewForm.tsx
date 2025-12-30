@@ -37,19 +37,60 @@ export default function LivePreviewForm() {
 
   const calculateFontSize = (name: string, imageWidth: number): number => {
     const baseSize = 120
-    const maxWidth = imageWidth * 0.85 // 85% of image width
-
-    // Estimate text width (rough approximation)
     const charCount = name.length
-    const estimatedWidth = charCount * (baseSize * 0.6) // ~0.6 is average char width ratio
+
+    // Split long names at 28+ characters
+    if (charCount >= 28) {
+      // Use two-line size (proportionally smaller for canvas)
+      return Math.max(90, Math.floor(baseSize * 0.75))
+    }
+
+    // For short names, use moderate size
+    if (charCount <= 10) {
+      return Math.max(80, Math.floor(baseSize * 0.7))
+    }
+
+    // Medium names scale proportionally
+    const maxWidth = imageWidth * 0.85
+    const estimatedWidth = charCount * (baseSize * 0.6)
 
     if (estimatedWidth <= maxWidth) {
       return baseSize
     }
 
-    // Scale down proportionally
     const scaleFactor = maxWidth / estimatedWidth
-    return Math.floor(baseSize * scaleFactor)
+    return Math.max(70, Math.floor(baseSize * scaleFactor))
+  }
+
+  const splitName = (name: string): { line1: string; line2: string; shouldSplit: boolean } => {
+    if (name.length < 28) {
+      return { line1: name, line2: "", shouldSplit: false }
+    }
+
+    // Try natural break points
+    const breakPoints = [/ & /, / and /i, /, /]
+    for (const pattern of breakPoints) {
+      const match = name.match(pattern)
+      if (match && match.index !== undefined) {
+        const splitIndex = match.index + match[0].length
+        const line1 = name.substring(0, splitIndex).trim()
+        const line2 = name.substring(splitIndex).trim()
+        if (line1.length > 0 && line2.length > 0) {
+          return { line1, line2, shouldSplit: true }
+        }
+      }
+    }
+
+    // Word-based split
+    const words = name.split(/\s+/)
+    if (words.length >= 2) {
+      const midPoint = Math.ceil(words.length / 2)
+      const line1 = words.slice(0, midPoint).join(" ")
+      const line2 = words.slice(midPoint).join(" ")
+      return { line1, line2, shouldSplit: true }
+    }
+
+    return { line1: name, line2: "", shouldSplit: false }
   }
 
   const loadPreview = async (name: string) => {
@@ -71,22 +112,33 @@ export default function LivePreviewForm() {
 
       ctx.drawImage(img, 0, 0)
 
-      const textY = img.height * 0.12
       const textX = img.width / 2
       const fontSize = calculateFontSize(name, img.width)
+      const nameSplit = splitName(name)
 
-      // Use elegant serif font stack for fancier appearance
+      // Position at 3% from top (was 12%)
+      const baseY = img.height * 0.03 + fontSize * 0.5
+
+      // Use elegant serif font stack
       ctx.font = `${fontSize}px "Didot", "Bodoni MT", "Garamond", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", Times, serif`
-      ctx.fillStyle = "#7B4B7A" // Purple color to match invitation text
+      ctx.fillStyle = "#7B4B7A"
       ctx.textAlign = "center"
-      ctx.textBaseline = "middle"
+      ctx.textBaseline = "hanging"
 
       ctx.shadowColor = "rgba(0, 0, 0, 0.3)"
       ctx.shadowBlur = 10
       ctx.shadowOffsetX = 2
       ctx.shadowOffsetY = 2
 
-      ctx.fillText(name, textX, textY)
+      if (nameSplit.shouldSplit) {
+        // Render two lines with proper spacing
+        const lineHeight = fontSize * 1.3
+        ctx.fillText(nameSplit.line1, textX, baseY)
+        ctx.fillText(nameSplit.line2, textX, baseY + lineHeight)
+      } else {
+        // Render single line
+        ctx.fillText(name, textX, baseY)
+      }
 
       canvas.toBlob(
         (blob) => {
