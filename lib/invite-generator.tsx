@@ -95,8 +95,8 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
 }
 
 // Define safe zone: guest names must end BEFORE "Please Join Us" text
-const SAFE_ZONE_END_PERCENT = 0.13 // Names MUST end by 13% from top (absolute maximum)
-const SAFE_ZONE_START_PERCENT = 0.02 // Start at 2% from top
+const SAFE_ZONE_END_PERCENT = 0.15 // Names MUST end by 15% from top
+const SAFE_ZONE_START_PERCENT = 0.03 // Start at 3% from top
 
 function calculateDynamicFontSize(
   name: string,
@@ -167,47 +167,54 @@ function calculateBoundaryAwarePosition(
   fontSize: number,
   isTwoLines: boolean,
 ): { x: number; y: number } {
-  // Horizontal: always center
   const x = imgWidth / 2
 
-  // Vertical: calculate based on safe zone boundaries
+  // Calculate safe zone boundaries
   const safeZoneStart = imgHeight * SAFE_ZONE_START_PERCENT
   const safeZoneEnd = imgHeight * SAFE_ZONE_END_PERCENT
-  const availableHeight = safeZoneEnd - safeZoneStart
 
-  let textHeight: number
+  // Calculate total text height needed
+  let totalTextHeight: number
   if (isTwoLines) {
-    // Two lines: height = 2 * fontSize + actual line spacing + descender buffer
-    const lineSpacing = fontSize * 1.25 // MUST match createTextOverlay lineHeight
-    const descenderBuffer = fontSize * 0.2 // Account for g, y, p descenders
-    textHeight = fontSize + lineSpacing + descenderBuffer // First line + spacing to second + buffer
+    // Two lines: first line + line spacing + second line + descender buffer
+    const lineSpacing = fontSize * 1.2
+    totalTextHeight = fontSize + lineSpacing + fontSize * 0.15 // Added descender buffer to second line
   } else {
     // Single line: font size + descender buffer
-    const descenderBuffer = fontSize * 0.2
-    textHeight = fontSize + descenderBuffer
+    totalTextHeight = fontSize * 1.15
   }
 
-  const verticalCenter = safeZoneStart + (availableHeight - textHeight) / 2
-  const y = Math.max(safeZoneStart, verticalCenter)
+  // Position text so it's centered in safe zone AND guaranteed to end before boundary
+  const availableHeight = safeZoneEnd - safeZoneStart
 
-  const textEndY = y + textHeight
-  const safeZoneEndPx = imgHeight * SAFE_ZONE_END_PERCENT
-
-  if (textEndY > safeZoneEndPx) {
+  // If text is too tall for safe zone, something is very wrong
+  if (totalTextHeight > availableHeight) {
     console.error(
-      `[v0] BOUNDARY VIOLATION: Text extends to ${textEndY.toFixed(1)}px, exceeding safe zone at ${safeZoneEndPx.toFixed(1)}px by ${(textEndY - safeZoneEndPx).toFixed(1)}px`,
+      `[v0] TEXT TOO TALL: ${totalTextHeight.toFixed(1)}px exceeds safe zone ${availableHeight.toFixed(1)}px`,
     )
-    const correction = textEndY - safeZoneEndPx
-    const correctedY = y - correction - 5 // Extra 5px safety margin
-    console.error(`[v0] FORCING Y correction from ${y.toFixed(1)} to ${correctedY.toFixed(1)}`)
-    return { x, y: correctedY }
+    // Force it to fit by starting at the very top
+    const y = safeZoneStart
+    console.log(`[v0] EMERGENCY positioning at ${y.toFixed(1)}px`)
+    return { x, y }
   }
+
+  // Center vertically within safe zone
+  const y = safeZoneStart + (availableHeight - totalTextHeight) / 2
+
+  // Verify the bottom won't exceed boundary
+  const textBottomY = y + totalTextHeight
+  const clearance = safeZoneEnd - textBottomY
 
   console.log(
-    `[v0] Position calc: safeStart=${safeZoneStart.toFixed(1)}px, safeEnd=${safeZoneEndPx.toFixed(1)}px, ` +
-      `textHeight=${textHeight.toFixed(1)}px, y=${y.toFixed(1)}px, textEndY=${textEndY.toFixed(1)}px, ` +
-      `clearance=${(safeZoneEndPx - textEndY).toFixed(1)}px`,
+    `[v0] Position: y=${y.toFixed(1)}px, textHeight=${totalTextHeight.toFixed(1)}px, ` +
+      `bottom=${textBottomY.toFixed(1)}px, safeEnd=${safeZoneEnd.toFixed(1)}px, clearance=${clearance.toFixed(1)}px`,
   )
+
+  if (clearance < 0) {
+    console.error(`[v0] BOUNDARY VIOLATION: ${Math.abs(clearance).toFixed(1)}px overflow!`)
+    // Force correction
+    return { x, y: y + clearance - 10 }
+  }
 
   return { x, y }
 }
@@ -247,7 +254,7 @@ async function createTextOverlay(
   line1?: string,
   line2?: string,
 ): Promise<Buffer> {
-  const lineHeight = fontSize * 1.25
+  const lineHeight = fontSize * 1.2 // Reduced from 1.25 to 1.2
   let svg: string
 
   console.log(`[v0] createTextOverlay: fontSize=${fontSize}, lineHeight=${lineHeight}, isTwoLines=${isTwoLines}`)
