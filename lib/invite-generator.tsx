@@ -13,24 +13,148 @@ function escapeSvg(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
 }
 
+// Split long names into two lines intelligently
+function splitNameIntoLines(name: string, maxChars: number = 30): { line1: string; line2: string; isTwoLines: boolean } {
+  // If name is short enough, don't split
+  if (name.length <= maxChars) {
+    return { line1: name, line2: "", isTwoLines: false }
+  }
+
+  // Try to split at natural break points
+  const breakPoints = [
+    { pattern: / & /, splitAfter: true },           // "John & Jane" - split after " &"
+    { pattern: / and /i, splitAfter: true },        // "John and Jane" - split after " and"
+    { pattern: /, /, splitAfter: true },            // "Last, First" - split after ", "
+    { pattern: / &amp; /, splitAfter: true },       // HTML encoded & - split after
+  ]
+
+  for (const breakPoint of breakPoints) {
+    const match = name.match(breakPoint.pattern)
+    if (match && match.index !== undefined) {
+      // Split after the break point (include it in the first line)
+      const splitIndex = breakPoint.splitAfter 
+        ? match.index + match[0].length  // Split after the break point
+        : match.index                     // Split before the break point
+      
+      const line1 = name.substring(0, splitIndex).trim()
+      const line2 = name.substring(splitIndex).trim()
+      
+      // Check if both lines are reasonable length
+      if (line1.length <= maxChars + 5 && line2.length <= maxChars + 5 && line1.length > 0 && line2.length > 0) {
+        return { line1, line2, isTwoLines: true }
+      }
+    }
+  }
+
+  // If no natural break point, split at the middle space
+  const words = name.split(/\s+/)
+  if (words.length >= 2) {
+    let line1 = ""
+    let line2 = ""
+    let midPoint = Math.ceil(words.length / 2)
+    
+    // Try to balance the lines
+    for (let i = 0; i < words.length; i++) {
+      if (i < midPoint) {
+        line1 += (line1 ? " " : "") + words[i]
+      } else {
+        line2 += (line2 ? " " : "") + words[i]
+      }
+    }
+    
+    if (line1.length > 0 && line2.length > 0) {
+      return { line1, line2, isTwoLines: true }
+    }
+  }
+
+  // Fallback: split at character midpoint
+  const midPoint = Math.floor(name.length / 2)
+  // Try to find a space near the midpoint
+  let splitIndex = midPoint
+  for (let i = 0; i < 10; i++) {
+    if (name[midPoint + i] === " ") {
+      splitIndex = midPoint + i
+      break
+    }
+    if (name[midPoint - i] === " ") {
+      splitIndex = midPoint - i
+      break
+    }
+  }
+  
+  return {
+    line1: name.substring(0, splitIndex).trim(),
+    line2: name.substring(splitIndex).trim(),
+    isTwoLines: true
+  }
+}
+
+// Calculate optimal font size based on name length
+// Returns font size and whether name should be split into two lines
+function calculateOptimalFontSize(name: string, imgWidth: number, baseFontSize: number = 80): { fontSize: number; shouldSplit: boolean } {
+  const charCount = name.length
+  const maxCharsForSingleLine = 30 // If longer than this, consider splitting
+  
+  // For very short names (1-10 chars), use smaller font to prevent encroachment
+  if (charCount <= 10) {
+    return { fontSize: Math.max(50, baseFontSize * 0.65), shouldSplit: false } // 50-52px for short names
+  }
+  
+  // For medium names (11-25 chars), use moderate scaling
+  if (charCount <= 25) {
+    const scaleFactor = 1 - ((charCount - 10) / 15) * 0.2 // Scale down 0-20% based on length
+    return { fontSize: Math.floor(baseFontSize * scaleFactor), shouldSplit: false }
+  }
+  
+  // For long names (26+ chars), check if we should split into two lines
+  if (charCount > maxCharsForSingleLine) {
+    // If splitting, we can use a larger font size since each line will be shorter
+    const splitResult = splitNameIntoLines(name, maxCharsForSingleLine)
+    if (splitResult.isTwoLines) {
+      // Use a good readable size for two-line names (around 60-65px)
+      const twoLineFontSize = Math.max(55, baseFontSize * 0.75)
+      return { fontSize: twoLineFontSize, shouldSplit: true }
+    }
+  }
+  
+  // For medium-long names that don't need splitting, scale down moderately
+  const maxWidth = imgWidth * 0.75 // 75% of image width max
+  const estimatedWidth = charCount * (baseFontSize * 0.55) // Average char width estimate
+  
+  if (estimatedWidth <= maxWidth) {
+    return { fontSize: baseFontSize * 0.8, shouldSplit: false } // 80% of base for medium-long names
+  }
+  
+  // Scale down proportionally for very long names that can't be split
+  const scaleFactor = maxWidth / estimatedWidth
+  return { fontSize: Math.max(45, Math.floor(baseFontSize * 0.8 * scaleFactor)), shouldSplit: false } // Minimum 45px
+}
+
 // Calculate optimal text position for guest name at the very top
 function calculateOptimalPosition(
   imgWidth: number,
   imgHeight: number,
   fontSize: number,
   name: string,
+  isTwoLines: boolean = false,
 ): { x: number; y: number } {
   // Center horizontally
   const x = imgWidth / 2
 
-  // Position at the very top of the image (top 10-15% area)
-  // This is the blank space above the invitation text
-  const topArea = imgHeight * 0.12 // 12% from top
+  // Position in the top blank area, but with better spacing
+  // Use a more conservative top position (8-10% from top) to avoid encroaching on template text
+  const topArea = imgHeight * 0.08 // 8% from top - gives more clearance
+  
+  // Adjust for font size - larger fonts need more space from top edge
+  // But also account for the fact that text baseline is at y position
+  let fontAdjustment = fontSize * 0.25 // Reduced from 0.3 for better spacing
+  
+  // For two-line text, adjust position slightly higher to center both lines better
+  if (isTwoLines) {
+    fontAdjustment = fontSize * 0.2 // Less adjustment since we have two lines
+  }
 
-  // Adjust slightly for font size (larger fonts need more space from top)
-  const fontAdjustment = fontSize * 0.3
-
-  // Final Y position - at the top blank space
+  // Final Y position - well-positioned in the top area with clearance
   const y = topArea + fontAdjustment
 
   return { x, y }
@@ -73,30 +197,62 @@ async function createTextOverlay(
   color: string,
   strokeColor: string,
   strokeWidth: number,
+  isTwoLines: boolean = false,
+  line1?: string,
+  line2?: string,
 ): Promise<Buffer> {
-  const escapedText = escapeSvg(text)
+  const lineHeight = fontSize * 1.2 // Line spacing for two-line text
+  let svg: string
 
-  // Use elegant serif fonts available on most systems
-  // NOTE: Sharp's SVG renderer (librsvg) does NOT support font-style="italic"
-  // Using more decorative serif fonts for a fancier appearance
-  const svg = `
-    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <text
-        x="${x}"
-        y="${y}"
-        font-family="Didot, 'Bodoni MT', Garamond, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', Times, serif"
-        font-size="${fontSize}"
-        font-weight="normal"
-        fill="${color}"
-        stroke="${strokeColor}"
-        stroke-width="${strokeWidth}"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        text-anchor="middle"
-        dominant-baseline="hanging"
-      >${escapedText}</text>
-    </svg>
-  `.trim()
+  if (isTwoLines && line1 && line2) {
+    // Two-line text using tspan elements
+    const escapedLine1 = escapeSvg(line1)
+    const escapedLine2 = escapeSvg(line2)
+    
+    svg = `
+      <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <text
+          x="${x}"
+          y="${y}"
+          font-family="Didot, 'Bodoni MT', Garamond, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', Times, serif"
+          font-size="${fontSize}"
+          font-weight="normal"
+          fill="${color}"
+          stroke="${strokeColor}"
+          stroke-width="${strokeWidth}"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          text-anchor="middle"
+          dominant-baseline="hanging"
+        >
+          <tspan x="${x}" dy="0">${escapedLine1}</tspan>
+          <tspan x="${x}" dy="${lineHeight}">${escapedLine2}</tspan>
+        </text>
+      </svg>
+    `.trim()
+  } else {
+    // Single-line text
+    const escapedText = escapeSvg(text)
+    
+    svg = `
+      <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <text
+          x="${x}"
+          y="${y}"
+          font-family="Didot, 'Bodoni MT', Garamond, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', Times, serif"
+          font-size="${fontSize}"
+          font-weight="normal"
+          fill="${color}"
+          stroke="${strokeColor}"
+          stroke-width="${strokeWidth}"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          text-anchor="middle"
+          dominant-baseline="hanging"
+        >${escapedText}</text>
+      </svg>
+    `.trim()
+  }
 
   // Convert SVG to PNG buffer using Sharp
   return await sharp(Buffer.from(svg))
@@ -158,22 +314,35 @@ export async function generatePersonalizedInvites(
     const name = guest.FullName?.trim()
     if (!name) continue
 
+    // Calculate optimal font size and check if name should be split into two lines
+    const fontInfo = calculateOptimalFontSize(name, imgWidth, fontSize)
+    const optimalFontSize = fontInfo.fontSize
+    const shouldSplit = fontInfo.shouldSplit
+    
+    // Split name if needed
+    const nameSplit = shouldSplit ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
+    
+    console.log(`[v0] Bulk: "${name}" (${name.length} chars) - Base: ${fontSize}px, Optimal: ${optimalFontSize}px, TwoLines: ${shouldSplit}`)
+    
     // Calculate optimal position for this guest's name (auto-positioning by default)
-    const position = calculateOptimalPosition(imgWidth, imgHeight, fontSize, name)
+    const position = calculateOptimalPosition(imgWidth, imgHeight, optimalFontSize, name, shouldSplit)
     const finalX = useCustomPosition ? (options.x ?? position.x) : position.x
     const finalY = useCustomPosition ? (options.y ?? position.y) : position.y
 
-    // Create text overlay using SVG
+    // Create text overlay using SVG with optimal font size
     const textOverlay = await createTextOverlay(
       name,
       imgWidth,
       imgHeight,
       finalX,
       finalY,
-      fontSize,
+      optimalFontSize,
       color,
       strokeColor,
       strokeWidth,
+      shouldSplit,
+      nameSplit.line1,
+      nameSplit.line2,
     )
 
     const output = await baseImage
@@ -227,9 +396,21 @@ export async function generatePreview(
 
     let finalX: number
     let finalY: number
+    let finalFontSize: number
+    let shouldSplit: boolean
+
+    // Calculate optimal font size and check if name should be split into two lines
+    const fontInfo = calculateOptimalFontSize(name, imgWidth, fontSize)
+    finalFontSize = fontInfo.fontSize
+    shouldSplit = fontInfo.shouldSplit
+    
+    // Split name if needed
+    const nameSplit = shouldSplit ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
+    
+    console.log(`[v0] Preview: "${name}" (${name.length} chars) - Base: ${fontSize}px, Optimal: ${finalFontSize}px, TwoLines: ${shouldSplit}`)
 
     if (autoPosition && (options.x === undefined || options.y === undefined)) {
-      const position = calculateOptimalPosition(imgWidth, imgHeight, fontSize, name)
+      const position = calculateOptimalPosition(imgWidth, imgHeight, finalFontSize, name, shouldSplit)
       finalX = position.x
       finalY = position.y
     } else {
@@ -237,7 +418,7 @@ export async function generatePreview(
       finalY = options.y ?? imgHeight * 0.2
     }
 
-    console.log("[v0] Text position:", finalX, finalY)
+    console.log("[v0] Text position:", finalX, finalY, "Font size:", finalFontSize, "Two lines:", shouldSplit)
 
     const textOverlayBuffer = await createTextOverlay(
       name,
@@ -245,10 +426,13 @@ export async function generatePreview(
       imgHeight,
       finalX,
       finalY,
-      fontSize,
+      finalFontSize,
       color,
       strokeColor,
       strokeWidth,
+      shouldSplit,
+      nameSplit.line1,
+      nameSplit.line2,
     )
 
     console.log("[v0] Text overlay created, size:", textOverlayBuffer.length)
