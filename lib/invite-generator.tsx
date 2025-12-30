@@ -95,8 +95,8 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
 }
 
 // Define safe zone: guest names must end BEFORE "Please Join Us" text
-const SAFE_ZONE_END_PERCENT = 0.15 // Names MUST end by 15% from top (was 16%)
-const SAFE_ZONE_START_PERCENT = 0.025 // Start at 2.5% from top (was 3%)
+const SAFE_ZONE_END_PERCENT = 0.14 // Names MUST end by 14% from top (stricter enforcement)
+const SAFE_ZONE_START_PERCENT = 0.02 // Start at 2% from top
 
 function calculateDynamicFontSize(
   name: string,
@@ -168,44 +168,40 @@ function calculateBoundaryAwarePosition(
 
   let textHeight: number
   if (isTwoLines) {
-    // Two lines: height = 2 * fontSize + line spacing + descender buffer
-    const lineSpacing = fontSize * 0.25 // Tighter spacing (was 0.3)
-    const descenderBuffer = fontSize * 0.15 // Account for g, y, p descenders
-    textHeight = fontSize * 2 + lineSpacing + descenderBuffer
+    // Two lines: height = 2 * fontSize + actual line spacing + descender buffer
+    const lineSpacing = fontSize * 1.25 // MUST match createTextOverlay lineHeight
+    const descenderBuffer = fontSize * 0.2 // Account for g, y, p descenders
+    textHeight = fontSize + lineSpacing + descenderBuffer // First line + spacing to second + buffer
   } else {
     // Single line: font size + descender buffer
-    const descenderBuffer = fontSize * 0.15
+    const descenderBuffer = fontSize * 0.2
     textHeight = fontSize + descenderBuffer
   }
 
   if (textHeight > availableHeight) {
-    console.warn(
-      `[v0] WARNING: Text height ${textHeight}px exceeds safe zone ${availableHeight}px! May overlap template.`,
+    console.error(
+      `[v0] CRITICAL: Text height ${textHeight.toFixed(1)}px EXCEEDS safe zone ${availableHeight.toFixed(1)}px!`,
     )
-    // Force text to fit by starting at safe zone start
-    const y = safeZoneStart
-    console.log(`[v0] FORCED position: y=${y} (safe zone enforced)`)
-    return { x, y }
+    // Calculate how much we need to shrink
+    const requiredScale = availableHeight / textHeight
+    console.error(`[v0] Text would need ${(requiredScale * 100).toFixed(1)}% scaling to fit. This should not happen!`)
   }
 
-  // Center text vertically within safe zone
-  const verticalCenter = safeZoneStart + (availableHeight - textHeight) / 2
-  const y = verticalCenter
+  const y = safeZoneStart + fontSize * 0.1 // Small padding from top
 
   const textEndY = y + textHeight
-  if (textEndY > imgHeight * SAFE_ZONE_END_PERCENT) {
+  const safeZoneEndPx = imgHeight * SAFE_ZONE_END_PERCENT
+
+  if (textEndY > safeZoneEndPx) {
     console.error(
-      `[v0] ERROR: Text will extend to ${textEndY}px, exceeding safe zone end at ${imgHeight * SAFE_ZONE_END_PERCENT}px`,
+      `[v0] BOUNDARY VIOLATION: Text extends to ${textEndY.toFixed(1)}px, exceeding safe zone at ${safeZoneEndPx.toFixed(1)}px by ${(textEndY - safeZoneEndPx).toFixed(1)}px`,
     )
-    // Force text higher
-    const correctedY = safeZoneStart
-    console.log(`[v0] CORRECTED position from ${y} to ${correctedY}`)
-    return { x, y: correctedY }
   }
 
   console.log(
-    `[v0] Boundary-aware position: safeStart=${safeZoneStart.toFixed(1)}, safeEnd=${safeZoneEnd.toFixed(1)}, ` +
-      `availHeight=${availableHeight.toFixed(1)}, textHeight=${textHeight.toFixed(1)}, y=${y.toFixed(1)}, textEndY=${textEndY.toFixed(1)}`,
+    `[v0] Position calc: safeStart=${safeZoneStart.toFixed(1)}px, safeEnd=${safeZoneEndPx.toFixed(1)}px, ` +
+      `textHeight=${textHeight.toFixed(1)}px, y=${y.toFixed(1)}px, textEndY=${textEndY.toFixed(1)}px, ` +
+      `clearance=${(safeZoneEndPx - textEndY).toFixed(1)}px`,
   )
 
   return { x, y }
@@ -246,10 +242,10 @@ async function createTextOverlay(
   line1?: string,
   line2?: string,
 ): Promise<Buffer> {
-  const lineHeight = fontSize * 1.25 // Tighter (was 1.3)
+  const lineHeight = fontSize * 1.25
   let svg: string
 
-  console.log(`[v0] createTextOverlay: isTwoLines=${isTwoLines}, line1="${line1}", line2="${line2}"`)
+  console.log(`[v0] createTextOverlay: fontSize=${fontSize}, lineHeight=${lineHeight}, isTwoLines=${isTwoLines}`)
 
   if (isTwoLines && line1 && line2 && line1.trim() && line2.trim()) {
     // Two-line text using tspan elements
