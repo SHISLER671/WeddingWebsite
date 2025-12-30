@@ -15,13 +15,17 @@ function escapeSvg(text: string): string {
 
 // Split long names into two lines intelligently
 function splitNameIntoLines(name: string, maxChars: number = 30): { line1: string; line2: string; isTwoLines: boolean } {
+  console.log(`[v0] splitNameIntoLines called: "${name}" (${name.length} chars), maxChars: ${maxChars}`)
+  
   // If name is short enough, don't split
   if (name.length < maxChars) {
+    console.log(`[v0] Name too short, not splitting`)
     return { line1: name, line2: "", isTwoLines: false }
   }
   
   // For names >= maxChars, ALWAYS split (even if exactly maxChars)
   // This ensures 30+ character names always get split
+  console.log(`[v0] Name is ${name.length} chars (>= ${maxChars}), MUST split`)
 
   // Try to split at natural break points
   const breakPoints = [
@@ -101,13 +105,15 @@ function splitNameIntoLines(name: string, maxChars: number = 30): { line1: strin
     return { line1, line2, isTwoLines: true }
   }
   
-  // Last resort: split exactly in half
+  // Last resort: split exactly in half - ALWAYS succeeds for names >= maxChars
   const exactMid = Math.floor(name.length / 2)
-  return {
+  const result = {
     line1: name.substring(0, exactMid).trim(),
     line2: name.substring(exactMid).trim(),
     isTwoLines: true
   }
+  console.log(`[v0] Last resort split result:`, result)
+  return result
 }
 
 // Calculate optimal font size based on name length
@@ -239,10 +245,13 @@ async function createTextOverlay(
   const lineHeight = fontSize * 1.2 // Line spacing for two-line text
   let svg: string
 
-  if (isTwoLines && line1 && line2) {
+  console.log(`[v0] createTextOverlay: isTwoLines=${isTwoLines}, line1="${line1}", line2="${line2}"`)
+  
+  if (isTwoLines && line1 && line2 && line1.trim() && line2.trim()) {
     // Two-line text using tspan elements
-    const escapedLine1 = escapeSvg(line1)
-    const escapedLine2 = escapeSvg(line2)
+    const escapedLine1 = escapeSvg(line1.trim())
+    const escapedLine2 = escapeSvg(line2.trim())
+    console.log(`[v0] Rendering TWO-LINE text: "${escapedLine1}" / "${escapedLine2}"`)
     
     svg = `
       <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
@@ -514,9 +523,14 @@ export async function generatePreview(
 
     console.log("[v0] Text position:", finalX, finalY, "Font size:", finalFontSize, "Two lines:", shouldSplit)
     console.log("[v0] Name split result:", nameSplit)
+    console.log("[v0] Must split check:", name.length >= 30, "Name length:", name.length)
 
     // Use the actual split result, not just shouldSplit flag
-    const actuallyTwoLines = nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2
+    // FORCE two lines if name is 30+ chars and we have a valid split
+    const actuallyTwoLines = (name.length >= 30 && nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2) || 
+                             (nameSplit.isTwoLines && !!nameSplit.line1 && !!nameSplit.line2)
+    
+    console.log("[v0] Actually rendering two lines?", actuallyTwoLines, "Line1:", nameSplit.line1, "Line2:", nameSplit.line2)
     
     const textOverlayBuffer = await createTextOverlay(
       name,
@@ -529,8 +543,8 @@ export async function generatePreview(
       strokeColor,
       strokeWidth,
       actuallyTwoLines,
-      nameSplit.line1,
-      nameSplit.line2,
+      nameSplit.line1 || name,
+      nameSplit.line2 || "",
     )
 
     console.log("[v0] Text overlay created, size:", textOverlayBuffer.length)
