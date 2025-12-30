@@ -351,15 +351,18 @@ export async function generatePersonalizedInvites(
 
     // Calculate optimal font size and check if name should be split into two lines
     const fontInfo = calculateOptimalFontSize(name, imgWidth, fontSize)
-    const optimalFontSize = fontInfo.fontSize
-    const shouldSplit = fontInfo.shouldSplit
+    let optimalFontSize = fontInfo.fontSize
     
-    // Split name if needed
-    let nameSplit = shouldSplit ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
+    // ALWAYS split names 30+ characters, regardless of what calculateOptimalFontSize says
+    const mustSplit = name.length >= 30
+    let shouldSplit = fontInfo.shouldSplit || mustSplit
     
-    // If shouldSplit is true but split failed, force a word-based split
-    if (shouldSplit && !nameSplit.isTwoLines && name.length >= 30) {
-      console.log(`[v0] Bulk: Split failed, forcing word-based split for "${name}"`)
+    // Split name if needed - ALWAYS try for 30+ char names
+    let nameSplit = (shouldSplit || mustSplit) ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
+    
+    // If we need to split but it failed, force a word-based split
+    if ((shouldSplit || mustSplit) && !nameSplit.isTwoLines) {
+      console.log(`[v0] Bulk: Split failed, forcing word-based split for "${name}" (${name.length} chars)`)
       const words = name.split(/\s+/)
       if (words.length >= 2) {
         const midPoint = Math.ceil(words.length / 2)
@@ -368,6 +371,17 @@ export async function generatePersonalizedInvites(
           line2: words.slice(midPoint).join(' '),
           isTwoLines: true
         }
+        // Update font size for two-line display
+        optimalFontSize = Math.max(55, fontSize * 0.75)
+      } else {
+        // Even if no spaces, split at character midpoint
+        const midPoint = Math.floor(name.length / 2)
+        nameSplit = {
+          line1: name.substring(0, midPoint),
+          line2: name.substring(midPoint),
+          isTwoLines: true
+        }
+        optimalFontSize = Math.max(55, fontSize * 0.75)
       }
     }
     
@@ -454,14 +468,17 @@ export async function generatePreview(
     // Calculate optimal font size and check if name should be split into two lines
     const fontInfo = calculateOptimalFontSize(name, imgWidth, fontSize)
     finalFontSize = fontInfo.fontSize
-    shouldSplit = fontInfo.shouldSplit
     
-    // Split name if needed
-    let nameSplit = shouldSplit ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
+    // ALWAYS split names 30+ characters, regardless of what calculateOptimalFontSize says
+    const mustSplit = name.length >= 30
+    shouldSplit = fontInfo.shouldSplit || mustSplit
     
-    // If shouldSplit is true but split failed, force a word-based split
-    if (shouldSplit && !nameSplit.isTwoLines && name.length >= 30) {
-      console.log(`[v0] Split failed, forcing word-based split for "${name}"`)
+    // Split name if needed - ALWAYS try for 30+ char names
+    let nameSplit = (shouldSplit || mustSplit) ? splitNameIntoLines(name, 30) : { line1: name, line2: "", isTwoLines: false }
+    
+    // If we need to split but it failed, force a word-based split
+    if ((shouldSplit || mustSplit) && !nameSplit.isTwoLines) {
+      console.log(`[v0] Split failed, forcing word-based split for "${name}" (${name.length} chars)`)
       const words = name.split(/\s+/)
       if (words.length >= 2) {
         const midPoint = Math.ceil(words.length / 2)
@@ -470,6 +487,17 @@ export async function generatePreview(
           line2: words.slice(midPoint).join(' '),
           isTwoLines: true
         }
+        // Update font size for two-line display
+        finalFontSize = Math.max(55, fontSize * 0.75)
+      } else {
+        // Even if no spaces, split at character midpoint
+        const midPoint = Math.floor(name.length / 2)
+        nameSplit = {
+          line1: name.substring(0, midPoint),
+          line2: name.substring(midPoint),
+          isTwoLines: true
+        }
+        finalFontSize = Math.max(55, fontSize * 0.75)
       }
     }
     
