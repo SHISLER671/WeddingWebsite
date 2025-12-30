@@ -25,31 +25,30 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
   // For names >= maxChars, ALWAYS split
   console.log(`[v0] Name is ${name.length} chars (>= ${maxChars}), MUST split`)
 
-  // Try to split at natural break points
-  const breakPoints = [
-    { pattern: / & /, splitAfter: true }, // "John & Jane" - split after " &"
-    { pattern: / and /i, splitAfter: true }, // "John and Jane" - split after " and"
-    { pattern: /, /, splitAfter: true }, // "Last, First" - split after ", "
-    { pattern: / &amp; /, splitAfter: true }, // HTML encoded & - split after
-  ]
-
-  for (const breakPoint of breakPoints) {
-    const match = name.match(breakPoint.pattern)
-    if (match && match.index !== undefined) {
-      const splitIndex = breakPoint.splitAfter ? match.index + match[0].length : match.index
-
-      const line1 = name.substring(0, splitIndex).trim()
-      const line2 = name.substring(splitIndex).trim()
-
-      // Accept split if both lines are reasonable (more lenient)
-      if (line1.length > 0 && line2.length > 0 && line1.length <= 40 && line2.length <= 40) {
-        console.log(`[v0] Natural break split: "${line1}" / "${line2}"`)
-        return { line1, line2, isTwoLines: true }
-      }
+  // Priority 1: Split before " & " or " and " (keep conjunction with second part)
+  const andMatch = name.match(/^(.+?)(\s+(?:&|and)\s+.+)$/i)
+  if (andMatch && andMatch[1] && andMatch[2]) {
+    const line1 = andMatch[1].trim()
+    const line2 = andMatch[2].trim()
+    // Accept if both lines are reasonable length
+    if (line1.length >= 3 && line2.length >= 3 && line1.length <= 40 && line2.length <= 40) {
+      console.log(`[v0] Conjunction split (before): "${line1}" / "${line2}"`)
+      return { line1, line2, isTwoLines: true }
     }
   }
 
-  // If no natural break point, split at the middle word
+  // Priority 2: Split at comma (common for "Last, First" format)
+  const commaIndex = name.indexOf(", ")
+  if (commaIndex > 0) {
+    const line1 = name.substring(0, commaIndex + 1).trim()
+    const line2 = name.substring(commaIndex + 1).trim()
+    if (line1.length >= 3 && line2.length >= 3 && line1.length <= 40 && line2.length <= 40) {
+      console.log(`[v0] Comma split: "${line1}" / "${line2}"`)
+      return { line1, line2, isTwoLines: true }
+    }
+  }
+
+  // Priority 3: Split at the middle word for balanced lines
   const words = name.split(/\s+/)
   if (words.length >= 2) {
     const midPoint = Math.ceil(words.length / 2)
@@ -62,9 +61,8 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
     }
   }
 
-  // Fallback: split at character midpoint
+  // Fallback: split at character midpoint near a space
   const midPoint = Math.floor(name.length / 2)
-  // Try to find a space near the midpoint
   let splitIndex = midPoint
   for (let i = 0; i < 10; i++) {
     if (midPoint + i < name.length && name[midPoint + i] === " ") {
@@ -132,29 +130,24 @@ function calculateOptimalPosition(
   // Center horizontally
   const x = imgWidth / 2
 
-  // Position higher in the top area to prevent descender overlap
-  // Use 3% from top for more clearance (was 5%)
-  const topMargin = imgHeight * 0.03
+  const topMargin = imgHeight * 0.02
 
-  // Add spacing based on font size with less aggressive adjustment
-  // This ensures larger fonts don't move too far down
+  // Add spacing based on font size with careful adjustment
   let fontAdjustment: number
 
   if (isTwoLines) {
-    // Two-line text needs less adjustment since each line is smaller
-    fontAdjustment = fontSize * 0.5 // Adjust for first line only
+    // Two-line text needs minimal adjustment since we're starting higher
+    fontAdjustment = fontSize * 0.4
   } else {
-    // Single-line text needs adjustment based on size
+    // Single-line text adjustment based on size
     if (fontSize <= 55) {
-      // Small/medium fonts - minimal adjustment
       fontAdjustment = fontSize * 0.3
     } else {
-      // Larger fonts - moderate adjustment to keep them high
-      fontAdjustment = fontSize * 0.4
+      fontAdjustment = fontSize * 0.35
     }
   }
 
-  // Final Y position - positioned higher with better clearance
+  // Final Y position - positioned very high with maximum clearance
   const y = topMargin + fontAdjustment
 
   console.log(
