@@ -46,36 +46,39 @@ export default function AdminPage() {
       // Generate a unique cache-busting parameter that changes on each call
       const timestamp = Date.now()
       const randomId = Math.random().toString(36).substring(7)
-      const sessionId = typeof window !== 'undefined' 
-        ? (window.sessionStorage.getItem('admin_session_id') || Math.random().toString(36).substring(7))
-        : Math.random().toString(36).substring(7)
-      
-      if (typeof window !== 'undefined' && !window.sessionStorage.getItem('admin_session_id')) {
-        window.sessionStorage.setItem('admin_session_id', sessionId)
+      const sessionId =
+        typeof window !== "undefined"
+          ? window.sessionStorage.getItem("admin_session_id") || Math.random().toString(36).substring(7)
+          : Math.random().toString(36).substring(7)
+
+      if (typeof window !== "undefined" && !window.sessionStorage.getItem("admin_session_id")) {
+        window.sessionStorage.setItem("admin_session_id", sessionId)
       }
-      
+
       // Force a new session ID on explicit refresh
-      if (forceRefresh && typeof window !== 'undefined') {
+      if (forceRefresh && typeof window !== "undefined") {
         const newSessionId = Math.random().toString(36).substring(7)
-        window.sessionStorage.setItem('admin_session_id', newSessionId)
+        window.sessionStorage.setItem("admin_session_id", newSessionId)
       }
-      
-      const finalSessionId = typeof window !== 'undefined' 
-        ? window.sessionStorage.getItem('admin_session_id')
-        : sessionId
-      
+
+      const finalSessionId =
+        typeof window !== "undefined" ? window.sessionStorage.getItem("admin_session_id") : sessionId
+
       // Use new endpoint that reads from invited_guests (synced from MASTERGUESTLIST.csv)
-      const response = await fetch(`/api/admin/guests?t=${timestamp}&r=${randomId}&s=${finalSessionId}&v=${forceRefresh ? '1' : '0'}`, {
-        method: 'GET',
-        cache: "no-store",
-        credentials: 'same-origin',
-        headers: {
-          "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
-          "Pragma": "no-cache",
-          "Expires": "0",
-          "X-Requested-With": "XMLHttpRequest",
+      const response = await fetch(
+        `/api/admin/guests?t=${timestamp}&r=${randomId}&s=${finalSessionId}&v=${forceRefresh ? "1" : "0"}`,
+        {
+          method: "GET",
+          cache: "no-store",
+          credentials: "same-origin",
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+            Pragma: "no-cache",
+            Expires: "0",
+            "X-Requested-With": "XMLHttpRequest",
+          },
         },
-      })
+      )
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
@@ -84,7 +87,12 @@ export default function AdminPage() {
       const result = await response.json()
 
       if (result.success) {
-        console.log("[v1] Admin page: Received", result.data.length, "guests from invited_guests", forceRefresh ? "(FORCE REFRESH)" : "")
+        console.log(
+          "[v1] Admin page: Received",
+          result.data.length,
+          "guests from invited_guests",
+          forceRefresh ? "(FORCE REFRESH)" : "",
+        )
         setAssignments(result.data)
         if (result.tableCapacities) {
           setTableCapacities(result.tableCapacities)
@@ -593,17 +601,58 @@ export default function AdminPage() {
   }
 
   const calculateFontSize = (name: string, imageWidth: number): number => {
-    const baseSize = 120
-    const maxWidth = imageWidth * 0.85
+    const SAFE_ZONE_HEIGHT = imageWidth * 0.13 // 13% of canvas height for safe zone
     const charCount = name.length
-    const estimatedWidth = charCount * (baseSize * 0.6)
 
-    if (estimatedWidth <= maxWidth) {
-      return baseSize
+    // Split long names at 28+ characters
+    if (charCount >= 28) {
+      // Two-line sizing: ensure total height fits in safe zone
+      const maxTwoLineFontSize = SAFE_ZONE_HEIGHT / 2.6 // Account for 2 lines + spacing
+      const widthBasedSize = (imageWidth * 0.9) / (Math.max(name.length / 2, 15) * 0.6)
+      return Math.floor(Math.min(maxTwoLineFontSize, widthBasedSize, 70))
     }
 
-    const scaleFactor = maxWidth / estimatedWidth
-    return Math.floor(baseSize * scaleFactor)
+    // Single-line sizing: ensure it fits width and height
+    const maxSingleLineFontSize = SAFE_ZONE_HEIGHT / 1.5
+    const widthBasedSize = (imageWidth * 0.9) / (charCount * 0.6)
+
+    return Math.floor(Math.min(maxSingleLineFontSize, widthBasedSize, 90))
+  }
+
+  const splitName = (name: string): { line1: string; line2: string; shouldSplit: boolean } => {
+    if (name.length < 26) {
+      return { line1: name, line2: "", shouldSplit: false }
+    }
+
+    // Try natural break points BEFORE conjunctions
+    const patterns = [
+      { regex: / & /, splitBefore: true },
+      { regex: / and /i, splitBefore: true },
+      { regex: /, /, splitBefore: false },
+    ]
+
+    for (const { regex, splitBefore } of patterns) {
+      const match = name.match(regex)
+      if (match && match.index !== undefined) {
+        const splitIndex = splitBefore ? match.index : match.index + match[0].length
+        const line1 = name.substring(0, splitIndex).trim()
+        const line2 = name.substring(splitIndex).trim()
+        if (line1.length > 5 && line2.length > 5) {
+          return { line1, line2, shouldSplit: true }
+        }
+      }
+    }
+
+    // Word-based split
+    const words = name.split(/\s+/)
+    if (words.length >= 2) {
+      const midPoint = Math.ceil(words.length / 2)
+      const line1 = words.slice(0, midPoint).join(" ")
+      const line2 = words.slice(midPoint).join(" ")
+      return { line1, line2, shouldSplit: true }
+    }
+
+    return { line1: name, line2: "", shouldSplit: false }
   }
 
   const generateInvitationCanvas = (guestName: string, templateImage: HTMLImageElement): Promise<Blob> => {
@@ -616,20 +665,46 @@ export default function AdminPage() {
       canvas.height = templateImage.height
       ctx.drawImage(templateImage, 0, 0)
 
-      const textY = templateImage.height * 0.12
       const textX = templateImage.width / 2
       const fontSize = calculateFontSize(guestName, templateImage.width)
+      const nameSplit = splitName(guestName)
 
+      const SAFE_ZONE_START = templateImage.height * 0.03 // 3% from top
+      const SAFE_ZONE_END = templateImage.height * 0.14 // 14% from top
+      const SAFE_ZONE_HEIGHT = SAFE_ZONE_END - SAFE_ZONE_START
+
+      let baseY: number
+
+      if (nameSplit.shouldSplit) {
+        // Two lines: calculate total height and center in safe zone
+        const lineHeight = fontSize * 1.15
+        const totalHeight = fontSize + lineHeight
+        baseY = SAFE_ZONE_START + (SAFE_ZONE_HEIGHT - totalHeight) / 2
+      } else {
+        // Single line: center in safe zone
+        baseY = SAFE_ZONE_START + (SAFE_ZONE_HEIGHT - fontSize) / 2
+      }
+
+      // Use elegant serif font stack
       ctx.font = `${fontSize}px "Didot", "Bodoni MT", "Garamond", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", Times, serif`
-      ctx.fillStyle = "#7B4B7A" // Purple color to match invitation text
+      ctx.fillStyle = "#7B4B7A"
       ctx.textAlign = "center"
-      ctx.textBaseline = "middle"
+      ctx.textBaseline = "hanging"
+
       ctx.shadowColor = "rgba(0, 0, 0, 0.3)"
       ctx.shadowBlur = 10
       ctx.shadowOffsetX = 2
       ctx.shadowOffsetY = 2
 
-      ctx.fillText(guestName, textX, textY)
+      if (nameSplit.shouldSplit) {
+        // Render two lines with proper spacing
+        const lineHeight = fontSize * 1.15
+        ctx.fillText(nameSplit.line1, textX, baseY)
+        ctx.fillText(nameSplit.line2, textX, baseY + lineHeight)
+      } else {
+        // Render single line
+        ctx.fillText(guestName, textX, baseY)
+      }
 
       canvas.toBlob(
         (blob) => {
