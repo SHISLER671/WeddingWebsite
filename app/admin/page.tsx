@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Search, Download, CheckCircle, AlertTriangle, Edit } from "lucide-react"
 import JSZip from "jszip"
 import NextImage from "next/image"
@@ -34,10 +34,46 @@ export default function AdminPage() {
   const [isBulkGenerating, setIsBulkGenerating] = useState(false)
   const [bulkProgress, setBulkProgress] = useState("")
   const [csvFile, setCsvFile] = useState<File | null>(null)
+  const [rsvpStats, setRsvpStats] = useState<{ yes: number; no: number; total: number } | null>(null)
 
   // Load assignments on mount
   useEffect(() => {
     loadAssignments()
+    loadRsvpStats()
+  }, [])
+
+  // Auto-refresh RSVP stats every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadRsvpStats()
+    }, 5000) // Refresh every 5 seconds
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval)
+  }, [loadRsvpStats])
+
+  const loadRsvpStats = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/rsvp-stats", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          setRsvpStats(result.data)
+        }
+      }
+    } catch (error) {
+      console.error("[Admin] Error loading RSVP stats:", error)
+    }
   }, [])
 
   const loadAssignments = async (forceRefresh = false) => {
@@ -107,6 +143,9 @@ export default function AdminPage() {
     } finally {
       setLoading(false)
     }
+    
+    // Reload RSVP stats when assignments are reloaded
+    await loadRsvpStats()
   }
 
   const searchAssignments = () => {
@@ -836,6 +875,27 @@ export default function AdminPage() {
           <h1 className="mb-2 font-serif text-4xl font-bold text-jewel-burgundy">Admin Dashboard</h1>
           <p className="text-jewel-crimson">Manage seating assignments for Pia & Ryan&apos;s Wedding</p>
         </div>
+
+        {/* RSVP Stats */}
+        {rsvpStats && (
+          <Card className="border-2 border-gold/20 bg-white/95 p-6 shadow-xl backdrop-blur">
+            <h2 className="mb-4 font-serif text-2xl font-bold text-jewel-burgundy text-center">RSVP Summary</h2>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-200">
+                <div className="text-3xl font-bold text-green-700">{rsvpStats.yes}</div>
+                <div className="text-sm font-medium text-green-800 mt-1">Attending</div>
+              </div>
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-red-50 to-rose-100 border-2 border-red-200">
+                <div className="text-3xl font-bold text-red-700">{rsvpStats.no}</div>
+                <div className="text-sm font-medium text-red-800 mt-1">Not Attending</div>
+              </div>
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-200">
+                <div className="text-3xl font-bold text-blue-700">{rsvpStats.total}</div>
+                <div className="text-sm font-medium text-blue-800 mt-1">Total Responses</div>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Bulk Invitation Generation */}
         <Card className="border-2 border-gold/20 bg-white/95 p-6 shadow-xl backdrop-blur">
