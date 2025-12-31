@@ -13,17 +13,17 @@ function escapeSvg(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
 }
 
-function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2: string; isTwoLines: boolean } {
-  console.log(`[v0] splitNameIntoLines called: "${name}" (${name.length} chars), maxChars: ${maxChars}`)
+function splitNameIntoLines(name: string): { line1: string; line2: string; isTwoLines: boolean } {
+  console.log(`[v0] splitNameIntoLines called: "${name}" (${name.length} chars)`)
 
   // If name is short enough, don't split
-  if (name.length < maxChars) {
-    console.log(`[v0] Name too short, not splitting`)
+  if (name.length < SPLIT_THRESHOLD) {
+    console.log(`[v0] Name too short (< ${SPLIT_THRESHOLD}), not splitting`)
     return { line1: name, line2: "", isTwoLines: false }
   }
 
-  // For names >= maxChars, ALWAYS split
-  console.log(`[v0] Name is ${name.length} chars (>= ${maxChars}), MUST split`)
+  // For names >= SPLIT_THRESHOLD, ALWAYS split
+  console.log(`[v0] Name is ${name.length} chars (>= ${SPLIT_THRESHOLD}), MUST split`)
 
   // Priority 1: Split before " & " or " and " (keep conjunction with second part)
   const andMatch = name.match(/^(.+?)(\s+(?:&|and)\s+.+)$/i)
@@ -31,7 +31,7 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
     const line1 = andMatch[1].trim()
     const line2 = andMatch[2].trim()
     // Accept if both lines are reasonable length
-    if (line1.length >= 3 && line2.length >= 3 && line1.length <= 40 && line2.length <= 40) {
+    if (line1.length >= 3 && line2.length >= 3 && line1.length <= 50 && line2.length <= 50) {
       console.log(`[v0] Conjunction split (before): "${line1}" / "${line2}"`)
       return { line1, line2, isTwoLines: true }
     }
@@ -42,7 +42,7 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
   if (commaIndex > 0) {
     const line1 = name.substring(0, commaIndex + 1).trim()
     const line2 = name.substring(commaIndex + 1).trim()
-    if (line1.length >= 3 && line2.length >= 3 && line1.length <= 40 && line2.length <= 40) {
+    if (line1.length >= 3 && line2.length >= 3 && line1.length <= 50 && line2.length <= 50) {
       console.log(`[v0] Comma split: "${line1}" / "${line2}"`)
       return { line1, line2, isTwoLines: true }
     }
@@ -94,8 +94,8 @@ function splitNameIntoLines(name: string, maxChars = 28): { line1: string; line2
   return result
 }
 
-const SAFE_ZONE_TOP = 0.04 // 4% from top - where text starts
-const SAFE_ZONE_BOTTOM = 0.16 // 16% from top - text MUST end before this
+const SAFE_ZONE_TOP = 0.02 // 2% from top - where text starts
+const SAFE_ZONE_BOTTOM = 0.14 // 14% from top - text MUST end before this
 const SPLIT_THRESHOLD = 30 // Split names 30+ characters
 
 function calculateDynamicFontSize(
@@ -113,25 +113,20 @@ function calculateDynamicFontSize(
   let maxFontSize: number
 
   if (isTwoLines) {
-    // Two lines: need font + lineSpacing + font
-    // lineSpacing = 1.3 * font, so total = font * 2.3
-    maxFontSize = safeZoneHeight / 2.3
+    maxFontSize = safeZoneHeight / 2.2
 
-    // Also check width constraint - longest line must fit
     const longestLine = line1.length > line2.length ? line1.length : line2.length
-    const widthBasedSize = (imgWidth * 0.92) / (longestLine * 0.55) // 0.55em per char for serif
+    const widthBasedSize = (imgWidth * 0.95) / (longestLine * 0.6)
 
     maxFontSize = Math.min(maxFontSize, widthBasedSize)
 
     console.log(
-      `[v0] Two-line sizing: height-based=${(safeZoneHeight / 2.3).toFixed(1)}, width-based=${widthBasedSize.toFixed(1)}, final=${maxFontSize.toFixed(1)}`,
+      `[v0] Two-line sizing: height-based=${(safeZoneHeight / 2.2).toFixed(1)}, width-based=${widthBasedSize.toFixed(1)}, final=${maxFontSize.toFixed(1)}`,
     )
   } else {
-    // Single line: just needs font height
-    maxFontSize = safeZoneHeight / 1.15 // 1.15 accounts for descenders
+    maxFontSize = safeZoneHeight / 1.15
 
-    // Check width constraint
-    const widthBasedSize = (imgWidth * 0.92) / (name.length * 0.55)
+    const widthBasedSize = (imgWidth * 0.95) / (name.length * 0.6)
     maxFontSize = Math.min(maxFontSize, widthBasedSize)
 
     console.log(
@@ -139,8 +134,7 @@ function calculateDynamicFontSize(
     )
   }
 
-  // Clamp to reasonable range
-  const fontSize = Math.floor(Math.max(30, Math.min(85, maxFontSize)))
+  const fontSize = Math.floor(Math.max(24, Math.min(85, maxFontSize)))
 
   return { fontSize }
 }
@@ -157,16 +151,13 @@ function calculateBoundaryAwarePosition(
   const safeZoneBottom = imgHeight * SAFE_ZONE_BOTTOM
   const safeZoneHeight = safeZoneBottom - safeZoneTop
 
-  // Calculate actual text height
   let textHeight: number
   if (isTwoLines) {
-    // font + (1.3 * font) = 2.3 * font
-    textHeight = fontSize * 2.3
+    textHeight = fontSize * 2.2
   } else {
     textHeight = fontSize * 1.15
   }
 
-  // Center vertically in safe zone
   const y = safeZoneTop + (safeZoneHeight - textHeight) / 2
 
   console.log(
@@ -176,7 +167,6 @@ function calculateBoundaryAwarePosition(
   return { x, y }
 }
 
-// Load template from public folder
 async function loadTemplate(): Promise<Buffer> {
   try {
     const templatePath = join(process.cwd(), "public", "tenthtemplate.jpg")
@@ -190,7 +180,6 @@ async function loadTemplate(): Promise<Buffer> {
   }
 }
 
-// Load master guest list from public folder
 async function loadMasterGuestList(): Promise<string> {
   const csvPath = join(process.cwd(), "MASTERGUESTLIST.csv")
   return await readFile(csvPath, "utf-8")
@@ -210,13 +199,12 @@ async function createTextOverlay(
   line1?: string,
   line2?: string,
 ): Promise<Buffer> {
-  const lineHeight = fontSize * 1.3 // Consistent with calculations
+  const lineHeight = fontSize * 1.2 // Consistent with calculations
   let svg: string
 
   console.log(`[v0] createTextOverlay: fontSize=${fontSize}, lineHeight=${lineHeight}, isTwoLines=${isTwoLines}`)
 
   if (isTwoLines && line1 && line2 && line1.trim() && line2.trim()) {
-    // Two-line text using tspan elements
     const escapedLine1 = escapeSvg(line1.trim())
     const escapedLine2 = escapeSvg(line2.trim())
     console.log(`[v0] Rendering TWO-LINE text: "${escapedLine1}" / "${escapedLine2}"`)
@@ -243,7 +231,6 @@ async function createTextOverlay(
       </svg>
     `.trim()
   } else {
-    // Single-line text
     const escapedText = escapeSvg(text)
 
     svg = `
@@ -266,7 +253,6 @@ async function createTextOverlay(
     `.trim()
   }
 
-  // Convert SVG to PNG buffer using Sharp
   return await sharp(Buffer.from(svg)).resize(width, height).png().toBuffer()
 }
 
@@ -285,16 +271,15 @@ export async function generatePersonalizedInvites(
 ) {
   const {
     fontSize = 80,
-    color = "#7B4B7A", // Purple color to match invitation text
-    strokeColor = "#5a1f2a", // Darker burgundy stroke for depth
+    color = "#7B4B7A",
+    strokeColor = "#5a1f2a",
     strokeWidth = 4,
-    font = "serif", // Use system serif to avoid font loading issues
+    font = "serif",
     useMasterList = false,
   } = options
 
   const useCustomPosition = false
 
-  // Use master list if requested, otherwise use uploaded file
   let csvText: string
   if (useMasterList || !csvFile) {
     csvText = await loadMasterGuestList()
@@ -304,7 +289,6 @@ export async function generatePersonalizedInvites(
 
   const { data: guests } = Papa.parse<Guest>(csvText, { header: true, skipEmptyLines: true })
 
-  // Handle "Full Name" column (with space) as well as "FullName"
   const normalizedGuests = guests.map((guest) => ({
     ...guest,
     FullName: guest.FullName || guest["Full Name"] || "",
@@ -323,9 +307,7 @@ export async function generatePersonalizedInvites(
     if (!name) continue
 
     const nameSplit =
-      name.length >= SPLIT_THRESHOLD
-        ? splitNameIntoLines(name, SPLIT_THRESHOLD)
-        : { line1: name, line2: "", isTwoLines: false }
+      name.length >= SPLIT_THRESHOLD ? splitNameIntoLines(name) : { line1: name, line2: "", isTwoLines: false }
 
     const { fontSize: optimalFontSize } = calculateDynamicFontSize(
       name,
@@ -402,9 +384,7 @@ export async function generatePreview(
     console.log("[v0] Image dimensions:", imgWidth, "x", imgHeight)
 
     const nameSplit =
-      name.length >= SPLIT_THRESHOLD
-        ? splitNameIntoLines(name, SPLIT_THRESHOLD)
-        : { line1: name, line2: "", isTwoLines: false }
+      name.length >= SPLIT_THRESHOLD ? splitNameIntoLines(name) : { line1: name, line2: "", isTwoLines: false }
 
     const { fontSize: finalFontSize } = calculateDynamicFontSize(
       name,
