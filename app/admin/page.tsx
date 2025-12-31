@@ -66,11 +66,11 @@ export default function AdminPage() {
     loadRsvpStats()
   }, [])
 
-  // Auto-refresh RSVP stats every 5 seconds
+  // Auto-refresh RSVP stats every 4 hours
   useEffect(() => {
     const interval = setInterval(() => {
       loadRsvpStats()
-    }, 5000) // Refresh every 5 seconds
+    }, 14400000) // Refresh every 4 hours (4 * 60 * 60 * 1000)
 
     // Cleanup interval on unmount
     return () => clearInterval(interval)
