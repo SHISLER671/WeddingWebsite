@@ -36,22 +36,6 @@ export default function AdminPage() {
   const [csvFile, setCsvFile] = useState<File | null>(null)
   const [rsvpStats, setRsvpStats] = useState<{ yes: number; no: number; total: number } | null>(null)
 
-  // Load assignments on mount
-  useEffect(() => {
-    loadAssignments()
-    loadRsvpStats()
-  }, [])
-
-  // Auto-refresh RSVP stats every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      loadRsvpStats()
-    }, 5000) // Refresh every 5 seconds
-
-    // Cleanup interval on unmount
-    return () => clearInterval(interval)
-  }, [loadRsvpStats])
-
   const loadRsvpStats = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/rsvp-stats", {
@@ -75,6 +59,22 @@ export default function AdminPage() {
       console.error("[Admin] Error loading RSVP stats:", error)
     }
   }, [])
+
+  // Load assignments on mount
+  useEffect(() => {
+    loadAssignments()
+    loadRsvpStats()
+  }, [])
+
+  // Auto-refresh RSVP stats every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadRsvpStats()
+    }, 5000) // Refresh every 5 seconds
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval)
+  }, [loadRsvpStats])
 
   const loadAssignments = async (forceRefresh = false) => {
     setLoading(true)
@@ -143,7 +143,7 @@ export default function AdminPage() {
     } finally {
       setLoading(false)
     }
-    
+
     // Reload RSVP stats when assignments are reloaded
     await loadRsvpStats()
   }
