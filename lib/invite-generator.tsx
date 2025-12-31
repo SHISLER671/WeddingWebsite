@@ -342,8 +342,13 @@ export async function generatePersonalizedInvites(
       nameSplit.line2,
     )
 
+    const compositeImage = await sharp(templateBuffer)
+      .composite([{ input: textOverlay, top: 0, left: 0 }])
+      .jpeg({ quality: 92 })
+      .toBuffer()
+
     const safeName = name.replace(/[^a-zA-Z0-9\- ]/g, "_").slice(0, 50)
-    zip.file(`${safeName}.jpg`, new Uint8Array(await textOverlay))
+    zip.file(`invitation-${safeName}.jpg`, compositeImage)
   }
 
   return await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" })
