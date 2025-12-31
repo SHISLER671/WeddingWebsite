@@ -129,7 +129,12 @@ export default function AdminPage() {
           "guests from invited_guests",
           forceRefresh ? "(FORCE REFRESH)" : "",
         )
-        setAssignments(result.data)
+        const sortedData = result.data.sort((a: any, b: any) => {
+          const nameA = (a.guest_name || "").toLowerCase()
+          const nameB = (b.guest_name || "").toLowerCase()
+          return nameA.localeCompare(nameB)
+        })
+        setAssignments(sortedData)
         if (result.tableCapacities) {
           setTableCapacities(result.tableCapacities)
         }
@@ -160,7 +165,12 @@ export default function AdminPage() {
         assignment.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         assignment.plus_one_name?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
-    setAssignments(filtered)
+    const sortedFiltered = filtered.sort((a, b) => {
+      const nameA = (a.guest_name || "").toLowerCase()
+      const nameB = (b.guest_name || "").toLowerCase()
+      return nameA.localeCompare(nameB)
+    })
+    setAssignments(sortedFiltered)
     setMessage(`🔍 Found ${filtered.length} matching assignments`)
   }
 
