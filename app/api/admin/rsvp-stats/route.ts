@@ -1,11 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 /**
  * Admin API endpoint to get RSVP statistics
- * Returns counts of "yes" and "no" RSVPs from the attendance column
+ * Returns counts of actual guests (headcount) based on guest_count field
  */
 export async function GET(request: NextRequest) {
   try {
@@ -18,22 +18,18 @@ export async function GET(request: NextRequest) {
 
     console.log("[RSVP Stats] Fetching RSVP statistics from rsvps table")
 
-    // Count RSVPs by attendance status
-    const { data: rsvps, error } = await supabase
-      .from("rsvps")
-      .select("attendance")
+    const { data: rsvps, error } = await supabase.from("rsvps").select("attendance, guest_count")
 
     if (error) {
       console.error("[RSVP Stats] Database error:", error)
       return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
     }
 
-    // Count yes and no
-    const yesCount = rsvps?.filter(r => r.attendance === 'yes').length || 0
-    const noCount = rsvps?.filter(r => r.attendance === 'no').length || 0
-    const totalCount = rsvps?.length || 0
+    const yesCount = rsvps?.filter((r) => r.attendance === "yes").reduce((sum, r) => sum + (r.guest_count || 1), 0) || 0
+    const noCount = rsvps?.filter((r) => r.attendance === "no").reduce((sum, r) => sum + (r.guest_count || 1), 0) || 0
+    const totalCount = rsvps?.reduce((sum, r) => sum + (r.guest_count || 1), 0) || 0
 
-    console.log("[RSVP Stats] Counts - Yes:", yesCount, "No:", noCount, "Total:", totalCount)
+    console.log("[RSVP Stats] Headcount - Yes:", yesCount, "No:", noCount, "Total:", totalCount)
 
     return NextResponse.json(
       {
@@ -46,11 +42,11 @@ export async function GET(request: NextRequest) {
       },
       {
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
         },
-      }
+      },
     )
   } catch (error) {
     console.error("[RSVP Stats] Error fetching statistics:", error)

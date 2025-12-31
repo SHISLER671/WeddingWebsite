@@ -883,15 +883,15 @@ export default function AdminPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center p-4 rounded-lg bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-200">
                 <div className="text-3xl font-bold text-green-700">{rsvpStats.yes}</div>
-                <div className="text-sm font-medium text-green-800 mt-1">Attending</div>
+                <div className="text-sm font-medium text-green-800 mt-1">Guests Attending</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-gradient-to-br from-red-50 to-rose-100 border-2 border-red-200">
                 <div className="text-3xl font-bold text-red-700">{rsvpStats.no}</div>
-                <div className="text-sm font-medium text-red-800 mt-1">Not Attending</div>
+                <div className="text-sm font-medium text-red-800 mt-1">Guests Declined</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-200">
                 <div className="text-3xl font-bold text-blue-700">{rsvpStats.total}</div>
-                <div className="text-sm font-medium text-blue-800 mt-1">Total Responses</div>
+                <div className="text-sm font-medium text-blue-800 mt-1">Total Guests</div>
               </div>
             </div>
           </Card>
