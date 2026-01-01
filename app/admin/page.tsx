@@ -56,6 +56,53 @@ export default function AdminPage() {
     seated: number
   } | null>(null)
 
+  const [isAutoAssigning, setIsAutoAssigning] = useState(false)
+
+  const handleAutoAssign = async () => {
+    if (
+      !confirm(
+        "This will automatically assign all RSVP'd guests to tables optimally.\n\nEntourage gets priority seating and tables will be filled efficiently.\n\nExisting entourage table assignments will be preserved.\n\nProceed?",
+      )
+    ) {
+      return
+    }
+
+    setIsAutoAssigning(true)
+    setMessage("⏳ Running automatic seat assignment...")
+
+    try {
+      const response = await fetch("/api/admin/auto-assign-seats", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setMessage(
+          `✅ ${result.message}\n\n📊 Table Summary:\n${result.summary
+            .map(
+              (t: any) =>
+                `Table ${t.table}: ${t.guests} parties (${t.capacity}/10 people, ${t.emptySeats} empty seats)`,
+            )
+            .join("\n")}`,
+        )
+
+        // Reload assignments to show new table assignments
+        await loadAssignments(true)
+      } else {
+        setMessage(`❌ Auto-assign failed: ${result.error}`)
+      }
+    } catch (error) {
+      console.error("[v0] Auto-assign error:", error)
+      setMessage(`❌ Error running auto-assignment: ${error}`)
+    } finally {
+      setIsAutoAssigning(false)
+    }
+  }
+
   const loadRsvpStats = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/rsvp-stats", {
@@ -508,7 +555,11 @@ export default function AdminPage() {
       const proceed = confirm(message)
       if (!proceed) return
 
-      const allMoves: Array<{ email: string | null; guest_name: string; table_number: number }> = []
+      const allMoves: Array<{
+        email: string | null
+        guest_name: string
+        table_number: number
+      }> = []
 
       // If moving entourage, move all entourage members together
       if (isMovingEntourage && entourageToMove.length > 0) {
@@ -1063,6 +1114,14 @@ export default function AdminPage() {
             >
               <Users className="w-4 h-4" />
               View Seating Chart
+            </Button>
+
+            <Button
+              onClick={handleAutoAssign}
+              disabled={isAutoAssigning || loading}
+              className="flex-1 bg-purple-600 hover:bg-purple-700"
+            >
+              {isAutoAssigning ? "⏳ Assigning..." : "🎯 Auto-Assign Seats"}
             </Button>
           </div>
 
