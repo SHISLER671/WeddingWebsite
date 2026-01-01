@@ -149,38 +149,71 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // Build updates array
+    // Build updates array with existing IDs where available
     const updates: any[] = []
     Object.entries(tables).forEach(([tableNum, table]) => {
       table.guests.forEach((guest) => {
+        const key = guest.email?.toLowerCase() || guest.guest_name?.toLowerCase()
+        const existingSeat = existingSeatingMap.get(key)
+
         updates.push({
+          id: existingSeat?.id, // Include existing ID if found
           guest_name: guest.guest_name,
           email: guest.email,
           table_number: Number.parseInt(tableNum),
-          actual_guest_count: guest.guestCount,
+          special_notes: existingSeat?.special_notes || null,
         })
       })
     })
 
     console.log(`[v0] Auto-Assign: Generated ${updates.length} table assignments`)
 
-    // Update database
-    for (const update of updates) {
-      const { error } = await supabase.from("seating_assignments").upsert(
-        {
-          guest_name: update.guest_name,
-          email: update.email,
-          table_number: update.table_number,
-        },
-        {
-          onConflict: "email,guest_name",
-        },
-      )
+    let successCount = 0
+    let errorCount = 0
 
-      if (error) {
-        console.error(`[v0] Auto-Assign: Error updating ${update.guest_name}:`, error)
+    for (const update of updates) {
+      try {
+        if (update.id) {
+          // Update existing record by ID
+          const { error } = await supabase
+            .from("seating_assignments")
+            .update({
+              table_number: update.table_number,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", update.id)
+
+          if (error) {
+            console.error(`[v0] Auto-Assign: Error updating ${update.guest_name}:`, error.message)
+            errorCount++
+          } else {
+            successCount++
+          }
+        } else {
+          // Insert new record
+          const { error } = await supabase.from("seating_assignments").insert({
+            guest_name: update.guest_name,
+            email: update.email,
+            table_number: update.table_number,
+            special_notes: update.special_notes,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+
+          if (error) {
+            console.error(`[v0] Auto-Assign: Error inserting ${update.guest_name}:`, error.message)
+            errorCount++
+          } else {
+            successCount++
+          }
+        }
+      } catch (err: any) {
+        console.error(`[v0] Auto-Assign: Exception for ${update.guest_name}:`, err.message)
+        errorCount++
       }
     }
+
+    console.log(`[v0] Auto-Assign: Success: ${successCount}, Errors: ${errorCount}`)
 
     // Generate summary
     const summary = Object.entries(tables)
@@ -196,7 +229,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Assigned ${updates.length} guests to ${summary.length} tables`,
+      message: `Assigned ${successCount} guests to ${summary.length} tables (${errorCount} errors)`,
       summary,
     })
   } catch (error) {
