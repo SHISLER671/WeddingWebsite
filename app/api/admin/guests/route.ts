@@ -94,8 +94,13 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const isEntourage = (specialNotes: string | null): boolean => {
-      return specialNotes?.toUpperCase().includes("ENTOURAGE") || false
+    const isEntourage = (guest: any): boolean => {
+      // Primary source: is_entourage boolean from invited_guests
+      if (guest.is_entourage === true) return true
+
+      // Fallback: check special_notes for legacy data
+      const specialNotes = guest.special_notes || ""
+      return specialNotes.toUpperCase().includes("ENTOURAGE")
     }
 
     // Combine invited_guests with seating and RSVP data
@@ -136,19 +141,16 @@ export async function GET(request: NextRequest) {
         const hasRsvpd = !!matchingRsvp
         const rsvpStatus = matchingRsvp?.attendance || "pending"
         const isAttending = rsvpStatus === "yes"
-        const isEntourageMember = isEntourage(seating?.special_notes)
+        const isEntourageMember = isEntourage(guest)
 
         // For entourage: always count (they're VIP even without RSVP)
         // For others: only count if RSVP'd yes
         let actualGuestCount = 0
         if (isEntourageMember) {
-          // Entourage always gets counted (even without RSVP)
           actualGuestCount = matchingRsvp?.guest_count || guest.allowed_party_size || 1
         } else if (isAttending) {
-          // Regular guests only counted if they RSVP'd yes
           actualGuestCount = matchingRsvp?.guest_count || guest.allowed_party_size || 1
         }
-        // If declined or no RSVP, actualGuestCount stays 0
 
         return {
           id: guest.id,
