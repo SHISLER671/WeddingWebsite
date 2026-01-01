@@ -7,6 +7,11 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
+const MAX_TABLE_CAPACITY = 10 // Maximum 10 people per table
+const MIN_TABLE_OCCUPANCY = 6 // Try not to leave more than 2 empty seats (10-2=8, but we allow 6 minimum)
+const MAX_TABLES = 26 // 26 tables available for guests including entourage
+const UNASSIGNED_TABLE = 0 // Table 0 is for guests who haven't RSVP'd or declined
+
 interface SeatingAssignment {
   id: string
   guest_name: string
@@ -16,6 +21,9 @@ interface SeatingAssignment {
   dietary_notes: string | null
   special_notes: string | null
   actual_guest_count?: number // From RSVP
+  rsvp_status?: string
+  is_entourage?: boolean
+  has_rsvpd?: boolean
 }
 
 interface TableCapacity {
@@ -35,6 +43,16 @@ export default function AdminPage() {
   const [bulkProgress, setBulkProgress] = useState("")
   const [csvFile, setCsvFile] = useState<File | null>(null)
   const [rsvpStats, setRsvpStats] = useState<{ yes: number; no: number; total: number } | null>(null)
+
+  // Guest stats state
+  const [guestStats, setGuestStats] = useState<{
+    total: number
+    entourage: number
+    attending: number
+    pending: number
+    declined: number
+    seated: number
+  } | null>(null)
 
   const loadRsvpStats = useCallback(async () => {
     try {
@@ -138,6 +156,9 @@ export default function AdminPage() {
         if (result.tableCapacities) {
           setTableCapacities(result.tableCapacities)
         }
+        if (result.stats) {
+          setGuestStats(result.stats)
+        }
         setMessage(`✅ Loaded ${result.data.length} guests from MASTERGUESTLIST`)
       } else {
         setMessage(`❌ Error: ${result.error}`)
@@ -219,9 +240,9 @@ export default function AdminPage() {
     Object.keys(tableGuestCounts).forEach((tableNumStr) => {
       const tableNum = Number.parseInt(tableNumStr, 10)
       const guestCount = tableGuestCounts[tableNum]
-      if (guestCount > 10) {
-        issues.push(`Table ${tableNum}: ${guestCount} people (over capacity - max 10 recommended)`)
-      } else if (guestCount < 6 && guestCount > 0) {
+      if (guestCount > MAX_TABLE_CAPACITY) {
+        issues.push(`Table ${tableNum}: ${guestCount} people (over capacity - max ${MAX_TABLE_CAPACITY} recommended)`)
+      } else if (guestCount < MIN_TABLE_OCCUPANCY && guestCount > 0) {
         issues.push(`Table ${tableNum}: ${guestCount} people (under capacity - consider combining)`)
       }
     })
@@ -324,8 +345,8 @@ export default function AdminPage() {
       Object.keys(capacities).forEach((tableStr) => {
         const table = Number.parseInt(tableStr, 10)
         const capacity = capacities[table]
-        if (capacity > 10) overCapacityTables.push(table)
-        if (capacity < 6 && capacity > 0) underCapacityTables.push(table)
+        if (capacity > MAX_TABLE_CAPACITY) overCapacityTables.push(table)
+        if (capacity < MIN_TABLE_OCCUPANCY && capacity > 0) underCapacityTables.push(table)
       })
 
       // If no issues, we're done
@@ -353,7 +374,7 @@ export default function AdminPage() {
         // Find best under-capacity table to move to
         for (const underTable of underCapacityTables) {
           const newCapacity = capacities[underTable] + candidateCount
-          if (newCapacity <= 10) {
+          if (newCapacity <= MAX_TABLE_CAPACITY) {
             // This move works!
             rebalanceMoves.push({
               assignmentId: candidate.id,
@@ -391,7 +412,7 @@ export default function AdminPage() {
           // Find any table with space (including creating new table if needed)
           const availableTables = Object.keys(capacities)
             .map((t) => Number.parseInt(t, 10))
-            .filter((t) => capacities[t] + candidateCount <= 10 && t !== overTable)
+            .filter((t) => capacities[t] + candidateCount <= MAX_TABLE_CAPACITY && t !== overTable)
             .sort((a, b) => capacities[a] - capacities[b]) // Prefer tables with more space
 
           if (availableTables.length > 0) {
@@ -476,7 +497,7 @@ export default function AdminPage() {
           message += `  ${idx + 1}. Move ${move.guestName} (${move.guestCount} ${move.guestCount === 1 ? "person" : "people"}) from Table ${move.fromTable} to Table ${move.toTable}\n`
         })
         message += `\nApply all changes?`
-      } else if (newTableCapacity > 10 || oldTableCapacity < 6) {
+      } else if (newTableCapacity > MAX_TABLE_CAPACITY || oldTableCapacity < MIN_TABLE_OCCUPANCY) {
         message += `⚠️ Warning: This will create capacity issues. No auto-rebalance moves found.\n\nProceed anyway?`
       } else {
         message += `✅ This move looks good!\n\nProceed?`
@@ -485,24 +506,24 @@ export default function AdminPage() {
       const proceed = confirm(message)
       if (!proceed) return
 
-      // Apply the main move(s) and all rebalance moves
-      const allMoves: Array<{ id: string; table_number: number }> = []
+      const allMoves: Array<{ email: string | null; guest_name: string; table_number: number }> = []
 
       // If moving entourage, move all entourage members together
       if (isMovingEntourage && entourageToMove.length > 0) {
         entourageToMove.forEach((entourageMember) => {
-          allMoves.push({ id: entourageMember.id, table_number: newTable })
-        })
-      } else {
-        // Get guest data for the move
-        const guestToMove = assignments.find((a) => a.id === editingId)
-        if (guestToMove) {
           allMoves.push({
-            email: guestToMove.email,
-            guest_name: guestToMove.guest_name,
+            email: entourageMember.email || null,
+            guest_name: entourageMember.guest_name,
             table_number: newTable,
           })
-        }
+        })
+      } else {
+        // Single guest move
+        allMoves.push({
+          email: currentAssignment.email || null,
+          guest_name: currentAssignment.guest_name,
+          table_number: newTable,
+        })
       }
 
       // Add rebalance moves (these will never include entourage)
@@ -510,7 +531,7 @@ export default function AdminPage() {
         const guest = assignments.find((a) => a.id === move.assignmentId)
         if (guest) {
           allMoves.push({
-            email: guest.email,
+            email: guest.email || null,
             guest_name: guest.guest_name,
             table_number: move.toTable,
           })
@@ -521,8 +542,9 @@ export default function AdminPage() {
       setMessage("")
 
       try {
+        console.log("[v0] Applying", allMoves.length, "table assignment moves")
+
         // Apply all moves in parallel
-        // allMoves now contains email/guest_name/table_number objects
         const updatePromises = allMoves.map((move) =>
           fetch("/api/admin/seating", {
             method: "PUT",
@@ -538,7 +560,7 @@ export default function AdminPage() {
           const response = results[i]
           if (!response.ok) {
             const errorText = await response.text()
-            errors.push(`Failed to update ${allMoves[i].guest_name || allMoves[i].email}: ${errorText}`)
+            errors.push(`Failed to update ${allMoves[i].guest_name}: ${errorText}`)
           }
         }
 
@@ -553,6 +575,7 @@ export default function AdminPage() {
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error)
         setMessage(`❌ Error updating assignments: ${errorMessage}`)
+        console.error("[v0] Error in table assignment update:", error)
       } finally {
         setLoading(false)
       }
@@ -870,6 +893,27 @@ export default function AdminPage() {
     }
   }
 
+  const getRsvpBadge = (assignment: SeatingAssignment) => {
+    if (assignment.is_entourage) {
+      return (
+        <span className="rounded-full bg-fuchsia-100 px-2 py-1 text-xs font-medium text-fuchsia-700">👥 Entourage</span>
+      )
+    }
+
+    switch (assignment.rsvp_status) {
+      case "yes":
+        return (
+          <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">✓ Attending</span>
+        )
+      case "no":
+        return <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">✗ Declined</span>
+      default:
+        return (
+          <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700">⏳ Pending</span>
+        )
+    }
+  }
+
   return (
     <div className="min-h-screen relative p-4">
       {/* Background Image */}
@@ -886,25 +930,42 @@ export default function AdminPage() {
           <p className="text-jewel-crimson">Manage seating assignments for Pia & Ryan&apos;s Wedding</p>
         </div>
 
-        {/* RSVP Stats */}
+        {/* RSVP Statistics Card - move to top */}
         {rsvpStats && (
-          <Card className="border-2 border-gold/20 bg-white/95 p-6 shadow-xl backdrop-blur">
-            <h2 className="mb-4 font-serif text-2xl font-bold text-jewel-burgundy text-center">RSVP Summary</h2>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-200">
-                <div className="text-3xl font-bold text-green-700">{rsvpStats.yes}</div>
-                <div className="text-sm font-medium text-green-800 mt-1">Guests Attending</div>
+          <div className="rounded-lg border border-burgundy-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 font-serif text-2xl font-semibold text-burgundy-900">RSVP Statistics</h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="rounded-lg bg-green-50 p-4">
+                <p className="text-sm text-green-600">Guests Attending</p>
+                <p className="text-3xl font-bold text-green-900">{rsvpStats.yes}</p>
               </div>
-              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-red-50 to-rose-100 border-2 border-red-200">
-                <div className="text-3xl font-bold text-red-700">{rsvpStats.no}</div>
-                <div className="text-sm font-medium text-red-800 mt-1">Guests Declined</div>
+              <div className="rounded-lg bg-red-50 p-4">
+                <p className="text-sm text-red-600">Guests Declined</p>
+                <p className="text-3xl font-bold text-red-900">{rsvpStats.no}</p>
               </div>
-              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-200">
-                <div className="text-3xl font-bold text-blue-700">{rsvpStats.total}</div>
-                <div className="text-sm font-medium text-blue-800 mt-1">Total Guests</div>
+              <div className="rounded-lg bg-burgundy-50 p-4">
+                <p className="text-sm text-burgundy-600">Total Guests</p>
+                <p className="text-3xl font-bold text-burgundy-900">{rsvpStats.total}</p>
               </div>
             </div>
-          </Card>
+            {/* Guest breakdown stats */}
+            {guestStats && (
+              <div className="mt-4 grid grid-cols-2 gap-3 border-t border-burgundy-200 pt-4 md:grid-cols-3">
+                <div className="text-center">
+                  <p className="text-xs text-burgundy-600">Entourage</p>
+                  <p className="text-xl font-semibold text-fuchsia-700">{guestStats.entourage}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-burgundy-600">Seated</p>
+                  <p className="text-xl font-semibold text-burgundy-900">{guestStats.seated}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-burgundy-600">Pending RSVP</p>
+                  <p className="text-xl font-semibold text-yellow-700">{guestStats.pending}</p>
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Bulk Invitation Generation */}
@@ -1047,7 +1108,10 @@ export default function AdminPage() {
                             className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded"
                           />
                         ) : (
-                          <div className="font-medium">{assignment.guest_name}</div>
+                          <div className="flex flex-col gap-1">
+                            <span className="font-medium text-burgundy-900">{assignment.guest_name}</span>
+                            {getRsvpBadge(assignment)}
+                          </div>
                         )}
                       </td>
                       <td className="py-3 px-2">

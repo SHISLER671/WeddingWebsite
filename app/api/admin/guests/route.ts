@@ -94,6 +94,10 @@ export async function GET(request: NextRequest) {
       }
     })
 
+    const isEntourage = (specialNotes: string | null): boolean => {
+      return specialNotes?.toUpperCase().includes("ENTOURAGE") || false
+    }
+
     // Combine invited_guests with seating and RSVP data
     const processed =
       invitedGuests?.map((guest: any) => {
@@ -129,52 +133,73 @@ export async function GET(request: NextRequest) {
           matchingRsvp = rsvpMap.get(`name:${nameKey}`)
         }
 
-        // Get actual guest count: prefer RSVP if yes, otherwise use allowed_party_size
-        let actualGuestCount = guest.allowed_party_size || 1
-        if (matchingRsvp?.attendance === "yes") {
-          actualGuestCount = matchingRsvp.guest_count || actualGuestCount
+        const hasRsvpd = !!matchingRsvp
+        const rsvpStatus = matchingRsvp?.attendance || "pending"
+        const isAttending = rsvpStatus === "yes"
+        const isEntourageMember = isEntourage(seating?.special_notes)
+
+        // For entourage: always count (they're VIP even without RSVP)
+        // For others: only count if RSVP'd yes
+        let actualGuestCount = 0
+        if (isEntourageMember) {
+          // Entourage always gets counted (even without RSVP)
+          actualGuestCount = matchingRsvp?.guest_count || guest.allowed_party_size || 1
+        } else if (isAttending) {
+          // Regular guests only counted if they RSVP'd yes
+          actualGuestCount = matchingRsvp?.guest_count || guest.allowed_party_size || 1
         }
+        // If declined or no RSVP, actualGuestCount stays 0
 
         return {
           id: guest.id,
           guest_name: guest.guest_name,
           email: guest.email,
-          table_number: seating?.table_number ?? 0, // Use nullish coalescing to handle null/undefined
+          table_number: seating?.table_number ?? 0,
           plus_one_name: seating?.plus_one_name || null,
           dietary_notes: seating?.dietary_notes || null,
           special_notes: seating?.special_notes || null,
           actual_guest_count: actualGuestCount,
           allowed_party_size: guest.allowed_party_size || 1,
+          rsvp_status: rsvpStatus,
+          is_entourage: isEntourageMember,
+          has_rsvpd: hasRsvpd,
         }
       }) || []
 
-    // Sort by table_number first (0/unassigned at end), then alphabetically by name
     const sorted = processed.sort((a, b) => {
+      // Priority 1: Entourage first (VIP treatment)
+      if (a.is_entourage && !b.is_entourage) return -1
+      if (!a.is_entourage && b.is_entourage) return 1
+
+      // Priority 2: Those with table assignments
       const tableA = a.table_number || 0
       const tableB = b.table_number || 0
 
-      if ((tableA === 0 && tableB === 0) || (tableA > 0 && tableB > 0)) {
-        if (tableA !== tableB) {
-          return tableA - tableB
-        }
-      } else {
-        if (tableA === 0) return 1
-        if (tableB === 0) return -1
+      if (tableA > 0 && tableB === 0) return -1
+      if (tableA === 0 && tableB > 0) return 1
+
+      // Priority 3: Within same table group, sort by table number
+      if (tableA !== tableB && tableA > 0 && tableB > 0) {
+        return tableA - tableB
       }
 
+      // Priority 4: RSVP status (yes before pending before no)
+      const statusOrder = { yes: 1, pending: 2, no: 3 }
+      const orderA = statusOrder[a.rsvp_status as keyof typeof statusOrder] || 2
+      const orderB = statusOrder[b.rsvp_status as keyof typeof statusOrder] || 2
+      if (orderA !== orderB) return orderA - orderB
+
+      // Final: Alphabetical by name
       const nameA = (a.guest_name || "").toLowerCase().trim()
       const nameB = (b.guest_name || "").toLowerCase().trim()
-      if (nameA < nameB) return -1
-      if (nameA > nameB) return 1
-      return 0
+      return nameA.localeCompare(nameB)
     })
 
-    // Calculate table capacities
     const tableCapacities: { [key: number]: number } = {}
     sorted.forEach((guest: any) => {
       const tableNum = guest.table_number || 0
-      if (tableNum > 0) {
-        tableCapacities[tableNum] = (tableCapacities[tableNum] || 0) + (guest.actual_guest_count || 1)
+      if (tableNum > 0 && guest.actual_guest_count > 0) {
+        tableCapacities[tableNum] = (tableCapacities[tableNum] || 0) + guest.actual_guest_count
       }
     })
 
@@ -186,11 +211,23 @@ export async function GET(request: NextRequest) {
       ")",
     )
 
+    const stats = {
+      total: sorted.length,
+      entourage: sorted.filter((g: any) => g.is_entourage).length,
+      attending: sorted.filter((g: any) => g.rsvp_status === "yes").length,
+      pending: sorted.filter((g: any) => !g.has_rsvpd).length,
+      declined: sorted.filter((g: any) => g.rsvp_status === "no").length,
+      seated: sorted.filter((g: any) => g.table_number > 0).length,
+    }
+
+    console.log("[v1] Admin: Guest stats:", stats)
+
     return NextResponse.json(
       {
         success: true,
         data: sorted || [],
         tableCapacities,
+        stats, // Include stats in response
       },
       {
         headers: {
