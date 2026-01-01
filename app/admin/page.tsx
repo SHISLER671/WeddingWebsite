@@ -1,11 +1,12 @@
 "use client"
 import { useState, useEffect, useCallback } from "react"
-import { Search, Download, CheckCircle, AlertTriangle, Edit } from "lucide-react"
+import { Search, Download, CheckCircle, AlertTriangle, Edit, Users } from "lucide-react"
 import JSZip from "jszip"
 import NextImage from "next/image"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation"
 
 const MAX_TABLE_CAPACITY = 10 // Maximum 10 people per table
 const MIN_TABLE_OCCUPANCY = 6 // Try not to leave more than 2 empty seats (10-2=8, but we allow 6 minimum)
@@ -31,6 +32,7 @@ interface TableCapacity {
 }
 
 export default function AdminPage() {
+  const router = useRouter()
   const [assignments, setAssignments] = useState<SeatingAssignment[]>([])
   const [tableCapacities, setTableCapacities] = useState<TableCapacity>({})
   const [searchTerm, setSearchTerm] = useState("")
@@ -1053,6 +1055,14 @@ export default function AdminPage() {
             >
               <Download className="w-4 h-4" />
               Export CSV
+            </Button>
+
+            <Button
+              onClick={() => router.push("/admin/seating-chart")}
+              className="bg-jewel-fuchsia hover:bg-jewel-fuchsia/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center"
+            >
+              <Users className="w-4 h-4" />
+              View Seating Chart
             </Button>
           </div>
 
