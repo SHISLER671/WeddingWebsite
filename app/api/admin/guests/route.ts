@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from "@/lib/supabase/server"
 
 export const dynamic = "force-dynamic"
 
@@ -11,12 +11,7 @@ export const dynamic = "force-dynamic"
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    })
+    const supabase = await createClient()
 
     const { searchParams } = new URL(request.url)
     const timestamp = searchParams.get("t")
@@ -61,7 +56,6 @@ export async function GET(request: NextRequest) {
         { status: 500 },
       )
     }
-    // END OF CHANGE
 
     if (error) {
       console.error("[v1] Admin: Database error:", error)

@@ -106,10 +106,15 @@ export default function AdminPage() {
         return
       }
 
-      const result = isJson ? await response.json() : { success: false, error: "Invalid response format" }
+      if (!isJson) {
+        setMessage(`❌ Auto-assign failed: Server returned non-JSON response`)
+        return
+      }
+
+      const result = await response.json()
       // </CHANGE>
 
-      if (result.success) {
+      if (result.success && result.stats) {
         setMessage(
           `✅ Auto-assigned ${result.stats.assigned} guests across ${result.stats.tables} tables! (${result.stats.totalPeople} total people)`,
         )
@@ -126,7 +131,7 @@ export default function AdminPage() {
         // </CHANGE>
         await loadRsvpStats()
       } else {
-        setMessage(`❌ Auto-assign failed: ${result.error}`)
+        setMessage(`❌ Auto-assign failed: ${result.error || "Unknown error"}`)
       }
     } catch (error) {
       console.error("[v0] Auto-assign error:", error)
