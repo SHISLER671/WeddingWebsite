@@ -71,6 +71,7 @@ export default function AdminPage() {
     setMessage("⏳ Running automatic seat assignment...")
 
     try {
+      console.log("[v0] Admin: Starting auto-assign process...")
       const response = await fetch("/api/admin/auto-assign-seats", {
         method: "POST",
         headers: {
@@ -110,20 +111,20 @@ export default function AdminPage() {
 
       if (result.success) {
         setMessage(
-          `✅ ${result.message}\n\n📊 Table Summary:\n${result.summary
-            .map(
-              (t: any) =>
-                `Table ${t.table}: ${t.guests} parties (${t.capacity}/10 people, ${t.emptySeats} empty seats)`,
-            )
-            .join("\n")}`,
+          `✅ Auto-assigned ${result.stats.assigned} guests across ${result.stats.tables} tables! (${result.stats.totalPeople} total people)`,
         )
 
-        setMessage("⏳ Assignment complete! Refreshing guest list in 3 seconds...")
-        await new Promise((resolve) => setTimeout(resolve, 3000))
+        console.log("[v0] Admin: Waiting 5 seconds before refreshing guest list...")
+        await new Promise((resolve) => setTimeout(resolve, 5000))
         // </CHANGE>
 
-        // Reload assignments to show new table assignments
+        // Reload assignments after successful auto-assign
+        console.log("[v0] Admin: Refreshing guest assignments...")
         await loadAssignments(true)
+
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+        // </CHANGE>
+        await loadRsvpStats()
       } else {
         setMessage(`❌ Auto-assign failed: ${result.error}`)
       }
@@ -412,7 +413,7 @@ export default function AdminPage() {
     const isMovingEntourage = movedGuest ? isEntourage(movedGuest) : false
 
     // If moving entourage, find all entourage at the OLD TABLE ONLY and move them together
-    // Note: Entourage is spread across multiple tables, so we only move the group at this specific table
+    // Note: Entourage is spread across multiple tables, so we only move the group at this table
     let assignmentsToMove: SeatingAssignment[] = []
     if (isMovingEntourage) {
       const entourageAtOldTable = getEntourageAtTable(currentAssignments, oldTable)

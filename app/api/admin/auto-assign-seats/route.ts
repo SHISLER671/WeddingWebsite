@@ -62,8 +62,12 @@ export async function POST(request: NextRequest) {
 
     invitedGuests?.forEach((guest: any) => {
       const rsvp = guest.rsvps?.[0]
-      const guestCount = rsvp?.guest_count || guest.allowed_party_size || 1
+      const guestCount = Math.max(1, rsvp?.guest_count || guest.allowed_party_size || 1)
       const isEntourage = guest.is_entourage === true
+
+      console.log(
+        `[v0]   ${guest.guest_name}: entourage=${isEntourage}, attendance=${rsvp?.attendance}, count=${guestCount} (rsvp=${rsvp?.guest_count}, allowed=${guest.allowed_party_size})`,
+      )
 
       if (isEntourage) {
         entourageGuests.push({ ...guest, guestCount, isEntourage: true })

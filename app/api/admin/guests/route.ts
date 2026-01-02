@@ -23,11 +23,12 @@ export async function GET(request: NextRequest) {
 
     console.log("[v1] Admin: Fetching guests with JOINs", { timestamp })
 
-    // seating_assignments(invited_guest_id) means "seating_assignments where seating_assignments.invited_guest_id = invited_guests.id"
-    const { data: guests, error } = await supabase
-      .from("invited_guests")
-      .select(
-        `
+    let guests, error
+    try {
+      const result = await supabase
+        .from("invited_guests")
+        .select(
+          `
         id,
         guest_name,
         email,
@@ -38,8 +39,29 @@ export async function GET(request: NextRequest) {
         seating_assignments(table_number),
         rsvps(attendance, guest_count, dietary_restrictions)
       `,
+        )
+        .order("guest_name")
+
+      guests = result.data
+      error = result.error
+    } catch (supabaseError: any) {
+      // Handle network-level errors or parsing errors from Supabase
+      console.error("[v1] Admin: Supabase call failed:", supabaseError)
+
+      const errorString = String(supabaseError?.message || supabaseError || "")
+      if (errorString.includes("Too Many") || errorString.includes("rate limit") || errorString.includes("429")) {
+        return NextResponse.json(
+          { success: false, error: "Rate limit exceeded. Please wait a moment and try again." },
+          { status: 429 },
+        )
+      }
+
+      return NextResponse.json(
+        { success: false, error: "Database connection error. Please try again." },
+        { status: 500 },
       )
-      .order("guest_name")
+    }
+    // END OF CHANGE
 
     if (error) {
       console.error("[v1] Admin: Database error:", error)
