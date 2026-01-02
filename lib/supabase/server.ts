@@ -18,6 +18,8 @@ export async function createClient() {
     console.error("[Supabase Server] Missing environment variables:", {
       hasUrl: !!supabaseUrl,
       hasKey: !!supabaseAnonKey,
+      urlValue: supabaseUrl ? "SET" : "NOT SET",
+      keyValue: supabaseAnonKey ? "SET" : "NOT SET",
     })
     throw new Error("Supabase environment variables are not configured")
   }

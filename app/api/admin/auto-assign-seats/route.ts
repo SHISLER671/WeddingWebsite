@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/client"
 
 export const dynamic = "force-dynamic"
 
@@ -8,7 +8,7 @@ const TOTAL_TABLES = 26
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     console.log("[v0] ========== AUTO-ASSIGN STARTING ==========")
 

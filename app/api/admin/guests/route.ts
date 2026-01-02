@@ -1,17 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/client"
 
 export const dynamic = "force-dynamic"
 
-/**
- * Admin API endpoint to fetch guest list from invited_guests table
- * This table is synced from MASTERGUESTLIST.csv, so it always has the latest names
- *
- * This replaces reading from seating_assignments for the admin display
- */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     const { searchParams } = new URL(request.url)
     const timestamp = searchParams.get("t")
@@ -90,7 +84,6 @@ export async function GET(request: NextRequest) {
       return a.guest_name.toLowerCase().localeCompare(b.guest_name.toLowerCase())
     })
 
-    // Calculate table capacities
     const tableCapacities: { [key: number]: number } = {}
     sorted.forEach((guest: any) => {
       const tableNum = guest.table_number || 0

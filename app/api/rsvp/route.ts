@@ -1,14 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { createBrowserClient } from "@supabase/ssr"
+
+function getSupabaseClient() {
+  return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    })
+    const supabase = getSupabaseClient()
 
     const body = await request.json()
 
@@ -20,7 +19,6 @@ export async function POST(request: NextRequest) {
 
     const { guest_name, email, attendance, guest_count, dietary_restrictions, special_message, wallet_address } = body
 
-    // Validate required fields
     if (!guest_name || !email || !attendance) {
       console.log("[v0] Missing required fields:", {
         guest_name: !!guest_name,
@@ -30,7 +28,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 })
     }
 
-    // Validate attendance value
     if (!["yes", "no"].includes(attendance)) {
       console.log("[v0] Invalid attendance value:", attendance)
       return NextResponse.json(
@@ -39,8 +36,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("[v0] Attempting to upsert RSVP into database...")
+    const { data: invitedGuest, error: guestError } = await supabase
+      .from("invited_guests")
+      .select("id")
+      .or(`guest_name.eq.${guest_name},email.eq.${email}`)
+      .maybeSingle()
 
+    if (guestError) {
+      console.error("[v0] Error finding invited guest:", guestError)
+    }
+
+    const invited_guest_id = invitedGuest?.id || null
+
+    if (!invited_guest_id) {
+      console.warn("[v0] No matching invited guest found for:", { guest_name, email })
+    }
+
+    console.log("[v0] Attempting to upsert RSVP into database with invited_guest_id:", invited_guest_id)
 
     const { data, error } = await supabase
       .from("rsvps")
@@ -48,6 +60,7 @@ export async function POST(request: NextRequest) {
         {
           guest_name,
           email,
+          invited_guest_id,
           attendance,
           guest_count: guest_count || 1,
           dietary_restrictions: dietary_restrictions || null,

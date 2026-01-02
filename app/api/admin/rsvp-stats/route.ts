@@ -1,15 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/client"
 
 export const dynamic = "force-dynamic"
 
-/**
- * Admin API endpoint to get RSVP statistics
- * Returns counts of actual guests (headcount) based on guest_count field
- */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     console.log("[RSVP Stats] Fetching RSVP statistics from rsvps table")
 
