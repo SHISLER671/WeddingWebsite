@@ -23,8 +23,7 @@ export async function GET(request: NextRequest) {
 
     console.log("[v1] Admin: Fetching guests with JOINs", { timestamp })
 
-    // Use a single query with JOIN instead of separate queries
-    // This eliminates data duplication and uses the simplified seating_assignments
+    // seating_assignments(invited_guest_id) means "seating_assignments where seating_assignments.invited_guest_id = invited_guests.id"
     const { data: guests, error } = await supabase
       .from("invited_guests")
       .select(
@@ -36,14 +35,8 @@ export async function GET(request: NextRequest) {
         source,
         is_entourage,
         created_at,
-        seating_assignments!invited_guest_id (
-          table_number
-        ),
-        rsvps!invited_guest_id (
-          attendance,
-          guest_count,
-          dietary_restrictions
-        )
+        seating_assignments(table_number),
+        rsvps(attendance, guest_count, dietary_restrictions)
       `,
       )
       .order("guest_name")
