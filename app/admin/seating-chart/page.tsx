@@ -35,14 +35,27 @@ export default function SeatingChartPage() {
   const loadSeatingChart = async () => {
     try {
       setLoading(true)
-      const res = await fetch("/api/admin/guests")
+      const timestamp = Date.now()
+      const randomId = Math.random().toString(36).substring(7)
+
+      const res = await fetch(`/api/admin/guests?t=${timestamp}&r=${randomId}`, {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      })
+
       const data = await res.json()
 
       if (!data.success) {
         throw new Error(data.error || "Failed to load guests")
       }
 
-      // Filter for attending guests (RSVP yes or entourage)
+      // Data now comes pre-joined from the API
       const attendingGuests = data.data.filter((g: Guest) => g.rsvp_status === "yes" || g.is_entourage)
 
       // Group by table number (skip table 0)
@@ -50,7 +63,7 @@ export default function SeatingChartPage() {
 
       attendingGuests.forEach((guest: Guest) => {
         const tableNum = guest.table_number || 0
-        if (tableNum === 0) return // Skip unassigned
+        if (tableNum === 0) return
 
         if (!tableMap.has(tableNum)) {
           tableMap.set(tableNum, [])
@@ -92,6 +105,14 @@ export default function SeatingChartPage() {
             <p className="text-jewel-crimson">Guest seating arrangements by table</p>
           </div>
           <div className="flex gap-3">
+            <Button
+              onClick={() => loadSeatingChart()}
+              disabled={loading}
+              className="flex items-center gap-2 bg-jewel-gold hover:bg-jewel-gold/90"
+            >
+              <Users className="h-4 w-4" />
+              {loading ? "Refreshing..." : "Refresh"}
+            </Button>
             <Button onClick={handlePrint} className="flex items-center gap-2 bg-jewel-fuchsia hover:bg-jewel-purple">
               <Printer className="h-4 w-4" />
               Print Chart

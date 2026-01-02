@@ -22,6 +22,12 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error("[RSVP Stats] Database error:", error)
+      if (error.message && error.message.includes("Too Many")) {
+        return NextResponse.json(
+          { success: false, error: "Rate limit exceeded. Please wait a moment and try again." },
+          { status: 429 },
+        )
+      }
       return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
     }
 
@@ -48,14 +54,19 @@ export async function GET(request: NextRequest) {
         },
       },
     )
-  } catch (error) {
+  } catch (error: any) {
     console.error("[RSVP Stats] Error fetching statistics:", error)
+    const errorMessage =
+      error?.message?.includes("Too Many") || error?.toString()?.includes("Too Many")
+        ? "Rate limit exceeded. Please wait 30 seconds and try again."
+        : "Internal server error. Please try again."
+
     return NextResponse.json(
       {
         success: false,
-        error: "Internal server error. Please try again.",
+        error: errorMessage,
       },
-      { status: 500 },
+      { status: error?.message?.includes("Too Many") ? 429 : 500 },
     )
   }
 }

@@ -6,13 +6,6 @@ export const dynamic = "force-dynamic"
 const MAX_TABLE_CAPACITY = 10
 const TOTAL_TABLES = 26
 
-/**
- * Auto-assign guests to tables optimally
- * - Entourage gets priority seating
- * - Keep parties together
- * - Fill tables efficiently (no more than 2 empty seats)
- * - Only assign guests who RSVP'd "yes" or are entourage
- */
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -22,215 +15,189 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    console.log("[v0] Auto-Assign: Starting automatic table assignment...")
+    console.log("[v0] ========== AUTO-ASSIGN STARTING ==========")
 
-    console.log("[v0] Auto-Assign: Clearing all existing table assignments...")
+    // Step 1: Clear all existing table assignments
+    console.log("[v0] Step 1: Clearing all existing table assignments...")
     const { error: clearError } = await supabase
       .from("seating_assignments")
       .update({ table_number: 0, updated_at: new Date().toISOString() })
-      .neq("table_number", -1) // Don't touch any special flags if they exist
+      .gte("table_number", 0)
 
     if (clearError) {
-      console.error("[v0] Auto-Assign: Error clearing tables:", clearError.message)
+      console.error("[v0] Error clearing tables:", clearError.message)
     } else {
-      console.log("[v0] Auto-Assign: All tables cleared successfully")
+      console.log("[v0] ✓ All tables cleared")
     }
 
-    const [
-      { data: invitedGuests, error: guestsError },
-      { data: rsvps, error: rsvpError },
-      { data: existingSeating, error: seatingError },
-    ] = await Promise.all([
-      supabase.from("invited_guests").select("*").order("guest_name"),
-      supabase.from("rsvps").select("*"),
-      supabase.from("seating_assignments").select("*"),
-    ])
+    // Step 2: Load all data with JOINs
+    console.log("[v0] Step 2: Loading data with JOINs...")
+    const { data: invitedGuests, error: loadError } = await supabase
+      .from("invited_guests")
+      .select(
+        `
+        id,
+        guest_name,
+        email,
+        allowed_party_size,
+        is_entourage,
+        rsvps!invited_guest_id (
+          attendance,
+          guest_count
+        )
+      `,
+      )
+      .order("guest_name")
 
-    if (guestsError) {
-      return NextResponse.json({ success: false, error: guestsError.message }, { status: 500 })
+    if (loadError) {
+      throw new Error(`Failed to load guests: ${loadError.message}`)
     }
 
-    console.log(`[v0] Auto-Assign: Loaded ${invitedGuests?.length || 0} invited guests, ${rsvps?.length || 0} RSVPs`)
+    console.log(`[v0] ✓ Loaded ${invitedGuests?.length || 0} invited guests with RSVP data`)
 
-    const rsvpMap = new Map()
-    rsvps?.forEach((rsvp: any) => {
-      const nameKey = (rsvp.guest_name || "").toLowerCase().trim()
-      const emailKey = (rsvp.email || "").toLowerCase().trim()
-
-      if (nameKey) rsvpMap.set(nameKey, rsvp)
-      if (emailKey) rsvpMap.set(emailKey, rsvp)
-    })
-
-    const existingSeatingMap = new Map()
-    existingSeating?.forEach((seat: any) => {
-      const key = (seat.guest_name || "").toLowerCase().trim()
-      if (key) existingSeatingMap.set(key, seat)
-    })
-
+    // Step 3: Categorize guests
+    console.log("[v0] Step 3: Categorizing guests...")
     const entourageGuests: any[] = []
     const attendingGuests: any[] = []
 
     invitedGuests?.forEach((guest: any) => {
-      const guestKey = (guest.guest_name || "").toLowerCase().trim()
-      const emailKey = (guest.email || "").toLowerCase().trim()
-
-      const existingSeat = existingSeatingMap.get(guestKey)
-      const rsvp = rsvpMap.get(guestKey) || rsvpMap.get(emailKey)
-
+      const rsvp = guest.rsvps?.[0]
+      const guestCount = rsvp?.guest_count || guest.allowed_party_size || 1
       const isEntourage = guest.is_entourage === true
 
-      const hasRsvpdYes = rsvp?.attendance === "yes"
-      const guestCount = rsvp?.guest_count || guest.allowed_party_size || 1
-
       if (isEntourage) {
-        console.log(`[v0] Auto-Assign: ${guest.guest_name} is ENTOURAGE (party of ${guestCount})`)
         entourageGuests.push({ ...guest, guestCount, isEntourage: true })
-      } else if (hasRsvpdYes) {
-        console.log(`[v0] Auto-Assign: ${guest.guest_name} RSVP'd YES (party of ${guestCount})`)
+      } else if (rsvp?.attendance === "yes") {
         attendingGuests.push({ ...guest, guestCount, isEntourage: false })
-      } else {
-        console.log(`[v0] Auto-Assign: Skipping ${guest.guest_name} (RSVP: ${rsvp?.attendance || "none"})`)
       }
     })
 
-    console.log(
-      `[v0] Auto-Assign: Found ${entourageGuests.length} entourage, ${attendingGuests.length} attending guests`,
-    )
+    console.log(`[v0] ✓ Found ${entourageGuests.length} entourage, ${attendingGuests.length} attending guests`)
 
-    const allGuestsToAssign = [...entourageGuests, ...attendingGuests].sort((a, b) => b.guestCount - a.guestCount)
+    // Sort by party size (largest first) for better packing
+    const allGuests = [...entourageGuests, ...attendingGuests].sort((a, b) => b.guestCount - a.guestCount)
 
-    console.log(`[v0] Auto-Assign: Total guests to assign: ${allGuestsToAssign.length}`)
+    const totalHeadcount = allGuests.reduce((sum, g) => sum + g.guestCount, 0)
+    console.log(`[v0] ✓ Total: ${allGuests.length} parties, ${totalHeadcount} people`)
 
-    const tables: { [key: number]: { guests: any[]; capacity: number } } = {}
-    for (let i = 1; i <= TOTAL_TABLES; i++) {
-      tables[i] = { guests: [], capacity: 0 }
-    }
-
+    // Step 4: Assign to tables sequentially
+    console.log("[v0] Step 4: Assigning guests to tables...")
+    const assignments: any[] = []
     let currentTable = 1
+    let currentTableCapacity = 0
 
-    allGuestsToAssign.forEach((guest) => {
+    for (const guest of allGuests) {
       const partySize = guest.guestCount
 
       // Check if party fits in current table
-      if (tables[currentTable].capacity + partySize <= MAX_TABLE_CAPACITY) {
-        tables[currentTable].guests.push(guest)
-        tables[currentTable].capacity += partySize
+      if (currentTableCapacity + partySize <= MAX_TABLE_CAPACITY) {
+        // Fits in current table
+        assignments.push({
+          invited_guest_id: guest.id,
+          table_number: currentTable,
+        })
+        currentTableCapacity += partySize
         console.log(
-          `[v0] Assigned ${guest.guest_name} (${partySize} people) to Table ${currentTable} (now ${tables[currentTable].capacity}/10)`,
+          `[v0]   Assigned ${guest.guest_name} (${partySize}) to Table ${currentTable} [${currentTableCapacity}/${MAX_TABLE_CAPACITY}]`,
         )
       } else {
-        // Move to next table
+        // Doesn't fit, move to next table
         currentTable++
+        currentTableCapacity = partySize
 
         if (currentTable > TOTAL_TABLES) {
-          console.warn(`[v0] Ran out of tables for ${guest.guest_name}`)
-          return
+          console.error(`[v0] ✗ RAN OUT OF TABLES! Cannot assign ${guest.guest_name}`)
+          break
         }
 
-        tables[currentTable].guests.push(guest)
-        tables[currentTable].capacity += partySize
+        assignments.push({
+          invited_guest_id: guest.id,
+          table_number: currentTable,
+        })
         console.log(
-          `[v0] Table ${currentTable - 1} full, moved to Table ${currentTable}. Assigned ${guest.guest_name} (${partySize} people) (now ${tables[currentTable].capacity}/10)`,
+          `[v0]   Assigned ${guest.guest_name} (${partySize}) to Table ${currentTable} [${currentTableCapacity}/${MAX_TABLE_CAPACITY}]`,
         )
       }
-    })
+    }
 
-    const updates: any[] = []
-    Object.entries(tables).forEach(([tableNum, table]) => {
-      table.guests.forEach((guest) => {
-        const existingSeat = existingSeatingMap.get((guest.guest_name || "").toLowerCase().trim())
+    console.log(`[v0] ✓ Created ${assignments.length} assignments across ${currentTable} tables`)
 
-        updates.push({
-          id: existingSeat?.id,
-          guest_name: guest.guest_name,
-          email: guest.email && guest.email.trim() ? guest.email : null,
-          table_number: Number.parseInt(tableNum),
-          special_notes: guest.isEntourage ? "ENTOURAGE" : existingSeat?.special_notes || null,
-        })
-      })
-    })
-
-    console.log(`[v0] Auto-Assign: Prepared ${updates.length} assignments`)
-
+    // Step 5: Write to database using upsert with invited_guest_id
+    console.log("[v0] Step 5: Writing assignments to database...")
     let successCount = 0
     let errorCount = 0
 
-    for (const update of updates) {
+    for (const assignment of assignments) {
       try {
-        if (update.id) {
+        // Check if record exists
+        const { data: existing } = await supabase
+          .from("seating_assignments")
+          .select("id")
+          .eq("invited_guest_id", assignment.invited_guest_id)
+          .maybeSingle()
+
+        if (existing) {
+          // Update existing record
           const { error } = await supabase
             .from("seating_assignments")
             .update({
-              table_number: update.table_number,
-              email: update.email,
-              special_notes: update.special_notes,
+              table_number: assignment.table_number,
               updated_at: new Date().toISOString(),
             })
-            .eq("id", update.id)
+            .eq("id", existing.id)
 
           if (error) throw error
           successCount++
         } else {
-          // Check if record exists by guest_name
-          const { data: existing } = await supabase
-            .from("seating_assignments")
-            .select("id")
-            .eq("guest_name", update.guest_name)
-            .maybeSingle()
+          // Insert new record
+          const { error } = await supabase.from("seating_assignments").insert({
+            invited_guest_id: assignment.invited_guest_id,
+            table_number: assignment.table_number,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
 
-          if (existing) {
-            const { error } = await supabase
-              .from("seating_assignments")
-              .update({
-                table_number: update.table_number,
-                email: update.email,
-                special_notes: update.special_notes,
-                updated_at: new Date().toISOString(),
-              })
-              .eq("id", existing.id)
-
-            if (error) throw error
-            successCount++
-          } else {
-            const { error } = await supabase.from("seating_assignments").insert({
-              guest_name: update.guest_name,
-              email: update.email,
-              table_number: update.table_number,
-              special_notes: update.special_notes,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            })
-
-            if (error) throw error
-            successCount++
-          }
+          if (error) throw error
+          successCount++
         }
       } catch (err: any) {
-        console.error(`[v0] Auto-Assign: Error for ${update.guest_name}:`, err.message)
+        console.error(`[v0] ✗ Error assigning guest ID ${assignment.invited_guest_id}:`, err.message)
         errorCount++
       }
     }
 
-    const summary = Object.entries(tables)
-      .filter(([_, table]) => table.capacity > 0)
-      .map(([tableNum, table]) => ({
-        table: Number.parseInt(tableNum),
-        guests: table.guests.length,
-        totalCapacity: table.capacity,
-        emptySeats: MAX_TABLE_CAPACITY - table.capacity,
-        guestNames: table.guests.map((g) => g.guest_name).join(", "),
-      }))
+    console.log(`[v0] ✓ Successfully assigned ${successCount} guests`)
+    if (errorCount > 0) {
+      console.error(`[v0] ✗ ${errorCount} errors occurred`)
+    }
 
-    console.log(`[v0] Auto-Assign: Complete! ${successCount} assigned, ${errorCount} errors`)
-    console.log(`[v0] Auto-Assign: Using ${summary.length} tables`)
+    // Generate summary
+    const tableSummary: any[] = []
+    for (let i = 1; i <= currentTable; i++) {
+      const tableAssignments = assignments.filter((a) => a.table_number === i)
+      const totalCapacity = tableAssignments.reduce((sum, a) => {
+        const guest = allGuests.find((g) => g.id === a.invited_guest_id)
+        return sum + (guest?.guestCount || 1)
+      }, 0)
+
+      tableSummary.push({
+        table: i,
+        guests: tableAssignments.length,
+        capacity: totalCapacity,
+        emptySeats: MAX_TABLE_CAPACITY - totalCapacity,
+      })
+    }
+
+    console.log("[v0] ========== AUTO-ASSIGN COMPLETE ==========")
 
     return NextResponse.json({
       success: true,
-      message: `Successfully assigned ${successCount} guests to ${summary.length} tables`,
-      summary,
+      message: `Successfully assigned ${successCount} guests to ${currentTable} tables`,
+      summary: tableSummary,
     })
   } catch (error: any) {
-    console.error("[v0] Auto-Assign: Fatal error:", error)
+    console.error("[v0] ========== AUTO-ASSIGN FAILED ==========")
+    console.error("[v0] Error:", error)
     return NextResponse.json({ success: false, error: error.message || "Internal server error" }, { status: 500 })
   }
 }

@@ -78,7 +78,35 @@ export default function AdminPage() {
         },
       })
 
-      const result = await response.json()
+      const contentType = response.headers.get("content-type")
+      const isJson = contentType?.includes("application/json")
+
+      if (!response.ok) {
+        let errorMsg = `HTTP ${response.status}: ${response.statusText}`
+
+        if (isJson) {
+          try {
+            const json = await response.json()
+            errorMsg = json.error || errorMsg
+          } catch {
+            errorMsg = "Failed to parse error response"
+          }
+        } else {
+          // Not JSON - likely HTML error page
+          const text = await response.text()
+          if (response.status === 429 || text.includes("Too Many") || text.includes("Rate limit")) {
+            errorMsg = "⚠️ Rate limit exceeded. Please wait 30 seconds and try again."
+          } else {
+            errorMsg = text.substring(0, 200) || errorMsg
+          }
+        }
+
+        setMessage(`❌ Auto-assign failed: ${errorMsg}`)
+        return
+      }
+
+      const result = isJson ? await response.json() : { success: false, error: "Invalid response format" }
+      // </CHANGE>
 
       if (result.success) {
         setMessage(
@@ -89,6 +117,10 @@ export default function AdminPage() {
             )
             .join("\n")}`,
         )
+
+        setMessage("⏳ Assignment complete! Refreshing guest list in 3 seconds...")
+        await new Promise((resolve) => setTimeout(resolve, 3000))
+        // </CHANGE>
 
         // Reload assignments to show new table assignments
         await loadAssignments(true)
@@ -115,6 +147,11 @@ export default function AdminPage() {
           Expires: "0",
         },
       })
+
+      if (response.status === 429) {
+        console.warn("[Admin] Rate limit hit for RSVP stats - will retry later")
+        return
+      }
 
       if (response.ok) {
         const result = await response.json()
@@ -183,11 +220,38 @@ export default function AdminPage() {
         },
       )
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const contentType = response.headers.get("content-type")
+      const isJson = contentType?.includes("application/json")
+
+      if (response.status === 429) {
+        setMessage("⚠️ Rate limit exceeded. Please wait 30 seconds and try again.")
+        return
       }
 
-      const result = await response.json()
+      if (!response.ok) {
+        let errorMsg = `HTTP ${response.status}: ${response.statusText}`
+
+        if (isJson) {
+          try {
+            const json = await response.json()
+            errorMsg = json.error || errorMsg
+          } catch {
+            errorMsg = "Failed to parse error response"
+          }
+        } else {
+          const text = await response.text()
+          if (text.includes("Too Many") || text.includes("Rate limit")) {
+            errorMsg = "Rate limit exceeded. Please wait 30 seconds and try again."
+          } else {
+            errorMsg = text.substring(0, 200) || errorMsg
+          }
+        }
+
+        throw new Error(errorMsg)
+      }
+
+      const result = isJson ? await response.json() : { success: false, error: "Invalid response format" }
+      // </CHANGE>
 
       if (result.success) {
         console.log(
@@ -219,7 +283,8 @@ export default function AdminPage() {
       setLoading(false)
     }
 
-    // Reload RSVP stats when assignments are reloaded
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    // </CHANGE>
     await loadRsvpStats()
   }
 
