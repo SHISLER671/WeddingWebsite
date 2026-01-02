@@ -32,7 +32,7 @@ export default function SeatingChartPage() {
     loadSeatingChart()
   }, [])
 
-  const loadSeatingChart = async () => {
+  const loadSeatingChart = async (retryCount = 0) => {
     try {
       setLoading(true)
       const timestamp = Date.now()
@@ -50,6 +50,13 @@ export default function SeatingChartPage() {
       })
 
       if (!res.ok) {
+        if (res.status === 429 && retryCount < 3) {
+          const waitTime = Math.pow(2, retryCount) * 2000 // 2s, 4s, 8s
+          console.log(`[v0] Rate limit hit, retrying in ${waitTime / 1000}s... (attempt ${retryCount + 1}/3)`)
+          await new Promise((resolve) => setTimeout(resolve, waitTime))
+          return loadSeatingChart(retryCount + 1)
+        }
+
         if (res.status === 429) {
           console.error("[v0] Error loading seating chart: Rate limit exceeded. Please wait a moment and try again.")
           throw new Error("Rate limit exceeded. Please wait a moment and try again.")
@@ -57,10 +64,17 @@ export default function SeatingChartPage() {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`)
       }
 
-      // Check if response is JSON before parsing
       const contentType = res.headers.get("content-type")
       if (!contentType || !contentType.includes("application/json")) {
         const text = await res.text()
+
+        if ((text.includes("Too Many") || text.includes("Rate limit")) && retryCount < 3) {
+          const waitTime = Math.pow(2, retryCount) * 2000
+          console.log(`[v0] Rate limit detected (HTML response), retrying in ${waitTime / 1000}s...`)
+          await new Promise((resolve) => setTimeout(resolve, waitTime))
+          return loadSeatingChart(retryCount + 1)
+        }
+
         console.error("[v0] Error loading seating chart: Invalid response format (not JSON):", text.substring(0, 100))
         throw new Error("Rate limit exceeded. Please wait a moment and try again.")
       }
@@ -71,10 +85,8 @@ export default function SeatingChartPage() {
         throw new Error(data.error || "Failed to load guests")
       }
 
-      // Data now comes pre-joined from the API
       const attendingGuests = data.data.filter((g: Guest) => g.rsvp_status === "yes" || g.is_entourage)
 
-      // Group by table number (skip table 0)
       const tableMap = new Map<number, Guest[]>()
 
       attendingGuests.forEach((guest: Guest) => {
@@ -87,7 +99,6 @@ export default function SeatingChartPage() {
         tableMap.get(tableNum)!.push(guest)
       })
 
-      // Convert to array and sort by table number
       const tableGroups: TableGroup[] = []
       for (let i = 1; i <= TOTAL_TABLES; i++) {
         const guests = tableMap.get(i) || []

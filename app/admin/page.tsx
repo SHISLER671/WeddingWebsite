@@ -93,7 +93,6 @@ export default function AdminPage() {
             errorMsg = "Failed to parse error response"
           }
         } else {
-          // Not JSON - likely HTML error page
           const text = await response.text()
           if (response.status === 429 || text.includes("Too Many") || text.includes("Rate limit")) {
             errorMsg = "⚠️ Rate limit exceeded. Please wait 30 seconds and try again."
@@ -112,30 +111,26 @@ export default function AdminPage() {
       }
 
       const result = await response.json()
-      // </CHANGE>
 
       if (result.success && result.stats) {
         setMessage(
           `✅ Auto-assigned ${result.stats.assigned} guests across ${result.stats.tables} tables! (${result.stats.totalPeople} total people)`,
         )
 
-        console.log("[v0] Admin: Waiting 5 seconds before refreshing guest list...")
-        await new Promise((resolve) => setTimeout(resolve, 5000))
-        // </CHANGE>
+        console.log("[v0] Admin: Waiting 8 seconds before refreshing guest list...")
+        await new Promise((resolve) => setTimeout(resolve, 8000))
 
-        // Reload assignments after successful auto-assign
         console.log("[v0] Admin: Refreshing guest assignments...")
         await loadAssignments(true)
 
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-        // </CHANGE>
+        await new Promise((resolve) => setTimeout(resolve, 3000))
         await loadRsvpStats()
       } else {
         setMessage(`❌ Auto-assign failed: ${result.error || "Unknown error"}`)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("[v0] Auto-assign error:", error)
-      setMessage(`❌ Error running auto-assignment: ${error}`)
+      setMessage(`❌ Error: ${error.message || "Unknown error occurred"}`)
     } finally {
       setIsAutoAssigning(false)
     }
@@ -257,7 +252,6 @@ export default function AdminPage() {
       }
 
       const result = isJson ? await response.json() : { success: false, error: "Invalid response format" }
-      // </CHANGE>
 
       if (result.success) {
         console.log(
@@ -290,7 +284,6 @@ export default function AdminPage() {
     }
 
     await new Promise((resolve) => setTimeout(resolve, 2000))
-    // </CHANGE>
     await loadRsvpStats()
   }
 
