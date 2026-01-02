@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
       const isEntourage = guest.is_entourage === true
 
-      const hasRsvpdYes = rsvp?.response === "yes"
+      const hasRsvpdYes = rsvp?.attendance === "yes"
       const guestCount = rsvp?.guest_count || guest.allowed_party_size || 1
 
       if (isEntourage) {
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
         console.log(`[v0] Auto-Assign: ${guest.guest_name} RSVP'd YES (party of ${guestCount})`)
         attendingGuests.push({ ...guest, guestCount, isEntourage: false })
       } else {
-        console.log(`[v0] Auto-Assign: Skipping ${guest.guest_name} (RSVP: ${rsvp?.response || "none"})`)
+        console.log(`[v0] Auto-Assign: Skipping ${guest.guest_name} (RSVP: ${rsvp?.attendance || "none"})`)
       }
     })
 
