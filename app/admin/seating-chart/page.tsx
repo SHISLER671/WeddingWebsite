@@ -32,10 +32,10 @@ export default function SeatingChartPage() {
   useEffect(() => {
     loadSeatingChart()
     
-    // Auto-refresh every 30 seconds to catch manual edits
+    // Auto-refresh once per day to catch manual edits
     const interval = setInterval(() => {
       loadSeatingChart()
-    }, 30000) // 30 seconds
+    }, 86400000) // 24 hours (1 day)
     
     return () => clearInterval(interval)
   }, [])

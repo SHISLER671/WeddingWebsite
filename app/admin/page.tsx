@@ -709,6 +709,13 @@ export default function AdminPage() {
         editForm.actual_guest_count !== undefined &&
         editForm.actual_guest_count !== currentAssignment.actual_guest_count
       ) {
+        console.log("[v0] Admin: Updating guest count:", {
+          guest_name: currentAssignment.guest_name,
+          email: currentAssignment.email,
+          old_count: currentAssignment.actual_guest_count,
+          new_count: editForm.actual_guest_count,
+        })
+
         const guestCountResponse = await fetch("/api/admin/guest-count", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -719,12 +726,23 @@ export default function AdminPage() {
           }),
         })
 
-        if (!guestCountResponse.ok) {
-          const errorText = await guestCountResponse.text()
-          setMessage(`❌ Error updating guest count: ${errorText}`)
+        const guestCountText = await guestCountResponse.text()
+        let guestCountResult
+        try {
+          guestCountResult = JSON.parse(guestCountText)
+        } catch {
+          guestCountResult = { success: false, error: guestCountText }
+        }
+
+        if (!guestCountResponse.ok || !guestCountResult.success) {
+          const errorMsg = guestCountResult.error || guestCountText || "Unknown error"
+          console.error("[v0] Admin: Guest count update failed:", errorMsg)
+          setMessage(`❌ Error updating guest count: ${errorMsg}`)
           setLoading(false)
           return
         }
+
+        console.log("[v0] Admin: Guest count updated successfully:", guestCountResult)
       }
 
       // Get guest data to send email/name for lookup
