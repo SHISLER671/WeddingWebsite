@@ -13,6 +13,7 @@ interface Guest {
   email: string
   table_number: number
   guest_count: number
+  actual_guest_count?: number
   rsvp_status: string
   is_entourage: boolean
 }
@@ -85,7 +86,12 @@ export default function SeatingChartPage() {
         throw new Error(data.error || "Failed to load guests")
       }
 
-      const attendingGuests = data.data.filter((g: Guest) => g.rsvp_status === "yes" || g.is_entourage)
+      const attendingGuests = data.data
+        .filter((g: any) => g.rsvp_status === "yes" || g.is_entourage)
+        .map((g: any) => ({
+          ...g,
+          guest_count: g.actual_guest_count || g.guest_count || 1, // Map actual_guest_count to guest_count for consistency
+        })) as Guest[]
 
       const tableMap = new Map<number, Guest[]>()
 
@@ -102,6 +108,7 @@ export default function SeatingChartPage() {
       const tableGroups: TableGroup[] = []
       for (let i = 1; i <= TOTAL_TABLES; i++) {
         const guests = tableMap.get(i) || []
+        // Calculate total body count (sum of all guest_count values)
         const totalCount = guests.reduce((sum, g) => sum + (g.guest_count || 1), 0)
         tableGroups.push({
           table_number: i,
@@ -184,32 +191,52 @@ export default function SeatingChartPage() {
                 </div>
 
                 <ul className="space-y-2 print:space-y-1">
-                  {table.guests.map((guest, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-center justify-between rounded-md bg-purple-50/50 px-3 py-2 print:bg-transparent print:py-1"
-                    >
-                      <span className="font-medium text-jewel-burgundy print:text-sm">
-                        {guest.guest_name}
-                        {guest.is_entourage && (
-                          <span className="ml-2 rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs text-fuchsia-700 print:bg-transparent print:px-0 print:font-semibold">
-                            (Entourage)
+                  {table.guests.flatMap((guest, guestIdx) => {
+                    // Expand each guest into individual seat entries
+                    const guestCount = guest.guest_count || 1
+                    const seats = []
+                    
+                    for (let seatNum = 0; seatNum < guestCount; seatNum++) {
+                      const isFirstSeat = seatNum === 0
+                      seats.push(
+                        <li
+                          key={`guest-${guestIdx}-seat-${seatNum}`}
+                          className="flex items-center justify-between rounded-md bg-purple-50/50 px-3 py-2 print:bg-transparent print:py-1"
+                        >
+                          <span className="font-medium text-jewel-burgundy print:text-sm">
+                            {isFirstSeat ? (
+                              <>
+                                {guest.guest_name}
+                                {guest.is_entourage && (
+                                  <span className="ml-2 rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs text-fuchsia-700 print:bg-transparent print:px-0 print:font-semibold">
+                                    (Entourage)
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <span className="text-jewel-burgundy/70 italic">
+                                Guest of {guest.guest_name}
+                              </span>
+                            )}
                           </span>
-                        )}
-                      </span>
-                      <span className="text-sm text-jewel-burgundy/60 print:text-xs">
-                        {guest.guest_count > 1 ? `+${guest.guest_count - 1}` : ""}
-                      </span>
-                    </li>
-                  ))}
+                          <span className="text-xs text-jewel-burgundy/50 print:text-xs">
+                            {isFirstSeat && guestCount > 1 ? `Party of ${guestCount}` : ""}
+                          </span>
+                        </li>
+                      )
+                    }
+                    return seats
+                  })}
 
-                  {/* Empty seat placeholders */}
+                  {/* Empty seat placeholders - show as empty boxes without text */}
                   {Array.from({ length: MAX_PER_TABLE - table.totalCount }).map((_, idx) => (
                     <li
                       key={`empty-${idx}`}
-                      className="rounded-md border border-dashed border-burgundy-200 px-3 py-2 text-center text-sm text-jewel-burgundy/30 print:py-1 print:text-xs"
+                      className="rounded-md border border-dashed border-burgundy-200/50 px-3 py-2 print:py-1"
+                      style={{ minHeight: '2.5rem' }}
+                      aria-label="Empty seat"
                     >
-                      Empty Seat
+                      {/* Empty - no text, just visual placeholder */}
                     </li>
                   ))}
                 </ul>
