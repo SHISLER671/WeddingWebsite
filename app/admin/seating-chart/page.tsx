@@ -49,6 +49,22 @@ export default function SeatingChartPage() {
         },
       })
 
+      if (!res.ok) {
+        if (res.status === 429) {
+          console.error("[v0] Error loading seating chart: Rate limit exceeded. Please wait a moment and try again.")
+          throw new Error("Rate limit exceeded. Please wait a moment and try again.")
+        }
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+      }
+
+      // Check if response is JSON before parsing
+      const contentType = res.headers.get("content-type")
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text()
+        console.error("[v0] Error loading seating chart: Invalid response format (not JSON):", text.substring(0, 100))
+        throw new Error("Rate limit exceeded. Please wait a moment and try again.")
+      }
+
       const data = await res.json()
 
       if (!data.success) {
