@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from "@/lib/supabase/server"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,23 +13,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Email or name parameter is required" }, { status: 400 })
     }
 
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    })
+    const supabase = await createClient()
 
-    console.log("[v0] Looking up seating assignment for:", { email, guestName })
+    console.log("[v0] Looking up seating for:", { email, guestName })
 
-    let query = supabase.from("seating_assignments").select("*")
+    let query = supabase.from("invited_guests").select(`
+        id,
+        guest_name,
+        email,
+        rsvps(table_number, guest_count, attendance)
+      `)
 
-    // Try to find by email first, then by name (with normalization)
     if (email) {
       query = query.eq("email", email)
-    } else {
-      // Normalize the name for better matching
-      const normalizedName = guestName?.trim().toLowerCase()
+    } else if (guestName) {
+      const normalizedName = guestName.trim().toLowerCase()
       query = query.ilike("guest_name", `%${normalizedName}%`)
     }
 
@@ -37,89 +35,50 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error("[v0] Database error:", error)
-      return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
+      return NextResponse.json({ success: false, error: "Database error" }, { status: 500 })
     }
 
-    if (!data) {
-      // Try alternative lookup if we have both email and name
-      if (email && guestName) {
-        console.log("[v0] No seating found by email, trying name lookup:", guestName)
-        const normalizedName = guestName.trim().toLowerCase()
-        const { data: nameData, error: nameError } = await supabase
-          .from("seating_assignments")
-          .select("*")
-          .ilike("guest_name", `%${normalizedName}%`)
-          .maybeSingle()
-
-        if (nameError) {
-          console.error("[v0] Name lookup error:", nameError)
-          return NextResponse.json(
-            {
-              success: false,
-              error: "Database error",
-              hasSeating: false,
-            },
-            { status: 500 },
-          )
-        }
-
-        if (nameData) {
-          console.log("[v0] Seating assignment found by name:", nameData)
-          return NextResponse.json({
-            success: true,
-            data: nameData,
-            hasSeating: true,
-            message: `You're assigned to Table ${nameData.table_number}`,
-          })
-        }
-      }
-
-      // Check if seating is full
-      const { data: table26Assignments, error: table26Error } = await supabase
-        .from("seating_assignments")
-        .select("table_number")
-        .eq("table_number", 26)
-
-      if (!table26Error && table26Assignments && table26Assignments.length >= 8) {
-        console.log("[v0] Seating appears to be full: Table 26 has", table26Assignments.length, "assignments")
-        return NextResponse.json(
-          {
-            success: false,
-            error: "Seating full",
-            hasSeating: false,
-            seatingFull: true,
-          },
-          { status: 404 },
-        )
-      }
-
-      console.log("[v0] No seating assignment found for:", { email, guestName })
+    if (!data || !data.rsvps || data.rsvps.length === 0) {
+      console.log("[v0] No RSVP found for:", { email, guestName })
       return NextResponse.json(
         {
           success: false,
-          error: "No seating assignment found",
+          error: "No RSVP found",
           hasSeating: false,
         },
         { status: 404 },
       )
     }
 
-    console.log("[v0] Seating assignment found:", data)
+    const rsvp = data.rsvps[0]
+    const tableNumber = rsvp.table_number || 0
+
+    if (tableNumber === 0) {
+      console.log("[v0] No table assignment yet for:", data.guest_name)
+      return NextResponse.json(
+        {
+          success: false,
+          error: "No seating assignment yet",
+          hasSeating: false,
+        },
+        { status: 404 },
+      )
+    }
+
+    console.log("[v0] Found seating for:", data.guest_name, "at Table", tableNumber)
 
     return NextResponse.json({
       success: true,
-      data: data,
+      data: {
+        guest_name: data.guest_name,
+        table_number: tableNumber,
+        guest_count: rsvp.guest_count,
+      },
       hasSeating: true,
-      message: `You're assigned to Table ${data.table_number}`,
+      message: `You're assigned to Table ${tableNumber}`,
     })
   } catch (error) {
-    console.error("[v0] Error looking up seating assignment:", error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Internal server error. Please try again.",
-      },
-      { status: 500 },
-    )
+    console.error("[v0] Error looking up seating:", error)
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
   }
 }

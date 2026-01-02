@@ -16,14 +16,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const timestamp = searchParams.get("t")
 
-    console.log("[v1] Admin: Fetching guests with JOINs", { timestamp })
+    console.log("[v1] Admin: Fetching guests with RSVPs", { timestamp })
 
-    let guests, error
-    try {
-      const result = await supabase
-        .from("invited_guests")
-        .select(
-          `
+    const { data: guests, error } = await supabase
+      .from("invited_guests")
+      .select(
+        `
         id,
         guest_name,
         email,
@@ -31,57 +29,26 @@ export async function GET(request: NextRequest) {
         source,
         is_entourage,
         created_at,
-        seating_assignments(table_number),
-        rsvps(attendance, guest_count, dietary_restrictions)
+        rsvps(attendance, guest_count, dietary_restrictions, table_number)
       `,
-        )
-        .order("guest_name")
-
-      guests = result.data
-      error = result.error
-    } catch (supabaseError: any) {
-      // Handle network-level errors or parsing errors from Supabase
-      console.error("[v1] Admin: Supabase call failed:", supabaseError)
-
-      const errorString = String(supabaseError?.message || supabaseError || "")
-      if (errorString.includes("Too Many") || errorString.includes("rate limit") || errorString.includes("429")) {
-        return NextResponse.json(
-          { success: false, error: "Rate limit exceeded. Please wait a moment and try again." },
-          { status: 429 },
-        )
-      }
-
-      return NextResponse.json(
-        { success: false, error: "Database connection error. Please try again." },
-        { status: 500 },
       )
-    }
+      .order("guest_name")
 
     if (error) {
       console.error("[v1] Admin: Database error:", error)
-      if (error.message && error.message.includes("Too Many")) {
-        return NextResponse.json(
-          { success: false, error: "Rate limit exceeded. Please wait a moment and try again." },
-          { status: 429 },
-        )
-      }
       return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
     }
 
-    console.log("[v1] Admin: Fetched", guests?.length || 0, "guests with JOINs")
+    console.log("[v1] Admin: Fetched", guests?.length || 0, "guests")
 
-    // Process and flatten the joined data
     const processed =
       guests?.map((guest: any) => {
-        // Get the first (and should be only) seating assignment
-        const seating = guest.seating_assignments?.[0]
         const rsvp = guest.rsvps?.[0]
-
         const isEntourageMember = guest.is_entourage === true
         const rsvpStatus = rsvp?.attendance || "pending"
         const isAttending = rsvpStatus === "yes"
+        const tableNumber = rsvp?.table_number || 0
 
-        // Calculate actual guest count
         let actualGuestCount = 0
         if (isEntourageMember) {
           actualGuestCount = rsvp?.guest_count || guest.allowed_party_size || 1
@@ -93,7 +60,7 @@ export async function GET(request: NextRequest) {
           id: guest.id,
           guest_name: guest.guest_name,
           email: guest.email,
-          table_number: seating?.table_number ?? 0,
+          table_number: tableNumber,
           actual_guest_count: actualGuestCount,
           allowed_party_size: guest.allowed_party_size || 1,
           rsvp_status: rsvpStatus,
@@ -103,7 +70,7 @@ export async function GET(request: NextRequest) {
         }
       }) || []
 
-    // Sort with proper priority
+    // Sort: entourage first, then by table, then by RSVP status, then by name
     const sorted = processed.sort((a, b) => {
       if (a.is_entourage && !b.is_entourage) return -1
       if (!a.is_entourage && b.is_entourage) return 1
@@ -113,19 +80,14 @@ export async function GET(request: NextRequest) {
 
       if (tableA > 0 && tableB === 0) return -1
       if (tableA === 0 && tableB > 0) return 1
-
-      if (tableA !== tableB && tableA > 0 && tableB > 0) {
-        return tableA - tableB
-      }
+      if (tableA !== tableB && tableA > 0 && tableB > 0) return tableA - tableB
 
       const statusOrder = { yes: 1, pending: 2, no: 3 }
       const orderA = statusOrder[a.rsvp_status as keyof typeof statusOrder] || 2
       const orderB = statusOrder[b.rsvp_status as keyof typeof statusOrder] || 2
       if (orderA !== orderB) return orderA - orderB
 
-      const nameA = (a.guest_name || "").toLowerCase().trim()
-      const nameB = (b.guest_name || "").toLowerCase().trim()
-      return nameA.localeCompare(nameB)
+      return a.guest_name.toLowerCase().localeCompare(b.guest_name.toLowerCase())
     })
 
     // Calculate table capacities
@@ -157,7 +119,7 @@ export async function GET(request: NextRequest) {
       },
       {
         headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          "Cache-Control": "no-store, no-cache, must-revalidate",
           Pragma: "no-cache",
           Expires: "0",
         },
@@ -165,17 +127,6 @@ export async function GET(request: NextRequest) {
     )
   } catch (error: any) {
     console.error("[v1] Admin: Error fetching guests:", error)
-    const errorMessage =
-      error?.message?.includes("Too Many") || error?.toString()?.includes("Too Many")
-        ? "Rate limit exceeded. Please wait 30 seconds and try again."
-        : "Internal server error. Please try again."
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: errorMessage,
-      },
-      { status: error?.message?.includes("Too Many") ? 429 : 500 },
-    )
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
   }
 }
