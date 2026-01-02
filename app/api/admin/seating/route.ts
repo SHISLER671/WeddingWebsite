@@ -19,48 +19,26 @@ export async function GET() {
 
     console.log("[v0] Admin: Fetching all seating assignments with RSVP counts")
 
-    // Fetch seating assignments
-    const { data: assignments, error } = await supabase
-      .from("seating_assignments")
-      .select("*")
-
-    if (error) {
-      console.error("[v0] Admin: Database error:", error)
-      return NextResponse.json({ success: false, error: "Database error: " + error.message }, { status: 500 })
-    }
-
-    // Fetch all RSVPs to match by email or name
+    // Fetch all RSVPs with table assignments
     const { data: rsvps, error: rsvpError } = await supabase
       .from("rsvps")
-      .select("email, guest_name, guest_count, attendance")
+      .select("id, email, guest_name, guest_count, attendance, table_number, dietary_restrictions")
 
     if (rsvpError) {
-      console.warn("[v0] Admin: Could not fetch RSVPs:", rsvpError.message)
+      console.error("[v0] Admin: Database error fetching RSVPs:", rsvpError)
+      return NextResponse.json({ success: false, error: "Database error: " + rsvpError.message }, { status: 500 })
     }
 
-    // Fetch invited_guests to get allowed_party_size as fallback
+    // Fetch invited_guests to get additional info like is_entourage
     const { data: invitedGuests, error: invitedGuestsError } = await supabase
       .from("invited_guests")
-      .select("guest_name, email, allowed_party_size")
+      .select("id, guest_name, email, allowed_party_size, is_entourage")
 
     if (invitedGuestsError) {
       console.warn("[v0] Admin: Could not fetch invited_guests:", invitedGuestsError.message)
     }
 
-    // Create a map of RSVPs by email and name for quick lookup
-    const rsvpMap = new Map<string, any>()
-    rsvps?.forEach((rsvp: any) => {
-      if (rsvp.email) {
-        rsvpMap.set(rsvp.email.toLowerCase(), rsvp)
-      }
-      // Also index by normalized name
-      const normalizedName = rsvp.guest_name?.trim().toLowerCase()
-      if (normalizedName) {
-        rsvpMap.set(`name:${normalizedName}`, rsvp)
-      }
-    })
-
-    // Create a map of invited_guests by email and name for allowed_party_size lookup
+    // Create a map of invited_guests by email and name for lookup
     const invitedGuestsMap = new Map<string, any>()
     invitedGuests?.forEach((guest: any) => {
       if (guest.email) {
@@ -72,39 +50,35 @@ export async function GET() {
       }
     })
 
-    // Process assignments to include actual guest count from RSVP or invited_guests
-    const processed = assignments?.map((assignment: any) => {
-      // Try to find matching RSVP by email first, then by name
-      let matchingRsvp = null
-      if (assignment.email) {
-        matchingRsvp = rsvpMap.get(assignment.email.toLowerCase())
-      }
-      if (!matchingRsvp && assignment.guest_name) {
-        const normalizedName = assignment.guest_name.trim().toLowerCase()
-        matchingRsvp = rsvpMap.get(`name:${normalizedName}`)
-      }
-
-      // Try to find matching invited_guest for allowed_party_size
+    // Process RSVPs into assignment format
+    const processed = rsvps?.map((rsvp: any) => {
+      // Find matching invited_guest for additional info
       let matchingInvitedGuest = null
-      if (assignment.email) {
-        matchingInvitedGuest = invitedGuestsMap.get(assignment.email.toLowerCase())
+      if (rsvp.email) {
+        matchingInvitedGuest = invitedGuestsMap.get(rsvp.email.toLowerCase())
       }
-      if (!matchingInvitedGuest && assignment.guest_name) {
-        const normalizedName = assignment.guest_name.trim().toLowerCase()
+      if (!matchingInvitedGuest && rsvp.guest_name) {
+        const normalizedName = rsvp.guest_name.trim().toLowerCase()
         matchingInvitedGuest = invitedGuestsMap.get(`name:${normalizedName}`)
       }
 
       // Get guest count: prefer RSVP guest_count if RSVP'd yes, otherwise use allowed_party_size, otherwise default to 1
       let actualGuestCount = 1
-      if (matchingRsvp?.attendance === 'yes') {
-        actualGuestCount = matchingRsvp.guest_count || 1
+      if (rsvp.attendance === 'yes') {
+        actualGuestCount = rsvp.guest_count || 1
       } else if (matchingInvitedGuest?.allowed_party_size) {
         actualGuestCount = matchingInvitedGuest.allowed_party_size
       }
       
       return {
-        ...assignment,
+        id: rsvp.id,
+        guest_name: rsvp.guest_name,
+        email: rsvp.email,
+        table_number: rsvp.table_number || 0,
         actual_guest_count: actualGuestCount,
+        is_entourage: matchingInvitedGuest?.is_entourage || false,
+        dietary_notes: rsvp.dietary_restrictions || null,
+        special_notes: matchingInvitedGuest?.is_entourage ? "ENTOURAGE" : null,
       }
     }) || []
 
@@ -172,9 +146,9 @@ export async function GET() {
 
 /**
  * Update seating assignment
- * Can be called with either:
- * - id: seating_assignments.id (legacy)
- * - email: guest email (new preferred method)
+ * Updates the rsvps table with table_number
+ * Can be called with:
+ * - email: guest email (preferred method)
  * - guest_name: guest name (fallback)
  */
 export async function PUT(request: NextRequest) {
@@ -197,34 +171,21 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const { id, email, guest_name, actual_guest_count, ...updateData } = body
+    const { email, guest_name, table_number, ...otherData } = body
 
-    // Support both ID-based (legacy) and email/name-based (new) updates
-    let query = supabase.from("seating_assignments")
-    
-    if (id) {
-      // Legacy: update by ID
-      query = query.eq("id", id)
-    } else if (email) {
-      // New: update by email
-      query = query.eq("email", email)
-    } else if (guest_name) {
-      // Fallback: update by name
-      query = query.ilike("guest_name", guest_name)
-    } else {
+    // Must have either email or guest_name
+    if (!email && !guest_name) {
       return NextResponse.json(
-        { success: false, error: "Missing required field: id, email, or guest_name" },
+        { success: false, error: "Missing required field: email or guest_name" },
         { status: 400 },
       )
     }
 
-    // actual_guest_count is computed on the fly, not stored in seating_assignments
-    // Remove it if it was accidentally included
-
     // Ensure table_number is a number if provided
-    if (updateData.table_number !== undefined) {
-      updateData.table_number = parseInt(updateData.table_number, 10)
-      if (isNaN(updateData.table_number)) {
+    let tableNum: number | undefined
+    if (table_number !== undefined) {
+      tableNum = parseInt(String(table_number), 10)
+      if (isNaN(tableNum)) {
         return NextResponse.json(
           { success: false, error: "Invalid table_number. Must be a number." },
           { status: 400 },
@@ -232,9 +193,17 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // If updating by email or name, we might get multiple results
-    // For email, it should be unique, but handle it gracefully
-    const { data: existing, error: findError } = await query.select().maybeSingle()
+    // Build query to find the RSVP
+    let query = supabase.from("rsvps").select("id, email, guest_name, table_number")
+    
+    if (email) {
+      query = query.eq("email", email)
+    } else if (guest_name) {
+      query = query.ilike("guest_name", guest_name)
+    }
+
+    // Find existing RSVP
+    const { data: existing, error: findError } = await query.maybeSingle()
 
     if (findError) {
       console.error("[v0] Admin: Find error:", findError)
@@ -245,75 +214,47 @@ export async function PUT(request: NextRequest) {
     }
 
     if (!existing) {
-      // If no existing record, create one (for email/name-based updates)
-      if (email || guest_name) {
-        const insertData = {
-          guest_name: guest_name || updateData.guest_name || '',
-          email: email || updateData.email || null,
-          table_number: updateData.table_number || 0,
-          plus_one_name: updateData.plus_one_name || null,
-          dietary_notes: updateData.dietary_notes || null,
-          special_notes: updateData.special_notes || null,
-        }
-
-        const { data: newData, error: insertError } = await supabase
-          .from("seating_assignments")
-          .insert(insertData)
-          .select()
-          .single()
-
-        if (insertError) {
-          console.error("[v0] Admin: Insert error:", insertError)
-          return NextResponse.json(
-            { success: false, error: "Database error: " + insertError.message },
-            { status: 500 },
-          )
-        }
-
-        console.log("[v0] Admin: Successfully created new assignment:", newData)
-        return NextResponse.json({
-          success: true,
-          data: newData,
-          message: "Assignment created successfully",
-        })
-      } else {
-        return NextResponse.json(
-          { success: false, error: "Assignment not found and cannot create without email or guest_name." },
-          { status: 404 },
-        )
-      }
+      return NextResponse.json(
+        { success: false, error: "RSVP not found. Guest must RSVP before table assignment can be updated." },
+        { status: 404 },
+      )
     }
 
-    // Update existing record
-    const { data, error } = await supabase
-      .from("seating_assignments")
+    // Prepare update data - only update table_number
+    const updateData: { table_number: number } = {
+      table_number: tableNum !== undefined ? tableNum : existing.table_number || 0,
+    }
+
+    // Update the RSVP's table_number
+    const { data: updated, error: updateError } = await supabase
+      .from("rsvps")
       .update(updateData)
       .eq("id", existing.id)
       .select()
       .single()
 
-    if (error) {
-      console.error("[v0] Admin: Update error:", error)
+    if (updateError) {
+      console.error("[v0] Admin: Update error:", updateError)
       return NextResponse.json(
-        { success: false, error: "Database error: " + error.message },
+        { success: false, error: "Database error: " + updateError.message },
         { status: 500 },
       )
     }
 
-    if (!data) {
+    if (!updated) {
       console.error("[v0] Admin: No data returned from update")
       return NextResponse.json(
-        { success: false, error: "Assignment not found or update failed." },
+        { success: false, error: "Update failed - no data returned." },
         { status: 404 },
       )
     }
 
-    console.log("[v0] Admin: Successfully updated assignment:", data)
+    console.log("[v0] Admin: Successfully updated RSVP table assignment:", updated)
 
     return NextResponse.json({
       success: true,
-      data: data,
-      message: "Assignment updated successfully",
+      data: updated,
+      message: "Table assignment updated successfully",
     })
   } catch (error) {
     console.error("[v0] Admin: Error updating seating assignment:", error)

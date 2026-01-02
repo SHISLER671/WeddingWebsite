@@ -27,37 +27,34 @@ async function searchGuest(searchTerm) {
   try {
     console.log(`🔍 Searching for: "${searchTerm}"`)
     
-    const { data, error } = await supabase
-      .from('seating_assignments')
-      .select('*')
+    // Search in RSVPs with table assignments
+    const { data: rsvps, error: rsvpError } = await supabase
+      .from('rsvps')
+      .select('id, email, guest_name, table_number, guest_count, attendance, dietary_restrictions')
       .ilike('guest_name', `%${searchTerm}%`)
       .order('guest_name')
 
-    if (error) {
-      console.error('❌ Search error:', error.message)
+    if (rsvpError) {
+      console.error('❌ Search error:', rsvpError.message)
       return
     }
 
-    if (data.length === 0) {
+    if (!rsvps || rsvps.length === 0) {
       console.log('❌ No guests found matching that search term')
       return
     }
 
-    console.log(`✅ Found ${data.length} guest(s):`)
+    console.log(`✅ Found ${rsvps.length} guest(s):`)
     console.log('=' .repeat(60))
     
-    data.forEach(guest => {
-      console.log(`👤 ${guest.guest_name}`)
-      console.log(`   📧 Email: ${guest.email || 'Not provided'}`)
-      console.log(`   🪑 Table ${guest.table_number}`)
-      if (guest.plus_one_name) {
-        console.log(`   👥 Plus One: ${guest.plus_one_name}`)
-      }
-      if (guest.dietary_notes) {
-        console.log(`   🍽️  Dietary: ${guest.dietary_notes}`)
-      }
-      if (guest.special_notes) {
-        console.log(`   📝 Notes: ${guest.special_notes}`)
+    rsvps.forEach(rsvp => {
+      console.log(`👤 ${rsvp.guest_name}`)
+      console.log(`   📧 Email: ${rsvp.email || 'Not provided'}`)
+      console.log(`   🪑 Table ${rsvp.table_number || 0}`)
+      console.log(`   👥 Guest Count: ${rsvp.guest_count || 1}`)
+      console.log(`   ✅ Attendance: ${rsvp.attendance || 'pending'}`)
+      if (rsvp.dietary_restrictions) {
+        console.log(`   🍽️  Dietary: ${rsvp.dietary_restrictions}`)
       }
       console.log('')
     })
@@ -70,10 +67,10 @@ async function fuzzySearch(searchTerm) {
   try {
     console.log(`🔍 Fuzzy search for: "${searchTerm}"`)
     
-    // Get all guests and do fuzzy matching
-    const { data: allGuests, error } = await supabase
-      .from('seating_assignments')
-      .select('*')
+    // Get all RSVPs and do fuzzy matching
+    const { data: allRsvps, error } = await supabase
+      .from('rsvps')
+      .select('id, email, guest_name, table_number, guest_count, attendance')
       .order('guest_name')
 
     if (error) {
@@ -82,8 +79,8 @@ async function fuzzySearch(searchTerm) {
     }
 
     const normalizedSearch = searchTerm.toLowerCase().trim()
-    const matches = allGuests.filter(guest => {
-      const normalizedName = guest.guest_name.toLowerCase()
+    const matches = allRsvps.filter(rsvp => {
+      const normalizedName = rsvp.guest_name.toLowerCase()
       return normalizedName.includes(normalizedSearch) || 
              normalizedSearch.includes(normalizedName.split(' ')[0]) ||
              normalizedSearch.includes(normalizedName.split(' ')[1])
@@ -98,10 +95,11 @@ async function fuzzySearch(searchTerm) {
     console.log(`✅ Found ${matches.length} potential match(es):`)
     console.log('=' .repeat(60))
     
-    matches.forEach(guest => {
-      console.log(`👤 ${guest.guest_name}`)
-      console.log(`   📧 Email: ${guest.email || 'Not provided'}`)
-      console.log(`   🪑 Table ${guest.table_number}`)
+    matches.forEach(rsvp => {
+      console.log(`👤 ${rsvp.guest_name}`)
+      console.log(`   📧 Email: ${rsvp.email || 'Not provided'}`)
+      console.log(`   🪑 Table ${rsvp.table_number || 0}`)
+      console.log(`   👥 Guest Count: ${rsvp.guest_count || 1}`)
       console.log('')
     })
   } catch (error) {
@@ -113,9 +111,9 @@ async function validateAssignments() {
   try {
     console.log('🔍 Validating seating assignments...')
     
-    const { data: guests, error } = await supabase
-      .from('seating_assignments')
-      .select('*')
+    const { data: rsvps, error } = await supabase
+      .from('rsvps')
+      .select('id, guest_name, table_number, guest_count, attendance')
       .order('table_number')
 
     if (error) {
@@ -125,11 +123,25 @@ async function validateAssignments() {
 
     const issues = []
     const tableCounts = {}
+    const tablePeopleCounts = {}
 
-    guests.forEach(guest => {
-      const tableKey = `table_${guest.table_number}`
-      // Count guests per table
-      tableCounts[tableKey] = (tableCounts[tableKey] || 0) + 1
+    rsvps.forEach(rsvp => {
+      if (rsvp.table_number > 0 && rsvp.attendance === 'yes') {
+        const tableKey = `table_${rsvp.table_number}`
+        // Count parties per table
+        tableCounts[tableKey] = (tableCounts[tableKey] || 0) + 1
+        // Count people per table
+        tablePeopleCounts[tableKey] = (tablePeopleCounts[tableKey] || 0) + (rsvp.guest_count || 1)
+      }
+    })
+
+    // Check for capacity issues
+    Object.keys(tablePeopleCounts).forEach(table => {
+      const tableNum = parseInt(table.replace('table_', ''))
+      const peopleCount = tablePeopleCounts[table]
+      if (peopleCount > 10) {
+        issues.push(`Table ${tableNum}: ${peopleCount} people (over capacity - max 10)`)
+      }
     })
 
     if (issues.length === 0) {
@@ -143,8 +155,9 @@ async function validateAssignments() {
     console.log('\n📊 Table Distribution:')
     Object.keys(tableCounts).forEach(table => {
       const tableNum = table.replace('table_', '')
-      const guestCount = tableCounts[table]
-      console.log(`   Table ${tableNum}: ${guestCount} guest(s)`)
+      const partyCount = tableCounts[table]
+      const peopleCount = tablePeopleCounts[table]
+      console.log(`   Table ${tableNum}: ${partyCount} party/parties, ${peopleCount} people`)
     })
 
   } catch (error) {
@@ -156,9 +169,9 @@ async function exportAssignments() {
   try {
     console.log('📤 Exporting seating assignments...')
     
-    const { data: guests, error } = await supabase
-      .from('seating_assignments')
-      .select('*')
+    const { data: rsvps, error } = await supabase
+      .from('rsvps')
+      .select('id, guest_name, email, table_number, guest_count, attendance, dietary_restrictions')
       .order('table_number')
 
     if (error) {
@@ -167,14 +180,14 @@ async function exportAssignments() {
     }
 
     // Create CSV content
-    const csvHeader = 'guest_name,email,table_number,plus_one_name,dietary_notes,special_notes'
-    const csvRows = guests.map(guest => [
-      guest.guest_name,
-      guest.email || '',
-      guest.table_number,
-      guest.plus_one_name || '',
-      guest.dietary_notes || '',
-      guest.special_notes || ''
+    const csvHeader = 'guest_name,email,table_number,guest_count,attendance,dietary_restrictions'
+    const csvRows = rsvps.map(rsvp => [
+      rsvp.guest_name,
+      rsvp.email || '',
+      rsvp.table_number || 0,
+      rsvp.guest_count || 1,
+      rsvp.attendance || 'pending',
+      rsvp.dietary_restrictions || ''
     ].map(field => `"${field}"`).join(','))
 
     const csvContent = [csvHeader, ...csvRows].join('\n')
@@ -183,7 +196,7 @@ async function exportAssignments() {
     const filename = `seating-export-${new Date().toISOString().split('T')[0]}.csv`
     fs.writeFileSync(filename, csvContent)
     
-    console.log(`✅ Exported ${guests.length} assignments to ${filename}`)
+    console.log(`✅ Exported ${rsvps.length} assignments to ${filename}`)
     console.log(`📁 File saved in current directory`)
 
   } catch (error) {

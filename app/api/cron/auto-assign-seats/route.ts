@@ -25,10 +25,12 @@ export async function GET(request: NextRequest) {
 
     if (rsvpError) throw rsvpError
 
-    // Fetch existing seating assignments
-    const { data: existingSeating, error: seatingError } = await supabase.from("seating_assignments").select("*")
+    // Fetch existing RSVPs with table assignments
+    const { data: existingRsvps, error: rsvpSeatingError } = await supabase
+      .from("rsvps")
+      .select("id, email, guest_name, table_number, guest_count")
 
-    if (seatingError) throw seatingError
+    if (rsvpSeatingError) throw rsvpSeatingError
 
     const MAX_TABLES = 26
     const SEATS_PER_TABLE = 10
@@ -70,15 +72,15 @@ export async function GET(request: NextRequest) {
     }
 
     // Account for existing assignments that shouldn't be moved
-    existingSeating?.forEach((seat) => {
-      if (seat.table_number > 0 && seat.table_number <= MAX_TABLES) {
+    existingRsvps?.forEach((rsvp) => {
+      if (rsvp.table_number > 0 && rsvp.table_number <= MAX_TABLES) {
         const guest = guestsToAssign.find(
           (g) =>
-            g.email.toLowerCase() === seat.email?.toLowerCase() ||
-            g.guest_name.toLowerCase() === seat.guest_name?.toLowerCase(),
+            g.email.toLowerCase() === rsvp.email?.toLowerCase() ||
+            g.guest_name.toLowerCase() === rsvp.guest_name?.toLowerCase(),
         )
         if (guest) {
-          tableCapacities[seat.table_number] -= guest.guest_count
+          tableCapacities[rsvp.table_number] -= guest.guest_count
         }
       }
     })
@@ -89,13 +91,13 @@ export async function GET(request: NextRequest) {
 
     for (const guest of guestsToAssign) {
       // Check if already assigned
-      const existingAssignment = existingSeating?.find(
-        (s) =>
-          s.email?.toLowerCase() === guest.email.toLowerCase() ||
-          s.guest_name?.toLowerCase() === guest.guest_name.toLowerCase(),
+      const existingRsvp = existingRsvps?.find(
+        (r) =>
+          r.email?.toLowerCase() === guest.email.toLowerCase() ||
+          r.guest_name?.toLowerCase() === guest.guest_name.toLowerCase(),
       )
 
-      if (existingAssignment && existingAssignment.table_number > 0) {
+      if (existingRsvp && existingRsvp.table_number > 0) {
         continue // Skip already assigned
       }
 
@@ -124,24 +126,54 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Update/insert assignments
+    // Update RSVPs with table assignments
     for (const assignment of assignments) {
-      const existing = existingSeating?.find(
-        (s) =>
-          s.email?.toLowerCase() === assignment.email.toLowerCase() ||
-          s.guest_name?.toLowerCase() === assignment.guest_name.toLowerCase(),
+      const existingRsvp = existingRsvps?.find(
+        (r) =>
+          r.email?.toLowerCase() === assignment.email.toLowerCase() ||
+          r.guest_name?.toLowerCase() === assignment.guest_name.toLowerCase(),
       )
 
-      if (existing) {
+      if (existingRsvp) {
+        // Update existing RSVP
         await supabase
-          .from("seating_assignments")
+          .from("rsvps")
           .update({
             table_number: assignment.table_number,
+          })
+          .eq("id", existingRsvp.id)
+      } else {
+        // Find or create RSVP for this guest
+        const { data: invitedGuest } = await supabase
+          .from("invited_guests")
+          .select("id")
+          .or(`email.eq.${assignment.email},guest_name.eq.${assignment.guest_name}`)
+          .maybeSingle()
+
+        // Try to find existing RSVP by email or name
+        const { data: rsvp } = await supabase
+          .from("rsvps")
+          .select("id")
+          .or(`email.eq.${assignment.email},guest_name.eq.${assignment.guest_name}`)
+          .maybeSingle()
+
+        if (rsvp) {
+          // Update existing RSVP
+          await supabase
+            .from("rsvps")
+            .update({ table_number: assignment.table_number })
+            .eq("id", rsvp.id)
+        } else {
+          // Create new RSVP with table assignment (attendance will be set later)
+          await supabase.from("rsvps").insert({
+            email: assignment.email,
+            guest_name: assignment.guest_name,
+            invited_guest_id: invitedGuest?.id || null,
+            table_number: assignment.table_number,
+            attendance: "yes",
             guest_count: assignment.guest_count,
           })
-          .eq("id", existing.id)
-      } else {
-        await supabase.from("seating_assignments").insert([assignment])
+        }
       }
     }
 
