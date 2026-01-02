@@ -87,32 +87,80 @@ export async function POST(request: NextRequest) {
     const totalHeadcount = guestsToAssign.reduce((sum, g) => sum + g.guestCount, 0)
     console.log(`[v0] ✓ Total: ${guestsToAssign.length} parties, ${totalHeadcount} people`)
 
-    // Step 4: Assign to tables sequentially
+    // Step 4: Assign to tables efficiently
     console.log("[v0] Step 4: Assigning guests to tables...")
-    let currentTable = 1
-    let currentTableCapacity = 0
+    
+    // Track capacity for each table
+    const tableCapacities: { [tableNum: number]: number } = {}
+    const entourageTables: Set<number> = new Set() // Track which tables have entourage
+    
     let successCount = 0
     let errorCount = 0
 
+    // Helper function to find the best table for a party
+    const findBestTable = (partySize: number, isEntourage: boolean): number | null => {
+      if (isEntourage) {
+        // For entourage: prioritize lower table numbers, and prefer tables that already have entourage
+        // First pass: find entourage tables with space (starting from table 1)
+        for (let tableNum = 1; tableNum <= TOTAL_TABLES; tableNum++) {
+          if (entourageTables.has(tableNum)) {
+            const currentCapacity = tableCapacities[tableNum] || 0
+            if (currentCapacity + partySize <= MAX_TABLE_CAPACITY) {
+              return tableNum
+            }
+          }
+        }
+        // Second pass: find first empty table (starting from table 1) for new entourage table
+        for (let tableNum = 1; tableNum <= TOTAL_TABLES; tableNum++) {
+          const currentCapacity = tableCapacities[tableNum] || 0
+          if (currentCapacity === 0 && partySize <= MAX_TABLE_CAPACITY) {
+            return tableNum
+          }
+        }
+        // Third pass: find any table with space (starting from table 1)
+        for (let tableNum = 1; tableNum <= TOTAL_TABLES; tableNum++) {
+          const currentCapacity = tableCapacities[tableNum] || 0
+          if (currentCapacity + partySize <= MAX_TABLE_CAPACITY) {
+            return tableNum
+          }
+        }
+      } else {
+        // For regular guests: prefer tables without entourage, starting from higher table numbers
+        // First pass: find non-entourage tables with space (starting from table 1)
+        for (let tableNum = 1; tableNum <= TOTAL_TABLES; tableNum++) {
+          if (!entourageTables.has(tableNum)) {
+            const currentCapacity = tableCapacities[tableNum] || 0
+            if (currentCapacity + partySize <= MAX_TABLE_CAPACITY) {
+              return tableNum
+            }
+          }
+        }
+        // Second pass: find any table with space (will mix with entourage if needed)
+        for (let tableNum = 1; tableNum <= TOTAL_TABLES; tableNum++) {
+          const currentCapacity = tableCapacities[tableNum] || 0
+          if (currentCapacity + partySize <= MAX_TABLE_CAPACITY) {
+            return tableNum
+          }
+        }
+      }
+      
+      return null // No table available
+    }
+
     for (const guest of guestsToAssign) {
       const partySize = guest.guestCount
+      const bestTable = findBestTable(partySize, guest.isEntourage)
 
-      // Check if party fits in current table
-      if (currentTableCapacity + partySize > MAX_TABLE_CAPACITY) {
-        // Move to next table
-        currentTable++
-        currentTableCapacity = 0
-
-        if (currentTable > TOTAL_TABLES) {
-          console.error(`[v0] ✗ RAN OUT OF TABLES! Cannot assign ${guest.guest_name}`)
-          break
-        }
+      if (!bestTable) {
+        console.error(`[v0] ✗ RAN OUT OF TABLES! Cannot assign ${guest.guest_name} (${partySize} people)`)
+        errorCount++
+        continue
       }
 
       try {
         const { error: updateError } = await supabase
           .from("rsvps")
-          .update({ table_number: currentTable })
+          .update({ table_number: bestTable })
           .eq("id", guest.rsvpId)
 
         if (updateError) {
@@ -121,11 +169,16 @@ export async function POST(request: NextRequest) {
           continue
         }
 
-        currentTableCapacity += partySize
+        // Update table capacity tracking
+        tableCapacities[bestTable] = (tableCapacities[bestTable] || 0) + partySize
+        if (guest.isEntourage) {
+          entourageTables.add(bestTable)
+        }
+
         successCount++
 
         console.log(
-          `[v0]   Assigned ${guest.guest_name} (${partySize}) to Table ${currentTable} [${currentTableCapacity}/${MAX_TABLE_CAPACITY}]`,
+          `[v0]   Assigned ${guest.guest_name} (${partySize}, ${guest.isEntourage ? 'entourage' : 'guest'}) to Table ${bestTable} [${tableCapacities[bestTable]}/${MAX_TABLE_CAPACITY}]`,
         )
       } catch (err: any) {
         console.error(`[v0] ✗ Error assigning ${guest.guest_name}:`, err.message)
@@ -133,7 +186,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const tablesUsed = currentTable
+    const tablesUsed = Object.keys(tableCapacities).length
     console.log(`[v0] ✓ Successfully assigned ${successCount} guests across ${tablesUsed} tables`)
     if (errorCount > 0) {
       console.error(`[v0] ✗ ${errorCount} errors occurred`)
