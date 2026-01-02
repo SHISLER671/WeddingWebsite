@@ -31,6 +31,13 @@ export default function SeatingChartPage() {
 
   useEffect(() => {
     loadSeatingChart()
+    
+    // Auto-refresh every 30 seconds to catch manual edits
+    const interval = setInterval(() => {
+      loadSeatingChart()
+    }, 30000) // 30 seconds
+    
+    return () => clearInterval(interval)
   }, [])
 
   const loadSeatingChart = async (retryCount = 0) => {
@@ -191,41 +198,26 @@ export default function SeatingChartPage() {
                 </div>
 
                 <ul className="space-y-2 print:space-y-1">
-                  {table.guests.flatMap((guest, guestIdx) => {
-                    // Expand each guest into individual seat entries
+                  {table.guests.map((guest, guestIdx) => {
                     const guestCount = guest.guest_count || 1
-                    const seats = []
-                    
-                    for (let seatNum = 0; seatNum < guestCount; seatNum++) {
-                      const isFirstSeat = seatNum === 0
-                      seats.push(
-                        <li
-                          key={`guest-${guestIdx}-seat-${seatNum}`}
-                          className="flex items-center justify-between rounded-md bg-purple-50/50 px-3 py-2 print:bg-transparent print:py-1"
-                        >
-                          <span className="font-medium text-jewel-burgundy print:text-sm">
-                            {isFirstSeat ? (
-                              <>
-                                {guest.guest_name}
-                                {guest.is_entourage && (
-                                  <span className="ml-2 rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs text-fuchsia-700 print:bg-transparent print:px-0 print:font-semibold">
-                                    (Entourage)
-                                  </span>
-                                )}
-                              </>
-                            ) : (
-                              <span className="text-jewel-burgundy/70 italic">
-                                Guest of {guest.guest_name}
-                              </span>
-                            )}
-                          </span>
-                          <span className="text-xs text-jewel-burgundy/50 print:text-xs">
-                            {isFirstSeat && guestCount > 1 ? `Party of ${guestCount}` : ""}
-                          </span>
-                        </li>
-                      )
-                    }
-                    return seats
+                    return (
+                      <li
+                        key={`guest-${guestIdx}`}
+                        className="flex items-center justify-between rounded-md bg-purple-50/50 px-3 py-2 print:bg-transparent print:py-1"
+                      >
+                        <span className="font-medium text-jewel-burgundy print:text-sm">
+                          {guest.guest_name}
+                          {guest.is_entourage && (
+                            <span className="ml-2 rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs text-fuchsia-700 print:bg-transparent print:px-0 print:font-semibold">
+                              (Entourage)
+                            </span>
+                          )}
+                        </span>
+                        <span className="text-xs text-jewel-burgundy/50 print:text-xs">
+                          {guestCount > 1 ? `Party of ${guestCount}` : ""}
+                        </span>
+                      </li>
+                    )
                   })}
 
                   {/* Empty seat placeholders - show as empty boxes without text */}

@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log("[v0] Step 2: Loading guests with RSVPs...")
+    // NOTE: This queries the database directly - always uses LIVE data, not cached
     const { data: invitedGuests, error: loadError } = await supabase
       .from("invited_guests")
       .select(
