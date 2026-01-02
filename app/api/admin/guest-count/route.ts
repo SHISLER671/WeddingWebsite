@@ -28,13 +28,12 @@ export async function PUT(request: NextRequest) {
     console.log("[v0] Admin: Updating guest count:", { guest_name, email, guest_count })
 
     // Update invited_guests table (allowed_party_size)
-    const invitedGuestsUpdate: any = { allowed_party_size: guest_count }
-    const invitedGuestsQuery = supabase.from("invited_guests").update(invitedGuestsUpdate)
+    let invitedGuestsQuery = supabase.from("invited_guests").update({ allowed_party_size: guest_count })
 
     if (email) {
-      invitedGuestsQuery.eq("email", email)
+      invitedGuestsQuery = invitedGuestsQuery.eq("email", email)
     } else {
-      invitedGuestsQuery.ilike("guest_name", guest_name)
+      invitedGuestsQuery = invitedGuestsQuery.ilike("guest_name", guest_name)
     }
 
     const { error: invitedGuestsError } = await invitedGuestsQuery
@@ -48,29 +47,25 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update rsvps table (guest_count) if RSVP exists
+    // Try both email and name to find the RSVP
+    let rsvpUpdateQuery = supabase.from("rsvps").update({ guest_count })
+    
     if (email) {
-      const { error: rsvpError } = await supabase.from("rsvps").update({ guest_count }).eq("email", email)
-
-      if (rsvpError) {
-        console.warn("[v0] Admin: Could not update RSVP (may not exist):", rsvpError.message)
-        // Don't fail if RSVP doesn't exist - that's okay
-      }
+      rsvpUpdateQuery = rsvpUpdateQuery.eq("email", email)
     } else {
-      // Try to find by guest name
-      const { data: rsvpData } = await supabase
-        .from("rsvps")
-        .select("email")
-        .ilike("guest_name", guest_name)
-        .limit(1)
-        .maybeSingle()
+      // Use name matching if no email
+      rsvpUpdateQuery = rsvpUpdateQuery.ilike("guest_name", guest_name)
+    }
+    
+    const { data: rsvpUpdateResult, error: rsvpError } = await rsvpUpdateQuery.select("id").limit(1)
 
-      if (rsvpData?.email) {
-        const { error: rsvpError } = await supabase.from("rsvps").update({ guest_count }).eq("email", rsvpData.email)
-
-        if (rsvpError) {
-          console.warn("[v0] Admin: Could not update RSVP:", rsvpError.message)
-        }
-      }
+    if (rsvpError) {
+      console.warn("[v0] Admin: Could not update RSVP (may not exist):", rsvpError.message)
+      // Don't fail if RSVP doesn't exist - that's okay, but log it
+    } else if (rsvpUpdateResult && rsvpUpdateResult.length > 0) {
+      console.log("[v0] Admin: Successfully updated RSVP guest_count for:", guest_name)
+    } else {
+      console.warn("[v0] Admin: No RSVP found to update for:", { guest_name, email })
     }
 
     console.log("[v0] Admin: Successfully updated guest count")
