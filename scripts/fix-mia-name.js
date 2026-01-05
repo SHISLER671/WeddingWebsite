@@ -39,4 +39,3 @@ if (updated > 0) {
 } else {
   console.log('ℹ️  No updates needed\n');
 }
-
