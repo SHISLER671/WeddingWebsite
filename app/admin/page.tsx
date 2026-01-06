@@ -22,6 +22,8 @@ interface SeatingAssignment {
   dietary_notes: string | null
   special_notes: string | null
   actual_guest_count?: number // From RSVP
+  allowed_party_size?: number
+  dietary_restrictions?: string | null
   rsvp_status?: string
   is_entourage?: boolean
   has_rsvpd?: boolean
@@ -745,6 +747,61 @@ export default function AdminPage() {
         console.log("[v0] Admin: Guest count updated successfully:", guestCountResult)
       }
 
+      // Update RSVP status if it was changed (admin override for guests who can't use the website)
+      if (
+        currentAssignment &&
+        editForm.rsvp_status &&
+        editForm.rsvp_status !== currentAssignment.rsvp_status &&
+        (editForm.rsvp_status === "yes" || editForm.rsvp_status === "no")
+      ) {
+        const attendance = editForm.rsvp_status
+
+        console.log("[v0] Admin: Updating RSVP status from dashboard:", {
+          guest_name: currentAssignment.guest_name,
+          email: currentAssignment.email,
+          old_status: currentAssignment.rsvp_status,
+          new_status: attendance,
+        })
+
+        const rsvpBody = {
+          guest_name: currentAssignment.guest_name,
+          email: currentAssignment.email,
+          attendance,
+          guest_count:
+            editForm.actual_guest_count ??
+            currentAssignment.actual_guest_count ??
+            currentAssignment.allowed_party_size ??
+            1,
+          dietary_restrictions: currentAssignment.dietary_restrictions || null,
+          special_message: null,
+          wallet_address: null,
+        }
+
+        const rsvpResponse = await fetch("/api/rsvp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(rsvpBody),
+        })
+
+        const rsvpText = await rsvpResponse.text()
+        let rsvpResult: any
+        try {
+          rsvpResult = JSON.parse(rsvpText)
+        } catch {
+          rsvpResult = { success: false, error: rsvpText }
+        }
+
+        if (!rsvpResponse.ok || !rsvpResult.success) {
+          const errorMsg = rsvpResult.error || rsvpText || "Unknown error"
+          console.error("[v0] Admin: RSVP status update failed:", errorMsg)
+          setMessage(`❌ Error updating RSVP status: ${errorMsg}`)
+          setLoading(false)
+          return
+        }
+
+        console.log("[v0] Admin: RSVP status updated successfully:", rsvpResult)
+      }
+
       // Get guest data to send email/name for lookup
       const guest = assignments.find((a) => a.id === editingId)
       const response = await fetch("/api/admin/seating", {
@@ -1252,12 +1309,23 @@ export default function AdminPage() {
                     <tr key={assignment.id} className="border-b border-jewel-burgundy/10 hover:bg-jewel-burgundy/5">
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (
-                          <Input
-                            type="text"
-                            value={editForm.guest_name || ""}
-                            onChange={(e) => setEditForm({ ...editForm, guest_name: e.target.value })}
-                            className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded"
-                          />
+                          <div className="flex flex-col gap-2">
+                            <Input
+                              type="text"
+                              value={editForm.guest_name || ""}
+                              onChange={(e) => setEditForm({ ...editForm, guest_name: e.target.value })}
+                              className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded"
+                            />
+                            <select
+                              value={editForm.rsvp_status ?? assignment.rsvp_status ?? "pending"}
+                              onChange={(e) => setEditForm({ ...editForm, rsvp_status: e.target.value })}
+                              className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded text-sm bg-white"
+                            >
+                              <option value="pending">⏳ Pending</option>
+                              <option value="yes">✓ Attending</option>
+                              <option value="no">✗ Declined</option>
+                            </select>
+                          </div>
                         ) : (
                           <div className="flex flex-col gap-1">
                             <span className="font-medium text-burgundy-900">{assignment.guest_name}</span>
