@@ -40,12 +40,21 @@ export async function GET(request: NextRequest) {
     console.log("[v1] Admin: Fetched", guests?.length || 0, "guests")
 
     // Also fetch all RSVPs directly to match by email/name if relationship join fails
-    const { data: allRsvps, error: rsvpFetchError } = await supabase
-      .from("rsvps")
-      .select("id, email, guest_name, guest_count, attendance, table_number, dietary_restrictions, special_message")
+    let allRsvps = []
+    try {
+      const { data, error: rsvpFetchError } = await supabase
+        .from("rsvps")
+        .select("id, email, guest_name, guest_count, attendance, table_number, dietary_restrictions, special_message")
 
-    if (rsvpFetchError) {
-      console.warn("[v1] Admin: Could not fetch all RSVPs for matching:", rsvpFetchError.message)
+      if (rsvpFetchError) {
+        console.warn("[v1] Admin: Could not fetch all RSVPs for matching:", rsvpFetchError.message)
+      } else {
+        allRsvps = data || []
+      }
+    } catch (rsvpError: any) {
+      console.error("[v1] Admin: Error fetching RSVPs:", rsvpError)
+      // Continue with empty array if RSVP fetch fails
+      allRsvps = []
     }
 
     // Helper function to normalize names for matching
@@ -64,20 +73,31 @@ export async function GET(request: NextRequest) {
 
     // Create a map of RSVPs by email and name for fallback matching
     const rsvpMap = new Map<string, any>()
-    allRsvps?.forEach((rsvp: any) => {
-      if (rsvp.email) {
-        rsvpMap.set(rsvp.email.toLowerCase(), rsvp)
-      }
-      // Also index by normalized name
-      const normalizedName = normalizeName(rsvp.guest_name || "")
-      if (normalizedName) {
-        rsvpMap.set(`name:${normalizedName}`, rsvp)
-      }
-    })
+    try {
+      allRsvps?.forEach((rsvp: any) => {
+        if (rsvp?.email) {
+          rsvpMap.set(rsvp.email.toLowerCase(), rsvp)
+        }
+        // Also index by normalized name
+        const normalizedName = normalizeName(rsvp?.guest_name || "")
+        if (normalizedName) {
+          rsvpMap.set(`name:${normalizedName}`, rsvp)
+        }
+      })
+    } catch (mapError: any) {
+      console.error("[v1] Admin: Error building RSVP map:", mapError)
+    }
 
     const processed =
       guests?.map((guest: any) => {
-        let rsvp = guest.rsvps?.[0]
+        try {
+        let rsvp = null
+        try {
+          rsvp = guest.rsvps?.[0] || null
+        } catch (e) {
+          // If relationship join fails, rsvp will be null and we'll match by name/email below
+          console.warn("[v1] Admin: Could not access RSVP relationship for guest:", guest.guest_name)
+        }
         const isEntourageMember = guest.is_entourage === true
 
         // Priority 1: If guest has a real email, try to match by email first (most reliable)
@@ -129,6 +149,23 @@ export async function GET(request: NextRequest) {
           has_rsvpd: !!rsvp,
           dietary_restrictions: rsvp?.dietary_restrictions || null,
           special_message: rsvp?.special_message || null,
+        }
+        } catch (guestError: any) {
+          console.error("[v1] Admin: Error processing guest:", guest?.guest_name, guestError)
+          // Return a minimal guest object if processing fails
+          return {
+            id: guest?.id || "",
+            guest_name: guest?.guest_name || "Unknown",
+            email: guest?.email || null,
+            table_number: 0,
+            actual_guest_count: guest?.allowed_party_size || 1,
+            allowed_party_size: guest?.allowed_party_size || 1,
+            rsvp_status: "pending",
+            is_entourage: guest?.is_entourage || false,
+            has_rsvpd: false,
+            dietary_restrictions: null,
+            special_message: null,
+          }
         }
       }) || []
 
@@ -188,6 +225,8 @@ export async function GET(request: NextRequest) {
     )
   } catch (error: any) {
     console.error("[v1] Admin: Error fetching guests:", error)
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
+    const errorMessage = error?.message || error?.toString() || "Internal server error"
+    console.error("[v1] Admin: Full error details:", JSON.stringify(error, null, 2))
+    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 })
   }
 }
