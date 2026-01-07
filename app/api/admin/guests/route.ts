@@ -1,30 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createBrowserClient } from "@supabase/ssr"
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-
-let supabaseClient: ReturnType<typeof createBrowserClient> | null = null
-
 function getSupabaseClient() {
-  // Return cached client if already created
-  if (supabaseClient) {
-    return supabaseClient
-  }
-
-  // Create client using module-level env vars
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.error(
-      "[v1] Admin: Missing env vars at module load - URL:",
-      SUPABASE_URL ? "SET" : "NOT SET",
-      "Key:",
-      SUPABASE_ANON_KEY ? "SET" : "NOT SET",
-    )
-    throw new Error("Supabase environment variables are not configured")
-  }
-
-  supabaseClient = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  return supabaseClient
+  return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 }
 
 export const dynamic = "force-dynamic"
