@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
         source,
         is_entourage,
         created_at,
-        rsvps(attendance, guest_count, dietary_restrictions, table_number)
+        rsvps(attendance, guest_count, dietary_restrictions, special_message, table_number)
       `,
       )
       .order("guest_name")
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Also fetch all RSVPs directly to match by email/name if relationship join fails
     const { data: allRsvps, error: rsvpFetchError } = await supabase
       .from("rsvps")
-      .select("id, email, guest_name, guest_count, attendance, table_number, dietary_restrictions")
+      .select("id, email, guest_name, guest_count, attendance, table_number, dietary_restrictions, special_message")
 
     if (rsvpFetchError) {
       console.warn("[v1] Admin: Could not fetch all RSVPs for matching:", rsvpFetchError.message)
@@ -124,6 +124,7 @@ export async function GET(request: NextRequest) {
           is_entourage: isEntourageMember,
           has_rsvpd: !!rsvp,
           dietary_restrictions: rsvp?.dietary_restrictions || null,
+          special_message: rsvp?.special_message || null,
         }
       }) || []
 

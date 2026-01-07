@@ -24,6 +24,7 @@ interface SeatingAssignment {
   actual_guest_count?: number // From RSVP
   allowed_party_size?: number
   dietary_restrictions?: string | null
+  special_message?: string | null // From RSVP
   rsvp_status?: string
   is_entourage?: boolean
   has_rsvpd?: boolean
@@ -765,7 +766,7 @@ export default function AdminPage() {
 
         const rsvpBody = {
           guest_name: currentAssignment.guest_name,
-          email: currentAssignment.email,
+          email: currentAssignment.email || "",
           attendance,
           guest_count:
             editForm.actual_guest_count ??
@@ -1293,13 +1294,14 @@ export default function AdminPage() {
                   <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Table</th>
                   <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Plus One</th>
                   <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Dietary</th>
+                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">RSVP Notes</th>
                   <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-8">
+                    <td colSpan={8} className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-jewel-burgundy mx-auto"></div>
                       <p className="text-jewel-burgundy/70 mt-2">Loading assignments...</p>
                     </td>
@@ -1413,6 +1415,25 @@ export default function AdminPage() {
                         ) : (
                           <div className="text-sm text-jewel-burgundy/70">{assignment.dietary_notes || "None"}</div>
                         )}
+                      </td>
+                      <td className="py-3 px-2">
+                        <div className="text-sm space-y-1 max-w-xs">
+                          {assignment.dietary_restrictions && (
+                            <div className="flex items-start gap-1">
+                              <span className="text-orange-600 font-medium shrink-0">🍽️</span>
+                              <span className="text-orange-700">{assignment.dietary_restrictions}</span>
+                            </div>
+                          )}
+                          {assignment.special_message && (
+                            <div className="flex items-start gap-1">
+                              <span className="text-purple-600 font-medium shrink-0">💬</span>
+                              <span className="text-purple-700 italic">{assignment.special_message}</span>
+                            </div>
+                          )}
+                          {!assignment.dietary_restrictions && !assignment.special_message && (
+                            <span className="text-jewel-burgundy/40">—</span>
+                          )}
+                        </div>
                       </td>
                       <td className="py-3 px-2">
                         {editingId === assignment.id ? (

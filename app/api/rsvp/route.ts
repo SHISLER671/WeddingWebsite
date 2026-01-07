@@ -19,10 +19,14 @@ export async function POST(request: NextRequest) {
 
     const { guest_name, email, attendance, guest_count, dietary_restrictions, special_message, wallet_address } = body
 
-    if (!guest_name || !email || !attendance) {
+    // Trim and validate required fields (email can be empty string for some guests)
+    const trimmedGuestName = guest_name?.trim()
+    const trimmedEmail = email?.trim()
+    
+    if (!trimmedGuestName || !attendance) {
       console.log("[v0] Missing required fields:", {
-        guest_name: !!guest_name,
-        email: !!email,
+        guest_name: !!trimmedGuestName,
+        email: !!trimmedEmail,
         attendance: !!attendance,
       })
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 })
@@ -36,11 +40,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data: invitedGuest, error: guestError } = await supabase
-      .from("invited_guests")
-      .select("id")
-      .or(`guest_name.eq.${guest_name},email.eq.${email}`)
-      .maybeSingle()
+    // Build query for invited guest lookup
+    let guestQuery = supabase.from("invited_guests").select("id")
+    
+    if (trimmedEmail) {
+      guestQuery = guestQuery.or(`guest_name.eq.${trimmedGuestName},email.eq.${trimmedEmail}`)
+    } else {
+      guestQuery = guestQuery.eq("guest_name", trimmedGuestName)
+    }
+    
+    const { data: invitedGuest, error: guestError } = await guestQuery.maybeSingle()
 
     if (guestError) {
       console.error("[v0] Error finding invited guest:", guestError)
@@ -49,13 +58,13 @@ export async function POST(request: NextRequest) {
     const invited_guest_id = invitedGuest?.id || null
 
     if (!invited_guest_id) {
-      console.warn("[v0] No matching invited guest found for:", { guest_name, email })
+      console.warn("[v0] No matching invited guest found for:", { guest_name: trimmedGuestName, email: trimmedEmail })
     }
 
     // First, check if an RSVP exists by guest name (to handle cases where auto-RSVP used placeholder emails)
     // Use case-insensitive exact matching
-    console.log("[v0] Checking for existing RSVP by guest name:", guest_name)
-    const normalizedGuestName = guest_name.trim().toLowerCase()
+    console.log("[v0] Checking for existing RSVP by guest name:", trimmedGuestName)
+    const normalizedGuestName = trimmedGuestName.toLowerCase()
     const { data: existingByName, error: nameCheckError } = await supabase
       .from("rsvps")
       .select("id, email, guest_name")
@@ -66,23 +75,28 @@ export async function POST(request: NextRequest) {
       console.error("[v0] Error checking for existing RSVP by name:", nameCheckError)
     }
 
-    // Also check by email as a fallback
-    const { data: existingByEmail, error: emailCheckError } = await supabase
-      .from("rsvps")
-      .select("id, email, guest_name")
-      .eq("email", email)
-      .maybeSingle()
+    // Also check by email as a fallback (only if email was provided)
+    let existingByEmail = null
+    if (trimmedEmail) {
+      const { data, error: emailCheckError } = await supabase
+        .from("rsvps")
+        .select("id, email, guest_name")
+        .eq("email", trimmedEmail)
+        .maybeSingle()
 
-    if (emailCheckError) {
-      console.error("[v0] Error checking for existing RSVP by email:", emailCheckError)
+      if (emailCheckError) {
+        console.error("[v0] Error checking for existing RSVP by email:", emailCheckError)
+      } else {
+        existingByEmail = data
+      }
     }
 
     // Prefer match by name over email (to handle email changes from placeholder to real email)
     const existingRsvp = existingByName || existingByEmail
 
     const rsvpData = {
-      guest_name,
-      email,
+      guest_name: trimmedGuestName,
+      email: trimmedEmail || null,
       invited_guest_id,
       attendance,
       guest_count: guest_count || 1,
@@ -97,7 +111,7 @@ export async function POST(request: NextRequest) {
       // Update existing RSVP (handles both name match and email match cases)
       console.log(`[v0] Found existing RSVP (id: ${existingRsvp.id}), updating...`, {
         old_email: existingRsvp.email,
-        new_email: email,
+        new_email: trimmedEmail,
         matched_by: existingByName ? "name" : "email",
       })
 
