@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     const invited_guest_id = invitedGuest?.id || null
 
     if (!invited_guest_id) {
-      console.warn("[v0] No matching invited guest found for:", { guest_name: trimmedGuestName, email: trimmedEmail })
+      console.warn("[v0] No matching invited guest found for:", { guest_name: trimmedGuestName, email: trimmedEmail || "(no email provided)" })
     }
 
     // First, check if an RSVP exists by guest name (to handle cases where auto-RSVP used placeholder emails)
@@ -94,9 +94,12 @@ export async function POST(request: NextRequest) {
     // Prefer match by name over email (to handle email changes from placeholder to real email)
     const existingRsvp = existingByName || existingByEmail
 
+    // Use placeholder email if none provided (database requires non-null email)
+    const emailForDb = trimmedEmail || `no-email-${trimmedGuestName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}@wedding.invalid`
+
     const rsvpData = {
       guest_name: trimmedGuestName,
-      email: trimmedEmail || null,
+      email: emailForDb,
       invited_guest_id,
       attendance,
       guest_count: guest_count || 1,
@@ -111,7 +114,7 @@ export async function POST(request: NextRequest) {
       // Update existing RSVP (handles both name match and email match cases)
       console.log(`[v0] Found existing RSVP (id: ${existingRsvp.id}), updating...`, {
         old_email: existingRsvp.email,
-        new_email: trimmedEmail,
+        new_email: emailForDb,
         matched_by: existingByName ? "name" : "email",
       })
 
