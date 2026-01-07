@@ -2,7 +2,16 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createBrowserClient } from "@supabase/ssr"
 
 function getSupabaseClient() {
-  return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) {
+    throw new Error(
+      `Supabase environment variables are missing. URL: ${url ? "SET" : "NOT SET"}, Key: ${key ? "SET" : "NOT SET"}`,
+    )
+  }
+
+  return createBrowserClient(url, key)
 }
 
 export async function POST(request: NextRequest) {
