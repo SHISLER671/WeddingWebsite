@@ -1,8 +1,30 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createBrowserClient } from "@supabase/ssr"
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+
+let supabaseClient: ReturnType<typeof createBrowserClient> | null = null
+
 function getSupabaseClient() {
-  return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+  // Return cached client if already created
+  if (supabaseClient) {
+    return supabaseClient
+  }
+
+  // Create client using module-level env vars
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error(
+      "[RSVP Stats] Missing env vars at module load - URL:",
+      SUPABASE_URL ? "SET" : "NOT SET",
+      "Key:",
+      SUPABASE_ANON_KEY ? "SET" : "NOT SET",
+    )
+    throw new Error("Supabase environment variables are not configured")
+  }
+
+  supabaseClient = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  return supabaseClient
 }
 
 export const dynamic = "force-dynamic"
@@ -54,7 +76,7 @@ export async function GET(request: NextRequest) {
     const errorMessage =
       error?.message?.includes("Too Many") || error?.toString()?.includes("Too Many")
         ? "Rate limit exceeded. Please wait 30 seconds and try again."
-        : "Internal server error. Please try again."
+        : error?.message || "Internal server error. Please try again."
 
     return NextResponse.json(
       {
