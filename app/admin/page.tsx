@@ -1125,8 +1125,8 @@ export default function AdminPage() {
           <div className="rounded-xl border-2 border-white/20 bg-white/95 p-8 shadow-2xl backdrop-blur-md">
             <h2 className="mb-6 font-serif text-3xl font-semibold text-jewel-burgundy">RSVP Statistics</h2>
 
-            {/* Main stats with better spacing and visual hierarchy */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-8">
+            {/* Only show Attending and Declined */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 p-6 shadow-md border border-green-200">
                 <p className="text-sm font-semibold uppercase tracking-wide text-green-700 mb-2">Guests Attending</p>
                 <p className="text-5xl font-bold text-green-900">{rsvpStats.yes}</p>
@@ -1135,29 +1135,7 @@ export default function AdminPage() {
                 <p className="text-sm font-semibold uppercase tracking-wide text-red-700 mb-2">Guests Declined</p>
                 <p className="text-5xl font-bold text-red-900">{rsvpStats.no}</p>
               </div>
-              <div className="rounded-xl bg-gradient-to-br from-purple-50 to-fuchsia-50 p-6 shadow-md border border-purple-200">
-                <p className="text-sm font-semibold uppercase tracking-wide text-purple-700 mb-2">Total Guests</p>
-                <p className="text-5xl font-bold text-purple-900">{rsvpStats.total}</p>
-              </div>
             </div>
-
-            {/* Guest breakdown stats with better spacing */}
-            {guestStats && (
-              <div className="grid grid-cols-3 gap-6 border-t-2 border-purple-200 pt-6">
-                <div className="text-center">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-600 mb-2">Entourage</p>
-                  <p className="text-3xl font-bold text-fuchsia-600">{guestStats.entourage}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-600 mb-2">Seated</p>
-                  <p className="text-3xl font-bold text-indigo-600">{guestStats.seated}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-600 mb-2">Pending RSVP</p>
-                  <p className="text-3xl font-bold text-amber-600">{guestStats.pending}</p>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
@@ -1209,6 +1187,12 @@ export default function AdminPage() {
               </h2>
               <p className="text-jewel-burgundy/70">Manage guest seating here</p>
             </div>
+            {guestStats && (
+              <div className="text-right">
+                <p className="text-sm font-semibold uppercase tracking-wide text-amber-700 mb-1">Pending RSVP</p>
+                <p className="text-4xl font-bold text-amber-600">{guestStats.pending}</p>
+              </div>
+            )}
           </div>
 
           <div className="mb-6 flex gap-4">
