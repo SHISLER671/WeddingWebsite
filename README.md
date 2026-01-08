@@ -113,6 +113,7 @@ OPENROUTER_MODEL=openai/gpt-4o-mini  # Optional: specify model (defaults to gpt-
 NEXT_PUBLIC_OPENROUTER_MODEL=openai/gpt-4o-mini  # Optional: public model name
 
 # Abstract Global Wallet (optional)
+# Note: Currently using hardcoded testnet. This env var is for future use.
 NEXT_PUBLIC_AGW_PROJECT_ID=your_agw_project_id
 
 # Encryption (for RSVP lookup)
@@ -147,7 +148,7 @@ The project uses Supabase with the following main tables:
 - `seating_assignments` - Table and seat assignments for confirmed guests
 - `gallery_items` - Wedding photo/video gallery with metadata and captions
 
-SQL setup scripts are available in the `scripts/` directory.
+SQL setup scripts are available in the `migrations/` directory. JavaScript utility scripts for guest list management are in the `scripts/` directory.
 
 ## 🤖 AI Chatbot
 

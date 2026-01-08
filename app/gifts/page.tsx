@@ -279,7 +279,7 @@ export default function GiftsPage() {
 
         <div className="text-center mt-8 p-6 bg-gradient-to-br from-rose-gold/10 to-emerald-50/30 rounded-lg border border-rose-gold/20">
           <p className="text-white leading-relaxed italic mb-4 font-medium drop-shadow-md">
-            "We just want to celebrate the best day of our lives with the people who mean the most, and  have a great time together, full of love and life!"
+            "We just want to celebrate the best day of our lives with the people who mean the most, and have a great time together, full of love and life!"
           </p>
           <p className="text-white font-semibold drop-shadow-md">— Pia & Ryan</p>
         </div>
