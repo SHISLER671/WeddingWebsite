@@ -1,17 +1,23 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createBrowserClient } from "@supabase/ssr"
 
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-  if (!url || !key) {
+let supabaseClient: ReturnType<typeof createBrowserClient> | null = null
+
+function getSupabaseClient() {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     throw new Error(
-      `Supabase environment variables are missing. URL: ${url ? "SET" : "NOT SET"}, Key: ${key ? "SET" : "NOT SET"}`,
+      `Supabase environment variables are missing. URL: ${SUPABASE_URL ? "SET" : "NOT SET"}, Key: ${SUPABASE_ANON_KEY ? "SET" : "NOT SET"}`,
     )
   }
 
-  return createBrowserClient(url, key)
+  if (!supabaseClient) {
+    supabaseClient = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  }
+
+  return supabaseClient
 }
 
 export const dynamic = "force-dynamic"
@@ -97,80 +103,80 @@ export async function GET(request: NextRequest) {
       console.error("[v1] Admin: Error building RSVP map:", mapError)
     }
 
-        const processed =
+    const processed =
       guests?.map((guest: any) => {
         try {
-        let rsvp = null
-        const isEntourageMember = guest.is_entourage === true
+          let rsvp = null
+          const isEntourageMember = guest.is_entourage === true
 
-        // Priority 1: Use relationship join result (if it exists and invited_guest_id matches)
-        // This is the most reliable since it uses the foreign key relationship
-        if (guest.rsvps && Array.isArray(guest.rsvps) && guest.rsvps.length > 0) {
-          rsvp = guest.rsvps[0]
-        } else if (guest.rsvps && !Array.isArray(guest.rsvps)) {
-          // Sometimes it's an object, not an array
-          rsvp = guest.rsvps
-        }
-
-        // Priority 2: If guest has a real email, try to match by email
-        // This handles cases where relationship join fails but email matches
-        if (!rsvp && guest.email && guest.email.includes("@") && !guest.email.includes("wedding.invalid")) {
-          const emailMatch = rsvpMap.get(guest.email.toLowerCase())
-          if (emailMatch) {
-            rsvp = emailMatch
+          // Priority 1: Use relationship join result (if it exists and invited_guest_id matches)
+          // This is the most reliable since it uses the foreign key relationship
+          if (guest.rsvps && Array.isArray(guest.rsvps) && guest.rsvps.length > 0) {
+            rsvp = guest.rsvps[0]
+          } else if (guest.rsvps && !Array.isArray(guest.rsvps)) {
+            // Sometimes it's an object, not an array
+            rsvp = guest.rsvps
           }
-        }
 
-        // Priority 3: Try normalized name matching (works for both real and placeholder emails)
-        if (!rsvp && guest.guest_name) {
-          const normalizedName = normalizeName(guest.guest_name)
-          rsvp = rsvpMap.get(`name:${normalizedName}`)
-        }
+          // Priority 2: If guest has a real email, try to match by email
+          // This handles cases where relationship join fails but email matches
+          if (!rsvp && guest.email && guest.email.includes("@") && !guest.email.includes("wedding.invalid")) {
+            const emailMatch = rsvpMap.get(guest.email.toLowerCase())
+            if (emailMatch) {
+              rsvp = emailMatch
+            }
+          }
 
-        // Debug: Log if we still don't have an RSVP for a known guest
-        if (!rsvp && guest.guest_name === "Audrey Shisler") {
-          const normalizedName = normalizeName(guest.guest_name)
-          console.log("[v1] Admin: Debug - No RSVP found for Audrey Shisler", {
-            normalizedName,
-            hasRelationshipJoin: !!guest.rsvps,
-            relationshipJoinType: typeof guest.rsvps,
-            relationshipJoinLength: Array.isArray(guest.rsvps) ? guest.rsvps.length : "not array",
-            mapHasNameKey: rsvpMap.has(`name:${normalizedName}`),
-            guestEmail: guest.email,
-          })
-        }
+          // Priority 3: Try normalized name matching (works for both real and placeholder emails)
+          if (!rsvp && guest.guest_name) {
+            const normalizedName = normalizeName(guest.guest_name)
+            rsvp = rsvpMap.get(`name:${normalizedName}`)
+          }
 
-        const rsvpStatus = rsvp?.attendance || "pending"
-        const isAttending = rsvpStatus === "yes"
-        const tableNumber = rsvp?.table_number || 0
+          // Debug: Log if we still don't have an RSVP for a known guest
+          if (!rsvp && guest.guest_name === "Audrey Shisler") {
+            const normalizedName = normalizeName(guest.guest_name)
+            console.log("[v1] Admin: Debug - No RSVP found for Audrey Shisler", {
+              normalizedName,
+              hasRelationshipJoin: !!guest.rsvps,
+              relationshipJoinType: typeof guest.rsvps,
+              relationshipJoinLength: Array.isArray(guest.rsvps) ? guest.rsvps.length : "not array",
+              mapHasNameKey: rsvpMap.has(`name:${normalizedName}`),
+              guestEmail: guest.email,
+            })
+          }
 
-        // Priority: RSVP guest_count > allowed_party_size > 1
-        // Always prefer RSVP guest_count if RSVP exists and is attending or entourage
-        let actualGuestCount = 0
-        if (rsvp && (isAttending || isEntourageMember)) {
-          // If RSVP exists and is attending/entourage, use RSVP guest_count
-          actualGuestCount = rsvp.guest_count || guest.allowed_party_size || 1
-        } else if (isEntourageMember) {
-          // Entourage without RSVP - use allowed_party_size
-          actualGuestCount = guest.allowed_party_size || 1
-        } else if (isAttending && rsvp) {
-          // Attending with RSVP - use RSVP guest_count
-          actualGuestCount = rsvp.guest_count || guest.allowed_party_size || 1
-        }
+          const rsvpStatus = rsvp?.attendance || "pending"
+          const isAttending = rsvpStatus === "yes"
+          const tableNumber = rsvp?.table_number || 0
 
-        return {
-          id: guest.id,
-          guest_name: guest.guest_name,
-          email: guest.email,
-          table_number: tableNumber,
-          actual_guest_count: actualGuestCount,
-          allowed_party_size: guest.allowed_party_size || 1,
-          rsvp_status: rsvpStatus,
-          is_entourage: isEntourageMember,
-          has_rsvpd: !!rsvp,
-          dietary_restrictions: rsvp?.dietary_restrictions || null,
-          special_message: rsvp?.special_message || null,
-        }
+          // Priority: RSVP guest_count > allowed_party_size > 1
+          // Always prefer RSVP guest_count if RSVP exists and is attending or entourage
+          let actualGuestCount = 0
+          if (rsvp && (isAttending || isEntourageMember)) {
+            // If RSVP exists and is attending/entourage, use RSVP guest_count
+            actualGuestCount = rsvp.guest_count || guest.allowed_party_size || 1
+          } else if (isEntourageMember) {
+            // Entourage without RSVP - use allowed_party_size
+            actualGuestCount = guest.allowed_party_size || 1
+          } else if (isAttending && rsvp) {
+            // Attending with RSVP - use RSVP guest_count
+            actualGuestCount = rsvp.guest_count || guest.allowed_party_size || 1
+          }
+
+          return {
+            id: guest.id,
+            guest_name: guest.guest_name,
+            email: guest.email,
+            table_number: tableNumber,
+            actual_guest_count: actualGuestCount,
+            allowed_party_size: guest.allowed_party_size || 1,
+            rsvp_status: rsvpStatus,
+            is_entourage: isEntourageMember,
+            has_rsvpd: !!rsvp,
+            dietary_restrictions: rsvp?.dietary_restrictions || null,
+            special_message: rsvp?.special_message || null,
+          }
         } catch (guestError: any) {
           console.error("[v1] Admin: Error processing guest:", guest?.guest_name, guestError)
           // Return a minimal guest object if processing fails

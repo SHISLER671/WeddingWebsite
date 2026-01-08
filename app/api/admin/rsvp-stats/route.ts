@@ -1,17 +1,23 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createBrowserClient } from "@supabase/ssr"
 
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-  if (!url || !key) {
+let supabaseClient: ReturnType<typeof createBrowserClient> | null = null
+
+function getSupabaseClient() {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     throw new Error(
-      `Supabase environment variables are missing. URL: ${url ? "SET" : "NOT SET"}, Key: ${key ? "SET" : "NOT SET"}`,
+      `Supabase environment variables are missing. URL: ${SUPABASE_URL ? "SET" : "NOT SET"}, Key: ${SUPABASE_ANON_KEY ? "SET" : "NOT SET"}`,
     )
   }
 
-  return createBrowserClient(url, key)
+  if (!supabaseClient) {
+    supabaseClient = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  }
+
+  return supabaseClient
 }
 
 export const dynamic = "force-dynamic"
