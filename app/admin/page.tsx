@@ -1109,52 +1109,52 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen relative p-4">
-      {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <NextImage src="/redroses.jpg" alt="Background" fill className="object-cover object-center" priority />
+        <NextImage src="/inthecar.jpg" alt="Background" fill className="object-cover object-center" priority />
       </div>
       {/* Overlay for readability */}
       <div className="absolute inset-0 z-10 bg-jewel-burgundy/40"></div>
 
       <div className="relative z-20 mx-auto max-w-6xl space-y-6">
-        {/* Header */}
         <div className="text-center">
-          <h1 className="mb-2 font-serif text-4xl font-bold text-jewel-burgundy">Admin Dashboard</h1>
-          <p className="text-jewel-crimson">Manage seating assignments for Pia & Ryan&apos;s Wedding</p>
+          <h1 className="mb-2 font-serif text-4xl font-bold text-blue-600">Admin Dashboard</h1>
+          <p className="text-white/90">Manage seating assignments for Pia & Ryan&apos;s Wedding</p>
         </div>
 
-        {/* RSVP Statistics Card - move to top */}
         {rsvpStats && (
-          <div className="rounded-lg border border-burgundy-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 font-serif text-2xl font-semibold text-burgundy-900">RSVP Statistics</h2>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div className="rounded-lg bg-green-50 p-4">
-                <p className="text-sm text-green-600">Guests Attending</p>
-                <p className="text-3xl font-bold text-green-900">{rsvpStats.yes}</p>
+          <div className="rounded-xl border-2 border-white/20 bg-white/95 p-8 shadow-2xl backdrop-blur-md">
+            <h2 className="mb-6 font-serif text-3xl font-semibold text-jewel-burgundy">RSVP Statistics</h2>
+
+            {/* Main stats with better spacing and visual hierarchy */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-8">
+              <div className="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 p-6 shadow-md border border-green-200">
+                <p className="text-sm font-semibold uppercase tracking-wide text-green-700 mb-2">Guests Attending</p>
+                <p className="text-5xl font-bold text-green-900">{rsvpStats.yes}</p>
               </div>
-              <div className="rounded-lg bg-red-50 p-4">
-                <p className="text-sm text-red-600">Guests Declined</p>
-                <p className="text-3xl font-bold text-red-900">{rsvpStats.no}</p>
+              <div className="rounded-xl bg-gradient-to-br from-red-50 to-rose-50 p-6 shadow-md border border-red-200">
+                <p className="text-sm font-semibold uppercase tracking-wide text-red-700 mb-2">Guests Declined</p>
+                <p className="text-5xl font-bold text-red-900">{rsvpStats.no}</p>
               </div>
-              <div className="rounded-lg bg-burgundy-50 p-4">
-                <p className="text-sm text-burgundy-600">Total Guests</p>
-                <p className="text-3xl font-bold text-burgundy-900">{rsvpStats.total}</p>
+              <div className="rounded-xl bg-gradient-to-br from-purple-50 to-fuchsia-50 p-6 shadow-md border border-purple-200">
+                <p className="text-sm font-semibold uppercase tracking-wide text-purple-700 mb-2">Total Guests</p>
+                <p className="text-5xl font-bold text-purple-900">{rsvpStats.total}</p>
               </div>
             </div>
-            {/* Guest breakdown stats */}
+
+            {/* Guest breakdown stats with better spacing */}
             {guestStats && (
-              <div className="mt-4 grid grid-cols-2 gap-3 border-t border-burgundy-200 pt-4 md:grid-cols-3">
+              <div className="grid grid-cols-3 gap-6 border-t-2 border-purple-200 pt-6">
                 <div className="text-center">
-                  <p className="text-xs text-burgundy-600">Entourage</p>
-                  <p className="text-xl font-semibold text-fuchsia-700">{guestStats.entourage}</p>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-600 mb-2">Entourage</p>
+                  <p className="text-3xl font-bold text-fuchsia-600">{guestStats.entourage}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-burgundy-600">Seated</p>
-                  <p className="text-xl font-semibold text-burgundy-900">{guestStats.seated}</p>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-600 mb-2">Seated</p>
+                  <p className="text-3xl font-bold text-indigo-600">{guestStats.seated}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-burgundy-600">Pending RSVP</p>
-                  <p className="text-xl font-semibold text-yellow-700">{guestStats.pending}</p>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-600 mb-2">Pending RSVP</p>
+                  <p className="text-3xl font-bold text-amber-600">{guestStats.pending}</p>
                 </div>
               </div>
             )}
@@ -1230,49 +1230,52 @@ export default function AdminPage() {
             </Button>
           </div>
 
-          <div className="mb-6 flex gap-4">
+          <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
             <Button
               onClick={() => loadAssignments(true)}
-              className="bg-jewel-emerald hover:bg-jewel-emerald/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2 justify-center"
             >
-              <CheckCircle className="w-4 h-4" />
-              Reload
+              <CheckCircle className="w-5 h-5" />
+              <span className="font-semibold">Reload</span>
             </Button>
 
             <Button
               onClick={exportToCSV}
               disabled={assignments.length === 0}
-              className="bg-jewel-sapphire hover:bg-jewel-sapphire/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center disabled:opacity-50"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download className="w-4 h-4" />
-              Export CSV
+              <Download className="w-5 h-5" />
+              <span className="font-semibold">Export CSV</span>
             </Button>
 
             <Button
               onClick={() => router.push("/admin/seating-chart")}
-              className="bg-jewel-fuchsia hover:bg-jewel-fuchsia/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center"
+              className="bg-pink-600 hover:bg-pink-700 text-white px-5 py-3 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2 justify-center"
             >
-              <Users className="w-4 h-4" />
-              View Seating Chart
+              <Users className="w-5 h-5" />
+              <span className="font-semibold">Seating Chart</span>
             </Button>
 
-            <Button
-              onClick={handleAutoAssign}
-              disabled={isAutoAssigning || loading}
-              className="flex-1 bg-purple-600 hover:bg-purple-700"
-            >
-              {isAutoAssigning ? "⏳ Assigning..." : "🎯 Auto-Assign Seats"}
-            </Button>
-          </div>
-
-          <div className="mb-6 flex gap-4">
             <Button
               onClick={validateAssignments}
               disabled={assignments.length === 0}
-              className="flex-1 bg-jewel-violet hover:bg-jewel-violet/90 text-white px-4 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center disabled:opacity-50"
+              className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-3 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <AlertTriangle className="w-4 h-4" />
-              Validate Seating
+              <AlertTriangle className="w-5 h-5" />
+              <span className="font-semibold">Validate</span>
+            </Button>
+          </div>
+
+          <div className="mb-6">
+            <Button
+              onClick={handleAutoAssign}
+              disabled={isAutoAssigning || loading}
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-6 py-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center gap-3 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="text-2xl">🎯</span>
+              <span className="text-lg font-bold">
+                {isAutoAssigning ? "⏳ Assigning Seats..." : "Auto-Assign Seats"}
+              </span>
             </Button>
           </div>
 
@@ -1283,19 +1286,18 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Assignments Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-jewel-burgundy/20">
-                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Guest</th>
-                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Email</th>
-                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Guest Count</th>
-                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Table</th>
-                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Plus One</th>
-                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Dietary</th>
-                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">RSVP Notes</th>
-                  <th className="text-left py-3 px-2 font-semibold text-jewel-burgundy">Actions</th>
+                <tr className="border-b-2 border-jewel-burgundy/30">
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Guest</th>
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Email</th>
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Guest Count</th>
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Table</th>
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Plus One</th>
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Dietary</th>
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">RSVP Notes</th>
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -1309,7 +1311,7 @@ export default function AdminPage() {
                 ) : (
                   assignments.map((assignment) => (
                     <tr key={assignment.id} className="border-b border-jewel-burgundy/10 hover:bg-jewel-burgundy/5">
-                      <td className="py-3 px-2">
+                      <td className="py-4 px-4">
                         {editingId === assignment.id ? (
                           <div className="flex flex-col gap-2">
                             <Input
@@ -1335,7 +1337,7 @@ export default function AdminPage() {
                           </div>
                         )}
                       </td>
-                      <td className="py-3 px-2">
+                      <td className="py-4 px-4">
                         {editingId === assignment.id ? (
                           <Input
                             type="email"
@@ -1347,7 +1349,7 @@ export default function AdminPage() {
                           <div className="text-sm text-jewel-burgundy/70">{assignment.email || "Not provided"}</div>
                         )}
                       </td>
-                      <td className="py-3 px-2">
+                      <td className="py-4 px-4">
                         {editingId === assignment.id ? (
                           <Input
                             type="number"
@@ -1370,7 +1372,7 @@ export default function AdminPage() {
                           </div>
                         )}
                       </td>
-                      <td className="py-3 px-2">
+                      <td className="py-4 px-4">
                         {editingId === assignment.id ? (
                           <Input
                             type="number"
@@ -1384,7 +1386,7 @@ export default function AdminPage() {
                           <div className="font-semibold text-jewel-burgundy">Table {assignment.table_number}</div>
                         )}
                       </td>
-                      <td className="py-3 px-2">
+                      <td className="py-4 px-4">
                         {editingId === assignment.id ? (
                           <Input
                             type="text"
@@ -1403,7 +1405,7 @@ export default function AdminPage() {
                           </div>
                         )}
                       </td>
-                      <td className="py-3 px-2">
+                      <td className="py-4 px-4">
                         {editingId === assignment.id ? (
                           <Input
                             type="text"
@@ -1416,7 +1418,7 @@ export default function AdminPage() {
                           <div className="text-sm text-jewel-burgundy/70">{assignment.dietary_notes || "None"}</div>
                         )}
                       </td>
-                      <td className="py-3 px-2">
+                      <td className="py-4 px-4">
                         <div className="text-sm space-y-1 max-w-xs">
                           {assignment.dietary_restrictions && (
                             <div className="flex items-start gap-1">
@@ -1435,7 +1437,7 @@ export default function AdminPage() {
                           )}
                         </div>
                       </td>
-                      <td className="py-3 px-2">
+                      <td className="py-4 px-4">
                         {editingId === assignment.id ? (
                           <div className="flex gap-2">
                             <Button
