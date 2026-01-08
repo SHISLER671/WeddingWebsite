@@ -97,35 +97,47 @@ export async function GET(request: NextRequest) {
       console.error("[v1] Admin: Error building RSVP map:", mapError)
     }
 
-    const processed =
+        const processed =
       guests?.map((guest: any) => {
         try {
         let rsvp = null
-        try {
-          rsvp = guest.rsvps?.[0] || null
-        } catch (e) {
-          // If relationship join fails, rsvp will be null and we'll match by name/email below
-          console.warn("[v1] Admin: Could not access RSVP relationship for guest:", guest.guest_name)
-        }
         const isEntourageMember = guest.is_entourage === true
 
-        // Priority 1: If guest has a real email, try to match by email first (most reliable)
-        // This handles cases where there are multiple RSVPs (e.g., one with placeholder email, one with real email)
-        if (guest.email && guest.email.includes("@") && !guest.email.includes("wedding.invalid")) {
+        // Priority 1: Use relationship join result (if it exists and invited_guest_id matches)
+        // This is the most reliable since it uses the foreign key relationship
+        if (guest.rsvps && Array.isArray(guest.rsvps) && guest.rsvps.length > 0) {
+          rsvp = guest.rsvps[0]
+        } else if (guest.rsvps && !Array.isArray(guest.rsvps)) {
+          // Sometimes it's an object, not an array
+          rsvp = guest.rsvps
+        }
+
+        // Priority 2: If guest has a real email, try to match by email
+        // This handles cases where relationship join fails but email matches
+        if (!rsvp && guest.email && guest.email.includes("@") && !guest.email.includes("wedding.invalid")) {
           const emailMatch = rsvpMap.get(guest.email.toLowerCase())
           if (emailMatch) {
-            // Prefer RSVP with real email - this is the authoritative source
             rsvp = emailMatch
           }
         }
 
-        // Priority 2: If no email match, use relationship join result (if it exists)
-        // This handles cases where invited_guest_id is set correctly
-
-        // Priority 3: If still no RSVP, try normalized name matching as fallback
+        // Priority 3: Try normalized name matching (works for both real and placeholder emails)
         if (!rsvp && guest.guest_name) {
           const normalizedName = normalizeName(guest.guest_name)
           rsvp = rsvpMap.get(`name:${normalizedName}`)
+        }
+
+        // Debug: Log if we still don't have an RSVP for a known guest
+        if (!rsvp && guest.guest_name === "Audrey Shisler") {
+          const normalizedName = normalizeName(guest.guest_name)
+          console.log("[v1] Admin: Debug - No RSVP found for Audrey Shisler", {
+            normalizedName,
+            hasRelationshipJoin: !!guest.rsvps,
+            relationshipJoinType: typeof guest.rsvps,
+            relationshipJoinLength: Array.isArray(guest.rsvps) ? guest.rsvps.length : "not array",
+            mapHasNameKey: rsvpMap.has(`name:${normalizedName}`),
+            guestEmail: guest.email,
+          })
         }
 
         const rsvpStatus = rsvp?.attendance || "pending"
