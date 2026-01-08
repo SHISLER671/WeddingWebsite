@@ -1112,8 +1112,6 @@ export default function AdminPage() {
       <div className="absolute inset-0 z-0">
         <NextImage src="/inthecar.jpg" alt="Background" fill className="object-cover object-center" priority />
       </div>
-      {/* Overlay for readability */}
-      <div className="absolute inset-0 z-10 bg-jewel-burgundy/40"></div>
 
       <div className="relative z-20 mx-auto max-w-6xl space-y-6">
         <div className="text-center">
