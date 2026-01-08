@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createBrowserClient } from "@supabase/ssr"
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Cache environment variables at module load time to avoid intermittent access issues
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ""
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ""
 
 let supabaseClient: ReturnType<typeof createBrowserClient> | null = null
 
