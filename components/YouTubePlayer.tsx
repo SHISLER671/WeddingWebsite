@@ -62,21 +62,35 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
   // Initialize player once API is ready - use global instance
   useEffect(() => {
-    if (!apiReady || !containerRef.current) return
+    if (!apiReady) return
 
-    // Use global player instance if it exists
+    // Use global player instance if it exists and is ready
     if (window.weddingMusicPlayer) {
-      setPlayerReady(true)
-      console.log("[Music] Using existing global player instance")
-      return
+      try {
+        // Check if player is still valid by checking if it has getPlayerState method
+        if (typeof window.weddingMusicPlayer.getPlayerState === "function") {
+          setPlayerReady(true)
+          console.log("[Music] Using existing global player instance")
+          return
+        }
+      } catch (error) {
+        // Player might be destroyed, recreate it
+        console.log("[Music] Existing player invalid, will recreate")
+        window.weddingMusicPlayer = null
+      }
     }
 
-    // Only initialize once
-    if (initializedRef.current) return
+    // Need container to create player
+    if (!containerRef.current || initializedRef.current) return
 
     try {
       initializedRef.current = true
-      window.weddingMusicPlayer = new window.YT.Player(containerRef.current, {
+      
+      // Create player container if it doesn't exist
+      const container = containerRef.current
+      if (!container) return
+
+      window.weddingMusicPlayer = new window.YT.Player(container, {
         height: "1",
         width: "1",
         playerVars: {
@@ -97,10 +111,8 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
             console.log("[Music] YouTube Player ready - global instance created")
           },
           onStateChange: (event: any) => {
-            // Handle state changes if needed
             const state = event.data
             console.log("[Music] Player state changed:", state)
-            // State 1 = playing, 2 = paused, 0 = ended
           },
           onError: (event: any) => {
             console.error("[Music] Player error:", event.data)
@@ -115,10 +127,16 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
   // Control playback - check state first to avoid restarting
   useEffect(() => {
-    if (!playerReady || !window.weddingMusicPlayer || !window.YT || !window.YT.PlayerState) return
+    if (!playerReady || !window.weddingMusicPlayer) return
 
     try {
       const player = window.weddingMusicPlayer
+      
+      // Safety check
+      if (typeof player.getPlayerState !== "function") {
+        console.warn("[Music] Player not ready, skipping playback control")
+        return
+      }
       
       if (isPlaying) {
         // Check current state - only play if not already playing/buffering
@@ -153,6 +171,13 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
     try {
       const player = window.weddingMusicPlayer
+      
+      // Safety check
+      if (typeof player.mute !== "function" || typeof player.unMute !== "function") {
+        console.warn("[Music] Player not ready for mute control")
+        return
+      }
+      
       if (isMuted) {
         player.mute()
       } else {
@@ -163,8 +188,10 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
     }
   }, [isMuted, playerReady])
 
+  // Don't let React unmount/remount this - keep it persistent
   return (
     <div
+      key="youtube-player-container"
       ref={containerRef}
       style={{
         position: "absolute",
@@ -173,7 +200,9 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
         width: "1px",
         height: "1px",
         visibility: "hidden",
+        pointerEvents: "none",
       }}
+      suppressHydrationWarning
     />
   )
 }
