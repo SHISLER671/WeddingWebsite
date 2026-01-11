@@ -789,7 +789,7 @@ export default function GalleryPage() {
                 </div>
               )}
 
-              {/* Spotify Player - Always Visible */}
+              {/* YouTube Playlist Player - Always Visible */}
               <div className="max-w-4xl mx-auto mt-8">
                 <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-6 border-t-4 border-jewel-burgundy">
                   <div className="flex items-center gap-3 mb-4">
@@ -801,12 +801,13 @@ export default function GalleryPage() {
                     <iframe
                       data-testid="embed-iframe"
                       style={{ borderRadius: "12px" }}
-                      src="https://open.spotify.com/embed/playlist/0wsQQLXJAaWwiG0SbeIJEP?utm_source=generator"
+                      src="https://www.youtube.com/embed/videoseries?list=PLpW1t4-1G91SnoEhXi324hjIG41PI_kUh&loop=1&playlist=PLpW1t4-1G91SnoEhXi324hjIG41PI_kUh"
                       width="100%"
                       height="352"
                       frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
-                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      referrerPolicy="strict-origin-when-cross-origin"
                       loading="lazy"
                     />
                   </div>
