@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 
 // YouTube IFrame API types
 declare global {
@@ -18,11 +19,41 @@ interface YouTubePlayerProps {
   onStateChange?: (isPlaying: boolean, isMuted: boolean) => void
 }
 
+// Global container for player - created once, persists forever
+const GLOBAL_CONTAINER_ID = "youtube-player-global-container"
+
+function getOrCreateGlobalContainer(): HTMLElement {
+  if (typeof window === "undefined") {
+    // SSR fallback
+    const div = document.createElement("div")
+    return div
+  }
+
+  let container = document.getElementById(GLOBAL_CONTAINER_ID)
+  if (!container) {
+    container = document.createElement("div")
+    container.id = GLOBAL_CONTAINER_ID
+    container.style.cssText =
+      "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;visibility:hidden;pointer-events:none;z-index:-1;"
+    document.body.appendChild(container)
+  }
+  return container
+}
+
 export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [apiReady, setApiReady] = useState(false)
   const [playerReady, setPlayerReady] = useState(false)
   const initializedRef = useRef(false)
+  const [globalContainer, setGlobalContainer] = useState<HTMLElement | null>(null)
+
+  // Get global container on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const container = getOrCreateGlobalContainer()
+      setGlobalContainer(container)
+    }
+  }, [])
 
   // Load YouTube IFrame API script
   useEffect(() => {
@@ -62,7 +93,7 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
   // Initialize player once API is ready - use global instance
   useEffect(() => {
-    if (!apiReady) return
+    if (!apiReady || !globalContainer || !containerRef.current) return
 
     // Use global player instance if it exists and is ready
     if (window.weddingMusicPlayer) {
@@ -80,17 +111,13 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
       }
     }
 
-    // Need container to create player
-    if (!containerRef.current || initializedRef.current) return
+    // Only initialize once
+    if (initializedRef.current) return
 
     try {
       initializedRef.current = true
-      
-      // Create player container if it doesn't exist
-      const container = containerRef.current
-      if (!container) return
 
-      window.weddingMusicPlayer = new window.YT.Player(container, {
+      window.weddingMusicPlayer = new window.YT.Player(containerRef.current, {
         height: "1",
         width: "1",
         playerVars: {
@@ -108,7 +135,7 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
         events: {
           onReady: (event: any) => {
             setPlayerReady(true)
-            console.log("[Music] YouTube Player ready - global instance created")
+            console.log("[Music] YouTube Player ready - global instance created via portal")
           },
           onStateChange: (event: any) => {
             const state = event.data
@@ -123,7 +150,7 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
       console.error("[Music] Failed to create player:", error)
       initializedRef.current = false
     }
-  }, [apiReady, playlistId])
+  }, [apiReady, playlistId, globalContainer])
 
   // Control playback - check state first to avoid restarting
   useEffect(() => {
@@ -131,20 +158,20 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
     try {
       const player = window.weddingMusicPlayer
-      
+
       // Safety check
       if (typeof player.getPlayerState !== "function") {
         console.warn("[Music] Player not ready, skipping playback control")
         return
       }
-      
+
       if (isPlaying) {
         // Check current state - only play if not already playing/buffering
         const playerState = player.getPlayerState()
         // YouTube PlayerState constants: 0=ended, 1=playing, 2=paused, 3=buffering, 5=cued
         const PLAYING = 1
         const BUFFERING = 3
-        
+
         // Only call playVideo if not already playing/buffering
         if (playerState !== PLAYING && playerState !== BUFFERING) {
           console.log("[Music] Starting playback (state:", playerState, ")")
@@ -171,13 +198,13 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
     try {
       const player = window.weddingMusicPlayer
-      
+
       // Safety check
       if (typeof player.mute !== "function" || typeof player.unMute !== "function") {
         console.warn("[Music] Player not ready for mute control")
         return
       }
-      
+
       if (isMuted) {
         player.mute()
       } else {
@@ -188,21 +215,20 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
     }
   }, [isMuted, playerReady])
 
-  // Don't let React unmount/remount this - keep it persistent
-  return (
+  // Render player container via portal to global container
+  if (!globalContainer) {
+    return null
+  }
+
+  return createPortal(
     <div
       key="youtube-player-container"
       ref={containerRef}
       style={{
-        position: "absolute",
-        top: "-9999px",
-        left: "-9999px",
         width: "1px",
         height: "1px",
-        visibility: "hidden",
-        pointerEvents: "none",
       }}
-      suppressHydrationWarning
-    />
+    />,
+    globalContainer
   )
 }
