@@ -28,7 +28,7 @@
 - Need to manage portal lifecycle
 
 **Implementation:**
-```typescript
+\`\`\`typescript
 // Create global container in layout.tsx
 useEffect(() => {
   if (typeof window !== "undefined") {
@@ -46,7 +46,7 @@ return createPortal(
   <div ref={containerRef} />,
   document.getElementById('youtube-player-global')
 );
-```
+\`\`\`
 
 ### Option 2: Service Worker + Web Audio API
 **How it works:**
@@ -93,7 +93,7 @@ return createPortal(
 - May not work perfectly with YouTube API
 
 **Implementation:**
-```typescript
+\`\`\`typescript
 // Track current index
 player.on('onStateChange', (event) => {
   if (event.data === YT.PlayerState.PLAYING) {
@@ -107,7 +107,7 @@ const savedIndex = sessionStorage.getItem('playlist-index');
 if (savedIndex) {
   player.loadPlaylist(playlistId, parseInt(savedIndex));
 }
-```
+\`\`\`
 
 ### Option 5: Floating Player UI (Visual Only)
 **How it works:**
