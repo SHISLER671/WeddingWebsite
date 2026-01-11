@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react"
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react"
 
 interface MusicContextType {
   isPlaying: boolean
@@ -10,18 +10,34 @@ interface MusicContextType {
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined)
 
+const MUSIC_STATE_KEY = "wedding-music-playing"
+
 export function MusicProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false)
+
+  // Load persisted state from sessionStorage on mount
+  useEffect(() => {
+    const savedState = sessionStorage.getItem(MUSIC_STATE_KEY)
+    if (savedState === "true") {
+      setIsPlaying(true)
+    }
+  }, [])
+
+  // Persist state to sessionStorage whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem(MUSIC_STATE_KEY, String(isPlaying))
+  }, [isPlaying])
 
   const startMusic = useCallback(() => {
     if (!isPlaying) {
       setIsPlaying(true)
-      // Music will start via iframe interaction
+      sessionStorage.setItem(MUSIC_STATE_KEY, "true")
     }
   }, [isPlaying])
 
   const stopMusic = useCallback(() => {
     setIsPlaying(false)
+    sessionStorage.setItem(MUSIC_STATE_KEY, "false")
   }, [])
 
   return (
