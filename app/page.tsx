@@ -3,10 +3,12 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, Edit, Gift, Camera, Info, ChevronDown } from "lucide-react"
+import { useMusic } from "@/contexts/MusicContext"
 
 export default function Home() {
   const [daysUntilWedding, setDaysUntilWedding] = useState<number | null>(null)
   const [showMenu, setShowMenu] = useState(false)
+  const { startMusic } = useMusic()
 
   useEffect(() => {
     // Calculate days until wedding
@@ -26,6 +28,13 @@ export default function Home() {
 
   const handleCountdownClick = () => {
     setShowMenu(!showMenu)
+    // Start music when menu button is clicked
+    startMusic()
+  }
+
+  const handleRSVPClick = () => {
+    // Start music when RSVP button is clicked
+    startMusic()
   }
   return (
     <div className="min-h-screen relative">
@@ -90,6 +99,7 @@ export default function Home() {
           <div className="flex flex-col gap-4 md:gap-6 font-sans">
             <Link
               href="/rsvp"
+              onClick={handleRSVPClick}
               className="bg-jewel-burgundy hover:bg-jewel-crimson text-warm-white px-10 py-4 text-lg font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 min-w-[200px] justify-center border-2 border-jewel-gold/30 transform hover:scale-105"
             >
               <Heart className="w-5 h-5" />

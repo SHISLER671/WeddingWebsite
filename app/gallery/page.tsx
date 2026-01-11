@@ -801,7 +801,7 @@ export default function GalleryPage() {
                     <iframe
                       data-testid="embed-iframe"
                       style={{ borderRadius: "12px" }}
-                      src="https://open.spotify.com/embed/playlist/6zaH3KMo6AGlFtKv9jn3vT?utm_source=generator"
+                      src="https://open.spotify.com/embed/playlist/0wsQQLXJAaWwiG0SbeIJEP?utm_source=generator"
                       width="100%"
                       height="352"
                       frameBorder="0"

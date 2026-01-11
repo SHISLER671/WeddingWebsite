@@ -169,7 +169,7 @@ function calculateBoundaryAwarePosition(
 
 async function loadTemplate(): Promise<Buffer> {
   try {
-    const templatePath = join(process.cwd(), "public", "tenthtemplate.jpg")
+    const templatePath = join(process.cwd(), "public", "15template.jpg")
     console.log("[v0] Loading template from:", templatePath)
     const buffer = await readFile(templatePath)
     console.log("[v0] Template loaded successfully, size:", buffer.length)
