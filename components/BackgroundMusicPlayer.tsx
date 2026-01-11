@@ -11,73 +11,105 @@ export default function BackgroundMusicPlayer() {
   const [isMuted, setIsMuted] = useState(() => {
     // Load mute state from sessionStorage on mount
     if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("music-muted")
-      return saved !== "false"
+      return sessionStorage.getItem("music-muted") !== "false"
     }
     return true
   })
-  const hasInitializedRef = useRef(false)
+  const srcInitializedRef = useRef(false)
 
-  // Initialize iframe once - set src only once to avoid reloads
+  // Initialize iframe src ONCE based on saved state - never change it again
   useEffect(() => {
-    if (iframeRef.current && !hasInitializedRef.current) {
-      // Load saved state
-      const savedMuted = typeof window !== "undefined" && sessionStorage.getItem("music-muted") !== "false"
+    if (iframeRef.current && !srcInitializedRef.current) {
+      // Check if music should be playing from sessionStorage
       const savedPlaying = typeof window !== "undefined" && sessionStorage.getItem("wedding-music-playing") === "true"
+      const savedMuted = typeof window !== "undefined" && sessionStorage.getItem("music-muted") !== "false"
       
-      // Set initial src based on saved state
+      // Set src ONCE with autoplay if it was playing before
       const initialSrc = savedPlaying
         ? `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}&autoplay=1&mute=${savedMuted ? "1" : "0"}&loop=1&playlist=${YOUTUBE_PLAYLIST_ID}`
         : `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}&mute=1&loop=1&playlist=${YOUTUBE_PLAYLIST_ID}`
       
       iframeRef.current.src = initialSrc
       setIsMuted(savedMuted)
-      hasInitializedRef.current = true
+      srcInitializedRef.current = true
       
       if (savedPlaying) {
-        console.log("[Music] Restored playback state", savedMuted ? "(muted)" : "(unmuted)")
+        console.log("[Music] Restored continuous playback", savedMuted ? "(muted)" : "(unmuted)")
       }
     }
   }, [])
 
-  // When music should start - only update src if not already initialized with autoplay
+  // When music should start - only set src ONCE if not already initialized
   useEffect(() => {
-    if (isPlaying && iframeRef.current && hasInitializedRef.current) {
-      const currentSrc = iframeRef.current.src
-      // Only change src if autoplay isn't already enabled
-      if (!currentSrc.includes("autoplay=1")) {
-        try {
-          const autoplaySrc = `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}&autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_PLAYLIST_ID}`
-          iframeRef.current.src = autoplaySrc
-          setIsMuted(true)
-          console.log("[Music] Starting YouTube playlist playback (muted)")
-        } catch (error) {
-          console.log("[Music] Playback initialization:", error)
-        }
+    if (isPlaying && iframeRef.current && !srcInitializedRef.current) {
+      try {
+        const autoplaySrc = `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}&autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_PLAYLIST_ID}`
+        iframeRef.current.src = autoplaySrc
+        setIsMuted(true)
+        srcInitializedRef.current = true
+        console.log("[Music] Starting continuous playback (muted)")
+      } catch (error) {
+        console.log("[Music] Playback initialization:", error)
       }
     }
   }, [isPlaying])
 
-  // Unmute handler - changes src (unavoidable, but only happens once)
-  const handleUnmute = () => {
-    if (iframeRef.current && isMuted) {
+  // Toggle mute/unmute handler
+  const handleToggleMute = () => {
+    if (iframeRef.current && srcInitializedRef.current) {
       try {
-        const unmutedSrc = `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}&autoplay=1&loop=1&playlist=${YOUTUBE_PLAYLIST_ID}`
-        iframeRef.current.src = unmutedSrc
-        setIsMuted(false)
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("music-muted", "false")
+        const currentSrc = iframeRef.current.src
+        const newMutedState = !isMuted
+        
+        // Update src to toggle mute state
+        let newSrc: string
+        if (newMutedState) {
+          // Mute: add or update mute=1
+          newSrc = currentSrc.includes("mute=")
+            ? currentSrc.replace(/mute=[01]/g, "mute=1")
+            : currentSrc + (currentSrc.includes("?") ? "&" : "?") + "mute=1"
+        } else {
+          // Unmute: change mute=1 to mute=0
+          newSrc = currentSrc.includes("mute=")
+            ? currentSrc.replace(/mute=[01]/g, "mute=0")
+            : currentSrc + (currentSrc.includes("?") ? "&" : "?") + "mute=0"
         }
-        console.log("[Music] Unmuting YouTube playlist")
+        
+        iframeRef.current.src = newSrc
+        setIsMuted(newMutedState)
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("music-muted", String(newMutedState))
+        }
+        console.log("[Music] Toggled mute:", newMutedState ? "muted" : "unmuted")
       } catch (error) {
-        console.log("[Music] Unmute error:", error)
+        console.log("[Music] Toggle mute error:", error)
       }
     }
   }
 
-  // Auto-unmute on any user interaction after music starts
+  // Auto-unmute on any user interaction after music starts (only if muted)
   useEffect(() => {
-    if (isPlaying && isMuted && hasInitializedRef.current) {
+    if (isPlaying && isMuted && srcInitializedRef.current) {
+      const handleUnmute = () => {
+        if (iframeRef.current && isMuted) {
+          try {
+            const currentSrc = iframeRef.current.src
+            const unmutedSrc = currentSrc.includes("mute=")
+              ? currentSrc.replace(/mute=[01]/g, "mute=0")
+              : currentSrc + (currentSrc.includes("?") ? "&" : "?") + "mute=0"
+            
+            iframeRef.current.src = unmutedSrc
+            setIsMuted(false)
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("music-muted", "false")
+            }
+            console.log("[Music] Auto-unmuted on user interaction")
+          } catch (error) {
+            console.log("[Music] Auto-unmute error:", error)
+          }
+        }
+      }
+
       const events = ["click", "touchstart", "keydown"]
       const handlers = events.map((event) => {
         const handler = handleUnmute
@@ -100,7 +132,7 @@ export default function BackgroundMusicPlayer() {
     }
   }, [isMuted])
 
-  // Static initial src - this is set once and shouldn't change during render
+  // Static src - this is the initial src, actual src is managed via ref to prevent React re-renders from reloading
   const staticSrc = `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}&mute=1&loop=1&playlist=${YOUTUBE_PLAYLIST_ID}`
 
   return (
@@ -111,9 +143,9 @@ export default function BackgroundMusicPlayer() {
         style={{ zIndex: -1, position: "fixed" }}
       >
         <iframe
-          key="background-music-persistent"
+          key="background-music-continuous" // Stable key prevents React from recreating
           ref={iframeRef}
-          src={staticSrc}
+          src={staticSrc} // Initial src, but we update via ref immediately in useEffect
           width="1"
           height="1"
           frameBorder="0"
@@ -132,21 +164,27 @@ export default function BackgroundMusicPlayer() {
         />
       </div>
       
-      {/* Prominent Unmute Button - Shows when music is playing and muted */}
-      {isPlaying && isMuted && (
+      {/* Music Control Button - Always visible when music is playing */}
+      {isPlaying && (
         <div
-          className="fixed bottom-6 right-6 z-50 animate-pulse"
-          style={{ animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" }}
+          className="fixed bottom-6 right-6 z-50"
         >
           <button
-            onClick={handleUnmute}
-            className="bg-jewel-gold hover:bg-jewel-gold/90 text-jewel-burgundy font-bold text-lg px-6 py-4 rounded-full shadow-2xl border-4 border-jewel-burgundy transform hover:scale-105 transition-all duration-300 flex items-center gap-3 min-w-[200px] justify-center"
+            onClick={handleToggleMute}
+            className={`font-bold text-lg px-6 py-4 rounded-full shadow-2xl border-4 transform hover:scale-105 transition-all duration-300 flex items-center gap-3 min-w-[200px] justify-center ${
+              isMuted
+                ? "bg-jewel-gold hover:bg-jewel-gold/90 text-jewel-burgundy border-jewel-burgundy"
+                : "bg-jewel-burgundy hover:bg-jewel-burgundy/90 text-warm-white border-jewel-gold"
+            }`}
             style={{
-              boxShadow: "0 10px 40px rgba(123, 75, 122, 0.5), 0 0 20px rgba(212, 165, 116, 0.8)",
+              boxShadow: isMuted
+                ? "0 10px 40px rgba(123, 75, 122, 0.5), 0 0 20px rgba(212, 165, 116, 0.8)"
+                : "0 10px 40px rgba(123, 75, 122, 0.5), 0 0 20px rgba(123, 75, 122, 0.6)",
+              animation: isMuted ? "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" : "none",
             }}
           >
-            <span className="text-2xl">🔊</span>
-            <span>Unmute Music</span>
+            <span className="text-2xl">{isMuted ? "🔊" : "🔇"}</span>
+            <span>{isMuted ? "Unmute Music" : "Mute Music"}</span>
           </button>
         </div>
       )}
