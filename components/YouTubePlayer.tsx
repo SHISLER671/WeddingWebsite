@@ -7,6 +7,7 @@ declare global {
   interface Window {
     YT: any
     onYouTubeIframeAPIReady: () => void
+    weddingMusicPlayer: any // Global player instance
   }
 }
 
@@ -18,7 +19,6 @@ interface YouTubePlayerProps {
 }
 
 export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerProps) {
-  const playerRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [apiReady, setApiReady] = useState(false)
   const [playerReady, setPlayerReady] = useState(false)
@@ -58,19 +58,25 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
       if (originalCallback) originalCallback()
       setApiReady(true)
     }
-
-    return () => {
-      // Cleanup if needed
-    }
   }, [])
 
-  // Initialize player once API is ready
+  // Initialize player once API is ready - use global instance
   useEffect(() => {
-    if (!apiReady || !containerRef.current || initializedRef.current) return
+    if (!apiReady || !containerRef.current) return
+
+    // Use global player instance if it exists
+    if (window.weddingMusicPlayer) {
+      setPlayerReady(true)
+      console.log("[Music] Using existing global player instance")
+      return
+    }
+
+    // Only initialize once
+    if (initializedRef.current) return
 
     try {
       initializedRef.current = true
-      playerRef.current = new window.YT.Player(containerRef.current, {
+      window.weddingMusicPlayer = new window.YT.Player(containerRef.current, {
         height: "1",
         width: "1",
         playerVars: {
@@ -88,11 +94,13 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
         events: {
           onReady: (event: any) => {
             setPlayerReady(true)
-            console.log("[Music] YouTube Player ready")
+            console.log("[Music] YouTube Player ready - global instance created")
           },
           onStateChange: (event: any) => {
             // Handle state changes if needed
-            console.log("[Music] Player state changed:", event.data)
+            const state = event.data
+            console.log("[Music] Player state changed:", state)
+            // State 1 = playing, 2 = paused, 0 = ended
           },
           onError: (event: any) => {
             console.error("[Music] Player error:", event.data)
@@ -105,22 +113,32 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
     }
   }, [apiReady, playlistId])
 
-  // Control playback
+  // Control playback - check state first to avoid restarting
   useEffect(() => {
-    if (!playerReady || !playerRef.current) return
+    if (!playerReady || !window.weddingMusicPlayer) return
 
     try {
+      const player = window.weddingMusicPlayer
+      
       if (isPlaying) {
-        // Check current state - if not playing, start
-        const playerState = playerRef.current.getPlayerState()
+        // Check current state - only play if not already playing
+        const playerState = player.getPlayerState()
         const PLAYING = window.YT.PlayerState.PLAYING
         const BUFFERING = window.YT.PlayerState.BUFFERING
         
+        // Only call playVideo if not already playing/buffering
         if (playerState !== PLAYING && playerState !== BUFFERING) {
-          playerRef.current.playVideo()
+          console.log("[Music] Starting playback (state:", playerState, ")")
+          player.playVideo()
+        } else {
+          console.log("[Music] Already playing, maintaining state")
         }
       } else {
-        playerRef.current.pauseVideo()
+        const playerState = player.getPlayerState()
+        if (playerState === PLAYING || playerState === BUFFERING) {
+          console.log("[Music] Pausing playback")
+          player.pauseVideo()
+        }
       }
     } catch (error) {
       console.error("[Music] Playback control error:", error)
@@ -129,13 +147,14 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
   // Control mute state (this won't cause reload!)
   useEffect(() => {
-    if (!playerReady || !playerRef.current) return
+    if (!playerReady || !window.weddingMusicPlayer) return
 
     try {
+      const player = window.weddingMusicPlayer
       if (isMuted) {
-        playerRef.current.mute()
+        player.mute()
       } else {
-        playerRef.current.unMute()
+        player.unMute()
       }
     } catch (error) {
       console.error("[Music] Mute control error:", error)
