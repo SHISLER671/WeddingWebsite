@@ -115,16 +115,17 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
   // Control playback - check state first to avoid restarting
   useEffect(() => {
-    if (!playerReady || !window.weddingMusicPlayer) return
+    if (!playerReady || !window.weddingMusicPlayer || !window.YT || !window.YT.PlayerState) return
 
     try {
       const player = window.weddingMusicPlayer
       
       if (isPlaying) {
-        // Check current state - only play if not already playing
+        // Check current state - only play if not already playing/buffering
         const playerState = player.getPlayerState()
-        const PLAYING = window.YT.PlayerState.PLAYING
-        const BUFFERING = window.YT.PlayerState.BUFFERING
+        // YouTube PlayerState constants: 0=ended, 1=playing, 2=paused, 3=buffering, 5=cued
+        const PLAYING = 1
+        const BUFFERING = 3
         
         // Only call playVideo if not already playing/buffering
         if (playerState !== PLAYING && playerState !== BUFFERING) {
@@ -135,7 +136,8 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
         }
       } else {
         const playerState = player.getPlayerState()
-        if (playerState === PLAYING || playerState === BUFFERING) {
+        const PLAYING = 1
+        if (playerState === PLAYING || playerState === 3) {
           console.log("[Music] Pausing playback")
           player.pauseVideo()
         }
