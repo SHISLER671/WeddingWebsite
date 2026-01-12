@@ -789,27 +789,17 @@ export default function GalleryPage() {
                 </div>
               )}
 
-              {/* YouTube Playlist Player - Always Visible */}
+              {/* Music Info - Background player handles all playback */}
               <div className="max-w-4xl mx-auto mt-8">
                 <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-6 border-t-4 border-jewel-burgundy">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl">Music</span>
                     <h3 className="text-2xl font-serif font-bold text-jewel-fuchsia">The Soundtrack to Our Story</h3>
                   </div>
-                  <p className="text-charcoal/70 mb-4 italic">Let the music move you as you browse our memories...</p>
-                  <div className="rounded-xl overflow-hidden shadow-lg">
-                    <iframe
-                      data-testid="embed-iframe"
-                      style={{ borderRadius: "12px" }}
-                      src="https://www.youtube.com/embed/videoseries?list=PLpW1t4-1G91SnoEhXi324hjIG41PI_kUh&loop=1&playlist=PLpW1t4-1G91SnoEhXi324hjIG41PI_kUh"
-                      width="100%"
-                      height="352"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      loading="lazy"
-                    />
+                  <p className="text-charcoal/70 mb-4 italic">Music is playing in the background - use the control button in the bottom right corner to mute/unmute</p>
+                  <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-jewel-burgundy/10 to-jewel-crimson/10 p-8 text-center border border-jewel-burgundy/20">
+                    <p className="text-jewel-burgundy font-medium">🎵 Background music is playing continuously</p>
+                    <p className="text-charcoal/60 text-sm mt-2">Control playback with the button in the bottom right corner</p>
                   </div>
                 </div>
               </div>
