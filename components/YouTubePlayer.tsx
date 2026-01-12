@@ -18,6 +18,7 @@ interface YouTubePlayerProps {
   isPlaying: boolean
   isMuted: boolean
   onStateChange?: (isPlaying: boolean, isMuted: boolean) => void
+  onTrackChange?: (trackTitle: string | null) => void
 }
 
 // Create container once, outside React
@@ -42,7 +43,7 @@ function getOrCreateContainer(): HTMLElement | null {
   return container
 }
 
-export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerProps) {
+export function YouTubePlayer({ playlistId, isPlaying, isMuted, onTrackChange }: YouTubePlayerProps) {
   const [apiReady, setApiReady] = useState(false)
   const [playerReady, setPlayerReady] = useState(false)
   const initializedRef = useRef(false)
@@ -151,11 +152,37 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
             setPlayerReady(true)
             window.weddingMusicPlayerReady = true
             console.log("[Music] YouTube Player ready - global instance created")
+            
+            // Get initial track info if available
+            try {
+              const videoData = event.target.getVideoData()
+              const trackTitle = videoData?.title || null
+              if (trackTitle && onTrackChange) {
+                onTrackChange(trackTitle)
+              }
+            } catch (error) {
+              // Player might not have video loaded yet
+              console.log("[Music] No initial video data available")
+            }
           },
           onStateChange: (event: any) => {
             const state = event.data
             console.log("[Music] Player state changed:", state)
             // State 1 = playing, 2 = paused, 0 = ended
+            
+            // When video starts playing (state 1), get the current track info
+            if (state === 1 && window.weddingMusicPlayer) {
+              try {
+                const videoData = window.weddingMusicPlayer.getVideoData()
+                const trackTitle = videoData?.title || null
+                console.log("[Music] Current track:", trackTitle)
+                if (onTrackChange) {
+                  onTrackChange(trackTitle)
+                }
+              } catch (error) {
+                console.error("[Music] Error getting video data:", error)
+              }
+            }
           },
           onError: (event: any) => {
             console.error("[Music] Player error:", event.data)

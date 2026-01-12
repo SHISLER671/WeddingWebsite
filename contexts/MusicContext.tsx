@@ -4,16 +4,28 @@ import React, { createContext, useContext, useState, useCallback, useEffect, Rea
 
 interface MusicContextType {
   isPlaying: boolean
+  isMuted: boolean
+  currentTrack: string | null
   startMusic: () => void
   stopMusic: () => void
+  toggleMute: () => void
+  setCurrentTrack: (track: string | null) => void
 }
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined)
 
 const MUSIC_STATE_KEY = "wedding-music-playing"
+const MUSIC_MUTED_KEY = "music-muted"
 
 export function MusicProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isMuted, setIsMuted] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem(MUSIC_MUTED_KEY) !== "false"
+    }
+    return true
+  })
+  const [currentTrack, setCurrentTrack] = useState<string | null>(null)
 
   // Load persisted state from sessionStorage on mount
   useEffect(() => {
@@ -28,6 +40,10 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     sessionStorage.setItem(MUSIC_STATE_KEY, String(isPlaying))
   }, [isPlaying])
 
+  useEffect(() => {
+    sessionStorage.setItem(MUSIC_MUTED_KEY, String(isMuted))
+  }, [isMuted])
+
   const startMusic = useCallback(() => {
     if (!isPlaying) {
       setIsPlaying(true)
@@ -40,8 +56,30 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     sessionStorage.setItem(MUSIC_STATE_KEY, "false")
   }, [])
 
+  const toggleMute = useCallback(() => {
+    setIsMuted((prev) => {
+      const newState = !prev
+      sessionStorage.setItem(MUSIC_MUTED_KEY, String(newState))
+      return newState
+    })
+  }, [])
+
+  const handleSetCurrentTrack = useCallback((track: string | null) => {
+    setCurrentTrack(track)
+  }, [])
+
   return (
-    <MusicContext.Provider value={{ isPlaying, startMusic, stopMusic }}>
+    <MusicContext.Provider
+      value={{
+        isPlaying,
+        isMuted,
+        currentTrack,
+        startMusic,
+        stopMusic,
+        toggleMute,
+        setCurrentTrack: handleSetCurrentTrack,
+      }}
+    >
       {children}
     </MusicContext.Provider>
   )
