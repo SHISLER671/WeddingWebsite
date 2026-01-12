@@ -23,6 +23,68 @@ export default function BackgroundMusicPlayer() {
     playTrackAtIndex,
   } = useMusic()
   const [showPlaylist, setShowPlaylist] = useState(false)
+  const [loadingTitles, setLoadingTitles] = useState(false)
+
+  // Fetch titles for all tracks when playlist is expanded
+  useEffect(() => {
+    if (showPlaylist && playlist.length > 0 && typeof window !== "undefined" && window.weddingMusicPlayer && window.weddingMusicPlayerReady) {
+      // Check if we need to fetch titles
+      const needsTitles = playlist.some((track) => !track.title)
+      if (!needsTitles) return
+
+      setLoadingTitles(true)
+      const fetchTitles = async () => {
+        try {
+          const player = window.weddingMusicPlayer
+          const currentIndex = player.getPlaylistIndex()
+          const updatedPlaylist = [...playlist]
+
+          // Fetch titles for tracks that don't have them
+          for (let i = 0; i < updatedPlaylist.length; i++) {
+            if (!updatedPlaylist[i].title) {
+              try {
+                // Temporarily load the video to get its data (without playing)
+                const wasPlaying = player.getPlayerState() === 1 // PLAYING state
+                const savedIndex = currentIndex
+
+                // Load the video (this doesn't play it if we're quick)
+                player.loadVideoById(updatedPlaylist[i].videoId, 0, "small")
+                
+                // Wait a bit for video to load
+                await new Promise((resolve) => setTimeout(resolve, 300))
+
+                // Get video data
+                const videoData = player.getVideoData()
+                if (videoData && videoData.title) {
+                  updatedPlaylist[i].title = videoData.title
+                  setPlaylist([...updatedPlaylist])
+                }
+
+                // Restore previous video if it was playing
+                if (wasPlaying && savedIndex >= 0) {
+                  player.playVideoAt(savedIndex)
+                  await new Promise((resolve) => setTimeout(resolve, 100))
+                  if (wasPlaying) {
+                    player.playVideo()
+                  }
+                } else if (savedIndex >= 0) {
+                  player.playVideoAt(savedIndex)
+                }
+              } catch (error) {
+                console.error(`[Music] Error fetching title for track ${i}:`, error)
+              }
+            }
+          }
+        } catch (error) {
+          console.error("[Music] Error fetching playlist titles:", error)
+        } finally {
+          setLoadingTitles(false)
+        }
+      }
+
+      fetchTitles()
+    }
+  }, [showPlaylist, playlist, setPlaylist])
 
   // Auto-unmute on any user interaction after music starts (only if muted)
   useEffect(() => {
