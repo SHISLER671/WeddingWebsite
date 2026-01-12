@@ -49,16 +49,44 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Build query for invited guest lookup
-    let guestQuery = supabase.from("invited_guests").select("id")
+    // Build query for invited guest lookup (must match to link RSVP properly)
+    // Use case-insensitive matching for guest names to handle variations
+    console.log("[v0] Looking up invited guest:", { guest_name: trimmedGuestName, email: trimmedEmail || "(no email)" })
     
-    if (trimmedEmail) {
-      guestQuery = guestQuery.or(`guest_name.eq.${trimmedGuestName},email.eq.${trimmedEmail}`)
-    } else {
-      guestQuery = guestQuery.eq("guest_name", trimmedGuestName)
+    let invitedGuest = null
+    let guestError = null
+    
+    // Try to find by email first (if provided and not a placeholder)
+    if (trimmedEmail && !trimmedEmail.includes("wedding.invalid")) {
+      const { data, error } = await supabase
+        .from("invited_guests")
+        .select("id, guest_name, email")
+        .eq("email", trimmedEmail)
+        .maybeSingle()
+      
+      if (!error && data) {
+        invitedGuest = data
+        console.log("[v0] Found invited guest by email:", data.id)
+      } else if (error) {
+        guestError = error
+      }
     }
     
-    const { data: invitedGuest, error: guestError } = await guestQuery.maybeSingle()
+    // If not found by email, try by name (case-insensitive)
+    if (!invitedGuest) {
+      const { data, error } = await supabase
+        .from("invited_guests")
+        .select("id, guest_name, email")
+        .ilike("guest_name", trimmedGuestName)
+        .maybeSingle()
+      
+      if (!error && data) {
+        invitedGuest = data
+        console.log("[v0] Found invited guest by name:", data.id)
+      } else if (error && !guestError) {
+        guestError = error
+      }
+    }
 
     if (guestError) {
       console.error("[v0] Error finding invited guest:", guestError)
@@ -67,44 +95,54 @@ export async function POST(request: NextRequest) {
     const invited_guest_id = invitedGuest?.id || null
 
     if (!invited_guest_id) {
-      console.warn("[v0] No matching invited guest found for:", { guest_name: trimmedGuestName, email: trimmedEmail || "(no email provided)" })
+      console.warn("[v0] ⚠️ No matching invited guest found for:", { 
+        guest_name: trimmedGuestName, 
+        email: trimmedEmail || "(no email provided)",
+        note: "RSVP will be created without invited_guest_id link"
+      })
+    } else {
+      console.log("[v0] ✅ Found invited guest ID:", invited_guest_id, "for:", trimmedGuestName)
     }
 
-    // First, check if an RSVP exists by guest name (to handle cases where auto-RSVP used placeholder emails)
-    // Use case-insensitive exact matching
-    console.log("[v0] Checking for existing RSVP by guest name:", trimmedGuestName)
-    const normalizedGuestName = trimmedGuestName.toLowerCase()
-    const { data: existingByName, error: nameCheckError } = await supabase
+    // Check for existing RSVP by both name and email
+    // Use placeholder email if none provided (for consistent lookup)
+    const emailForLookup = trimmedEmail || `no-email-${trimmedGuestName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}@wedding.invalid`
+    
+    console.log("[v0] Checking for existing RSVP:", { guest_name: trimmedGuestName, email: emailForLookup })
+    
+    // Try to find existing RSVP by email first (most reliable - emails are unique)
+    const { data: existingByEmail, error: emailCheckError } = await supabase
       .from("rsvps")
       .select("id, email, guest_name")
-      .ilike("guest_name", normalizedGuestName)
+      .eq("email", emailForLookup)
       .maybeSingle()
 
-    if (nameCheckError) {
-      console.error("[v0] Error checking for existing RSVP by name:", nameCheckError)
+    if (emailCheckError) {
+      console.error("[v0] Error checking for existing RSVP by email:", emailCheckError)
     }
 
-    // Also check by email as a fallback (only if email was provided)
-    let existingByEmail = null
-    if (trimmedEmail) {
-      const { data, error: emailCheckError } = await supabase
+    // Also check by guest name (case-insensitive) as fallback
+    // This handles cases where email might have changed or there are variations
+    let existingByName = null
+    if (!existingByEmail) {
+      const { data, error: nameCheckError } = await supabase
         .from("rsvps")
         .select("id, email, guest_name")
-        .eq("email", trimmedEmail)
+        .ilike("guest_name", trimmedGuestName)
         .maybeSingle()
 
-      if (emailCheckError) {
-        console.error("[v0] Error checking for existing RSVP by email:", emailCheckError)
+      if (nameCheckError) {
+        console.error("[v0] Error checking for existing RSVP by name:", nameCheckError)
       } else {
-        existingByEmail = data
+        existingByName = data
       }
     }
 
-    // Prefer match by name over email (to handle email changes from placeholder to real email)
-    const existingRsvp = existingByName || existingByEmail
+    // Prefer match by email over name (emails are unique and more reliable)
+    const existingRsvp = existingByEmail || existingByName
 
-    // Use placeholder email if none provided (database requires non-null email)
-    const emailForDb = trimmedEmail || `no-email-${trimmedGuestName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}@wedding.invalid`
+    // Use the same email format for database (consistent with lookup)
+    const emailForDb = emailForLookup
 
     const rsvpData = {
       guest_name: trimmedGuestName,
@@ -122,9 +160,11 @@ export async function POST(request: NextRequest) {
     if (existingRsvp) {
       // Update existing RSVP (handles both name match and email match cases)
       console.log(`[v0] Found existing RSVP (id: ${existingRsvp.id}), updating...`, {
+        guest_name: trimmedGuestName,
         old_email: existingRsvp.email,
         new_email: emailForDb,
-        matched_by: existingByName ? "name" : "email",
+        new_attendance: attendance,
+        matched_by: existingByEmail ? "email" : "name",
       })
 
       const { data: updateData, error: updateError } = await supabase
