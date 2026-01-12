@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { createPortal } from "react-dom"
 
 // YouTube IFrame API types
 declare global {
@@ -10,6 +9,7 @@ declare global {
     onYouTubeIframeAPIReady: () => void
     weddingMusicPlayer: any // Global player instance
     weddingMusicPlayerReady: boolean // Track if player is ready
+    weddingMusicContainer: HTMLElement | null // Global container
   }
 }
 
@@ -20,41 +20,40 @@ interface YouTubePlayerProps {
   onStateChange?: (isPlaying: boolean, isMuted: boolean) => void
 }
 
-// Global container for player - created once, persists forever
-const GLOBAL_CONTAINER_ID = "youtube-player-global-container"
+// Create container once, outside React
+function getOrCreateContainer(): HTMLElement | null {
+  if (typeof window === "undefined") return null
 
-function getOrCreateGlobalContainer(): HTMLElement {
-  if (typeof window === "undefined") {
-    // SSR fallback
-    const div = document.createElement("div")
-    return div
+  // Return existing container if it exists
+  if (window.weddingMusicContainer) {
+    return window.weddingMusicContainer
   }
 
-  let container = document.getElementById(GLOBAL_CONTAINER_ID)
-  if (!container) {
-    container = document.createElement("div")
-    container.id = GLOBAL_CONTAINER_ID
-    container.style.cssText =
-      "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;visibility:hidden;pointer-events:none;z-index:-1;"
-    document.body.appendChild(container)
-  }
+  // Create container and store globally
+  const container = document.createElement("div")
+  container.id = "youtube-player-global-container"
+  container.style.cssText =
+    "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;visibility:hidden;pointer-events:none;z-index:-1;"
+  
+  // Append to body (outside React tree)
+  document.body.appendChild(container)
+  window.weddingMusicContainer = container
+
   return container
 }
 
 export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
   const [apiReady, setApiReady] = useState(false)
   const [playerReady, setPlayerReady] = useState(false)
   const initializedRef = useRef(false)
-  const [globalContainer, setGlobalContainer] = useState<HTMLElement | null>(null)
   const lastPlayingStateRef = useRef<boolean | null>(null)
 
-  // Get global container on mount
+  // Get/create container on mount
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const container = getOrCreateGlobalContainer()
-      setGlobalContainer(container)
-    }
+    if (typeof window === "undefined") return
+    
+    // Ensure container exists
+    getOrCreateContainer()
   }, [])
 
   // Load YouTube IFrame API script
@@ -95,7 +94,10 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
 
   // Initialize player once API is ready - use global instance
   useEffect(() => {
-    if (!apiReady || !globalContainer || !containerRef.current) return
+    if (!apiReady) return
+
+    const container = getOrCreateContainer()
+    if (!container) return
 
     // Use global player instance if it exists and is ready
     if (window.weddingMusicPlayer && window.weddingMusicPlayerReady) {
@@ -117,10 +119,19 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
     // Only initialize once
     if (initializedRef.current) return
 
+    // Create inner container div for YouTube player
+    let playerContainer = container.querySelector("#youtube-player-inner") as HTMLElement
+    if (!playerContainer) {
+      playerContainer = document.createElement("div")
+      playerContainer.id = "youtube-player-inner"
+      playerContainer.style.cssText = "width:1px;height:1px;"
+      container.appendChild(playerContainer)
+    }
+
     try {
       initializedRef.current = true
 
-      window.weddingMusicPlayer = new window.YT.Player(containerRef.current, {
+      window.weddingMusicPlayer = new window.YT.Player(playerContainer, {
         height: "1",
         width: "1",
         playerVars: {
@@ -139,7 +150,7 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
           onReady: (event: any) => {
             setPlayerReady(true)
             window.weddingMusicPlayerReady = true
-            console.log("[Music] YouTube Player ready - global instance created via portal")
+            console.log("[Music] YouTube Player ready - global instance created")
           },
           onStateChange: (event: any) => {
             const state = event.data
@@ -155,7 +166,7 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
       console.error("[Music] Failed to create player:", error)
       initializedRef.current = false
     }
-  }, [apiReady, playlistId, globalContainer])
+  }, [apiReady, playlistId])
 
   // Control playback - ONLY change state if it actually changed
   useEffect(() => {
@@ -229,20 +240,6 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted }: YouTubePlayerP
     }
   }, [isMuted, playerReady])
 
-  // Render player container via portal to global container
-  if (!globalContainer) {
-    return null
-  }
-
-  return createPortal(
-    <div
-      key="youtube-player-container"
-      ref={containerRef}
-      style={{
-        width: "1px",
-        height: "1px",
-      }}
-    />,
-    globalContainer
-  )
+  // Don't render anything - container is managed outside React
+  return null
 }
