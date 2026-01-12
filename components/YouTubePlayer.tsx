@@ -19,6 +19,8 @@ interface YouTubePlayerProps {
   isMuted: boolean
   onStateChange?: (isPlaying: boolean, isMuted: boolean) => void
   onTrackChange?: (trackTitle: string | null) => void
+  onTrackIndexChange?: (index: number | null) => void
+  onPlaylistLoaded?: (playlist: Array<{ videoId: string; title: string | null; index: number }>) => void
   onNextTrack?: () => void
   onPreviousTrack?: () => void
 }
@@ -45,7 +47,14 @@ function getOrCreateContainer(): HTMLElement | null {
   return container
 }
 
-export function YouTubePlayer({ playlistId, isPlaying, isMuted, onTrackChange }: YouTubePlayerProps) {
+export function YouTubePlayer({
+  playlistId,
+  isPlaying,
+  isMuted,
+  onTrackChange,
+  onTrackIndexChange,
+  onPlaylistLoaded,
+}: YouTubePlayerProps) {
   const [apiReady, setApiReady] = useState(false)
   const [playerReady, setPlayerReady] = useState(false)
   const initializedRef = useRef(false)
@@ -150,21 +159,44 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted, onTrackChange }:
           modestbranding: 1,
         },
         events: {
-          onReady: (event: any) => {
+          onReady: async (event: any) => {
             setPlayerReady(true)
             window.weddingMusicPlayerReady = true
             console.log("[Music] YouTube Player ready - global instance created")
-            
-            // Get initial track info if available
+
+            // Get playlist and initial track info
             try {
-              const videoData = event.target.getVideoData()
+              const player = event.target
+              
+              // Get playlist video IDs
+              const videoIds = player.getPlaylist() || []
+              console.log("[Music] Playlist loaded, video count:", videoIds.length)
+
+              // Get current track index
+              const currentIndex = player.getPlaylistIndex()
+              if (onTrackIndexChange) {
+                onTrackIndexChange(currentIndex >= 0 ? currentIndex : null)
+              }
+
+              // Get initial track title
+              const videoData = player.getVideoData()
               const trackTitle = videoData?.title || null
               if (trackTitle && onTrackChange) {
                 onTrackChange(trackTitle)
               }
+
+              // Build playlist array with video IDs (titles will be fetched on demand)
+              const playlist = videoIds.map((videoId: string, index: number) => ({
+                videoId,
+                title: index === currentIndex ? trackTitle : null, // Only get title for current track initially
+                index,
+              }))
+
+              if (onPlaylistLoaded) {
+                onPlaylistLoaded(playlist)
+              }
             } catch (error) {
-              // Player might not have video loaded yet
-              console.log("[Music] No initial video data available")
+              console.error("[Music] Error getting playlist info:", error)
             }
           },
           onStateChange: (event: any) => {
@@ -175,11 +207,19 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted, onTrackChange }:
             // When video starts playing (state 1), get the current track info
             if (state === 1 && window.weddingMusicPlayer) {
               try {
-                const videoData = window.weddingMusicPlayer.getVideoData()
+                const player = window.weddingMusicPlayer
+                const videoData = player.getVideoData()
                 const trackTitle = videoData?.title || null
-                console.log("[Music] Current track:", trackTitle)
+                const currentIndex = player.getPlaylistIndex()
+                
+                console.log("[Music] Current track:", trackTitle, "Index:", currentIndex)
+                
                 if (onTrackChange) {
                   onTrackChange(trackTitle)
+                }
+                
+                if (onTrackIndexChange) {
+                  onTrackIndexChange(currentIndex >= 0 ? currentIndex : null)
                 }
               } catch (error) {
                 console.error("[Music] Error getting video data:", error)

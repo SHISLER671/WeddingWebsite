@@ -2,16 +2,27 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react"
 
+interface PlaylistTrack {
+  videoId: string
+  title: string | null
+  index: number
+}
+
 interface MusicContextType {
   isPlaying: boolean
   isMuted: boolean
   currentTrack: string | null
+  currentTrackIndex: number | null
+  playlist: PlaylistTrack[]
   startMusic: () => void
   stopMusic: () => void
   toggleMute: () => void
   setCurrentTrack: (track: string | null) => void
+  setCurrentTrackIndex: (index: number | null) => void
+  setPlaylist: (playlist: PlaylistTrack[]) => void
   nextTrack: () => void
   previousTrack: () => void
+  playTrackAtIndex: (index: number) => void
 }
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined)
@@ -28,6 +39,8 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     return true
   })
   const [currentTrack, setCurrentTrack] = useState<string | null>(null)
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null)
+  const [playlist, setPlaylist] = useState<PlaylistTrack[]>([])
 
   // Load persisted state from sessionStorage on mount
   useEffect(() => {
@@ -90,18 +103,41 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const playTrackAtIndex = useCallback((index: number) => {
+    if (typeof window !== "undefined" && window.weddingMusicPlayer && window.weddingMusicPlayerReady) {
+      try {
+        window.weddingMusicPlayer.playVideoAt(index)
+      } catch (error) {
+        console.error("[Music] Error playing track at index:", error)
+      }
+    }
+  }, [])
+
+  const handleSetCurrentTrackIndex = useCallback((index: number | null) => {
+    setCurrentTrackIndex(index)
+  }, [])
+
+  const handleSetPlaylist = useCallback((newPlaylist: PlaylistTrack[]) => {
+    setPlaylist(newPlaylist)
+  }, [])
+
   return (
     <MusicContext.Provider
       value={{
         isPlaying,
         isMuted,
         currentTrack,
+        currentTrackIndex,
+        playlist,
         startMusic,
         stopMusic,
         toggleMute,
         setCurrentTrack: handleSetCurrentTrack,
+        setCurrentTrackIndex: handleSetCurrentTrackIndex,
+        setPlaylist: handleSetPlaylist,
         nextTrack,
         previousTrack,
+        playTrackAtIndex,
       }}
     >
       {children}

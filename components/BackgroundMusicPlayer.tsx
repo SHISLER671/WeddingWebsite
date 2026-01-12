@@ -3,13 +3,26 @@
 import { useEffect, useState } from "react"
 import { useMusic } from "@/contexts/MusicContext"
 import { YouTubePlayer } from "./YouTubePlayer"
-import { SkipBack, SkipForward } from "lucide-react"
+import { SkipBack, SkipForward, List, X } from "lucide-react"
 
 const YOUTUBE_PLAYLIST_ID = "PLpW1t4-1G91SnoEhXi324hjIG41PI_kUh"
 
 export default function BackgroundMusicPlayer() {
-  const { isPlaying, isMuted, currentTrack, toggleMute, setCurrentTrack, nextTrack, previousTrack } = useMusic()
-  const [showControls, setShowControls] = useState(false)
+  const {
+    isPlaying,
+    isMuted,
+    currentTrack,
+    currentTrackIndex,
+    playlist,
+    toggleMute,
+    setCurrentTrack,
+    setCurrentTrackIndex,
+    setPlaylist,
+    nextTrack,
+    previousTrack,
+    playTrackAtIndex,
+  } = useMusic()
+  const [showPlaylist, setShowPlaylist] = useState(false)
 
   // Auto-unmute on any user interaction after music starts (only if muted)
   useEffect(() => {
@@ -42,12 +55,56 @@ export default function BackgroundMusicPlayer() {
         isPlaying={isPlaying}
         isMuted={isMuted}
         onTrackChange={setCurrentTrack}
+        onTrackIndexChange={setCurrentTrackIndex}
+        onPlaylistLoaded={setPlaylist}
       />
 
       {/* Music Control Panel - Always visible when music is playing */}
       {isPlaying && (
         <div className="fixed bottom-6 right-6 z-50 max-w-md">
           <div className="flex flex-col gap-3 items-end">
+            {/* Expandable Playlist */}
+            {showPlaylist && playlist.length > 0 && (
+              <div className="bg-jewel-burgundy/95 backdrop-blur-md rounded-2xl shadow-2xl border-4 border-jewel-gold p-4 max-h-[400px] overflow-y-auto w-full">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-warm-white font-bold text-lg">Playlist</h3>
+                  <button
+                    onClick={() => setShowPlaylist(false)}
+                    className="text-warm-white hover:text-jewel-gold transition-colors"
+                    aria-label="Close playlist"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="space-y-1">
+                  {playlist.map((track) => (
+                    <button
+                      key={track.index}
+                      onClick={() => {
+                        playTrackAtIndex(track.index)
+                        setShowPlaylist(false)
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
+                        track.index === currentTrackIndex
+                          ? "bg-jewel-gold text-jewel-burgundy font-semibold"
+                          : "bg-warm-white/10 text-warm-white hover:bg-warm-white/20"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs opacity-70">#{track.index + 1}</span>
+                        <span className="truncate flex-1">
+                          {track.title || `Track ${track.index + 1}`}
+                        </span>
+                        {track.index === currentTrackIndex && (
+                          <span className="text-xs">▶</span>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Track Navigation Buttons */}
             <div className="flex items-center gap-2">
               <button
@@ -57,6 +114,14 @@ export default function BackgroundMusicPlayer() {
                 title="Previous track"
               >
                 <SkipBack className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setShowPlaylist(!showPlaylist)}
+                className="bg-jewel-burgundy/90 hover:bg-jewel-burgundy text-warm-white p-3 rounded-full shadow-lg border-2 border-jewel-gold/30 hover:scale-110 transition-all duration-300"
+                aria-label={showPlaylist ? "Hide playlist" : "Show playlist"}
+                title={showPlaylist ? "Hide playlist" : "Show playlist"}
+              >
+                <List className="w-5 h-5" />
               </button>
               <button
                 onClick={nextTrack}
