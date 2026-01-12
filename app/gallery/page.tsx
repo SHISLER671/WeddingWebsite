@@ -1,5 +1,7 @@
 "use client"
 
+import { useMusic } from "@/contexts/MusicContext"
+
 import type React from "react"
 import { useState, useEffect, useRef, useCallback } from "react"
 import Image from "next/image"
@@ -29,6 +31,7 @@ import useEmblaCarousel from "embla-carousel-react"
 type ViewMode = "carousel" | "grid"
 
 export default function GalleryPage() {
+  const { currentTrack } = useMusic()
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -799,6 +802,11 @@ export default function GalleryPage() {
                   <p className="text-charcoal/70 mb-4 italic">Music is playing in the background - use the control button in the bottom right corner to mute/unmute</p>
                   <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-jewel-burgundy/10 to-jewel-crimson/10 p-8 text-center border border-jewel-burgundy/20">
                     <p className="text-jewel-burgundy font-medium">🎵 Background music is playing continuously</p>
+                    {currentTrack && (
+                      <p className="text-jewel-burgundy text-lg font-semibold mt-3 italic">
+                        Now Playing: "{currentTrack}"
+                      </p>
+                    )}
                     <p className="text-charcoal/60 text-sm mt-2">Control playback with the button in the bottom right corner</p>
                   </div>
                 </div>

@@ -267,6 +267,34 @@ export function YouTubePlayer({ playlistId, isPlaying, isMuted, onTrackChange }:
     }
   }, [isMuted, playerReady])
 
+  // Poll for current track info periodically when playing
+  useEffect(() => {
+    if (!playerReady || !isPlaying || !window.weddingMusicPlayer || !window.weddingMusicPlayerReady) return
+
+    const updateTrackInfo = () => {
+      try {
+        const player = window.weddingMusicPlayer
+        if (typeof player.getVideoData === "function") {
+          const videoData = player.getVideoData()
+          const trackTitle = videoData?.title || null
+          if (trackTitle && onTrackChange) {
+            onTrackChange(trackTitle)
+          }
+        }
+      } catch (error) {
+        // Silently fail - player might be transitioning
+      }
+    }
+
+    // Update immediately
+    updateTrackInfo()
+
+    // Poll every 2 seconds to catch track changes
+    const interval = setInterval(updateTrackInfo, 2000)
+
+    return () => clearInterval(interval)
+  }, [playerReady, isPlaying, onTrackChange])
+
   // Don't render anything - container is managed outside React
   return null
 }
