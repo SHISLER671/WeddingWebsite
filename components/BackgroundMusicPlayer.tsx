@@ -25,9 +25,9 @@ export default function BackgroundMusicPlayer() {
   const [showPlaylist, setShowPlaylist] = useState(false)
   const [loadingTitles, setLoadingTitles] = useState(false)
 
-  // Fetch titles for all tracks when playlist is expanded
+  // Fetch titles for all tracks when playlist is expanded (using YouTube oEmbed API)
   useEffect(() => {
-    if (showPlaylist && playlist.length > 0 && typeof window !== "undefined" && window.weddingMusicPlayer && window.weddingMusicPlayerReady) {
+    if (showPlaylist && playlist.length > 0) {
       // Check if we need to fetch titles
       const needsTitles = playlist.some((track) => !track.title)
       if (!needsTitles) return
@@ -35,46 +35,34 @@ export default function BackgroundMusicPlayer() {
       setLoadingTitles(true)
       const fetchTitles = async () => {
         try {
-          const player = window.weddingMusicPlayer
-          const currentIndex = player.getPlaylistIndex()
           const updatedPlaylist = [...playlist]
 
-          // Fetch titles for tracks that don't have them
-          for (let i = 0; i < updatedPlaylist.length; i++) {
-            if (!updatedPlaylist[i].title) {
+          // Fetch titles using YouTube oEmbed API (no API key needed)
+          const fetchPromises = updatedPlaylist.map(async (track, index) => {
+            if (!track.title) {
               try {
-                // Temporarily load the video to get its data (without playing)
-                const wasPlaying = player.getPlayerState() === 1 // PLAYING state
-                const savedIndex = currentIndex
-
-                // Load the video (this doesn't play it if we're quick)
-                player.loadVideoById(updatedPlaylist[i].videoId, 0, "small")
-                
-                // Wait a bit for video to load
-                await new Promise((resolve) => setTimeout(resolve, 300))
-
-                // Get video data
-                const videoData = player.getVideoData()
-                if (videoData && videoData.title) {
-                  updatedPlaylist[i].title = videoData.title
-                  setPlaylist([...updatedPlaylist])
-                }
-
-                // Restore previous video if it was playing
-                if (wasPlaying && savedIndex >= 0) {
-                  player.playVideoAt(savedIndex)
-                  await new Promise((resolve) => setTimeout(resolve, 100))
-                  if (wasPlaying) {
-                    player.playVideo()
-                  }
-                } else if (savedIndex >= 0) {
-                  player.playVideoAt(savedIndex)
+                const response = await fetch(
+                  `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${track.videoId}&format=json`
+                )
+                if (response.ok) {
+                  const data = await response.json()
+                  return { index, title: data.title }
                 }
               } catch (error) {
-                console.error(`[Music] Error fetching title for track ${i}:`, error)
+                console.error(`[Music] Error fetching title for track ${index}:`, error)
               }
             }
-          }
+            return null
+          })
+
+          const results = await Promise.all(fetchPromises)
+          results.forEach((result) => {
+            if (result && updatedPlaylist[result.index]) {
+              updatedPlaylist[result.index].title = result.title
+            }
+          })
+
+          setPlaylist(updatedPlaylist)
         } catch (error) {
           console.error("[Music] Error fetching playlist titles:", error)
         } finally {
