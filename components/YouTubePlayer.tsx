@@ -19,6 +19,8 @@ interface YouTubePlayerProps {
   isMuted: boolean
   onStateChange?: (isPlaying: boolean, isMuted: boolean) => void
   onTrackChange?: (trackTitle: string | null) => void
+  onNextTrack?: () => void
+  onPreviousTrack?: () => void
 }
 
 // Create container once, outside React

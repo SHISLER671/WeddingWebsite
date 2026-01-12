@@ -10,6 +10,8 @@ interface MusicContextType {
   stopMusic: () => void
   toggleMute: () => void
   setCurrentTrack: (track: string | null) => void
+  nextTrack: () => void
+  previousTrack: () => void
 }
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined)
@@ -68,6 +70,26 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     setCurrentTrack(track)
   }, [])
 
+  const nextTrack = useCallback(() => {
+    if (typeof window !== "undefined" && window.weddingMusicPlayer && window.weddingMusicPlayerReady) {
+      try {
+        window.weddingMusicPlayer.nextVideo()
+      } catch (error) {
+        console.error("[Music] Error skipping to next track:", error)
+      }
+    }
+  }, [])
+
+  const previousTrack = useCallback(() => {
+    if (typeof window !== "undefined" && window.weddingMusicPlayer && window.weddingMusicPlayerReady) {
+      try {
+        window.weddingMusicPlayer.previousVideo()
+      } catch (error) {
+        console.error("[Music] Error skipping to previous track:", error)
+      }
+    }
+  }, [])
+
   return (
     <MusicContext.Provider
       value={{
@@ -78,6 +100,8 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         stopMusic,
         toggleMute,
         setCurrentTrack: handleSetCurrentTrack,
+        nextTrack,
+        previousTrack,
       }}
     >
       {children}
