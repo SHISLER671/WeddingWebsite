@@ -1,0 +1,318 @@
+{
+  "matchedCount": 78,
+  "missing": [],
+  "mappings": [
+    {
+      "input": "Albert & Doris Perez",
+      "canonical": "Uncle Albert & Doris Perez"
+    },
+    {
+      "input": "Ann & Michael Taitano",
+      "canonical": "Ann & Michael Taitano"
+    },
+    {
+      "input": "Anthony Aguon",
+      "canonical": "Anthony Aguon"
+    },
+    {
+      "input": "Auntie Ann Taitano",
+      "canonical": "Auntie Ann Taitano & Guest"
+    },
+    {
+      "input": "Annette A. Camacho",
+      "canonical": "Annette A. Camacho"
+    },
+    {
+      "input": "Ashe Ramirez & Genevieve Palmares",
+      "canonical": "Ashe Ramirez and Genevieve Palmares"
+    },
+    {
+      "input": "Audrey Benavente",
+      "canonical": "Audrey Benavente"
+    },
+    {
+      "input": "Bert Flores",
+      "canonical": "Bert Flores"
+    },
+    {
+      "input": "Camella Ramirez & Dominic Gadia",
+      "canonical": "Camella Ramirez & Dominic Gadia"
+    },
+    {
+      "input": "Carol M. Perez & Joe Hernandez",
+      "canonical": "Auntie Carol M. Perez & Joe Hernandez"
+    },
+    {
+      "input": "Auntie Carol Perez",
+      "canonical": "Auntie Carol Perez"
+    },
+    {
+      "input": "Christiana Ramirez & Zachary Caldwell",
+      "canonical": "Zachary Caldwell & Christiana Ramirez"
+    },
+    {
+      "input": "Christopher & Nora Rapolla",
+      "canonical": "Christopher & Nora Rapolla"
+    },
+    {
+      "input": "Christopher Taitano",
+      "canonical": "Christopher Taitano"
+    },
+    {
+      "input": "Daniel & Carol Somerfleck and Family",
+      "canonical": "Daniel & Carol Somerfleck"
+    },
+    {
+      "input": "David Weisenberger",
+      "canonical": "David Weisenberger"
+    },
+    {
+      "input": "Derek Mandell & Ayuri Sugahara",
+      "canonical": "Derek Mandell & Ayuri Sugahara"
+    },
+    {
+      "input": "Derrick & Reynne Wahl",
+      "canonical": "Derrick & Reynne Wahl"
+    },
+    {
+      "input": "Desmond & Gerri Mandell Jr.",
+      "canonical": "Uncle Desmond & Gerri Mandell Jr."
+    },
+    {
+      "input": "Desmond & Shista Mandell",
+      "canonical": "Desmond & Shista Mandell III"
+    },
+    {
+      "input": "Donna C. Perez",
+      "canonical": "Auntie Donna C. Perez"
+    },
+    {
+      "input": "Ray & Elena Quiogue and Diego",
+      "canonical": "Elena and Ray and Diego Quiogue"
+    },
+    {
+      "input": "Elizabeth Valencia & Agustin Untalan",
+      "canonical": "Elizabeth Valencia & Agustin Untalan"
+    },
+    {
+      "input": "Enrique & Rose Pangelinan",
+      "canonical": "Uncle Enrique & Rose Pangelinan"
+    },
+    {
+      "input": "Eric & Diana Mandell and Kids",
+      "canonical": "Eric & Diana Mandell"
+    },
+    {
+      "input": "Eric & Tasha Taitano",
+      "canonical": "Eric & Tasha Taitano"
+    },
+    {
+      "input": "Esther Mendiola & Wilma",
+      "canonical": "Esther Mendiola & Guest"
+    },
+    {
+      "input": "Felisa & Carisa Baza",
+      "canonical": "Felisa & Carisa Baza"
+    },
+    {
+      "input": "Felix & Joann Camacho",
+      "canonical": "Uncle Felix & Joann Camacho"
+    },
+    {
+      "input": "Frank & Edeine Camacho",
+      "canonical": "Uncle Frank & Edeine Camacho"
+    },
+    {
+      "input": "Frank & Julie Santos",
+      "canonical": "Frank & Julie Santos"
+    },
+    {
+      "input": "Frank & Margie P. Leon Guerrero",
+      "canonical": "Uncle Frank & Margie P. Leon Guerrero"
+    },
+    {
+      "input": "Gavin Garrido & Jonathan Pablo",
+      "canonical": "Jonathan Pablo & Gavin Garrido"
+    },
+    {
+      "input": "Greg & Ernee Perez",
+      "canonical": "Uncle Greg & Ernee Perez"
+    },
+    {
+      "input": "Greg M. Perez",
+      "canonical": "Greg M. Perez"
+    },
+    {
+      "input": "Haig Huynh and Mariana Cook-Huynh",
+      "canonical": "Haig Huynh & Mariana Leon Guerrero"
+    },
+    {
+      "input": "James Losongco & Jeric Sanchez",
+      "canonical": "James Losongco & Jaret Sanchez"
+    },
+    {
+      "input": "Jeremy Bato",
+      "canonical": "Jeremy Bato"
+    },
+    {
+      "input": "Jesse Pangelinan and Guest",
+      "canonical": "Uncle Jesse Pangelinan and Guest"
+    },
+    {
+      "input": "Joaquin Pangelinan & Michelle San Nicolas",
+      "canonical": "Uncle Joaquin Pangelinan & Michelle San Nicolas"
+    },
+    {
+      "input": "Joey & Joyce Crisostomo",
+      "canonical": "Joey & Joyce Crisostomo"
+    },
+    {
+      "input": "Neil & Johannes Pang",
+      "canonical": "Neil & Johannes Pang"
+    },
+    {
+      "input": "John & Elizabeth M. Weisenberger",
+      "canonical": "John & Elizabeth M. Weisenberger"
+    },
+    {
+      "input": "John & Maria D.R. Taitano",
+      "canonical": "John & Maria D.R. Taitano"
+    },
+    {
+      "input": "John & Marie Wusstig",
+      "canonical": "John & Marie Wusstig"
+    },
+    {
+      "input": "John D. Perez",
+      "canonical": "Uncle John D. Perez"
+    },
+    {
+      "input": "John M. Weisenberger & Brianne Preza-Haynes and Isiah Weisenberger",
+      "canonical": "John M. Weisenberger & Brianne Preza-Haynes and Isiah Weisenberger"
+    },
+    {
+      "input": "Johnny & Grace Chargualaf and Family",
+      "canonical": "Nino Johnny & Grace M. Chargualaf and Family"
+    },
+    {
+      "input": "Johnny & Kaisha Arceo",
+      "canonical": "Johnny & Kaysha Arceo"
+    },
+    {
+      "input": "Joseph & Jadene T. Perez",
+      "canonical": "Uncle Jay & Auntie Jadene T. Perez"
+    },
+    {
+      "input": "Patrick Civille & Joyce Tang",
+      "canonical": "Patrick Civille & Joyce Tang"
+    },
+    {
+      "input": "Lisa Pang",
+      "canonical": "Lisa Pang"
+    },
+    {
+      "input": "Auntie Lou P. Camacho",
+      "canonical": "Auntie Lou P. Camacho"
+    },
+    {
+      "input": "Lourdes M. Perez",
+      "canonical": "Auntie Lourdes M. Perez"
+    },
+    {
+      "input": "Luke & Sylvia H. Weisenberger and Family",
+      "canonical": "Luke & Sylvia H. Weisenberger and Family"
+    },
+    {
+      "input": "Margaret M.P. Mandell",
+      "canonical": "Nina Margaret M.P. Mandell"
+    },
+    {
+      "input": "Margarita B. Gay",
+      "canonical": "Auntie Margarita B. Gay"
+    },
+    {
+      "input": "Maria Roger Mariah and Reid Ramos",
+      "canonical": "Roger Maria Mariah and Reid Ramos"
+    },
+    {
+      "input": "Michael Gina and Mikey Cura",
+      "canonical": "Michael Gina and Mikey Cura"
+    },
+    {
+      "input": "Nisha Chargualaf and Edie Jo",
+      "canonical": "Nisha and Edie Jo Chargualaf"
+    },
+    {
+      "input": "Uncle Nito Bautista",
+      "canonical": "Uncle Nito Bautista Sr."
+    },
+    {
+      "input": "Nito Bautista Jr.",
+      "canonical": "Uncle Nito Bautista Jr."
+    },
+    {
+      "input": "Fr. Paul Gofigan",
+      "canonical": "Fr. Paul Gofigan"
+    },
+    {
+      "input": "Peter P. Bautista",
+      "canonical": "Uncle Peter P. Bautista"
+    },
+    {
+      "input": "Rick & Lisa Catindig",
+      "canonical": "Rick & Lisa Catindig"
+    },
+    {
+      "input": "Robert & Mary P. Torres",
+      "canonical": "Uncle Robert & Mary P. Torres"
+    },
+    {
+      "input": "Ron & Gia Ramos",
+      "canonical": "Ron & Gia Ramos"
+    },
+    {
+      "input": "Ron & Therese C. Schnabel",
+      "canonical": "Ron & Therese C. Schnabel"
+    },
+    {
+      "input": "Sirena and West Cassidy",
+      "canonical": "Sirena & Wesley Cassidy"
+    },
+    {
+      "input": "Tammy Ramirez",
+      "canonical": "Tammy Ramirez"
+    },
+    {
+      "input": "Terry D. Perez",
+      "canonical": "Auntie Terry D. Perez"
+    },
+    {
+      "input": "Tom & Karen K. Perez",
+      "canonical": "Uncle Tom & Karen K. Perez"
+    },
+    {
+      "input": "Tom Camacho and Guest",
+      "canonical": "Uncle Tom Camacho and Guest"
+    },
+    {
+      "input": "Tony & Rosie Bordallo",
+      "canonical": "Tony & Rosie Bordallo"
+    },
+    {
+      "input": "Tressie A. Perez",
+      "canonical": "Auntie Tressie A. Perez"
+    },
+    {
+      "input": "Victor & Kaleena Camacho",
+      "canonical": "Uncle Victor & Kaleena Camacho"
+    },
+    {
+      "input": "Fr. Will Mamangan",
+      "canonical": "Fr. Will Mamangan"
+    },
+    {
+      "input": "Zebediah Howser & Kohaku",
+      "canonical": "Zebediah Howser & Kohaku"
+    }
+  ]
+}
