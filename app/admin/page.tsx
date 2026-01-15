@@ -706,6 +706,45 @@ export default function AdminPage() {
     setMessage("")
 
     try {
+      // Track effective identity values (may be updated via admin endpoint)
+      let effectiveGuestName = currentAssignment?.guest_name
+      let effectiveEmail = currentAssignment?.email || null
+
+      // If user edited guest name / email, persist it to invited_guests (and linked rsvps if present).
+      const identityChanged =
+        !!currentAssignment &&
+        ((!!editForm.guest_name?.trim() && editForm.guest_name.trim() !== currentAssignment.guest_name) ||
+          (editForm.email !== undefined && (editForm.email || "").trim() !== (currentAssignment.email || "")))
+
+      if (identityChanged) {
+        const identityResponse = await fetch("/api/admin/guest-identity", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            invited_guest_id: currentAssignment.id,
+            guest_name: (editForm.guest_name || currentAssignment.guest_name).trim(),
+            email: (editForm.email ?? currentAssignment.email ?? "").toString(),
+          }),
+        })
+
+        const identityText = await identityResponse.text()
+        let identityResult: any
+        try {
+          identityResult = JSON.parse(identityText)
+        } catch {
+          identityResult = { success: false, error: identityText }
+        }
+
+        if (!identityResponse.ok || !identityResult.success) {
+          const errorMsg = identityResult.error || identityText || "Unknown error"
+          setMessage(`❌ Error updating guest name/email: ${errorMsg}`)
+          return
+        }
+
+        effectiveGuestName = identityResult?.data?.invited_guest?.guest_name || effectiveGuestName
+        effectiveEmail = identityResult?.data?.invited_guest?.email || effectiveEmail
+      }
+
       // Update guest count if it was changed
       if (
         currentAssignment &&
@@ -723,8 +762,8 @@ export default function AdminPage() {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            guest_name: currentAssignment.guest_name,
-            email: currentAssignment.email,
+            guest_name: effectiveGuestName,
+            email: effectiveEmail,
             guest_count: editForm.actual_guest_count,
           }),
         })
@@ -758,15 +797,15 @@ export default function AdminPage() {
         const attendance = editForm.rsvp_status
 
         console.log("[v0] Admin: Updating RSVP status from dashboard:", {
-          guest_name: currentAssignment.guest_name,
-          email: currentAssignment.email,
+          guest_name: effectiveGuestName,
+          email: effectiveEmail,
           old_status: currentAssignment.rsvp_status,
           new_status: attendance,
         })
 
         const rsvpBody = {
-          guest_name: currentAssignment.guest_name,
-          email: currentAssignment.email || "",
+          guest_name: effectiveGuestName,
+          email: effectiveEmail || "",
           attendance,
           guest_count:
             editForm.actual_guest_count ??
@@ -803,55 +842,14 @@ export default function AdminPage() {
         console.log("[v0] Admin: RSVP status updated successfully:", rsvpResult)
       }
 
-      // Get guest data to send email/name for lookup
-      const guest = assignments.find((a) => a.id === editingId)
-      const response = await fetch("/api/admin/seating", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: guest?.email,
-          guest_name: guest?.guest_name,
-          ...editForm,
-        }),
-      })
-
-      // Check if response is ok and has content
-      if (!response.ok) {
-        const errorText = await response.text()
-        let errorMessage = `HTTP ${response.status}: ${response.statusText}`
-        try {
-          const errorJson = JSON.parse(errorText)
-          errorMessage = errorJson.error || errorMessage
-        } catch {
-          errorMessage = errorText || errorMessage
-        }
-        setMessage(`❌ Error: ${errorMessage}`)
-        return
-      }
-
-      // Parse JSON response
-      const text = await response.text()
-      if (!text) {
-        setMessage("❌ Error: Empty response from server")
-        return
-      }
-
-      let result
-      try {
-        result = JSON.parse(text)
-      } catch (parseError) {
-        setMessage(`❌ Error: Invalid response from server: ${parseError}`)
-        return
-      }
-
-      if (result.success) {
-        setMessage("✅ Assignment updated successfully")
-        setEditingId(null)
-        setEditForm({})
-        loadAssignments()
-      } else {
-        setMessage(`❌ Error: ${result.error || "Unknown error"}`)
-      }
+      // IMPORTANT:
+      // /api/admin/seating (PUT) requires an RSVP to exist; calling it for a non-RSVP guest will fail.
+      // Table changes are handled in the earlier branch. For identity/guest_count/rsvp_status updates,
+      // we can finish successfully without touching seating.
+      setMessage("✅ Guest updated successfully")
+      setEditingId(null)
+      setEditForm({})
+      loadAssignments()
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
       setMessage(`❌ Error updating assignment: ${errorMessage}`)
