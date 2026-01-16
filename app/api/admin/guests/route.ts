@@ -1,11 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createBrowserClient } from "@supabase/ssr"
+import { createClient } from "@supabase/supabase-js"
 
 // Cache environment variables at module load time to avoid intermittent access issues
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ""
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ""
 
-let supabaseClient: ReturnType<typeof createBrowserClient> | null = null
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+export const fetchCache = "force-no-store"
+export const runtime = "nodejs"
 
 function getSupabaseClient() {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -14,11 +17,14 @@ function getSupabaseClient() {
     )
   }
 
-  if (!supabaseClient) {
-    supabaseClient = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  }
-
-  return supabaseClient
+  // IMPORTANT: Next.js can cache server-side fetch() results in some runtimes.
+  // We force "no-store" at the fetch layer to avoid serving stale Supabase reads.
+  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { autoRefreshToken: false, persistSession: false },
+    global: {
+      fetch: (input: any, init?: any) => fetch(input, { ...(init || {}), cache: "no-store" }),
+    },
+  })
 }
 
 function getSupabaseProjectRefFromJwt(jwt: string): string | null {
@@ -33,8 +39,6 @@ function getSupabaseProjectRefFromJwt(jwt: string): string | null {
     return null
   }
 }
-
-export const dynamic = "force-dynamic"
 
 export async function GET(request: NextRequest) {
   try {
