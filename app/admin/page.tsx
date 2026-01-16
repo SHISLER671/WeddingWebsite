@@ -743,6 +743,24 @@ export default function AdminPage() {
 
         effectiveGuestName = identityResult?.data?.invited_guest?.guest_name || effectiveGuestName
         effectiveEmail = identityResult?.data?.invited_guest?.email || effectiveEmail
+
+        // Optimistically update the row in the UI immediately (so it reflects even before reload completes)
+        setAssignments((prev) => {
+          const updated = prev.map((a) =>
+            a.id === currentAssignment.id
+              ? {
+                  ...a,
+                  guest_name: effectiveGuestName || a.guest_name,
+                  email: effectiveEmail ?? a.email,
+                }
+              : a,
+          )
+          return updated.sort((a: any, b: any) => {
+            const nameA = (a.guest_name || "").toLowerCase()
+            const nameB = (b.guest_name || "").toLowerCase()
+            return nameA.localeCompare(nameB)
+          })
+        })
       }
 
       // Update guest count if it was changed
@@ -849,7 +867,8 @@ export default function AdminPage() {
       setMessage("✅ Guest updated successfully")
       setEditingId(null)
       setEditForm({})
-      loadAssignments()
+      // Force refresh so the table reflects server-side state after edits (and avoids stale cache)
+      await loadAssignments(true)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
       setMessage(`❌ Error updating assignment: ${errorMessage}`)
