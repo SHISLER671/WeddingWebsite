@@ -7,6 +7,8 @@ type Body = {
   invited_guest_id: string
   guest_name: string
   email?: string | null
+  previous_guest_name?: string | null
+  previous_email?: string | null
 }
 
 function isValidUuid(value: string): boolean {
@@ -32,6 +34,8 @@ export async function PUT(request: NextRequest) {
     const invitedGuestId = body.invited_guest_id?.trim()
     const newGuestName = body.guest_name?.trim()
     const newEmail = (body.email ?? "").toString().trim()
+    const prevGuestName = (body.previous_guest_name ?? "").toString().trim()
+    const prevEmail = (body.previous_email ?? "").toString().trim()
 
     if (!invitedGuestId || !isValidUuid(invitedGuestId)) {
       return NextResponse.json({ success: false, error: "Invalid invited_guest_id" }, { status: 400 })
@@ -45,8 +49,8 @@ export async function PUT(request: NextRequest) {
       auth: { autoRefreshToken: false, persistSession: false },
     })
 
-    // Fetch existing invited guest
-    const { data: existing, error: fetchError } = await supabase
+    // Fetch existing invited guest (by id first)
+    let { data: existing, error: fetchError } = await supabase
       .from("invited_guests")
       .select("id, guest_name, email")
       .eq("id", invitedGuestId)
@@ -56,8 +60,42 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: false, error: fetchError.message }, { status: 500 })
     }
 
+    // Fallback: if record was deleted/reinserted by a CSV resync, the old id can be stale.
+    // In that case, try to re-locate by previous email/name (best-effort).
+    if (!existing && (prevEmail || prevGuestName)) {
+      if (prevEmail && prevEmail.includes("@") && !prevEmail.includes("wedding.invalid")) {
+        const res = await supabase
+          .from("invited_guests")
+          .select("id, guest_name, email")
+          .eq("email", prevEmail)
+          .maybeSingle()
+        existing = res.data
+        fetchError = res.error
+      }
+
+      if (!existing && prevGuestName) {
+        const res = await supabase
+          .from("invited_guests")
+          .select("id, guest_name, email")
+          .ilike("guest_name", prevGuestName)
+          .maybeSingle()
+        existing = res.data
+        fetchError = res.error
+      }
+
+      if (fetchError) {
+        return NextResponse.json({ success: false, error: fetchError.message }, { status: 500 })
+      }
+    }
+
     if (!existing) {
-      return NextResponse.json({ success: false, error: "invited_guest not found" }, { status: 404 })
+      return NextResponse.json(
+        {
+          success: false,
+          error: "invited_guest not found (please click Reload and try again)",
+        },
+        { status: 404 },
+      )
     }
 
     // Update invited_guests identity fields
@@ -68,7 +106,7 @@ export async function PUT(request: NextRequest) {
         // Keep consistent with the CSV sync script which uses empty string when not provided
         email: newEmail,
       })
-      .eq("id", invitedGuestId)
+      .eq("id", existing.id)
       .select("id, guest_name, email")
       .single()
 

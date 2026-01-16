@@ -724,6 +724,8 @@ export default function AdminPage() {
             invited_guest_id: currentAssignment.id,
             guest_name: (editForm.guest_name || currentAssignment.guest_name).trim(),
             email: (editForm.email ?? currentAssignment.email ?? "").toString(),
+            previous_guest_name: currentAssignment.guest_name,
+            previous_email: currentAssignment.email ?? "",
           }),
         })
 
