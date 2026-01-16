@@ -15,6 +15,22 @@ function isValidUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
 }
 
+function buildLooseNamePattern(name: string): string | null {
+  const tokens = name
+    .toLowerCase()
+    .replace(/&amp;/g, " and ")
+    .replace(/&/g, " and ")
+    .replace(/[.,]/g, "")
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .filter((t) => t.length >= 3)
+
+  if (tokens.length === 0) return null
+  const picked = tokens.slice(0, 3)
+  return `%${picked.join("%")}%`
+}
+
 export async function PUT(request: NextRequest) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
@@ -74,13 +90,40 @@ export async function PUT(request: NextRequest) {
       }
 
       if (!existing && prevGuestName) {
-        const res = await supabase
+        // First try exact-ish match (case-insensitive)
+        let res = await supabase
           .from("invited_guests")
           .select("id, guest_name, email")
           .ilike("guest_name", prevGuestName)
           .maybeSingle()
         existing = res.data
         fetchError = res.error
+
+        // If no match, try a loose partial match based on key tokens (e.g. "Elijah Limtiaco")
+        if (!existing) {
+          const pattern = buildLooseNamePattern(prevGuestName) || buildLooseNamePattern(newGuestName)
+          if (pattern) {
+            const list = await supabase
+              .from("invited_guests")
+              .select("id, guest_name, email")
+              .ilike("guest_name", pattern)
+              .limit(2)
+
+            fetchError = list.error
+            if (!fetchError && list.data && list.data.length === 1) {
+              existing = list.data[0]
+            } else if (!fetchError && list.data && list.data.length > 1) {
+              return NextResponse.json(
+                {
+                  success: false,
+                  error:
+                    "Multiple possible matches found for this guest after resync. Please click Reload and try again.",
+                },
+                { status: 409 },
+              )
+            }
+          }
+        }
       }
 
       if (fetchError) {
