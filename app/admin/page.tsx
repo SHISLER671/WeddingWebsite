@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useCallback } from "react"
-import { Search, Download, CheckCircle, AlertTriangle, Edit, Users } from "lucide-react"
+import { Search, Download, CheckCircle, AlertTriangle, Edit, Users, PlusCircle, Flag, Copy } from "lucide-react"
 import JSZip from "jszip"
 import NextImage from "next/image"
 import { Card } from "@/components/ui/card"
@@ -48,6 +48,29 @@ export default function AdminPage() {
   const [bulkProgress, setBulkProgress] = useState("")
   const [csvFile, setCsvFile] = useState<File | null>(null)
   const [rsvpStats, setRsvpStats] = useState<{ yes: number; no: number; total: number } | null>(null)
+
+  // New invited guest (admin-created; remember to add to MASTER before next CSV sync)
+  const [isCreateGuestOpen, setIsCreateGuestOpen] = useState(false)
+  const [creatingGuest, setCreatingGuest] = useState(false)
+  const [lastCreatedGuest, setLastCreatedGuest] = useState<null | {
+    guest_name: string
+    email: string
+    allowed_party_size: number
+  }>(null)
+  const [isCsvHelperOpen, setIsCsvHelperOpen] = useState(false)
+  const [createGuestForm, setCreateGuestForm] = useState<{
+    guest_name: string
+    email: string
+    allowed_party_size: number
+    is_entourage: boolean
+    open_invite_after_create: boolean
+  }>({
+    guest_name: "",
+    email: "",
+    allowed_party_size: 1,
+    is_entourage: false,
+    open_invite_after_create: true,
+  })
 
   // Guest stats state
   const [guestStats, setGuestStats] = useState<{
@@ -288,6 +311,104 @@ export default function AdminPage() {
 
     await new Promise((resolve) => setTimeout(resolve, 2000))
     await loadRsvpStats()
+  }
+
+  const getMasterCsvLineForGuest = (guest: { guest_name: string; email: string; allowed_party_size: number }) => {
+    // Number will be corrected by renumber script; use 0 as placeholder
+    // Header: Number,Full Name,Notes,Headcount,RSVP Status,KIDENTOURAGE
+    const number = "0"
+    const fullName = guest.guest_name
+    const notes = guest.email && guest.email.includes("@") ? guest.email : ""
+    const headcount = String(guest.allowed_party_size || 1)
+    const rsvpStatus = ""
+    const kidEntourage = ""
+    return `${number},${fullName},${notes},${headcount},${rsvpStatus},${kidEntourage}`
+  }
+
+  const copyMasterCsvLine = async () => {
+    if (!lastCreatedGuest) return
+    const line = getMasterCsvLineForGuest(lastCreatedGuest)
+    try {
+      await navigator.clipboard.writeText(line)
+      setMessage((prev) => `${prev}\n\n📋 Copied MASTER CSV row to clipboard.`.trim())
+    } catch (e: any) {
+      setMessage((prev) => `${prev}\n\n❌ Could not copy to clipboard: ${e?.message || "Unknown error"}`.trim())
+    }
+  }
+
+  const createInvitedGuest = async () => {
+    const name = createGuestForm.guest_name.trim()
+    if (!name) {
+      setMessage("❌ Please enter a guest name")
+      return
+    }
+
+    const allowed = Number(createGuestForm.allowed_party_size)
+    if (!Number.isInteger(allowed) || allowed < 1) {
+      setMessage("❌ Guest count must be at least 1")
+      return
+    }
+
+    setCreatingGuest(true)
+    setMessage("")
+    try {
+      const res = await fetch("/api/admin/invited-guests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          guest_name: name,
+          email: createGuestForm.email.trim(),
+          allowed_party_size: allowed,
+          is_entourage: createGuestForm.is_entourage,
+        }),
+      })
+
+      const text = await res.text()
+      let json: any
+      try {
+        json = JSON.parse(text)
+      } catch {
+        json = { success: false, error: text }
+      }
+
+      if (!res.ok || !json.success) {
+        setMessage(`❌ Error creating guest: ${json.error || "Unknown error"}`)
+        return
+      }
+
+      const createdName = json?.data?.guest_name || name
+      const createdAllowed = Number(json?.data?.allowed_party_size ?? allowed) || allowed
+      const createdEmail = (json?.data?.email ?? createGuestForm.email ?? "").toString()
+      setMessage(
+        `✅ Created invited guest: ${createdName}\n\n⚠️ Reminder: add this guest to MASTERGUESTLIST.csv before the next CSV sync, or it will be removed.`,
+      )
+      setIsCreateGuestOpen(false)
+      const shouldOpenInvite = createGuestForm.open_invite_after_create
+      setLastCreatedGuest({
+        guest_name: createdName,
+        email: createdEmail,
+        allowed_party_size: createdAllowed,
+      })
+      setIsCsvHelperOpen(true)
+      setCreateGuestForm({
+        guest_name: "",
+        email: "",
+        allowed_party_size: 1,
+        is_entourage: false,
+        open_invite_after_create: true,
+      })
+      setSearchTerm(createdName)
+      await loadAssignments(true)
+
+      if (shouldOpenInvite) {
+        const guestParam = encodeURIComponent(createdName)
+        window.open(`/admin/invitations?guest=${guestParam}`, "_blank", "noopener,noreferrer")
+      }
+    } catch (e: any) {
+      setMessage(`❌ Error creating guest: ${e?.message || "Unknown error"}`)
+    } finally {
+      setCreatingGuest(false)
+    }
   }
 
   const searchAssignments = () => {
@@ -1231,7 +1352,7 @@ export default function AdminPage() {
             </Button>
           </div>
 
-          <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4">
             <Button
               onClick={() => loadAssignments(true)}
               className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2 justify-center"
@@ -1247,6 +1368,14 @@ export default function AdminPage() {
             >
               <Download className="w-5 h-5" />
               <span className="font-semibold">Export CSV</span>
+            </Button>
+
+            <Button
+              onClick={() => setIsCreateGuestOpen((v) => !v)}
+              className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-3 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2 justify-center"
+            >
+              <PlusCircle className="w-5 h-5" />
+              <span className="font-semibold">New Guest</span>
             </Button>
 
             <Button
@@ -1266,6 +1395,130 @@ export default function AdminPage() {
               <span className="font-semibold">Validate</span>
             </Button>
           </div>
+
+          {isCreateGuestOpen && (
+            <div className="mb-6 rounded-lg border border-jewel-burgundy/20 bg-white/90 p-4 shadow-lg">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="font-semibold text-jewel-burgundy">Add New Invited Guest</p>
+                <Button
+                  onClick={() => setIsCreateGuestOpen(false)}
+                  variant="outline"
+                  className="border-jewel-burgundy/30 text-jewel-burgundy hover:bg-jewel-burgundy/5"
+                >
+                  Cancel
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div className="md:col-span-2">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Guest Name</label>
+                  <Input
+                    value={createGuestForm.guest_name}
+                    onChange={(e) => setCreateGuestForm((p) => ({ ...p, guest_name: e.target.value }))}
+                    placeholder='e.g. "Kevin Camacho" or "John & Jane Doe"'
+                    className="border-jewel-burgundy/30"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Guest Count</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    value={createGuestForm.allowed_party_size}
+                    onChange={(e) =>
+                      setCreateGuestForm((p) => ({ ...p, allowed_party_size: parseInt(e.target.value || "1", 10) || 1 }))
+                    }
+                    className="border-jewel-burgundy/30"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Email (optional)</label>
+                  <Input
+                    value={createGuestForm.email}
+                    onChange={(e) => setCreateGuestForm((p) => ({ ...p, email: e.target.value }))}
+                    placeholder="example@email.com"
+                    className="border-jewel-burgundy/30"
+                  />
+                </div>
+                <div className="flex items-end gap-2">
+                  <label className="flex items-center gap-2 text-sm text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={createGuestForm.is_entourage}
+                      onChange={(e) => setCreateGuestForm((p) => ({ ...p, is_entourage: e.target.checked }))}
+                    />
+                    Entourage
+                  </label>
+                </div>
+                <div className="md:col-span-3">
+                  <label className="flex items-center gap-2 text-sm text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={createGuestForm.open_invite_after_create}
+                      onChange={(e) => setCreateGuestForm((p) => ({ ...p, open_invite_after_create: e.target.checked }))}
+                    />
+                    Open invite generator after create
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <Button
+                  onClick={createInvitedGuest}
+                  disabled={creatingGuest}
+                  className="bg-teal-600 hover:bg-teal-700 text-white"
+                >
+                  {creatingGuest
+                    ? "Creating..."
+                    : createGuestForm.open_invite_after_create
+                      ? "Create & Generate Invite"
+                      : "Create Guest"}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {lastCreatedGuest && (
+            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50/70 p-4 shadow-sm">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="font-semibold text-amber-900">MASTER CSV helper</p>
+                  <p className="text-sm text-amber-800">
+                    Click the flag to view/copy the CSV row to paste into `MASTERGUESTLIST.csv` (renumber later).
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={() => setIsCsvHelperOpen((v) => !v)}
+                    variant="outline"
+                    className="border-amber-300 text-amber-900 hover:bg-amber-100 flex items-center gap-2"
+                  >
+                    <Flag className="h-4 w-4" />
+                    {isCsvHelperOpen ? "Hide" : "Show"}
+                  </Button>
+                  <Button
+                    onClick={copyMasterCsvLine}
+                    variant="outline"
+                    className="border-amber-300 text-amber-900 hover:bg-amber-100 flex items-center gap-2"
+                  >
+                    <Copy className="h-4 w-4" />
+                    Copy
+                  </Button>
+                </div>
+              </div>
+
+              {isCsvHelperOpen && (
+                <div className="mt-3 rounded-md border border-amber-200 bg-white p-3">
+                  <p className="mb-2 text-xs text-gray-600">
+                    Header: `Number,Full Name,Notes,Headcount,RSVP Status,KIDENTOURAGE`
+                  </p>
+                  <pre className="whitespace-pre-wrap break-all text-sm text-gray-900">
+                    {getMasterCsvLineForGuest(lastCreatedGuest)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="mb-6">
             <Button
