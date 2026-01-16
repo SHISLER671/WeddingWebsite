@@ -12,4 +12,3 @@ export async function POST(request: NextRequest) {
   res.cookies.delete("admin-token")
   return res
 }
-
