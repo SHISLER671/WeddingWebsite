@@ -41,6 +41,9 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState("")
+  const [needsAdminAuth, setNeedsAdminAuth] = useState(false)
+  const [adminPassword, setAdminPassword] = useState("")
+  const [adminLoggingIn, setAdminLoggingIn] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Partial<SeatingAssignment>>({})
 
@@ -100,6 +103,7 @@ export default function AdminPage() {
       console.log("[v0] Admin: Starting auto-assign process...")
       const response = await fetch("/api/admin/auto-assign-seats", {
         method: "POST",
+        credentials: "same-origin",
         headers: {
           "Content-Type": "application/json",
         },
@@ -174,6 +178,11 @@ export default function AdminPage() {
           Expires: "0",
         },
       })
+
+      if (response.status === 401) {
+        setNeedsAdminAuth(true)
+        return
+      }
 
       if (response.status === 429) {
         console.warn("[Admin] Rate limit hit for RSVP stats - will retry later")
@@ -255,6 +264,12 @@ export default function AdminPage() {
         return
       }
 
+      if (response.status === 401) {
+        setNeedsAdminAuth(true)
+        setMessage("🔒 Admin login required.")
+        return
+      }
+
       if (!response.ok) {
         let errorMsg = `HTTP ${response.status}: ${response.statusText}`
 
@@ -313,6 +328,42 @@ export default function AdminPage() {
     await loadRsvpStats()
   }
 
+  const loginAdmin = async () => {
+    setAdminLoggingIn(true)
+    setMessage("")
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: adminPassword }),
+      })
+
+      const text = await res.text()
+      let json: any
+      try {
+        json = JSON.parse(text)
+      } catch {
+        json = { success: false, error: text }
+      }
+
+      if (!res.ok || !json.success) {
+        setMessage(`❌ Admin login failed: ${json.error || "Unknown error"}`)
+        return
+      }
+
+      setNeedsAdminAuth(false)
+      setAdminPassword("")
+      setMessage("✅ Logged in.")
+      await loadAssignments(true)
+      await loadRsvpStats()
+    } catch (e: any) {
+      setMessage(`❌ Admin login failed: ${e?.message || "Unknown error"}`)
+    } finally {
+      setAdminLoggingIn(false)
+    }
+  }
+
   const getMasterCsvLineForGuest = (guest: { guest_name: string; email: string; allowed_party_size: number }) => {
     // Number will be corrected by renumber script; use 0 as placeholder
     // Header: Number,Full Name,Notes,Headcount,RSVP Status,KIDENTOURAGE
@@ -354,6 +405,7 @@ export default function AdminPage() {
     try {
       const res = await fetch("/api/admin/invited-guests", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           guest_name: name,
@@ -840,6 +892,7 @@ export default function AdminPage() {
       if (identityChanged) {
         const identityResponse = await fetch("/api/admin/guest-identity", {
           method: "PUT",
+          credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             invited_guest_id: currentAssignment.id,
@@ -901,6 +954,7 @@ export default function AdminPage() {
 
         const guestCountResponse = await fetch("/api/admin/guest-count", {
           method: "PUT",
+          credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             guest_name: effectiveGuestName,
@@ -1254,6 +1308,31 @@ export default function AdminPage() {
       </div>
 
       <div className="relative z-20 mx-auto max-w-6xl space-y-6">
+        {needsAdminAuth && (
+          <Card className="border-2 border-gold/20 bg-white/95 p-6 shadow-xl backdrop-blur">
+            <h2 className="mb-2 font-serif text-2xl font-bold text-jewel-burgundy">Admin Login</h2>
+            <p className="mb-4 text-sm text-gray-600">Enter the admin password to continue.</p>
+            <div className="flex flex-col gap-3 md:flex-row md:items-end">
+              <div className="flex-1">
+                <label className="mb-1 block text-sm font-medium text-gray-700">Password</label>
+                <Input
+                  type="password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  className="border-jewel-burgundy/30"
+                />
+              </div>
+              <Button
+                onClick={loginAdmin}
+                disabled={adminLoggingIn || !adminPassword}
+                className="bg-jewel-burgundy hover:bg-jewel-crimson text-white"
+              >
+                {adminLoggingIn ? "Logging in..." : "Login"}
+              </Button>
+            </div>
+          </Card>
+        )}
+
         <div className="text-center">
           <h1 className="mb-2 font-serif text-4xl font-bold text-blue-600">Admin Dashboard</h1>
           <p className="text-white/90">Manage seating assignments for Pia & Ryan&apos;s Wedding</p>
