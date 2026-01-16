@@ -21,6 +21,19 @@ function getSupabaseClient() {
   return supabaseClient
 }
 
+function getSupabaseProjectRefFromJwt(jwt: string): string | null {
+  try {
+    const parts = jwt.split(".")
+    if (parts.length < 2) return null
+    const payload = parts[1]
+    const json = Buffer.from(payload, "base64").toString("utf8")
+    const parsed = JSON.parse(json) as any
+    return typeof parsed?.ref === "string" ? parsed.ref : null
+  } catch {
+    return null
+  }
+}
+
 export const dynamic = "force-dynamic"
 
 export async function GET(request: NextRequest) {
@@ -236,12 +249,19 @@ export async function GET(request: NextRequest) {
 
     console.log("[v1] Admin: Guest stats:", stats)
 
+    const meta = {
+      vercel_commit_sha: process.env.VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_REF || null,
+      supabase_url_host: SUPABASE_URL ? new URL(SUPABASE_URL).host : null,
+      supabase_project_ref: getSupabaseProjectRefFromJwt(SUPABASE_ANON_KEY),
+    }
+
     return NextResponse.json(
       {
         success: true,
         data: sorted || [],
         tableCapacities,
         stats,
+        meta,
       },
       {
         headers: {
