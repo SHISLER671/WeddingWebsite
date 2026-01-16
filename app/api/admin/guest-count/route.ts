@@ -1,11 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { requireAdminAPIAuth } from "@/lib/authHelpers"
 
 /**
  * Update guest count for a guest
  * Updates both invited_guests.allowed_party_size and rsvps.guest_count if RSVP exists
  */
 export async function PUT(request: NextRequest) {
+  const auth = requireAdminAPIAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
       auth: {

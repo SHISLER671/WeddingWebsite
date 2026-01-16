@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { requireAdminAPIAuth } from "@/lib/authHelpers"
 
 export const dynamic = 'force-dynamic'
 
@@ -8,7 +9,10 @@ export const dynamic = 'force-dynamic'
  * New admin page should use /api/admin/guests for GET
  * This endpoint is still used for PUT (updating seating assignments)
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireAdminAPIAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
       auth: {
@@ -152,6 +156,9 @@ export async function GET() {
  * - guest_name: guest name (fallback)
  */
 export async function PUT(request: NextRequest) {
+  const auth = requireAdminAPIAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
       auth: {

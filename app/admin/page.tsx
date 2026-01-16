@@ -811,7 +811,7 @@ export default function AdminPage() {
           setMessage(`✅ Successfully moved ${allMoves.length} assignment(s)!`)
           setEditingId(null)
           setEditForm({})
-          loadAssignments()
+          await loadAssignments(true)
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error)

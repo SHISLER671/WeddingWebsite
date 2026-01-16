@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { requireAdminAPIAuth } from "@/lib/authHelpers"
 
 // Cache environment variables at module load time to avoid intermittent access issues
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ""
@@ -41,6 +42,9 @@ function getSupabaseProjectRefFromJwt(jwt: string): string | null {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = requireAdminAPIAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabase = getSupabaseClient()
 

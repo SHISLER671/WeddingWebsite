@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { requireAdminAPIAuth } from "@/lib/authHelpers"
 
 export const dynamic = "force-dynamic"
 
@@ -32,6 +33,9 @@ function buildLooseNamePattern(name: string): string | null {
 }
 
 export async function PUT(request: NextRequest) {
+  const auth = requireAdminAPIAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY

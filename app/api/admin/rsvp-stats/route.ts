@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createBrowserClient } from "@supabase/ssr"
+import { requireAdminAPIAuth } from "@/lib/authHelpers"
 
 // Cache environment variables at module load time to avoid intermittent access issues
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ""
@@ -22,8 +23,14 @@ function getSupabaseClient() {
 }
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
+export const fetchCache = "force-no-store"
+export const runtime = "nodejs"
 
 export async function GET(request: NextRequest) {
+  const auth = requireAdminAPIAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabase = getSupabaseClient()
 

@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/client"
+import { requireAdminAPIAuth } from "@/lib/authHelpers"
 
 export const dynamic = "force-dynamic"
 
@@ -7,6 +8,9 @@ const MAX_TABLE_CAPACITY = 10
 const TOTAL_TABLES = 26
 
 export async function POST(request: NextRequest) {
+  const auth = requireAdminAPIAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabase = createClient()
 
