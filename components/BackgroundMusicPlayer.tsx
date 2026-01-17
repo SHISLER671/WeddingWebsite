@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useMusic } from "@/contexts/MusicContext"
 import { YouTubePlayer } from "./YouTubePlayer"
-import { List, Pause, Play, SkipBack, SkipForward, Volume2, VolumeX, X } from "lucide-react"
+import { Eye, EyeOff, List, Pause, Play, SkipBack, SkipForward, Volume2, VolumeX, X } from "lucide-react"
 
 const YOUTUBE_PLAYLIST_ID = "PLpW1t4-1G91SnoEhXi324hjIG41PI_kUh"
 
@@ -25,6 +25,7 @@ export default function BackgroundMusicPlayer() {
     playTrackAtIndex,
   } = useMusic()
   const [showPlaylist, setShowPlaylist] = useState(false)
+  const [showVideo, setShowVideo] = useState(true)
   const [loadingTitles, setLoadingTitles] = useState(false)
 
   // Ensure music stops when leaving the Gallery page (unmount)
@@ -98,6 +99,8 @@ export default function BackgroundMusicPlayer() {
         playlistId={YOUTUBE_PLAYLIST_ID}
         isPlaying={isPlaying}
         isMuted={isMuted}
+        showVideo={showVideo}
+        showNativeControls={true}
         onTrackChange={setCurrentTrack}
         onTrackIndexChange={setCurrentTrackIndex}
         onPlaylistLoaded={setPlaylist}
@@ -111,6 +114,18 @@ export default function BackgroundMusicPlayer() {
       <p className="text-charcoal/70 mb-5 italic">
         Music is optional on this page. It will not start unless you press play.
       </p>
+
+      <div className="mb-4">
+        <button
+          onClick={() => setShowVideo((v) => !v)}
+          className="inline-flex items-center justify-center gap-2 bg-white/80 hover:bg-white text-charcoal px-4 py-2 rounded-full transition-all duration-300 shadow-md border border-rose-gold/40 font-semibold"
+          type="button"
+          aria-label={showVideo ? "Hide video" : "Show video"}
+        >
+          {showVideo ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          <span className="text-sm">{showVideo ? "Hide Video" : "Show Video"}</span>
+        </button>
+      </div>
 
       {/* Expandable Playlist */}
       {showPlaylist && playlist.length > 0 && (

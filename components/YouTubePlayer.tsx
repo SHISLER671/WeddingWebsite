@@ -9,7 +9,6 @@ declare global {
     onYouTubeIframeAPIReady: () => void
     weddingMusicPlayer: any // Global player instance
     weddingMusicPlayerReady: boolean // Track if player is ready
-    weddingMusicContainer: HTMLElement | null // Global container
   }
 }
 
@@ -17,6 +16,8 @@ interface YouTubePlayerProps {
   playlistId: string
   isPlaying: boolean
   isMuted: boolean
+  showVideo?: boolean
+  showNativeControls?: boolean
   onStateChange?: (isPlaying: boolean, isMuted: boolean) => void
   onTrackChange?: (trackTitle: string | null) => void
   onTrackIndexChange?: (index: number | null) => void
@@ -25,32 +26,12 @@ interface YouTubePlayerProps {
   onPreviousTrack?: () => void
 }
 
-// Create container once, outside React
-function getOrCreateContainer(): HTMLElement | null {
-  if (typeof window === "undefined") return null
-
-  // Return existing container if it exists
-  if (window.weddingMusicContainer) {
-    return window.weddingMusicContainer
-  }
-
-  // Create container and store globally
-  const container = document.createElement("div")
-  container.id = "youtube-player-global-container"
-  container.style.cssText =
-    "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;visibility:hidden;pointer-events:none;z-index:-1;"
-  
-  // Append to body (outside React tree)
-  document.body.appendChild(container)
-  window.weddingMusicContainer = container
-
-  return container
-}
-
 export function YouTubePlayer({
   playlistId,
   isPlaying,
   isMuted,
+  showVideo = true,
+  showNativeControls = true,
   onTrackChange,
   onTrackIndexChange,
   onPlaylistLoaded,
@@ -59,15 +40,10 @@ export function YouTubePlayer({
   const [playerReady, setPlayerReady] = useState(false)
   const initializedRef = useRef(false)
   const lastPlayingStateRef = useRef<boolean | null>(null)
+  const playerMountRef = useRef<HTMLDivElement | null>(null)
 
-  // Get/create container on mount
+  // Cleanup on unmount: stop playback and remove global player
   useEffect(() => {
-    if (typeof window === "undefined") return
-    
-    // Ensure container exists
-    getOrCreateContainer()
-
-    // Cleanup on unmount: stop playback and remove global player/container
     return () => {
       try {
         if (window.weddingMusicPlayer && typeof window.weddingMusicPlayer.pauseVideo === "function") {
@@ -83,13 +59,6 @@ export function YouTubePlayer({
 
       window.weddingMusicPlayer = null
       window.weddingMusicPlayerReady = false
-
-      try {
-        if (window.weddingMusicContainer) {
-          window.weddingMusicContainer.remove()
-        }
-      } catch {}
-      window.weddingMusicContainer = null
     }
   }, [])
 
@@ -133,8 +102,8 @@ export function YouTubePlayer({
   useEffect(() => {
     if (!apiReady) return
 
-    const container = getOrCreateContainer()
-    if (!container) return
+    const mount = playerMountRef.current
+    if (!mount) return
 
     // Use global player instance if it exists and is ready
     if (window.weddingMusicPlayer && window.weddingMusicPlayerReady) {
@@ -156,32 +125,24 @@ export function YouTubePlayer({
     // Only initialize once
     if (initializedRef.current) return
 
-    // Create inner container div for YouTube player
-    let playerContainer = container.querySelector("#youtube-player-inner") as HTMLElement
-    if (!playerContainer) {
-      playerContainer = document.createElement("div")
-      playerContainer.id = "youtube-player-inner"
-      playerContainer.style.cssText = "width:1px;height:1px;"
-      container.appendChild(playerContainer)
-    }
-
     try {
       initializedRef.current = true
 
-      window.weddingMusicPlayer = new window.YT.Player(playerContainer, {
-        height: "1",
-        width: "1",
+      window.weddingMusicPlayer = new window.YT.Player(mount, {
+        height: "100%",
+        width: "100%",
         playerVars: {
           listType: "playlist",
           list: playlistId,
           autoplay: 0,
           mute: 1,
           loop: 1,
-          controls: 0,
+          controls: showNativeControls ? 1 : 0,
           showinfo: 0,
           rel: 0,
           fs: 0,
           modestbranding: 1,
+          playsinline: 1,
         },
         events: {
           onReady: async (event: any) => {
@@ -260,7 +221,7 @@ export function YouTubePlayer({
       console.error("[Music] Failed to create player:", error)
       initializedRef.current = false
     }
-  }, [apiReady, playlistId])
+  }, [apiReady, playlistId, showNativeControls])
 
   // Control playback - ONLY change state if it actually changed
   useEffect(() => {
@@ -362,6 +323,9 @@ export function YouTubePlayer({
     return () => clearInterval(interval)
   }, [playerReady, isPlaying, onTrackChange])
 
-  // Don't render anything - container is managed outside React
-  return null
+  return (
+    <div className={showVideo ? "relative w-full aspect-video overflow-hidden rounded-xl bg-black shadow-lg" : "hidden"}>
+      <div ref={playerMountRef} className="absolute inset-0" />
+    </div>
+  )
 }
