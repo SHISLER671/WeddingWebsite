@@ -1,7 +1,5 @@
 "use client"
 
-import { useMusic } from "@/contexts/MusicContext"
-
 import type React from "react"
 import { useState, useEffect, useRef, useCallback } from "react"
 import Image from "next/image"
@@ -26,12 +24,12 @@ import { uploadGalleryItem } from "@/app/actions/upload-gallery-item"
 import { updateGalleryItemCaption, deleteGalleryItem } from "@/app/actions/gallery-edit"
 import Link from "next/link"
 import { SpinningRoseLoader } from "@/components/spinning-rose-loader"
+import BackgroundMusicPlayer from "@/components/BackgroundMusicPlayer"
 import useEmblaCarousel from "embla-carousel-react"
 
 type ViewMode = "carousel" | "grid"
 
 export default function GalleryPage() {
-  const { currentTrack } = useMusic()
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -792,24 +790,9 @@ export default function GalleryPage() {
                 </div>
               )}
 
-              {/* Music Info - Background player handles all playback */}
+              {/* Music (Gallery-only) */}
               <div className="max-w-4xl mx-auto mt-8">
-                <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-6 border-t-4 border-jewel-burgundy">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-3xl">Music</span>
-                    <h3 className="text-2xl font-serif font-bold text-jewel-fuchsia">The Soundtrack to Our Story</h3>
-                  </div>
-                  <p className="text-charcoal/70 mb-4 italic">Music is playing in the background - use the control button in the bottom right corner to mute/unmute</p>
-                  <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-jewel-burgundy/10 to-jewel-crimson/10 p-8 text-center border border-jewel-burgundy/20">
-                    <p className="text-jewel-burgundy font-medium">🎵 Background music is playing continuously</p>
-                    {currentTrack && (
-                      <p className="text-jewel-burgundy text-lg font-semibold mt-3 italic">
-                        Now Playing: "{currentTrack}"
-                      </p>
-                    )}
-                    <p className="text-charcoal/60 text-sm mt-2">Control playback with the button in the bottom right corner</p>
-                  </div>
-                </div>
+                <BackgroundMusicPlayer />
               </div>
             </>
           )}

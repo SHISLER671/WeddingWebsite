@@ -5,7 +5,6 @@ import "./globals.css"
 import { Providers } from "./providers"
 import NavigationWrapper from "@/components/NavigationWrapper"
 import GlobalChatbot from "@/components/GlobalChatbot"
-import BackgroundMusicPlayer from "@/components/BackgroundMusicPlayer"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -41,7 +40,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${playfair.variable} ${lato.variable} font-sans antialiased`}>
         <Providers>
-          <BackgroundMusicPlayer />
           {children}
           <NavigationWrapper />
           <GlobalChatbot />

@@ -3,12 +3,10 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, Edit, Gift, Camera, Info, ChevronDown } from "lucide-react"
-import { useMusic } from "@/contexts/MusicContext"
 
 export default function Home() {
   const [daysUntilWedding, setDaysUntilWedding] = useState<number | null>(null)
   const [showMenu, setShowMenu] = useState(false)
-  const { startMusic } = useMusic()
 
   useEffect(() => {
     // Calculate days until wedding
@@ -28,13 +26,9 @@ export default function Home() {
 
   const handleCountdownClick = () => {
     setShowMenu(!showMenu)
-    // Start music when menu button is clicked
-    startMusic()
   }
 
   const handleRSVPClick = () => {
-    // Start music when RSVP button is clicked
-    startMusic()
   }
   return (
     <div className="min-h-screen relative">

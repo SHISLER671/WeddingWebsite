@@ -53,7 +53,8 @@ export async function PUT(request: NextRequest) {
 
     const invitedGuestId = body.invited_guest_id?.trim()
     const newGuestName = body.guest_name?.trim()
-    const newEmail = (body.email ?? "").toString().trim()
+    const emailProvided = body.email !== undefined
+    const newEmail = emailProvided ? String(body.email ?? "").trim() : undefined
     const prevGuestName = (body.previous_guest_name ?? "").toString().trim()
     const prevEmail = (body.previous_email ?? "").toString().trim()
 
@@ -145,26 +146,38 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Update invited_guests identity fields
+    // Update invited_guests identity fields.
+    // IMPORTANT: If email is not provided, do not touch it (name-only edits).
+    const invitedUpdate: Record<string, any> = { guest_name: newGuestName }
+    if (emailProvided) invitedUpdate.email = newEmail
+
     const { data: updatedInvited, error: updateInvitedError } = await supabase
       .from("invited_guests")
-      .update({
-        guest_name: newGuestName,
-        // Keep consistent with the CSV sync script which uses empty string when not provided
-        email: newEmail,
-      })
+      .update(invitedUpdate)
       .eq("id", existing.id)
       .select("id, guest_name, email")
       .single()
 
     if (updateInvitedError) {
-      return NextResponse.json({ success: false, error: updateInvitedError.message }, { status: 500 })
+      const msg = updateInvitedError.message || "Failed to update invited guest"
+      const code = (updateInvitedError as any)?.code
+      // Postgres unique violation (e.g. duplicate email)
+      if (code === "23505" || msg.toLowerCase().includes("duplicate key value")) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "That email is already assigned to another guest. Please use a different email (or clear it).",
+          },
+          { status: 409 },
+        )
+      }
+      return NextResponse.json({ success: false, error: msg }, { status: 500 })
     }
 
     // If an RSVP exists linked to this invited guest, update its guest_name and optionally email.
     // RSVP email is unique, so only update email if a real value is provided.
     const rsvpUpdate: Record<string, string> = { guest_name: newGuestName }
-    if (newEmail && newEmail.includes("@")) {
+    if (emailProvided && newEmail && newEmail.includes("@")) {
       rsvpUpdate.email = newEmail
     }
 

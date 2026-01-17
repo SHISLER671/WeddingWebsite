@@ -66,6 +66,31 @@ export function YouTubePlayer({
     
     // Ensure container exists
     getOrCreateContainer()
+
+    // Cleanup on unmount: stop playback and remove global player/container
+    return () => {
+      try {
+        if (window.weddingMusicPlayer && typeof window.weddingMusicPlayer.pauseVideo === "function") {
+          window.weddingMusicPlayer.pauseVideo()
+        }
+      } catch {}
+
+      try {
+        if (window.weddingMusicPlayer && typeof window.weddingMusicPlayer.destroy === "function") {
+          window.weddingMusicPlayer.destroy()
+        }
+      } catch {}
+
+      window.weddingMusicPlayer = null
+      window.weddingMusicPlayerReady = false
+
+      try {
+        if (window.weddingMusicContainer) {
+          window.weddingMusicContainer.remove()
+        }
+      } catch {}
+      window.weddingMusicContainer = null
+    }
   }, [])
 
   // Load YouTube IFrame API script

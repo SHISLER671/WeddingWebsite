@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useMusic } from "@/contexts/MusicContext"
 import { YouTubePlayer } from "./YouTubePlayer"
-import { SkipBack, SkipForward, List, X } from "lucide-react"
+import { List, Pause, Play, SkipBack, SkipForward, Volume2, VolumeX, X } from "lucide-react"
 
 const YOUTUBE_PLAYLIST_ID = "PLpW1t4-1G91SnoEhXi324hjIG41PI_kUh"
 
@@ -14,6 +14,8 @@ export default function BackgroundMusicPlayer() {
     currentTrack,
     currentTrackIndex,
     playlist,
+    startMusic,
+    stopMusic,
     toggleMute,
     setCurrentTrack,
     setCurrentTrackIndex,
@@ -24,6 +26,21 @@ export default function BackgroundMusicPlayer() {
   } = useMusic()
   const [showPlaylist, setShowPlaylist] = useState(false)
   const [loadingTitles, setLoadingTitles] = useState(false)
+
+  // Ensure music stops when leaving the Gallery page (unmount)
+  useEffect(() => {
+    return () => {
+      try {
+        stopMusic()
+      } catch {}
+
+      if (typeof window !== "undefined" && window.weddingMusicPlayer && window.weddingMusicPlayerReady) {
+        try {
+          window.weddingMusicPlayer.pauseVideo()
+        } catch {}
+      }
+    }
+  }, [stopMusic])
 
   // Fetch titles for all tracks when playlist is expanded (using YouTube oEmbed API)
   useEffect(() => {
@@ -74,31 +91,8 @@ export default function BackgroundMusicPlayer() {
     }
   }, [showPlaylist, playlist, setPlaylist])
 
-  // Auto-unmute on any user interaction after music starts (only if muted)
-  useEffect(() => {
-    if (isPlaying && isMuted) {
-      const handleUnmute = () => {
-        toggleMute()
-        console.log("[Music] Auto-unmuted on user interaction")
-      }
-
-      const events = ["click", "touchstart", "keydown"]
-      const handlers = events.map((event) => {
-        const handler = handleUnmute
-        document.addEventListener(event, handler, { once: true, passive: true })
-        return { event, handler }
-      })
-
-      return () => {
-        handlers.forEach(({ event, handler }) => {
-          document.removeEventListener(event, handler)
-        })
-      }
-    }
-  }, [isPlaying, isMuted, toggleMute])
-
   return (
-    <>
+    <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-6 border-t-4 border-jewel-burgundy">
       {/* YouTube Player using IFrame API for continuous playback */}
       <YouTubePlayer
         playlistId={YOUTUBE_PLAYLIST_ID}
@@ -109,108 +103,124 @@ export default function BackgroundMusicPlayer() {
         onPlaylistLoaded={setPlaylist}
       />
 
-      {/* Music Control Panel - Always visible when music is playing */}
-      {isPlaying && (
-        <div className="fixed bottom-6 right-6 z-50 max-w-md">
-          <div className="flex flex-col gap-3 items-end">
-            {/* Expandable Playlist */}
-            {showPlaylist && playlist.length > 0 && (
-              <div className="bg-jewel-burgundy/95 backdrop-blur-md rounded-2xl shadow-2xl border-4 border-jewel-gold p-4 max-h-[400px] overflow-y-auto w-full">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-warm-white font-bold text-lg">Playlist</h3>
-                  <button
-                    onClick={() => setShowPlaylist(false)}
-                    className="text-warm-white hover:text-jewel-gold transition-colors"
-                    aria-label="Close playlist"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-                <div className="space-y-1">
-                  {playlist.map((track) => (
-                    <button
-                      key={track.index}
-                      onClick={() => {
-                        playTrackAtIndex(track.index)
-                        setShowPlaylist(false)
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
-                        track.index === currentTrackIndex
-                          ? "bg-jewel-gold text-jewel-burgundy font-semibold"
-                          : "bg-warm-white/10 text-warm-white hover:bg-warm-white/20"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs opacity-70">#{track.index + 1}</span>
-                        <span className="truncate flex-1">
-                          {track.title || `Track ${track.index + 1}`}
-                        </span>
-                        {track.index === currentTrackIndex && (
-                          <span className="text-xs">▶</span>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+      <div className="flex items-center gap-3 mb-4">
+        <span className="text-3xl">Music</span>
+        <h3 className="text-2xl font-serif font-bold text-jewel-fuchsia">The Soundtrack to Our Story</h3>
+      </div>
 
-            {/* Track Navigation Buttons */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={previousTrack}
-                className="bg-jewel-burgundy/90 hover:bg-jewel-burgundy text-warm-white p-3 rounded-full shadow-lg border-2 border-jewel-gold/30 hover:scale-110 transition-all duration-300"
-                aria-label="Previous track"
-                title="Previous track"
-              >
-                <SkipBack className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setShowPlaylist(!showPlaylist)}
-                className="bg-jewel-burgundy/90 hover:bg-jewel-burgundy text-warm-white p-3 rounded-full shadow-lg border-2 border-jewel-gold/30 hover:scale-110 transition-all duration-300"
-                aria-label={showPlaylist ? "Hide playlist" : "Show playlist"}
-                title={showPlaylist ? "Hide playlist" : "Show playlist"}
-              >
-                <List className="w-5 h-5" />
-              </button>
-              <button
-                onClick={nextTrack}
-                className="bg-jewel-burgundy/90 hover:bg-jewel-burgundy text-warm-white p-3 rounded-full shadow-lg border-2 border-jewel-gold/30 hover:scale-110 transition-all duration-300"
-                aria-label="Next track"
-                title="Next track"
-              >
-                <SkipForward className="w-5 h-5" />
-              </button>
-            </div>
+      <p className="text-charcoal/70 mb-5 italic">
+        Music is optional on this page. It will not start unless you press play.
+      </p>
 
-            {/* Main Mute/Unmute Button */}
+      {/* Expandable Playlist */}
+      {showPlaylist && playlist.length > 0 && (
+        <div className="mb-4 bg-jewel-burgundy/95 backdrop-blur-md rounded-2xl shadow-2xl border-4 border-jewel-gold p-4 max-h-[340px] overflow-y-auto w-full">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-warm-white font-bold text-lg">Playlist</h4>
             <button
-              onClick={toggleMute}
-              className={`font-bold text-lg px-6 py-4 rounded-full shadow-2xl border-4 transform hover:scale-105 transition-all duration-300 flex flex-col items-center gap-2 w-full ${
-                isMuted
-                  ? "bg-jewel-gold hover:bg-jewel-gold/90 text-jewel-burgundy border-jewel-burgundy"
-                  : "bg-jewel-burgundy hover:bg-jewel-burgundy/90 text-warm-white border-jewel-gold"
-              }`}
-              style={{
-                boxShadow: isMuted
-                  ? "0 10px 40px rgba(123, 75, 122, 0.5), 0 0 20px rgba(212, 165, 116, 0.8)"
-                  : "0 10px 40px rgba(123, 75, 122, 0.5), 0 0 20px rgba(123, 75, 122, 0.6)",
-                animation: isMuted ? "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" : "none",
-              }}
+              onClick={() => setShowPlaylist(false)}
+              className="text-warm-white hover:text-jewel-gold transition-colors"
+              aria-label="Close playlist"
+              type="button"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{isMuted ? "🔊" : "🔇"}</span>
-                <span>{isMuted ? "Unmute Music" : "Mute Music"}</span>
-              </div>
-              {currentTrack && (
-                <div className="text-sm font-normal opacity-90 text-center px-2 truncate w-full">
-                  <span className="italic">"{currentTrack}"</span>
-                </div>
-              )}
+              <X className="w-5 h-5" />
             </button>
+          </div>
+          <div className="space-y-1">
+            {playlist.map((track) => (
+              <button
+                key={track.index}
+                onClick={() => {
+                  playTrackAtIndex(track.index)
+                  startMusic()
+                  setShowPlaylist(false)
+                }}
+                className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
+                  track.index === currentTrackIndex
+                    ? "bg-jewel-gold text-jewel-burgundy font-semibold"
+                    : "bg-warm-white/10 text-warm-white hover:bg-warm-white/20"
+                }`}
+                type="button"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs opacity-70">#{track.index + 1}</span>
+                  <span className="truncate flex-1">{track.title || `Track ${track.index + 1}`}</span>
+                  {track.index === currentTrackIndex && <span className="text-xs">Playing</span>}
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       )}
-    </>
+
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <button
+          onClick={() => (isPlaying ? stopMusic() : startMusic())}
+          className="inline-flex items-center justify-center gap-2 bg-jewel-burgundy hover:bg-jewel-crimson text-warm-white px-5 py-3 rounded-full transition-all duration-300 shadow-lg border-2 border-jewel-gold/30 font-semibold"
+          type="button"
+          aria-label={isPlaying ? "Pause music" : "Play music"}
+        >
+          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+          <span>{isPlaying ? "Pause Music" : "Play Music"}</span>
+        </button>
+
+        <button
+          onClick={toggleMute}
+          className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full transition-all duration-300 shadow-lg border-2 font-semibold ${
+            isMuted
+              ? "bg-jewel-gold/90 hover:bg-jewel-gold text-jewel-burgundy border-jewel-burgundy/40"
+              : "bg-white/80 hover:bg-white text-charcoal border-rose-gold/40"
+          }`}
+          type="button"
+          aria-label={isMuted ? "Unmute music" : "Mute music"}
+        >
+          {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          <span>{isMuted ? "Unmute" : "Mute"}</span>
+        </button>
+
+        <button
+          onClick={() => setShowPlaylist((v) => !v)}
+          className="inline-flex items-center justify-center gap-2 bg-white/80 hover:bg-white text-charcoal px-5 py-3 rounded-full transition-all duration-300 shadow-lg border-2 border-rose-gold/40 font-semibold"
+          type="button"
+          aria-label={showPlaylist ? "Hide playlist" : "Show playlist"}
+        >
+          <List className="w-5 h-5" />
+          <span>{showPlaylist ? "Hide Playlist" : "Show Playlist"}</span>
+        </button>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <button
+          onClick={previousTrack}
+          className="inline-flex items-center justify-center gap-2 bg-jewel-burgundy/90 hover:bg-jewel-burgundy text-warm-white px-4 py-2 rounded-full shadow-md border border-jewel-gold/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Previous track"
+          title="Previous track"
+          type="button"
+          disabled={!playlist.length}
+        >
+          <SkipBack className="w-4 h-4" />
+          <span className="text-sm font-semibold">Prev</span>
+        </button>
+        <button
+          onClick={nextTrack}
+          className="inline-flex items-center justify-center gap-2 bg-jewel-burgundy/90 hover:bg-jewel-burgundy text-warm-white px-4 py-2 rounded-full shadow-md border border-jewel-gold/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Next track"
+          title="Next track"
+          type="button"
+          disabled={!playlist.length}
+        >
+          <SkipForward className="w-4 h-4" />
+          <span className="text-sm font-semibold">Next</span>
+        </button>
+      </div>
+
+      {currentTrack && (
+        <div className="mt-4 text-charcoal/80">
+          <span className="font-semibold">Now playing:</span> <span className="italic">"{currentTrack}"</span>
+        </div>
+      )}
+
+      {loadingTitles && <div className="mt-3 text-sm text-charcoal/60">Loading playlist details…</div>}
+    </div>
   )
 }

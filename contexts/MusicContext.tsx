@@ -27,7 +27,6 @@ interface MusicContextType {
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined)
 
-const MUSIC_STATE_KEY = "wedding-music-playing"
 const MUSIC_MUTED_KEY = "music-muted"
 
 export function MusicProvider({ children }: { children: ReactNode }) {
@@ -42,19 +41,6 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null)
   const [playlist, setPlaylist] = useState<PlaylistTrack[]>([])
 
-  // Load persisted state from sessionStorage on mount
-  useEffect(() => {
-    const savedState = sessionStorage.getItem(MUSIC_STATE_KEY)
-    if (savedState === "true") {
-      setIsPlaying(true)
-    }
-  }, [])
-
-  // Persist state to sessionStorage whenever it changes
-  useEffect(() => {
-    sessionStorage.setItem(MUSIC_STATE_KEY, String(isPlaying))
-  }, [isPlaying])
-
   useEffect(() => {
     sessionStorage.setItem(MUSIC_MUTED_KEY, String(isMuted))
   }, [isMuted])
@@ -62,13 +48,11 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const startMusic = useCallback(() => {
     if (!isPlaying) {
       setIsPlaying(true)
-      sessionStorage.setItem(MUSIC_STATE_KEY, "true")
     }
   }, [isPlaying])
 
   const stopMusic = useCallback(() => {
     setIsPlaying(false)
-    sessionStorage.setItem(MUSIC_STATE_KEY, "false")
   }, [])
 
   const toggleMute = useCallback(() => {

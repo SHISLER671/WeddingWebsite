@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
 
   const insertRow = {
     guest_name: guestName,
+    // Keep DB-compatible behavior (Supabase email may be NOT NULL).
     email: email || "",
     allowed_party_size: allowed,
     is_entourage: isEntourage,
@@ -94,7 +95,15 @@ export async function POST(request: NextRequest) {
 
   const { data: created, error: insertErr } = await supabase.from("invited_guests").insert(insertRow).select("*").single()
   if (insertErr) {
-    return NextResponse.json({ success: false, error: insertErr.message }, { status: 500 })
+    const msg = insertErr.message || "Failed to create invited guest"
+    const code = (insertErr as any)?.code
+    if (code === "23505" || msg.toLowerCase().includes("duplicate key value")) {
+      return NextResponse.json(
+        { success: false, error: "A guest with this email already exists (or there is a duplicate email conflict)." },
+        { status: 409 },
+      )
+    }
+    return NextResponse.json({ success: false, error: msg }, { status: 500 })
   }
 
   return NextResponse.json({ success: true, data: created })

@@ -883,24 +883,40 @@ export default function AdminPage() {
       let effectiveGuestName = currentAssignment?.guest_name
       let effectiveEmail = currentAssignment?.email || null
 
+      const normalizeEmailForCompare = (value: unknown): string => {
+        return String(value ?? "").trim()
+      }
+
       // If user edited guest name / email, persist it to invited_guests (and linked rsvps if present).
+      const nameChanged =
+        !!currentAssignment && !!editForm.guest_name?.trim() && editForm.guest_name.trim() !== currentAssignment.guest_name
+
+      const currentEmailStr = normalizeEmailForCompare(currentAssignment?.email)
+      const editEmailStr =
+        editForm.email !== undefined ? normalizeEmailForCompare(editForm.email) : normalizeEmailForCompare(currentAssignment?.email)
+      const emailChanged = !!currentAssignment && editForm.email !== undefined && editEmailStr !== currentEmailStr
+
       const identityChanged =
         !!currentAssignment &&
-        ((!!editForm.guest_name?.trim() && editForm.guest_name.trim() !== currentAssignment.guest_name) ||
-          (editForm.email !== undefined && (editForm.email || "").trim() !== (currentAssignment.email || "")))
+        (nameChanged || emailChanged)
 
       if (identityChanged) {
+        const requestBody: any = {
+          invited_guest_id: currentAssignment.id,
+          guest_name: (editForm.guest_name || currentAssignment.guest_name).trim(),
+          previous_guest_name: currentAssignment.guest_name,
+          previous_email: currentAssignment.email ?? "",
+        }
+        // Important: if only the name changed, do NOT touch email (avoids unique-email collisions).
+        if (emailChanged) {
+          requestBody.email = editEmailStr
+        }
+
         const identityResponse = await fetch("/api/admin/guest-identity", {
           method: "PUT",
           credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            invited_guest_id: currentAssignment.id,
-            guest_name: (editForm.guest_name || currentAssignment.guest_name).trim(),
-            email: (editForm.email ?? currentAssignment.email ?? "").toString(),
-            previous_guest_name: currentAssignment.guest_name,
-            previous_email: currentAssignment.email ?? "",
-          }),
+          body: JSON.stringify(requestBody),
         })
 
         const identityText = await identityResponse.text()
