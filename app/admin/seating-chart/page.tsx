@@ -5,42 +5,73 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Users, Printer } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-const MAX_PER_TABLE = 10
-const TOTAL_TABLES = 26
-
 interface Guest {
   guest_name: string
   email: string
   table_number: number
-  guest_count: number
-  actual_guest_count?: number
   rsvp_status: string
   is_entourage: boolean
+  actual_guest_count?: number
+  allowed_party_size?: number
 }
 
-interface TableGroup {
-  table_number: number
-  guests: Guest[]
-  totalCount: number
+type AlphabetGroup = {
+  letter: string
+  guests: Array<{
+    guest_name: string
+    table_number: number
+    guest_count: number
+    is_entourage: boolean
+  }>
 }
 
 export default function SeatingChartPage() {
   const router = useRouter()
-  const [tables, setTables] = useState<TableGroup[]>([])
+  const [groups, setGroups] = useState<AlphabetGroup[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadSeatingChart()
-    
+
     // Auto-refresh once per day to catch manual edits
     const interval = setInterval(() => {
       loadSeatingChart()
     }, 86400000) // 24 hours (1 day)
-    
+
     return () => clearInterval(interval)
   }, [])
 
-  const loadSeatingChart = async (retryCount = 0) => {
+  const extractLastName = (fullName: string): string => {
+    const name = (fullName || "").trim().replace(/\s+/g, " ")
+    if (!name) return ""
+
+    // Format: "Last, First"
+    const commaIdx = name.indexOf(",")
+    if (commaIdx > 0) {
+      return name.slice(0, commaIdx).trim()
+    }
+
+    // Drop common suffixes
+    const suffixes = new Set(["jr", "sr", "ii", "iii", "iv", "v"])
+    const parts = name.split(" ").filter(Boolean)
+    while (parts.length > 1) {
+      const last = parts[parts.length - 1].replace(/\./g, "").toLowerCase()
+      if (suffixes.has(last)) {
+        parts.pop()
+        continue
+      }
+      break
+    }
+
+    return parts[parts.length - 1] || name
+  }
+
+  const letterBucket = (lastName: string): string => {
+    const firstChar = (lastName || "").trim().charAt(0).toUpperCase()
+    return /^[A-Z]$/.test(firstChar) ? firstChar : "#"
+  }
+
+  const loadSeatingChart = async (retryCount = 0): Promise<void> => {
     try {
       setLoading(true)
       const timestamp = Date.now()
@@ -62,7 +93,8 @@ export default function SeatingChartPage() {
           const waitTime = Math.pow(2, retryCount) * 2000 // 2s, 4s, 8s
           console.log(`[v0] Rate limit hit, retrying in ${waitTime / 1000}s... (attempt ${retryCount + 1}/3)`)
           await new Promise((resolve) => setTimeout(resolve, waitTime))
-          return loadSeatingChart(retryCount + 1)
+          await loadSeatingChart(retryCount + 1)
+          return
         }
 
         if (res.status === 429) {
@@ -80,7 +112,8 @@ export default function SeatingChartPage() {
           const waitTime = Math.pow(2, retryCount) * 2000
           console.log(`[v0] Rate limit detected (HTML response), retrying in ${waitTime / 1000}s...`)
           await new Promise((resolve) => setTimeout(resolve, waitTime))
-          return loadSeatingChart(retryCount + 1)
+          await loadSeatingChart(retryCount + 1)
+          return
         }
 
         console.error("[v0] Error loading seating chart: Invalid response format (not JSON):", text.substring(0, 100))
@@ -93,38 +126,44 @@ export default function SeatingChartPage() {
         throw new Error(data.error || "Failed to load guests")
       }
 
-      const attendingGuests = data.data
-        .filter((g: any) => g.rsvp_status === "yes" || g.is_entourage)
-        .map((g: any) => ({
-          ...g,
-          guest_count: g.actual_guest_count || g.guest_count || 1, // Map actual_guest_count to guest_count for consistency
-        })) as Guest[]
+      const attending = (data.data as Guest[])
+        // RSVP "yes" (plus entourage) only, and only those with an assigned table
+        .filter((g) => (g.rsvp_status === "yes" || g.is_entourage) && (g.table_number || 0) > 0)
+        .map((g) => ({
+          guest_name: g.guest_name,
+          table_number: g.table_number || 0,
+          guest_count: g.actual_guest_count || g.allowed_party_size || 1,
+          is_entourage: g.is_entourage === true,
+        }))
 
-      const tableMap = new Map<number, Guest[]>()
+      // Group by last-name first letter (A-Z), sorted alphabetically
+      const bucketMap = new Map<string, AlphabetGroup["guests"]>()
 
-      attendingGuests.forEach((guest: Guest) => {
-        const tableNum = guest.table_number || 0
-        if (tableNum === 0) return
-
-        if (!tableMap.has(tableNum)) {
-          tableMap.set(tableNum, [])
-        }
-        tableMap.get(tableNum)!.push(guest)
-      })
-
-      const tableGroups: TableGroup[] = []
-      for (let i = 1; i <= TOTAL_TABLES; i++) {
-        const guests = tableMap.get(i) || []
-        // Calculate total body count (sum of all guest_count values)
-        const totalCount = guests.reduce((sum, g) => sum + (g.guest_count || 1), 0)
-        tableGroups.push({
-          table_number: i,
-          guests,
-          totalCount,
-        })
+      for (const g of attending) {
+        const last = extractLastName(g.guest_name)
+        const letter = letterBucket(last)
+        if (!bucketMap.has(letter)) bucketMap.set(letter, [])
+        bucketMap.get(letter)!.push(g)
       }
 
-      setTables(tableGroups)
+      const letters = Array.from(bucketMap.keys()).sort((a, b) => {
+        if (a === "#") return 1
+        if (b === "#") return -1
+        return a.localeCompare(b)
+      })
+
+      const nextGroups: AlphabetGroup[] = letters.map((letter) => {
+        const guests = bucketMap.get(letter) || []
+        guests.sort((a, b) => {
+          const lastA = extractLastName(a.guest_name).toLowerCase()
+          const lastB = extractLastName(b.guest_name).toLowerCase()
+          if (lastA !== lastB) return lastA.localeCompare(lastB)
+          return a.guest_name.toLowerCase().localeCompare(b.guest_name.toLowerCase())
+        })
+        return { letter, guests }
+      })
+
+      setGroups(nextGroups)
     } catch (error) {
       console.error("[v0] Error loading seating chart:", error)
     } finally {
@@ -179,61 +218,55 @@ export default function SeatingChartPage() {
             <p className="text-jewel-burgundy">Loading seating chart...</p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 print:grid-cols-3 print:gap-4">
-            {tables.map((table) => (
-              <div
-                key={table.table_number}
-                className="rounded-lg border border-burgundy-200 bg-white p-6 shadow-sm print:break-inside-avoid print:p-4"
-              >
-                <div className="mb-4 flex items-center justify-between border-b border-burgundy-100 pb-3 print:pb-2">
-                  <h2 className="font-serif text-2xl font-bold text-jewel-burgundy print:text-xl">
-                    Table {table.table_number}
-                  </h2>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Users className="h-4 w-4 text-jewel-crimson" />
-                    <span className="font-semibold text-jewel-burgundy">
-                      {table.totalCount}/{MAX_PER_TABLE}
-                    </span>
-                  </div>
-                </div>
-
-                <ul className="space-y-2 print:space-y-1">
-                  {table.guests.map((guest, guestIdx) => {
-                    const guestCount = guest.guest_count || 1
-                    return (
-                      <li
-                        key={`guest-${guestIdx}`}
-                        className="flex items-center justify-between rounded-md bg-purple-50/50 px-3 py-2 print:bg-transparent print:py-1"
-                      >
-                        <span className="font-medium text-jewel-burgundy print:text-sm">
-                          {guest.guest_name}
-                          {guest.is_entourage && (
-                            <span className="ml-2 rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs text-fuchsia-700 print:bg-transparent print:px-0 print:font-semibold">
-                              (Entourage)
-                            </span>
-                          )}
-                        </span>
-                        <span className="text-xs text-jewel-burgundy/50 print:text-xs">
-                          {guestCount > 1 ? `Party of ${guestCount}` : ""}
-                        </span>
-                      </li>
-                    )
-                  })}
-
-                  {/* Empty seat placeholders - show as empty boxes without text */}
-                  {Array.from({ length: MAX_PER_TABLE - table.totalCount }).map((_, idx) => (
-                    <li
-                      key={`empty-${idx}`}
-                      className="rounded-md border border-dashed border-burgundy-200/50 px-3 py-2 print:py-1"
-                      style={{ minHeight: '2.5rem' }}
-                      aria-label="Empty seat"
-                    >
-                      {/* Empty - no text, just visual placeholder */}
-                    </li>
-                  ))}
-                </ul>
+          <div className="space-y-8 print:space-y-6">
+            {groups.length === 0 ? (
+              <div className="rounded-lg bg-white p-12 text-center">
+                <p className="text-jewel-burgundy">No assigned “yes” RSVPs found.</p>
               </div>
-            ))}
+            ) : (
+              groups.map((group) => (
+                <section
+                  key={group.letter}
+                  className="rounded-lg border border-burgundy-200 bg-white p-6 shadow-sm print:break-inside-avoid print:p-4"
+                >
+                  <div className="mb-4 border-b border-burgundy-100 pb-3 print:pb-2">
+                    <h2 className="font-serif text-3xl font-bold text-jewel-burgundy print:text-xl">
+                      {group.letter}
+                    </h2>
+                  </div>
+
+                  <ul className="divide-y divide-burgundy-100">
+                    {group.guests.map((g, idx) => (
+                      <li
+                        key={`${group.letter}-${idx}-${g.table_number}`}
+                        className="flex items-center justify-between gap-4 py-3 print:py-2"
+                      >
+                        <div className="min-w-0">
+                          <div className="truncate font-medium text-jewel-burgundy print:text-sm">
+                            {g.guest_name}
+                            {g.is_entourage && (
+                              <span className="ml-2 rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs text-fuchsia-700 print:bg-transparent print:px-0 print:font-semibold">
+                                (Entourage)
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-jewel-burgundy/60 print:text-xs">
+                            {g.guest_count > 1 ? `Party of ${g.guest_count}` : ""}
+                          </div>
+                        </div>
+
+                        <div className="shrink-0 text-right">
+                          <div className="inline-flex items-center gap-2 rounded-md bg-purple-50/60 px-3 py-1.5 text-sm font-semibold text-jewel-burgundy print:bg-transparent print:px-0 print:py-0">
+                            <Users className="h-4 w-4 text-jewel-crimson print:hidden" />
+                            Table {g.table_number}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))
+            )}
           </div>
         )}
       </div>

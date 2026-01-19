@@ -4,8 +4,8 @@ import { requireAdminAPIAuth } from "@/lib/authHelpers"
 
 export const dynamic = "force-dynamic"
 
-const MAX_TABLE_CAPACITY = 10
-const TOTAL_TABLES = 26
+const MAX_TABLE_CAPACITY = 11
+const TOTAL_TABLES = 25
 
 export async function POST(request: NextRequest) {
   const auth = requireAdminAPIAuth(request)

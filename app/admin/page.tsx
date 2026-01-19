@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 
-const MAX_TABLE_CAPACITY = 10 // Maximum 10 people per table
-const MIN_TABLE_OCCUPANCY = 6 // Try not to leave more than 2 empty seats (10-2=8, but we allow 6 minimum)
-const MAX_TABLES = 26 // 26 tables available for guests including entourage
+const MAX_TABLE_CAPACITY = 11 // Maximum 11 people per table
+const MIN_TABLE_OCCUPANCY = 7 // Try not to leave too many empty seats (11-4=7)
+const MAX_TABLES = 25 // 25 tables available for guests including entourage
 const UNASSIGNED_TABLE = 0 // Table 0 is for guests who haven't RSVP'd or declined
 
 interface SeatingAssignment {

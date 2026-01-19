@@ -65,18 +65,18 @@ export default function GiftsPage() {
           </CardContent>
         </Card>
 
-        {/* Traditional Cash Gifts */}
+        {/* Traditional Monetary Gifts */}
         <Card className="border-t-4 border-jewel-burgundy shadow-lg bg-white/70 backdrop-blur-md mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-jewel-crimson">
               <Heart className="w-5 h-5" />
-              Traditional Cash Gifts
+              Traditional Monetary Gifts
             </CardTitle>
             <CardDescription>The classic way - always appreciated</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-800 leading-relaxed">
-              If you would like to give us cash as a gift, we would more than appreciate it because it will help build our new life!
+              If you would like to give us a monetary gift, we would more than appreciate it because it will help build our new life!
             </p>
           </CardContent>
         </Card>
@@ -254,10 +254,10 @@ export default function GiftsPage() {
 
               {/* Optional Nature & Alternatives */}
               <AccordionItem value="do-i-have-to">
-                <AccordionTrigger className="text-left">Do I have to use crypto? Can I just give cash?</AccordionTrigger>
+                <AccordionTrigger className="text-left">Do I have to use crypto? Can I just give a monetary gift?</AccordionTrigger>
                 <AccordionContent className="text-gray-700 leading-relaxed">
-                  <strong>Nope - it's 100% optional!</strong> We love and appreciate any form of gift, and traditional cash 
-                  is always wonderful. The crypto option is just an alternative for those who are interested or already use 
+                  <strong>Nope - it's 100% optional!</strong> We love and appreciate any form of gift, and traditional monetary gifts 
+                  are always wonderful. The crypto option is just an alternative for those who are interested or already use 
                   digital currencies. <em>Your RSVP is totally valid whether you connect a wallet or not. We just wanted to 
                   offer this as a fun, modern option for anyone interested.</em> <strong>Your presence at our wedding is 
                   what matters most to us.</strong> Everything else is just bonus!

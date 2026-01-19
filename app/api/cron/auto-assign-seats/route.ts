@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
 
     if (rsvpSeatingError) throw rsvpSeatingError
 
-    const MAX_TABLES = 26
-    const SEATS_PER_TABLE = 10
+    const MAX_TABLES = 25
+    const SEATS_PER_TABLE = 11
 
     // Build guest list with RSVP status
     const guestsToAssign = invitedGuests

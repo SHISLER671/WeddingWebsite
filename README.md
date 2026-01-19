@@ -28,7 +28,7 @@ A sophisticated, full-featured wedding website built with Next.js 15 (App Router
 - **📚 Accurate Information** - Verified knowledge base with strict rules against fabricating wedding details
 
 ### 💎 Modern Tech Features
-- **🎁 Gift Options** - Handmade art/crafts, traditional cash gifts, and crypto gifts (no traditional registry)
+- **🎁 Gift Options** - Handmade art/crafts, traditional monetary gifts, and crypto gifts (no traditional registry)
 - **💰 Crypto Gifts** - Accept cryptocurrency gifts via Abstract Global Wallet
 - **🔗 Wallet Connection** - Optional wallet connection for post-wedding digital surprises
 - **📱 Mobile-First** - Fully optimized for mobile and desktop experiences with touch-friendly UI
@@ -155,7 +155,7 @@ SQL setup scripts are available in the `migrations/` directory. JavaScript utili
 The wedding chatbot "Ezekiel" is powered by OpenRouter and can:
 - Answer questions about the wedding (date, venue, dress code, etc.)
 - Provide directions and accommodation info
-- Explain gift options (handmade art, cash, crypto - no traditional registry)
+- Explain gift options (handmade art, monetary gifts, crypto - no traditional registry)
 - Help with RSVP-related questions and check RSVP status
 - Offer seating information for confirmed guests
 - Guide guests through photo gallery uploads (direct upload, no QR code)
@@ -175,7 +175,7 @@ Configuration is managed in `lib/chatbot-config.ts`. The chatbot appears globall
 ### Gift Options (No Traditional Registry)
 The couple offers three gift options:
 1. **Handmade Art & Crafts** - Paintings, drawings, pottery, jewelry, or any craft made with love
-2. **Traditional Cash Gifts** - Always appreciated to help build their new life together
+2. **Traditional Monetary Gifts** - Always appreciated to help build their new life together
 3. **Crypto Gifts** - Via Abstract Global Wallet for crypto-curious guests
 
 ### Crypto Integration
