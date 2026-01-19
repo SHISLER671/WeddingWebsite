@@ -410,7 +410,7 @@ export async function handleRSVPStatusRequest(userMessage: string): Promise<stri
         if (seatingData.success && seatingData.hasSeating) {
           message += `\n\n🪑 **Your Seating Assignment:**\nTable ${seatingData.data.table_number}`;
           if (seatingData.data.plus_one_name) {
-            message += `\nPlus One: ${seatingData.data.plus_one_name}`;
+            message += `\nAdditional guest: ${seatingData.data.plus_one_name}`;
           }
         } else {
           message += `\n\n🪑 **Seating Assignment:** We're still finalizing seating arrangements. Please contact us directly if you need your table assignment.`;

@@ -23,7 +23,7 @@ node scripts/admin-seating.js fuzzy "smith"
 
 #### **Validate All Assignments:**
 \`\`\`bash
-# Check for duplicate seats, missing plus-ones, etc.
+# Check for duplicate seats, missing additional guests, etc.
 node scripts/admin-seating.js validate
 \`\`\`
 
@@ -71,10 +71,10 @@ Sarah Johnson,,1,3,,,,
 2. **Check table assignments** manually
 3. **Reassign conflicting guests**
 
-#### **Missing Plus-Ones:**
-1. **Validate assignments** to find missing plus-one seats
-2. **Update the database** with correct plus-one information
-3. **Contact guests** to confirm plus-one details
+#### **Missing Additional Guests:**
+1. **Validate assignments** to find missing additional guest seats
+2. **Update the database** with correct additional guest information
+3. **Contact guests** to confirm details
 
 ## 🔧 Admin Workflow
 
@@ -141,7 +141,7 @@ node scripts/admin-seating.js export
 
 - ✅ All guests can find their seating assignments
 - ✅ No duplicate seat assignments
-- ✅ Plus-ones properly assigned
+- ✅ Additional guests properly assigned
 - ✅ Dietary restrictions noted
 - ✅ Special requirements documented
 - ✅ Easy admin management

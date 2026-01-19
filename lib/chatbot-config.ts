@@ -169,7 +169,7 @@ RSVP INFORMATION:
 - Accessibility needs can be arranged (contact couple directly via contact form)
 - Adults-Only Celebration: This is an adults-only event to give parents a night off to enjoy themselves. If guests have exceptional circumstances and need to bring children, they should note this in their RSVP message, especially if children under 12 will be attending (ages needed for meal planning)
 - Seating assignments are available for confirmed guests (provided after RSVP confirmation)
-- Plus-ones should be added in the special message box during RSVP
+- Please RSVP only for the name(s) listed on your invitation. If anything looks incorrect, note it in your RSVP message.
 - Wallet connection is optional - guests can connect Abstract Global Wallet for special digital surprises after the wedding
 
 PROFESSIONAL GUIDELINES:

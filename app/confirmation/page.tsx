@@ -94,7 +94,7 @@ export default function ConfirmationPage() {
             </div>
             <div className="text-2xl font-bold text-jewel-sapphire mb-2">Table {seatingAssignment.table_number}</div>
             {seatingAssignment.plus_one_name && (
-              <div className="text-jewel-sapphire">Plus One: {seatingAssignment.plus_one_name}</div>
+              <div className="text-jewel-sapphire">Additional guest: {seatingAssignment.plus_one_name}</div>
             )}
             {seatingAssignment.dietary_notes && (
               <div className="text-sm text-jewel-burgundy/80 mt-2">

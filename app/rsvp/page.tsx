@@ -775,9 +775,10 @@ export default function RSVPPage() {
                     </div>
                     <div className="bg-jewel-burgundy/10 border border-jewel-burgundy/30 rounded-lg p-4">
                       <p className="text-sm text-charcoal leading-relaxed">
-                        Your presence means the world to us! Bringing a plus-one? Add their name in the special message
-                        box below. We are looking forward to having a night full of dancing, drinking, and celebration.
-                        This is an adults-only event, so please arrange for childcare if needed. We can&apos;t wait to have you there!
+                        Your presence means the world to us! Please RSVP only for the name(s) listed on your invitation.
+                        If anything looks incorrect or you have a question, leave us a note in the special message box below.
+                        We are looking forward to having a night full of dancing, drinking, and celebration. This is an adults-only
+                        event, so please arrange for childcare if needed. We can&apos;t wait to have you there!
                       </p>
                     </div>
                     <div>
@@ -930,8 +931,9 @@ export default function RSVPPage() {
                     <h4 className="font-semibold text-jewel-sapphire text-sm mb-1">Quick Tip</h4>
                     <p className="text-jewel-burgundy text-sm leading-relaxed">
                       Use the <strong>exact name from your invitation</strong> (this helps us keep everything perfect!)
-                      - start typing and select it from the dropdown to auto-fill your info. Bringing a plus-one? Add
-                      their name in the special message box below. Your presence means the world to us!
+                      - start typing and select it from the dropdown to auto-fill your info. Please RSVP only for the
+                      name(s) listed on your invitation. If anything looks incorrect, leave us a note in the special
+                      message box below. Your presence means the world to us!
                     </p>
                   </div>
                 </div>

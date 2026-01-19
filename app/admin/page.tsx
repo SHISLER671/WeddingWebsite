@@ -1434,7 +1434,7 @@ export default function AdminPage() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search guests by name, email, or plus-one..."
+                placeholder="Search guests by name or email..."
                 className="border border-jewel-burgundy/30 rounded-lg focus:ring-2 focus:ring-jewel-crimson focus:border-jewel-crimson"
               />
             </div>
@@ -1643,7 +1643,7 @@ export default function AdminPage() {
                   <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Email</th>
                   <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Guest Count</th>
                   <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Table</th>
-                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Plus One</th>
+                  <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Additional Guest</th>
                   <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Dietary</th>
                   <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">RSVP Notes</th>
                   <th className="text-left py-4 px-4 font-semibold text-jewel-burgundy">Actions</th>
@@ -1741,7 +1741,7 @@ export default function AdminPage() {
                             type="text"
                             value={editForm.plus_one_name || ""}
                             onChange={(e) => setEditForm({ ...editForm, plus_one_name: e.target.value })}
-                            placeholder="Plus one name"
+                            placeholder="Additional guest name"
                             className="w-full px-2 py-1 border border-jewel-burgundy/30 rounded text-sm"
                           />
                         ) : (
