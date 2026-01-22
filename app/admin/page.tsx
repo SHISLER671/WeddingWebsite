@@ -1716,8 +1716,8 @@ export default function AdminPage() {
                           />
                         ) : (
                           <div className="text-sm font-medium text-jewel-sapphire">
-                            {assignment.actual_guest_count || 1}{" "}
-                            {assignment.actual_guest_count === 1 ? "person" : "people"}
+                            {(assignment.actual_guest_count ?? assignment.allowed_party_size ?? 1) + " "}
+                            {(assignment.actual_guest_count ?? assignment.allowed_party_size ?? 1) === 1 ? "person" : "people"}
                           </div>
                         )}
                       </td>

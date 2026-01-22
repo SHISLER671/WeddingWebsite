@@ -168,23 +168,16 @@ export async function GET(request: NextRequest) {
             })
           }
 
-          const rsvpStatus = rsvp?.attendance || "pending"
-          const isAttending = rsvpStatus === "yes"
+          const rsvpStatus = (rsvp?.attendance || "pending").toString().toLowerCase()
           const tableNumber = rsvp?.table_number || 0
 
-          // Priority: RSVP guest_count > allowed_party_size > 1
-          // Always prefer RSVP guest_count if RSVP exists and is attending or entourage
-          let actualGuestCount = 0
-          if (rsvp && (isAttending || isEntourageMember)) {
-            // If RSVP exists and is attending/entourage, use RSVP guest_count
-            actualGuestCount = rsvp.guest_count || guest.allowed_party_size || 1
-          } else if (isEntourageMember) {
-            // Entourage without RSVP - use allowed_party_size
-            actualGuestCount = guest.allowed_party_size || 1
-          } else if (isAttending && rsvp) {
-            // Attending with RSVP - use RSVP guest_count
-            actualGuestCount = rsvp.guest_count || guest.allowed_party_size || 1
-          }
+          // Admin dashboard needs a stable, meaningful count for every row:
+          // - If an RSVP exists, show its guest_count (even for declines, so headcount math is consistent)
+          // - Otherwise, fall back to invited_guests.allowed_party_size
+          // - Always ensure at least 1 (DB rules also enforce this)
+          const rawCount = rsvp?.guest_count ?? guest.allowed_party_size ?? 1
+          const parsedCount = Number.parseInt(String(rawCount), 10)
+          const actualGuestCount = Number.isFinite(parsedCount) && parsedCount >= 1 ? parsedCount : 1
 
           return {
             id: guest.id,

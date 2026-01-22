@@ -1,0 +1,25 @@
+[dotenv@17.2.3] injecting env (5) from .env.local -- tip: ⚙️  suppress all logs with { quiet: true }
+📄 Master CSV: /Users/ipan/Desktop/working website/WeddingWebsite2026/MASTERGUESTLIST.csv
+✅ Loaded master names: 260
+
+🔌 Fetching invited_guests from Supabase…
+✅ Fetched invited_guests rows: 260
+
+🧾 Exported invited_guests to CSV: /Users/ipan/Desktop/working website/WeddingWebsite2026/invited_guests_export.csv
+
+🧾 Report (no changes made):
+- Invited guests in Supabase but not in MASTERGUESTLIST.csv: 1
+- Of those, created via admin (source includes @ADMIN): 0
+- Guests in MASTERGUESTLIST.csv but missing from Supabase: 1
+
+=== Supabase-only (ALL sources) (1) ===
+- Fr. Will Mamangan (party=1 | source=@MASTERGUESTLIST.csv)
+
+=== Supabase-only (source=@ADMIN) (0) ===
+
+=== Master-only (missing from Supabase) (1) ===
+- David & Sirena Cassidy (#55 | party=2)
+
+=== Duplicates in Supabase (same canonical name appears multiple times) (0) ===
+
+=== Duplicates in MASTERGUESTLIST.csv (same canonical name appears multiple times) (0) ===
