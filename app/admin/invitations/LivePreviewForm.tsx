@@ -25,7 +25,7 @@ export default function LivePreviewForm() {
   useEffect(() => {
     const img = new Image()
     img.crossOrigin = "anonymous"
-    img.src = "/25th.jpg"
+    img.src = "/template.jpg"
     img.onload = () => {
       templateImageRef.current = img
       setImageLoaded(true)
@@ -252,7 +252,7 @@ export default function LivePreviewForm() {
         <div className="space-y-6">
           <div className="p-4 bg-jewel-gold/10 rounded-lg border border-jewel-gold/20">
             <p className="text-sm text-jewel-burgundy mb-2">
-              <strong>Template:</strong> Using <code>25th.jpg</code> from public folder
+              <strong>Template:</strong> Using <code>template.jpg</code> from public folder
             </p>
             <p className="text-sm text-jewel-burgundy">
               <strong>Settings:</strong> All styling and positioning are automatic and preset

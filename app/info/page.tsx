@@ -85,6 +85,10 @@ export default function InfoPage() {
                     <strong className="text-xl font-semibold text-jewel-burgundy">Reception:</strong>{" "}
                     <em>Hotel Nikko Guam, Tasi Ballroom, Tumon</em>
                   </p>
+                  <p className="text-lg">
+                    <strong className="text-xl font-semibold text-jewel-burgundy">Hotel booking discount code:</strong>{" "}
+                    <code className="font-mono font-bold text-jewel-burgundy">SHISLER</code>
+                  </p>
                 </div>
               </div>
 
@@ -147,6 +151,10 @@ export default function InfoPage() {
                       <strong className="text-xl text-jewel-burgundy">Reception:</strong>{" "}
                       <em>6:30pm at Hotel Nikko Guam, Tasi Ballroom</em>
                     </p>
+                    <div className="mt-3 inline-flex items-center gap-2 bg-jewel-gold/15 border border-jewel-gold/30 rounded-lg px-3 py-2">
+                      <span className="text-charcoal text-lg font-semibold">Hotel booking discount code:</span>
+                      <code className="font-mono text-lg font-extrabold text-jewel-burgundy">SHISLER</code>
+                    </div>
                     <p className="mt-2 text-lg font-bold text-jewel-burgundy">
                       Then we dance until we can't dance anymore! 
                     </p>
@@ -168,6 +176,10 @@ export default function InfoPage() {
                       <strong className="text-xl text-jewel-burgundy">Reception:</strong>{" "}
                       <em>Hotel Nikko Guam, Tasi Ballroom</em>
                     </p>
+                    <div className="mt-3 inline-flex items-center gap-2 bg-jewel-gold/15 border border-jewel-gold/30 rounded-lg px-3 py-2">
+                      <span className="text-charcoal text-lg font-semibold">Hotel booking discount code:</span>
+                      <code className="font-mono text-lg font-extrabold text-jewel-burgundy">SHISLER</code>
+                    </div>
                     <p className="text-lg">
                       <strong className="text-xl text-jewel-burgundy">Address:</strong>{" "}
                       <em>245 Gun Beach Road, Tumon, Guam 96913</em>
@@ -233,6 +245,10 @@ export default function InfoPage() {
                     Hotel Nikko is right in Tumon with valet parking, so getting there is a breeze.{" "}
                     <strong className="text-jewel-burgundy">Come ready to eat, drink, and celebrate with us! 🎉</strong>
                   </p>
+                  <div className="inline-flex items-center gap-2 bg-jewel-gold/15 border border-jewel-gold/30 rounded-lg px-3 py-2">
+                    <span className="text-gray-800 text-lg font-semibold">Hotel booking discount code:</span>
+                    <code className="font-mono text-lg font-extrabold text-jewel-burgundy">SHISLER</code>
+                  </div>
                 </div>
               </div>
             </section>

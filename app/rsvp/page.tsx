@@ -535,6 +535,17 @@ export default function RSVPPage() {
                 : "We're so excited to celebrate with you! Please let us know if you'll be joining us on February 13, 2026."}
             </p>
           </div>
+
+          <div className="max-w-2xl mx-auto mt-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-jewel-burgundy/30 p-5">
+            <div className="text-center space-y-2">
+              <p className="text-lg md:text-xl text-charcoal font-semibold">
+                Staying at <span className="text-jewel-burgundy font-bold">Hotel Nikko</span>?
+              </p>
+              <p className="text-lg md:text-xl text-charcoal">
+                Hotel booking discount code: <code className="font-mono font-extrabold text-jewel-burgundy">SHISLER</code>
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Step-by-Step Modal for New RSVPs */}

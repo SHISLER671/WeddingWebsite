@@ -1245,7 +1245,7 @@ export default function AdminPage() {
 
       const img = new window.Image()
       img.crossOrigin = "anonymous"
-      img.src = "/25th.jpg"
+      img.src = "/template.jpg"
 
       await new Promise((resolve, reject) => {
         img.onload = resolve
