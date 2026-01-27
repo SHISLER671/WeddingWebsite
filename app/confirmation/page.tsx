@@ -187,10 +187,6 @@ export default function ConfirmationPage() {
                 <h3 className="font-medium text-charcoal mb-2 text-lg">Reception</h3>
                 <p className="text-xl text-charcoal">Hotel Nikko Guam, Tasi Ballroom</p>
                 <p className="text-charcoal/70 text-lg">Tumon, Guam • 6:30pm</p>
-                <div className="mt-3 inline-flex items-center gap-2 bg-jewel-gold/15 border border-jewel-gold/30 rounded-lg px-3 py-2">
-                  <span className="text-charcoal text-lg font-medium">Hotel booking discount code:</span>
-                  <code className="font-mono text-lg font-bold text-jewel-burgundy">SHISLER</code>
-                </div>
               </div>
             </div>
           </div>
